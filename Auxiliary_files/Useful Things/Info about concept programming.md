@@ -7,5 +7,3 @@
 * [github](https://github.com), [bitbucket](https://bitbucket.org)
 * [git shell](https://training.github.com), [SourceTree](https://www.sourcetreeapp.com)
 * [Git-Flow](http://danielkummer.github.io/git-flow-cheatsheet/index.ru_RU.html)
-
-* [Конкурс](https://vk.com/vkmc)
