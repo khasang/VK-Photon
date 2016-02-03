@@ -7,8 +7,8 @@
 * [RoadMap file](https://github.com/khasang-incubator/Android-20160131/wiki/RoadMap)
 * [Team file](https://github.com/khasang-incubator/Android-20160131/wiki/%D0%A1%D0%BE%D1%81%D1%82%D0%B0%D0%B2-%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4%D1%8B)
 
-### Useful information ###
-	Painting instruments:
+## Useful information
+### Painting instruments ###
 * [ninjamock](https://ninjamock.com/)
 * [invisionapp](https://projects.invisionapp.com/d/login?redir=%2Fd%2Fmain#/projects/5440003)
 * [fluidui](https://www.fluidui.com/)
@@ -22,7 +22,7 @@
 * [axure](http://www.axure.com/)
 * [mockflow](https://www.mockflow.com/)
 
-	UML Diagram instruments:
+### UML Diagram instruments ###
 * [visual-paradigm](http://www.visual-paradigm.com/)
 * [draw.io](https://www.draw.io)
 * [UML Diagram Tool](http://www.umlet.com/umletino/umletino.html)
