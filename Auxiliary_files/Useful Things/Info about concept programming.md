@@ -1,0 +1,11 @@
+* [Firebug](https://addons.mozilla.org/ru/firefox/addon/firebug/)
+* [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
+* [Scrum](https://ru.wikipedia.org/wiki/Scrum)
+* [Agile](https://ru.wikipedia.org/wiki/%D0%93%D0%B8%D0%B1%D0%BA%D0%B0%D1%8F_%D0%BC%D0%B5%D1%82%D0%BE%D0%B4%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D1%8F_%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B8)
+* [Kanban](https://ru.wikipedia.org/wiki/%D0%9A%D0%B0%D0%BD%D0%B1%D0%B0%D0%BD_(%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B0))
+* [Git](https://git-scm.com/book/ru/v1/Введение-Основы-Git)
+* [github](https://github.com), [bitbucket](https://bitbucket.org)
+* [git shell](https://training.github.com), [SourceTree](https://www.sourcetreeapp.com)
+* [Git-Flow](http://danielkummer.github.io/git-flow-cheatsheet/index.ru_RU.html)
+
+* [Конкурс](https://vk.com/vkmc)
