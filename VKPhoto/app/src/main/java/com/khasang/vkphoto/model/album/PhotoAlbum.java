@@ -19,7 +19,6 @@ public class PhotoAlbum {
 //    privacy_comment: ['all']
     @SerializedName("id")
     public int id;
-
     @SerializedName("thumb_id")
     public int thumb_id;
     @SerializedName("title")

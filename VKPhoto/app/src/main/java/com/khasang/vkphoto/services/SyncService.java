@@ -15,7 +15,6 @@ public interface SyncService {
 
     /** Синхронизирует альбом */
     void syncAlbum(PhotoAlbum photoAlbum);
-
     /** Получает фотографию */
     Photo getPhoto();
 

@@ -55,7 +55,7 @@ public class MainFragment extends Fragment implements MainView {
     @Override
     public void displayVkAlbums(List<PhotoAlbum> photoAlbumList) {
         for (PhotoAlbum photoAlbum : photoAlbumList) {
-            Logger.d("title " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size);
+            Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size);
         }
     }
 

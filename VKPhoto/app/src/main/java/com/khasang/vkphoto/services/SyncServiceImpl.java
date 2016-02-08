@@ -7,13 +7,15 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.khasang.vkphoto.domain.interfaces.OnGetAllAlbumsListener;
 import com.khasang.vkphoto.executor.MainThread;
 import com.khasang.vkphoto.executor.MainThreadImpl;
 import com.khasang.vkphoto.executor.ThreadExecutor;
-import com.khasang.vkphoto.model.album.GetAlbumsResponse;
 import com.khasang.vkphoto.model.Photo;
 import com.khasang.vkphoto.model.album.PhotoAlbum;
+import com.khasang.vkphoto.model.album.PhotoAlbums;
+import com.khasang.vkphoto.model.Response;
 import com.khasang.vkphoto.util.VkAccessTokenHolder;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
@@ -21,11 +23,21 @@ import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
+import java.lang.reflect.Type;
+
 public class SyncServiceImpl extends Service implements SyncService {
     public static final String TAG = SyncService.class.getSimpleName();
     private ThreadExecutor executor = new ThreadExecutor();
     private MainThread mainThread = new MainThreadImpl();
     private MyBinder binder = new MyBinder();
+    private Gson gson;
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        gson = new Gson();
+        return super.onStartCommand(intent, flags, startId);
+    }
 
     @Nullable
     @Override
@@ -35,26 +47,22 @@ public class SyncServiceImpl extends Service implements SyncService {
 
     /**
      * получает все альбомы
+     *
      * @param onGetAllAlbumsListener коллбэк
      */
     @Override
     public void getAllAlbums(final OnGetAllAlbumsListener onGetAllAlbumsListener) {
-//        VKRequest request = VKApi.wall().post(VKParameters.from(VKApiConst.OWNER_ID, VkAccessTokenHolder.getUserId(), VKApiConst.MESSAGE, "Привет, друзья!"));
         VKRequest request = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VkAccessTokenHolder.getUserId()));
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                Gson gson = new Gson();
-                GetAlbumsResponse albumsResponse = gson.fromJson(response.json.toString(), GetAlbumsResponse.class);
+                Type photoAlbumsType = new TypeToken<Response<PhotoAlbums>>() {
+                }.getType();
+                Response<PhotoAlbums> albumsResponse = gson.fromJson(response.json.toString(), photoAlbumsType);
                 if (onGetAllAlbumsListener != null) {
-                    onGetAllAlbumsListener.onSuccess(albumsResponse.photoAlbums.results);
+                    onGetAllAlbumsListener.onSuccess(albumsResponse.response.results);
                 }
-            }
-
-            @Override
-            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                super.attemptFailed(request, attemptNumber, totalAttempts);
             }
 
             @Override
@@ -63,23 +71,6 @@ public class SyncServiceImpl extends Service implements SyncService {
                 onGetAllAlbumsListener.onVKError(error);
             }
         });
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-////                try {
-////                    TimeUnit.SECONDS.sleep(1);
-////                } catch (InterruptedException e) {
-////                    e.printStackTrace();
-////                }
-//                mainThread.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        onGetAllAlbumsListener.onVKError(new RuntimeException("Gotcha! Exception"));
-//                    }
-//                });
-//            }
-//        });
-
     }
 
     @Override
@@ -89,6 +80,7 @@ public class SyncServiceImpl extends Service implements SyncService {
 
     /**
      * Синхронизирует альбом
+     *
      * @param photoAlbum объект альбома, который синхронизирует
      */
     @Override

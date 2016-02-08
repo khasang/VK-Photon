@@ -1,0 +1,14 @@
+package com.khasang.vkphoto.domain.interfaces;
+
+import com.khasang.vkphoto.model.album.PhotoAlbum;
+import com.vk.sdk.api.VKError;
+
+import java.util.List;
+
+public interface OnGetPhotosFromAlbumListener {
+    void onSuccess(List<PhotoAlbum> photoAlbums);
+
+    void onVKError(VKError e);
+
+    void onSyncServiceError();
+}
