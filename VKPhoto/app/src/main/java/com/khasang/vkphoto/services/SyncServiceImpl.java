@@ -13,10 +13,10 @@ import com.khasang.vkphoto.executor.MainThread;
 import com.khasang.vkphoto.executor.MainThreadImpl;
 import com.khasang.vkphoto.executor.ThreadExecutor;
 import com.khasang.vkphoto.model.Photo;
+import com.khasang.vkphoto.model.Response;
 import com.khasang.vkphoto.model.album.PhotoAlbum;
 import com.khasang.vkphoto.model.album.PhotoAlbums;
-import com.khasang.vkphoto.model.Response;
-import com.khasang.vkphoto.util.VkAccessTokenHolder;
+import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
@@ -52,7 +52,7 @@ public class SyncServiceImpl extends Service implements SyncService {
      */
     @Override
     public void getAllAlbums(final OnGetAllAlbumsListener onGetAllAlbumsListener) {
-        VKRequest request = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VkAccessTokenHolder.getUserId()));
+        VKRequest request = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId));
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {

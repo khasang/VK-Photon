@@ -56,6 +56,14 @@ public class MainFragment extends Fragment implements MainView {
     public void displayVkAlbums(List<PhotoAlbum> photoAlbumList) {
         for (PhotoAlbum photoAlbum : photoAlbumList) {
             Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size);
+//            VKRequest vkRequest = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, VKApiConst.ALBUM_ID, photoAlbum.id));
+//            vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
+//                @Override
+//                public void onComplete(VKResponse response) {
+//                    super.onComplete(response);
+//
+//                }
+//            });
         }
     }
 

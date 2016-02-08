@@ -20,7 +20,6 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.services.SyncService;
 import com.khasang.vkphoto.services.SyncServiceImpl;
 import com.khasang.vkphoto.util.Logger;
-import com.khasang.vkphoto.util.VkAccessTokenHolder;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -123,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             @Override
             public void onResult(VKAccessToken res) {
                 res.expiresIn = 1000000000;
-                VkAccessTokenHolder.setVkAccessToken(res);
                 Toast.makeText(MainActivity.this, "Authorized", Toast.LENGTH_SHORT).show();
                 // User passed Authorization
             }
