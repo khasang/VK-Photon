@@ -3,7 +3,7 @@ package com.khasang.vkphoto.services;
 
 import com.khasang.vkphoto.domain.interfaces.OnGetAllAlbumsListener;
 import com.khasang.vkphoto.model.Photo;
-import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.model.album.PhotoAlbum;
 
 public interface SyncService {
     void getAllAlbums(OnGetAllAlbumsListener onGetAllAlbumsListener);

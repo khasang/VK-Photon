@@ -6,20 +6,20 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.google.gson.Gson;
 import com.khasang.vkphoto.domain.interfaces.OnGetAllAlbumsListener;
 import com.khasang.vkphoto.executor.MainThread;
 import com.khasang.vkphoto.executor.MainThreadImpl;
 import com.khasang.vkphoto.executor.ThreadExecutor;
+import com.khasang.vkphoto.model.album.GetAlbumsResponse;
 import com.khasang.vkphoto.model.Photo;
-import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.model.album.PhotoAlbum;
 import com.khasang.vkphoto.util.VkAccessTokenHolder;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-
-import java.util.ArrayList;
 
 public class SyncServiceImpl extends Service implements SyncService {
     public static final String TAG = SyncService.class.getSimpleName();
@@ -41,7 +41,11 @@ public class SyncServiceImpl extends Service implements SyncService {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                onGetAllAlbumsListener.onSuccess(new ArrayList<PhotoAlbum>());
+                Gson gson = new Gson();
+                GetAlbumsResponse albumsResponse = gson.fromJson(response.json.toString(), GetAlbumsResponse.class);
+                if (onGetAllAlbumsListener != null) {
+                    onGetAllAlbumsListener.onSuccess(albumsResponse.photoAlbums.results);
+                }
             }
 
             @Override

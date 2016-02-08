@@ -1,6 +1,7 @@
-package com.khasang.vkphoto.model;
+package com.khasang.vkphoto.model.album;
 
 import com.google.gson.annotations.SerializedName;
+import com.khasang.vkphoto.model.Photo;
 
 import java.util.List;
 

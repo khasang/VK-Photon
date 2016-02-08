@@ -4,7 +4,7 @@ import com.khasang.vkphoto.domain.interactors.MainInteractor;
 import com.khasang.vkphoto.domain.interactors.MainInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.OnGetAllAlbumsListener;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
-import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.model.album.PhotoAlbum;
 import com.khasang.vkphoto.ui.activities.Navigator;
 import com.khasang.vkphoto.ui.view.MainView;
 import com.khasang.vkphoto.util.Logger;

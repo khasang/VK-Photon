@@ -8,11 +8,12 @@ import android.view.ViewGroup;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
-import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.model.album.PhotoAlbum;
 import com.khasang.vkphoto.ui.activities.Navigator;
 import com.khasang.vkphoto.ui.presenter.MainPresenter;
 import com.khasang.vkphoto.ui.presenter.MainPresenterImpl;
 import com.khasang.vkphoto.ui.view.MainView;
+import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
 import java.util.List;
@@ -53,7 +54,9 @@ public class MainFragment extends Fragment implements MainView {
 
     @Override
     public void displayVkAlbums(List<PhotoAlbum> photoAlbumList) {
-        ToastUtils.showShortMessage("Got albums", getContext());
+        for (PhotoAlbum photoAlbum : photoAlbumList) {
+            Logger.d("title " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size);
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.ui.view;
 
-import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.model.album.PhotoAlbum;
 
 import java.util.List;
 

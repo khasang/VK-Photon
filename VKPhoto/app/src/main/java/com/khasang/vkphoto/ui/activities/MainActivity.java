@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 bound = false;
             }
         };
+        startService(intent);
     }
 
     @Override
