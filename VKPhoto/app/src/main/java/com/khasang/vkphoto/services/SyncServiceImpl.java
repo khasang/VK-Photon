@@ -33,6 +33,10 @@ public class SyncServiceImpl extends Service implements SyncService {
         return binder;
     }
 
+    /**
+     * получает все альбомы
+     * @param onGetAllAlbumsListener коллбэк
+     */
     @Override
     public void getAllAlbums(final OnGetAllAlbumsListener onGetAllAlbumsListener) {
 //        VKRequest request = VKApi.wall().post(VKParameters.from(VKApiConst.OWNER_ID, VkAccessTokenHolder.getUserId(), VKApiConst.MESSAGE, "Привет, друзья!"));
@@ -83,6 +87,10 @@ public class SyncServiceImpl extends Service implements SyncService {
         return false;
     }
 
+    /**
+     * Синхронизирует альбом
+     * @param photoAlbum объект альбома, который синхронизирует
+     */
     @Override
     public void syncAlbum(PhotoAlbum photoAlbum) {
 
