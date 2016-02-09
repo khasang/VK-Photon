@@ -10,8 +10,6 @@ public interface MainView {
 
     void displayGalleryAlbums();
 
-    void navigateToHome();
-
     void showConnectionError();
 
     void showSyncServiceError();

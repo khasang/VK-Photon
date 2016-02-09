@@ -41,6 +41,7 @@ public class MainFragment extends Fragment implements MainView {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
+        albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,27 +62,13 @@ public class MainFragment extends Fragment implements MainView {
     public void displayVkAlbums(List<PhotoAlbum> photoAlbumList) {
         for (PhotoAlbum photoAlbum : photoAlbumList) {
             Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
-//            VKRequest vkRequest = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, VKApiConst.ALBUM_ID, photoAlbum.id));
-//            vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
-//                @Override
-//                public void onComplete(VKResponse response) {
-//                    super.onComplete(response);
-//
-//                }
-//            });
         }
-        albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         PhotoAlbumsAdapter adapter = new PhotoAlbumsAdapter(photoAlbumList);
         albumsRecyclerView.setAdapter(adapter);
     }
 
     @Override
     public void displayGalleryAlbums() {
-
-    }
-
-    @Override
-    public void navigateToHome() {
 
     }
 

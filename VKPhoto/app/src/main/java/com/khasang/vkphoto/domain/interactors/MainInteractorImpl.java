@@ -1,5 +1,7 @@
 package com.khasang.vkphoto.domain.interactors;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
@@ -17,8 +19,6 @@ import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
-import java.lang.reflect.Type;
-
 /**
  * Реализация интерфейса исполнителя запросов к службе синхронизации.
  * Создается внутри MainPresenterImpl
@@ -30,10 +30,13 @@ import java.lang.reflect.Type;
 public class MainInteractorImpl implements MainInteractor {
     private SyncServiceProvider syncServiceProvider;
     private SyncService syncService;
-    private MainThread mainThread = new MainThreadImpl();
+    private MainThread mainThread;
+    private Gson gson;
 
     public MainInteractorImpl(SyncServiceProvider syncServiceProvider) {
         this.syncServiceProvider = syncServiceProvider;
+        mainThread = new MainThreadImpl();
+        gson = new Gson();
         setSyncService();
     }
 
@@ -75,9 +78,7 @@ public class MainInteractorImpl implements MainInteractor {
                     @Override
                     public void onComplete(VKResponse response) {
                         super.onComplete(response);
-                        Type photoAlbumsType = new TypeToken<Response<Items<PhotoAlbum>>>() {
-                        }.getType();
-                        final Response<Items<PhotoAlbum>> albumsResponse = new Gson().fromJson(response.json.toString(), photoAlbumsType);
+                        final Response<Items<PhotoAlbum>> albumsResponse = getAlbumsResponse(response);
                         if (onGetAllAlbumsListener != null) {
                             mainThread.post(new Runnable() {
                                 @Override
@@ -99,6 +100,12 @@ public class MainInteractorImpl implements MainInteractor {
                         });
                     }
                 });
+            }
+
+            @NonNull
+            private Response<Items<PhotoAlbum>> getAlbumsResponse(VKResponse response) {
+                return gson.fromJson(response.json.toString(), new TypeToken<Response<Items<PhotoAlbum>>>() {
+                }.getType());
             }
         };
     }
