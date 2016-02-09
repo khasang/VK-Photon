@@ -7,23 +7,11 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.khasang.vkphoto.domain.listeners.OnGetAllAlbumsListener;
 import com.khasang.vkphoto.executor.MainThread;
 import com.khasang.vkphoto.executor.MainThreadImpl;
 import com.khasang.vkphoto.executor.ThreadExecutor;
-import com.khasang.vkphoto.model.Items;
-import com.khasang.vkphoto.model.Response;
 import com.khasang.vkphoto.model.album.PhotoAlbum;
 import com.khasang.vkphoto.model.photo.Photo;
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
-
-import java.lang.reflect.Type;
 
 public class SyncServiceImpl extends Service implements SyncService {
     public static final String TAG = SyncService.class.getSimpleName();
@@ -47,29 +35,11 @@ public class SyncServiceImpl extends Service implements SyncService {
     /**
      * получает все альбомы
      *
-     * @param onGetAllAlbumsListener коллбэк
+     * @param onGetAllAlbumsRunnable коллбэк
      */
     @Override
-    public void getAllAlbums(final OnGetAllAlbumsListener onGetAllAlbumsListener) {
-        VKRequest request = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId));
-        request.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-                Type photoAlbumsType = new TypeToken<Response<Items<PhotoAlbum>>>() {
-                }.getType();
-                Response<Items<PhotoAlbum>> albumsResponse = gson.fromJson(response.json.toString(), photoAlbumsType);
-                if (onGetAllAlbumsListener != null) {
-                    onGetAllAlbumsListener.onSuccess(albumsResponse.response.results);
-                }
-            }
-
-            @Override
-            public void onError(VKError error) {
-                super.onError(error);
-                onGetAllAlbumsListener.onVKError(error);
-            }
-        });
+    public void getAllAlbums(Runnable onGetAllAlbumsRunnable) {
+        executor.execute(onGetAllAlbumsRunnable);
     }
 
     @Override
