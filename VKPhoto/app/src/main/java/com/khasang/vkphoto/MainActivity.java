@@ -15,8 +15,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.khasang.vkphoto.fragments.OneFragment;
-import com.khasang.vkphoto.fragments.TwoFragment;
+import com.khasang.vkphoto.fragments.VkAlbumsFragment;
+import com.khasang.vkphoto.fragments.GalleryFragment;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
@@ -68,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OneFragment(), "ONE");
-        adapter.addFragment(new TwoFragment(), "TWO");
+        adapter.addFragment(new VkAlbumsFragment(), getResources().getString(R.string.vk_albums));
+        adapter.addFragment(new GalleryFragment(), getResources().getString(R.string.gallery));
         viewPager.setAdapter(adapter);
     }
 

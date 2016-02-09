@@ -3,4 +3,6 @@
     <string name="action_settings">Settings</string>
     <string name="one">one</string>
     <string name="two">two</string>
+    <string name="vk_albums">VK Albums</string>
+    <string name="gallery">Gallery</string>
 </resources>
