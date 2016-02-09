@@ -23,7 +23,7 @@ import java.util.List;
 
 public class MainFragment extends Fragment implements MainView {
     public static final String TAG = MainFragment.class.getSimpleName();
-    private MainPresenter mainPresenter;
+    private MainPresenter mainPresdiscrepanciesenter;
     private RecyclerView albumsRecyclerView;
 
     public MainFragment() {
