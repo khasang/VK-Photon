@@ -1,12 +1,12 @@
-package com.khasang.vkphoto.model.album;
+package com.khasang.vkphoto.model;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class PhotoAlbums {
+public class Items<T> {
     @SerializedName("items")
-    public List<PhotoAlbum> results;
+    public List<T> results;
     @SerializedName("count")
     public int count;
 }

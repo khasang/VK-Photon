@@ -12,10 +12,10 @@ import com.khasang.vkphoto.domain.listeners.OnGetAllAlbumsListener;
 import com.khasang.vkphoto.executor.MainThread;
 import com.khasang.vkphoto.executor.MainThreadImpl;
 import com.khasang.vkphoto.executor.ThreadExecutor;
-import com.khasang.vkphoto.model.Photo;
+import com.khasang.vkphoto.model.Items;
 import com.khasang.vkphoto.model.Response;
 import com.khasang.vkphoto.model.album.PhotoAlbum;
-import com.khasang.vkphoto.model.album.PhotoAlbums;
+import com.khasang.vkphoto.model.photo.Photo;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
@@ -56,9 +56,9 @@ public class SyncServiceImpl extends Service implements SyncService {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                Type photoAlbumsType = new TypeToken<Response<PhotoAlbums>>() {
+                Type photoAlbumsType = new TypeToken<Response<Items<PhotoAlbum>>>() {
                 }.getType();
-                Response<PhotoAlbums> albumsResponse = gson.fromJson(response.json.toString(), photoAlbumsType);
+                Response<Items<PhotoAlbum>> albumsResponse = gson.fromJson(response.json.toString(), photoAlbumsType);
                 if (onGetAllAlbumsListener != null) {
                     onGetAllAlbumsListener.onSuccess(albumsResponse.response.results);
                 }

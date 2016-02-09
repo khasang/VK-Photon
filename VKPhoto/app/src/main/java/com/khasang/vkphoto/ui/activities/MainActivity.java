@@ -121,7 +121,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-                res.expiresIn = 1000000000;
                 Toast.makeText(MainActivity.this, "Authorized", Toast.LENGTH_SHORT).show();
                 // User passed Authorization
             }

@@ -42,7 +42,7 @@ public class MainInteractorImpl implements MainInteractor {
     @Override
     public void getAllAlbums(OnGetAllAlbumsListener onGetAllAlbumsListener) {
         if (syncService == null) {
-            if (setSyncService()) {
+            if (!setSyncService()) {
                 onGetAllAlbumsListener.onSyncServiceError();
                 return;
             }

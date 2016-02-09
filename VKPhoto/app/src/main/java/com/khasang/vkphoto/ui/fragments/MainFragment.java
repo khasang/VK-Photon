@@ -2,11 +2,14 @@ package com.khasang.vkphoto.ui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.adapters.PhotoAlbumsAdapter;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.model.album.PhotoAlbum;
 import com.khasang.vkphoto.ui.activities.Navigator;
@@ -21,6 +24,7 @@ import java.util.List;
 public class MainFragment extends Fragment implements MainView {
     public static final String TAG = MainFragment.class.getSimpleName();
     private MainPresenter mainPresenter;
+    private RecyclerView albumsRecyclerView;
 
     public MainFragment() {
     }
@@ -36,6 +40,7 @@ public class MainFragment extends Fragment implements MainView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+        albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
         view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,7 +60,7 @@ public class MainFragment extends Fragment implements MainView {
     @Override
     public void displayVkAlbums(List<PhotoAlbum> photoAlbumList) {
         for (PhotoAlbum photoAlbum : photoAlbumList) {
-            Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size);
+            Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
 //            VKRequest vkRequest = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, VKApiConst.ALBUM_ID, photoAlbum.id));
 //            vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
 //                @Override
@@ -65,6 +70,9 @@ public class MainFragment extends Fragment implements MainView {
 //                }
 //            });
         }
+        albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        PhotoAlbumsAdapter adapter = new PhotoAlbumsAdapter(photoAlbumList);
+        albumsRecyclerView.setAdapter(adapter);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.domain.listeners;
 
-import com.khasang.vkphoto.model.Photo;
+import com.khasang.vkphoto.model.photo.Photo;
 import com.vk.sdk.api.VKError;
 
 import java.util.List;
