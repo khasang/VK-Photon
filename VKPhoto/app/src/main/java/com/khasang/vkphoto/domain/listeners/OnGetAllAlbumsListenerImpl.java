@@ -1,6 +1,5 @@
 package com.khasang.vkphoto.domain.listeners;
 
-import com.khasang.vkphoto.domain.interfaces.OnGetAllAlbumsListener;
 import com.khasang.vkphoto.model.album.PhotoAlbum;
 import com.khasang.vkphoto.ui.view.MainView;
 import com.khasang.vkphoto.util.Logger;

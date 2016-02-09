@@ -1,7 +1,7 @@
 package com.khasang.vkphoto.services;
 
 
-import com.khasang.vkphoto.domain.interfaces.OnGetAllAlbumsListener;
+import com.khasang.vkphoto.domain.listeners.OnGetAllAlbumsListener;
 import com.khasang.vkphoto.model.Photo;
 import com.khasang.vkphoto.model.album.PhotoAlbum;
 

@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.khasang.vkphoto.domain.interfaces.OnGetAllAlbumsListener;
+import com.khasang.vkphoto.domain.listeners.OnGetAllAlbumsListener;
 import com.khasang.vkphoto.executor.MainThread;
 import com.khasang.vkphoto.executor.MainThreadImpl;
 import com.khasang.vkphoto.executor.ThreadExecutor;
@@ -31,7 +31,6 @@ public class SyncServiceImpl extends Service implements SyncService {
     private MainThread mainThread = new MainThreadImpl();
     private MyBinder binder = new MyBinder();
     private Gson gson;
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
