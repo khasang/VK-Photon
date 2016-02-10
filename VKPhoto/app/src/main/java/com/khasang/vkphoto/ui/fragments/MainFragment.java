@@ -18,6 +18,7 @@ import com.khasang.vkphoto.ui.presenter.MainPresenterImpl;
 import com.khasang.vkphoto.ui.view.MainView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
+import com.vk.sdk.api.model.VKApiPhotoAlbum;
 
 import java.util.List;
 
@@ -59,8 +60,8 @@ public class MainFragment extends Fragment implements MainView {
 
 
     @Override
-    public void displayVkAlbums(List<PhotoAlbum> photoAlbumList) {
-        for (PhotoAlbum photoAlbum : photoAlbumList) {
+    public void displayVkAlbums(List<VKApiPhotoAlbum> photoAlbumList) {
+        for (VKApiPhotoAlbum photoAlbum : photoAlbumList) {
             Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
         }
         PhotoAlbumsAdapter adapter = new PhotoAlbumsAdapter(photoAlbumList);

@@ -22,5 +22,6 @@ public class MainPresenterImpl implements MainPresenter {
     public void getAllAlbums() {
         mainInteractor.getAllAlbums(new OnGetAllAlbumsListenerImpl(mainView));
     }
+
 }
       
