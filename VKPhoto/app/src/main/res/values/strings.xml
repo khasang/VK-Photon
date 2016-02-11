@@ -5,4 +5,7 @@
     <string name="two">two</string>
     <string name="vk_albums">VK Albums</string>
     <string name="gallery">Gallery</string>
+    <string name="count_of_albums">Количество альбомов</string>
+    <string name="count_of_photos_in_album">Количество фотографий в альбоме</string>
+    <string name="title_of_album">Наименование альбома</string>
 </resources>
