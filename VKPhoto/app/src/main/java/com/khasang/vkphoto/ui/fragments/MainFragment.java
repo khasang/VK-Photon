@@ -33,7 +33,7 @@ public class MainFragment extends Fragment implements MainView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        mainPresenter = new MainPresenterImpl(this, ((SyncServiceProvider) getActivity()), new Navigator(getActivity()));
+        mainPresdiscrepanciesenter = new MainPresenterImpl(this, ((SyncServiceProvider) getActivity()), new Navigator(getActivity()));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class MainFragment extends Fragment implements MainView {
         view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainPresenter.getAllAlbums();
+                mainPresdiscrepanciesenter.getAllAlbums();
             }
         });
         return view;
