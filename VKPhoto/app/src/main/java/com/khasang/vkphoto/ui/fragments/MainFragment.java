@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumsAdapter;
@@ -43,11 +44,15 @@ public class MainFragment extends Fragment implements MainView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+        final TextView tv_count_of_albums = (TextView) view.findViewById(R.id.tv_count_of_albums);
         albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
         albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(tv_count_of_albums.getVisibility() == View.INVISIBLE){
+                    tv_count_of_albums.setVisibility(View.VISIBLE);
+                }
                 mainPresenter.getAllAlbums();
             }
         });
