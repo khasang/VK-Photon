@@ -7,26 +7,25 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.model.Items;
-import com.khasang.vkphoto.model.Response;
-import com.khasang.vkphoto.model.album.PhotoAlbum;
-import com.khasang.vkphoto.model.photo.Photo;
+import com.khasang.vkphoto.util.JsonUtils;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.model.VKApiPhoto;
+import com.vk.sdk.api.model.VKApiPhotoAlbum;
 
-import java.lang.reflect.Type;
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.List;
 
 public class PhotoAlbumsAdapter extends RecyclerView.Adapter<PhotoAlbumsAdapter.PhotoAlbumHolder> {
-    private List<PhotoAlbum> photoAlbumList;
+    private List<VKApiPhotoAlbum> photoAlbumList;
 
-    public PhotoAlbumsAdapter(List<PhotoAlbum> photoAlbumList) {
+    public PhotoAlbumsAdapter(List<VKApiPhotoAlbum> photoAlbumList) {
         this.photoAlbumList = photoAlbumList;
     }
 
@@ -38,7 +37,7 @@ public class PhotoAlbumsAdapter extends RecyclerView.Adapter<PhotoAlbumsAdapter.
 
     @Override
     public void onBindViewHolder(PhotoAlbumHolder holder, int position) {
-        PhotoAlbum photoAlbum = photoAlbumList.get(position);
+        VKApiPhotoAlbum photoAlbum = photoAlbumList.get(position);
         holder.bindPhotoAlbum(photoAlbum);
     }
 
@@ -50,7 +49,7 @@ public class PhotoAlbumsAdapter extends RecyclerView.Adapter<PhotoAlbumsAdapter.
     static class PhotoAlbumHolder extends RecyclerView.ViewHolder {
         private final ImageView albumThumbImageView;
         private final TextView albumTitleTextView;
-        private PhotoAlbum photoAlbum;
+        private VKApiPhotoAlbum photoAlbum;
 
         public PhotoAlbumHolder(View itemView) {
             super(itemView);
@@ -58,7 +57,7 @@ public class PhotoAlbumsAdapter extends RecyclerView.Adapter<PhotoAlbumsAdapter.
             albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
         }
 
-        public void bindPhotoAlbum(PhotoAlbum photoAlbum) {
+        public void bindPhotoAlbum(final VKApiPhotoAlbum photoAlbum) {
             this.photoAlbum = photoAlbum;
             albumTitleTextView.setText(photoAlbum.title);
             if (photoAlbum.thumb_id != 0) {
@@ -67,14 +66,15 @@ public class PhotoAlbumsAdapter extends RecyclerView.Adapter<PhotoAlbumsAdapter.
                     @Override
                     public void onComplete(VKResponse response) {
                         super.onComplete(response);
-                        Type photoType = new TypeToken<Response<Items<Photo>>>() {
-                        }.getType();
-                        Response<Items<Photo>> photoResponse = new Gson().fromJson(response.json.toString(), photoType);
-                        Photo photo = photoResponse.response.results.get(0);
-                        Picasso.with(albumThumbImageView.getContext())
-                                .load(photo.photo_130)
-                                .into(albumThumbImageView);
-
+                        try {
+                            JSONArray jsonArray = JsonUtils.getJsonArray(response.json);
+                            VKApiPhoto vkApiPhoto = new VKApiPhoto(jsonArray.getJSONObject(0));
+                            Picasso.with(albumThumbImageView.getContext())
+                                    .load(vkApiPhoto.photo_130)
+                                    .into(albumThumbImageView);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
             }

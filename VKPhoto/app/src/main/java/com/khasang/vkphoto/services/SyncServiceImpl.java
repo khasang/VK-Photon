@@ -7,6 +7,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.khasang.vkphoto.domain.listeners.OnGetAllAlbumsListener;
+import com.khasang.vkphoto.domain.runnables.GetAllAlbumsRunnable;
 import com.khasang.vkphoto.executor.MainThread;
 import com.khasang.vkphoto.executor.MainThreadImpl;
 import com.khasang.vkphoto.executor.ThreadExecutor;
@@ -35,11 +37,11 @@ public class SyncServiceImpl extends Service implements SyncService {
     /**
      * получает все альбомы
      *
-     * @param onGetAllAlbumsRunnable коллбэк
+     * @param onGetAllAlbumsListener коллбэк
      */
     @Override
-    public void getAllAlbums(Runnable onGetAllAlbumsRunnable) {
-        executor.execute(onGetAllAlbumsRunnable);
+    public void getAllAlbums(OnGetAllAlbumsListener onGetAllAlbumsListener) {
+        executor.execute(new GetAllAlbumsRunnable(mainThread, onGetAllAlbumsListener));
     }
 
     @Override

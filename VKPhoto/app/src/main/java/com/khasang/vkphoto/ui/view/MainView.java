@@ -1,12 +1,12 @@
 package com.khasang.vkphoto.ui.view;
 
-import com.khasang.vkphoto.model.album.PhotoAlbum;
+import com.vk.sdk.api.model.VKApiPhotoAlbum;
 
 import java.util.List;
 
 public interface MainView {
 
-    void displayVkAlbums(List<PhotoAlbum> photoAlbumList);
+    void displayVkAlbums(List<VKApiPhotoAlbum> photoAlbumList);
 
     void displayGalleryAlbums();
 
