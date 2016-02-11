@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">VKPhoto</string>
     <string name="action_settings">Settings</string>
+    <string name="count_of_albums">Количество альбомов</string>
+    <string name="title_of_album">Название альбома</string>
+    <string name="count_of_photos_in_album">Количество фотографий в альбоме</string>
 </resources>

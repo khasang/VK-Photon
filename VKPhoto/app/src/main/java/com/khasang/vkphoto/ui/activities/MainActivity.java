@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         initNavigator();
         initServiceConnection();
         initViews();
-        VKSdk.login(this, scopes);
+//        VKSdk.login(this, scopes);
     }
 
     private void initNavigator() {
