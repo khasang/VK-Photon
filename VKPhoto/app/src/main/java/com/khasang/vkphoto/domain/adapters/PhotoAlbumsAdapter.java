@@ -24,15 +24,17 @@ import java.util.List;
 
 public class PhotoAlbumsAdapter extends RecyclerView.Adapter<PhotoAlbumsAdapter.PhotoAlbumHolder> {
     private List<VKApiPhotoAlbum> photoAlbumList;
+    private List<VKApiPhotoAlbum> albumsToSync;
 
-    public PhotoAlbumsAdapter(List<VKApiPhotoAlbum> photoAlbumList) {
+    public PhotoAlbumsAdapter(List<VKApiPhotoAlbum> photoAlbumList, List<VKApiPhotoAlbum> albumsToSync) {
         this.photoAlbumList = photoAlbumList;
+        this.albumsToSync = albumsToSync;
     }
 
     @Override
     public PhotoAlbumHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.photoalbum_item, parent, false);
-        return new PhotoAlbumHolder(view);
+        return new PhotoAlbumHolder(view, albumsToSync);
     }
 
     @Override
@@ -47,12 +49,14 @@ public class PhotoAlbumsAdapter extends RecyclerView.Adapter<PhotoAlbumsAdapter.
     }
 
     static class PhotoAlbumHolder extends RecyclerView.ViewHolder {
-        private final ImageView albumThumbImageView;
-        private final TextView albumTitleTextView;
-        private VKApiPhotoAlbum photoAlbum;
+        final ImageView albumThumbImageView;
+        final TextView albumTitleTextView;
+        VKApiPhotoAlbum photoAlbum;
+        List<VKApiPhotoAlbum> albumsToSync;
 
-        public PhotoAlbumHolder(View itemView) {
+        public PhotoAlbumHolder(View itemView, List<VKApiPhotoAlbum> albumsToSync) {
             super(itemView);
+            this.albumsToSync = albumsToSync;
             albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
             albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
         }
