@@ -57,7 +57,7 @@ public class PhotoAlbumsAdapter extends RecyclerView.Adapter<PhotoAlbumsAdapter.
             albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
         }
 
-        public void bindPhotoAlbum(VKApiPhotoAlbum photoAlbum) {
+        public void bindPhotoAlbum(final VKApiPhotoAlbum photoAlbum) {
             this.photoAlbum = photoAlbum;
             albumTitleTextView.setText(photoAlbum.title);
             if (photoAlbum.thumb_id != 0) {

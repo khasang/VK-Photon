@@ -30,12 +30,6 @@ public class GetAllAlbumsRunnable implements Runnable {
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 try {
-//                    JSONArray jsonArray = JsonUtils.getJsonArray(response.json);
-//                    int length = jsonArray.length();
-//                    final List<VKApiPhotoAlbum> vkApiPhotoAlbums = new ArrayList<>(length);
-//                    for (int i = 0; i < length; i++) {
-//                        vkApiPhotoAlbums.add(new VKApiPhotoAlbum(jsonArray.getJSONObject(i)));
-//                    }
                     final List<VKApiPhotoAlbum> vkApiPhotoAlbums = JsonUtils.getItems(response.json, VKApiPhotoAlbum.class);
                     if (onGetAllAlbumsListener != null) {
                         mainThread.post(new Runnable() {
@@ -62,11 +56,5 @@ public class GetAllAlbumsRunnable implements Runnable {
             }
         });
     }
-
-//    @NonNull
-//    private Response<Items<PhotoAlbum>> getAlbumsResponse(VKResponse response) {
-//        return new Gson().fromJson(response.json.toString(), new TypeToken<Response<Items<PhotoAlbum>>>() {
-//        }.getType());
-//    }
 }
       

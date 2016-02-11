@@ -1,10 +1,7 @@
 package com.khasang.vkphoto.domain.interactors;
 
-import com.google.gson.Gson;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.listeners.OnGetAllAlbumsListener;
-import com.khasang.vkphoto.executor.MainThread;
-import com.khasang.vkphoto.executor.MainThreadImpl;
 import com.khasang.vkphoto.services.SyncService;
 
 /**
@@ -18,13 +15,9 @@ import com.khasang.vkphoto.services.SyncService;
 public class MainInteractorImpl implements MainInteractor {
     private SyncServiceProvider syncServiceProvider;
     private SyncService syncService;
-    private MainThread mainThread;
-    private Gson gson;
 
     public MainInteractorImpl(SyncServiceProvider syncServiceProvider) {
         this.syncServiceProvider = syncServiceProvider;
-        mainThread = new MainThreadImpl();
-        gson = new Gson();
         setSyncService();
     }
 
@@ -56,7 +49,5 @@ public class MainInteractorImpl implements MainInteractor {
         }
         syncService.getAllAlbums(onGetAllAlbumsListener);
     }
-
-
 }
       

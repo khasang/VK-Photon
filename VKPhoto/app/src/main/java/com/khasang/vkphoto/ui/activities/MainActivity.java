@@ -20,6 +20,7 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.services.SyncService;
 import com.khasang.vkphoto.services.SyncServiceImpl;
 import com.khasang.vkphoto.util.Logger;
+import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -58,7 +59,12 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                        .setAction("Action", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ToastUtils.showShortMessage("Undone", getApplicationContext());
+                            }
+                        }).show();
             }
         });
     }
