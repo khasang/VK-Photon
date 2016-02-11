@@ -33,10 +33,8 @@ public class Navigator {
     public void navigateToMainFragment() {
         if (!isFragmentAvailable(mainFragment)) {
             mainFragment = new MainFragment();
-            navigateToFragment(mainFragment, MainFragment.TAG);
-        } else {
-            navigateToFragment(mainFragment, MainFragment.TAG);
         }
+        navigateToFragment(mainFragment, MainFragment.TAG);
     }
 
     private void navigateToFragment(Fragment fragment, String tag) {
