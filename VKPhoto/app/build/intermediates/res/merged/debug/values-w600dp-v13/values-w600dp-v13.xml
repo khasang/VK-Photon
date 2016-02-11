@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="abc_search_view_text_min_width">192dip</dimen>
+    <dimen name="vk_share_dialog_view_padding">100dp</dimen>
+    <integer name="abc_max_action_buttons">5</integer>
+</resources>

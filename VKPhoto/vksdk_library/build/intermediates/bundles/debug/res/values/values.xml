@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="vk_black">#000</color>
+    <color name="vk_black_pressed">#1000</color>
+    <color name="vk_clear">#0000</color>
+    <color name="vk_color">#5585BC</color>
+    <color name="vk_grey_color">#F0F2F5</color>
+    <color name="vk_light_color">#A7C2DF</color>
+    <color name="vk_share_blue_color">#338cc9</color>
+    <color name="vk_share_gray_line">#e5e5e5</color>
+    <color name="vk_share_link_color">#9e9e9e</color>
+    <color name="vk_share_link_title_color">#5477a3</color>
+    <color name="vk_share_top_blue_color">#527dad</color>
+    <color name="vk_white">#fff</color>
+    <dimen name="vk_share_dialog_padding">10dp</dimen>
+    <dimen name="vk_share_dialog_padding_top">6dp</dimen>
+    <dimen name="vk_share_dialog_view_padding">5dp</dimen>
+    <dimen name="vk_share_link_top_margin">2dp</dimen>
+    <dimen name="vk_share_send_text_size">12sp</dimen>
+    <dimen name="vk_share_settings_button_min_height">48dp</dimen>
+    <dimen name="vk_share_title_link_host_size">15sp</dimen>
+    <dimen name="vk_share_title_link_title_size">16sp</dimen>
+    <dimen name="vk_share_title_text_size">18sp</dimen>
+    <dimen name="vk_share_top_button_padding_left">1dp</dimen>
+    <dimen name="vk_share_top_button_padding_right">14dp</dimen>
+    <dimen name="vk_share_top_image_margin">6dp</dimen>
+    <dimen name="vk_share_top_line_margin">8dp</dimen>
+    <dimen name="vk_share_top_panel_height">48dp</dimen>
+    <dimen name="vk_share_top_title_margin">5dp</dimen>
+    <string name="vk_enter_captcha_text">Enter captcha text here</string>
+    <string name="vk_name">VK</string>
+    <string name="vk_new_message_text">Enter your message..</string>
+    <string name="vk_new_post_settings">Post settings</string>
+    <string name="vk_retry">Retry</string>
+    <string name="vk_send">SEND</string>
+    <string name="vk_share">Share</string>
+    <style name="VK.Transparent" parent="android:Theme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+    <style name="VKAlertDialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+</resources>

@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "D:\\gitRepos\\Khasang\\VKPhoto\\vksdk_library\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-mdpi-v4\\ic_ab_app.png",
+        "source": "D:\\gitRepos\\Khasang\\VKPhoto\\vksdk_library\\build\\intermediates\\bundles\\debug\\res\\drawable-mdpi-v4\\ic_ab_app.png"
+    },
+    {
+        "merged": "D:\\gitRepos\\Khasang\\VKPhoto\\vksdk_library\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-mdpi-v4\\ic_ab_done.png",
+        "source": "D:\\gitRepos\\Khasang\\VKPhoto\\vksdk_library\\build\\intermediates\\bundles\\debug\\res\\drawable-mdpi-v4\\ic_ab_done.png"
+    }
+]

@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "D:\\gitRepos\\Khasang\\VKPhoto\\vksdk_library\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\ic_ab_app.png",
+        "source": "D:\\gitRepos\\Khasang\\VKPhoto\\vksdk_library\\src\\main\\res\\drawable-xhdpi\\ic_ab_app.png"
+    },
+    {
+        "merged": "D:\\gitRepos\\Khasang\\VKPhoto\\vksdk_library\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\ic_ab_done.png",
+        "source": "D:\\gitRepos\\Khasang\\VKPhoto\\vksdk_library\\src\\main\\res\\drawable-xhdpi\\ic_ab_done.png"
+    }
+]
