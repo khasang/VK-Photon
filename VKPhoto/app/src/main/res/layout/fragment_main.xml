@@ -15,6 +15,18 @@
         android:layout_height="wrap_content"
         android:text="StartSync!" />
 
+    <TextView
+        android:id="@+id/tv_count_of_albums"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:text="@string/count_of_albums"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:visibility="invisible"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/albums_recycler_view"
         android:layout_width="match_parent"
