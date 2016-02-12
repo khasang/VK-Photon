@@ -1,44 +1,65 @@
 package com.khasang.vkphoto.model.album;
 
-import com.google.gson.annotations.SerializedName;
-import com.khasang.vkphoto.model.photo.Photo;
+import android.os.Parcel;
 
-import java.util.List;
+import com.vk.sdk.api.model.VKApiPhotoAlbum;
+import com.vk.sdk.api.model.VKPhotoSizes;
 
-public class PhotoAlbum {
-    //    id: 112120371,
-//    thumb_id: 169255459,
-//    owner_id: 9414475,
-//    title: 'Крокодил - рисуй и угадывай',
-//    description: 'Рисунки из игры Крокодил - http://kroko.vkontakte.ru/',
-//    created: 1276887693,
-//    updated: 1277314548,
-//    size: 2,
-//    thumb_is_last: 1,
-//    privacy_view: ['all'],
-//    privacy_comment: ['all']
-    @SerializedName("id")
-    public int id;
-    @SerializedName("thumb_id")
-    public int thumb_id;
-    @SerializedName("title")
-    public String title;
-    @SerializedName("description")
-    public String description;
-    @SerializedName("created")
-    public long created;
-    @SerializedName("updated")
-    public long updated;
-    @SerializedName("size")
-    public int size;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    private List<Photo> photos;
+public class PhotoAlbum extends VKApiPhotoAlbum {
+    public String filePath;
+    public int syncStatus;
 
-    public List<Photo> getPhotos() {
-        return photos;
+
+    public PhotoAlbum(JSONObject from) throws JSONException {
+        super(from);
     }
 
-    public void setPhotos(List<Photo> photos) {
-        this.photos = photos;
+    public PhotoAlbum(Parcel in) {
+        this.id = in.readInt();
+        this.title = in.readString();
+        this.size = in.readInt();
+        this.privacy = in.readInt();
+        this.description = in.readString();
+        this.owner_id = in.readInt();
+        this.can_upload = in.readByte() != 0;
+        this.updated = in.readLong();
+        this.created = in.readLong();
+        this.thumb_id = in.readInt();
+        this.thumb_src = in.readString();
+        this.photo = in.readParcelable(VKPhotoSizes.class.getClassLoader());
+        this.filePath = in.readString();
+        this.syncStatus = in.readInt();
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.title);
+        dest.writeInt(this.size);
+        dest.writeInt(this.privacy);
+        dest.writeString(this.description);
+        dest.writeInt(this.owner_id);
+        dest.writeByte(can_upload ? (byte) 1 : (byte) 0);
+        dest.writeLong(this.updated);
+        dest.writeLong(this.created);
+        dest.writeInt(this.thumb_id);
+        dest.writeString(this.thumb_src);
+        dest.writeParcelable(this.photo, flags);
+        dest.writeString(this.filePath);
+        dest.writeInt(this.syncStatus);
+    }
+
+    public static Creator<PhotoAlbum> CREATOR = new Creator<PhotoAlbum>() {
+        public PhotoAlbum createFromParcel(Parcel source) {
+            return new PhotoAlbum(source);
+        }
+
+        public PhotoAlbum[] newArray(int size) {
+            return new PhotoAlbum[size];
+        }
+    };
+
 }

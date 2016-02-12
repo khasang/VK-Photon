@@ -1,118 +1,75 @@
 package com.khasang.vkphoto.model.photo;
 
-import com.google.gson.annotations.SerializedName;
+import android.os.Parcel;
 
-public class Photo {
-    /**
-     * Photo ID, positive number
-     */
-    @SerializedName("id")
-    public int id;
+import com.vk.sdk.api.model.VKApiPhoto;
+import com.vk.sdk.api.model.VKPhotoSizes;
 
-    /**
-     * Photo album ID.
-     */
-    @SerializedName("album_id")
-    public int album_id;
+public class Photo extends VKApiPhoto {
+    public String filePath;
+    public int syncStatus;
 
     /**
-     * ID of the user or community that owns the photo.
+     * Creates a Photo instance from Parcel.
      */
-    @SerializedName("owner_id")
-    public int owner_id;
+    public Photo(Parcel in) {
+        this.id = in.readInt();
+        this.album_id = in.readInt();
+        this.owner_id = in.readInt();
+        this.width = in.readInt();
+        this.height = in.readInt();
+        this.text = in.readString();
+        this.date = in.readLong();
+        this.src = in.readParcelable(VKPhotoSizes.class.getClassLoader());
+        this.photo_75 = in.readString();
+        this.photo_130 = in.readString();
+        this.photo_604 = in.readString();
+        this.photo_807 = in.readString();
+        this.photo_1280 = in.readString();
+        this.photo_2560 = in.readString();
+        this.user_likes = in.readByte() != 0;
+        this.can_comment = in.readByte() != 0;
+        this.likes = in.readInt();
+        this.comments = in.readInt();
+        this.tags = in.readInt();
+        this.access_key = in.readString();
+        this.filePath = in.readString();
+        this.syncStatus = in.readInt();
+    }
 
-    /**
-     * Width (in pixels) of the original photo.
-     */
-    @SerializedName("width")
-    public int width;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeInt(this.album_id);
+        dest.writeInt(this.owner_id);
+        dest.writeInt(this.width);
+        dest.writeInt(this.height);
+        dest.writeString(this.text);
+        dest.writeLong(this.date);
+        dest.writeParcelable(this.src, flags);
+        dest.writeString(this.photo_75);
+        dest.writeString(this.photo_130);
+        dest.writeString(this.photo_604);
+        dest.writeString(this.photo_807);
+        dest.writeString(this.photo_1280);
+        dest.writeString(this.photo_2560);
+        dest.writeByte(user_likes ? (byte) 1 : (byte) 0);
+        dest.writeByte(can_comment ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.likes);
+        dest.writeInt(this.comments);
+        dest.writeInt(this.tags);
+        dest.writeString(this.access_key);
+        dest.writeString(filePath);
+        dest.writeInt(syncStatus);
+    }
 
-    /**
-     * Height (in pixels) of the original photo.
-     */
-    @SerializedName("height")
-    public int height;
+    public static Creator<Photo> CREATOR = new Creator<Photo>() {
+        public Photo createFromParcel(Parcel source) {
+            return new Photo(source);
+        }
 
-    /**
-     * Text describing the photo.
-     */
-    @SerializedName("text")
-    public String text;
-
-    /**
-     * Date (in Unix time) the photo was added.
-     */
-    @SerializedName("date")
-    public long date;
-
-    /**
-     * URL of image with maximum size 75x75px.
-     */
-    @SerializedName("photo_75")
-    public String photo_75;
-
-    /**
-     * URL of image with maximum size 130x130px.
-     */
-    @SerializedName("photo_130")
-    public String photo_130;
-
-    /**
-     * URL of image with maximum size 604x604px.
-     */
-    @SerializedName("photo_604")
-    public String photo_604;
-
-    /**
-     * URL of image with maximum size 807x807px.
-     */
-    @SerializedName("photo_807")
-    public String photo_807;
-
-    /**
-     * URL of image with maximum size 1280x1024px.
-     */
-    @SerializedName("photo_1280")
-    public String photo_1280;
-
-    /**
-     * URL of image with maximum size 2560x2048px.
-     */
-    @SerializedName("photo_2560")
-    public String photo_2560;
-
-    /**
-     * All photo thumbs in photo sizes.
-     * It has data even if server returned them without {@code PhotoSizes} format.
-     */
-
-    /**
-     * Information whether the current user liked the photo.
-     */
-    public boolean user_likes;
-
-    /**
-     * Whether the current user can comment on the photo
-     */
-    public boolean can_comment;
-
-    /**
-     * Number of likes on the photo.
-     */
-    public int likes;
-
-    /**
-     * Number of comments on the photo.
-     */
-    public int comments;
-
-    /**
-     * Number of tags on the photo.
-     */
-    public int tags;
-
-    /**
-     * An access key using for get information about hidden objects.
-     */
-    public String access_key;
+        public Photo[] newArray(int size) {
+            return new Photo[size];
+        }
+    };
 }
