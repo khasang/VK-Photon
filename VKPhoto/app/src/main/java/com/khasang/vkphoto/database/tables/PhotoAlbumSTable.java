@@ -1,7 +1,5 @@
 package com.khasang.vkphoto.database.tables;
 
-import android.provider.BaseColumns;
-
 import com.khasang.vkphoto.database.MySQliteHelper;
 
 public class PhotoAlbumsTable {
@@ -16,9 +14,10 @@ public class PhotoAlbumsTable {
     public static final String UPDATED = "updated";
     public static final String THUMB_ID = "thumb_id";
     public static final String THUMB_SRC = "thumb_src";
-    public static final String FILE_PATH = "filePath";
-    public static final String SYNC_STATUS = "syncStatus";
-    public static final String CREATE_PHOTOALBUMS_TABLE = String.format(MySQliteHelper.CREATE_TABLE, TABLE_NAME, BaseColumns._ID + MySQliteHelper.PRIMARY_KEY
+    public static final String FILE_PATH = "filepath";
+    public static final String SYNC_STATUS = "sync_status";
+
+    public static final String FIELDS = MySQliteHelper.PRIMARY_KEY
             + TITLE + " text, "
             + SIZE + " integer, "
             + PRIVACY + " integer, "
@@ -29,5 +28,5 @@ public class PhotoAlbumsTable {
             + THUMB_ID + " integer, "
             + THUMB_SRC + " text, "
             + FILE_PATH + " text, "
-            + SYNC_STATUS + " integer");
+            + SYNC_STATUS + " integer";
 }
