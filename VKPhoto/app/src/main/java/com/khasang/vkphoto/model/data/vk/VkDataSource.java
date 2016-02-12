@@ -1,9 +1,9 @@
 package com.khasang.vkphoto.model.data.vk;
 
-import com.khasang.vkphoto.model.data.AlbumSource;
-import com.khasang.vkphoto.model.data.CommentSource;
-import com.khasang.vkphoto.model.data.DataSource;
-import com.khasang.vkphoto.model.data.PhotoSource;
+import com.khasang.vkphoto.model.data.interfaces.AlbumSource;
+import com.khasang.vkphoto.model.data.interfaces.CommentSource;
+import com.khasang.vkphoto.model.data.interfaces.DataSource;
+import com.khasang.vkphoto.model.data.interfaces.PhotoSource;
 
 public class VkDataSource implements DataSource {
     @Override

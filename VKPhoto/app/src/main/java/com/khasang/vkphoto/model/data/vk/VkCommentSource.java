@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.model.data.vk;
 
-import com.khasang.vkphoto.model.data.CommentSource;
+import com.khasang.vkphoto.model.data.interfaces.CommentSource;
 
 public class VkCommentSource implements CommentSource {
     @Override

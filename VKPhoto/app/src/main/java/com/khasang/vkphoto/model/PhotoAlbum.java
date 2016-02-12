@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.model.album;
+package com.khasang.vkphoto.model;
 
 import android.os.Parcel;
 

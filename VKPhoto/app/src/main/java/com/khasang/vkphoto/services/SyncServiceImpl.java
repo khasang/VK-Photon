@@ -12,8 +12,8 @@ import com.khasang.vkphoto.domain.runnables.GetAllAlbumsRunnable;
 import com.khasang.vkphoto.executor.MainThread;
 import com.khasang.vkphoto.executor.MainThreadImpl;
 import com.khasang.vkphoto.executor.ThreadExecutor;
-import com.khasang.vkphoto.model.album.PhotoAlbum;
-import com.khasang.vkphoto.model.photo.Photo;
+import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.model.Photo;
 
 public class SyncServiceImpl extends Service implements SyncService {
     public static final String TAG = SyncService.class.getSimpleName();
