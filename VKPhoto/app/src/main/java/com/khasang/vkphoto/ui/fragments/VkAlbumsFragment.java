@@ -14,7 +14,7 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.ui.activities.Navigator;
 import com.khasang.vkphoto.ui.presenter.MainPresenter;
 import com.khasang.vkphoto.ui.presenter.MainPresenterImpl;
-import com.khasang.vkphoto.ui.view.MainView;
+import com.khasang.vkphoto.ui.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKApiPhotoAlbum;
@@ -22,13 +22,13 @@ import com.vk.sdk.api.model.VKApiPhotoAlbum;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainFragment extends Fragment implements MainView {
-    public static final String TAG = MainFragment.class.getSimpleName();
+public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
+    public static final String TAG = VkAlbumsFragment.class.getSimpleName();
     private MainPresenter mainPresenter;
     private RecyclerView albumsRecyclerView;
     private List<VKApiPhotoAlbum> albumsToSync;
 
-    public MainFragment() {
+    public VkAlbumsFragment() {
     }
 
     @Override

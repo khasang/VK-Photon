@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Интерфейс колбэка для SyncService.
- * MainPresenter -> MainInteractor-> в SyncService
+ * MainPresenter -> VkAlbumsInteractor-> в SyncService
  * При получении альбомов/ошибки от ВК, служба вызывает колбэк методы.
  *
  * @see SyncService#getAllAlbums(OnGetAllAlbumsListener)

@@ -8,11 +8,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.ui.fragments.MainFragment;
+import com.khasang.vkphoto.ui.fragments.VkAlbumsFragment;
 
 public class Navigator {
     private final Context activityContext;
-    private MainFragment mainFragment;
+    private VkAlbumsFragment vkAlbumsFragment;
 
     public Navigator(Context activityContext) {
         this.activityContext = activityContext;
@@ -31,10 +31,10 @@ public class Navigator {
     }
 
     public void navigateToMainFragment() {
-        if (!isFragmentAvailable(mainFragment)) {
-            mainFragment = new MainFragment();
+        if (!isFragmentAvailable(vkAlbumsFragment)) {
+            vkAlbumsFragment = new VkAlbumsFragment();
         }
-        navigateToFragment(mainFragment, MainFragment.TAG);
+        navigateToFragment(vkAlbumsFragment, VkAlbumsFragment.TAG);
     }
 
     private void navigateToFragment(Fragment fragment, String tag) {

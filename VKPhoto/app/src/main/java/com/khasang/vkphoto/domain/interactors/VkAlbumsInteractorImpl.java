@@ -8,15 +8,15 @@ import com.khasang.vkphoto.services.SyncService;
  * Реализация интерфейса исполнителя запросов к службе синхронизации.
  * Создается внутри MainPresenterImpl
  *
- * @see com.khasang.vkphoto.domain.interactors.MainInteractor
+ * @see VkAlbumsInteractor
  * @see com.khasang.vkphoto.ui.presenter.MainPresenterImpl
  * @see com.khasang.vkphoto.services.SyncServiceImpl
  */
-public class MainInteractorImpl implements MainInteractor {
+public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     private SyncServiceProvider syncServiceProvider;
     private SyncService syncService;
 
-    public MainInteractorImpl(SyncServiceProvider syncServiceProvider) {
+    public VkAlbumsInteractorImpl(SyncServiceProvider syncServiceProvider) {
         this.syncServiceProvider = syncServiceProvider;
         setSyncService();
     }

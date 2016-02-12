@@ -4,7 +4,7 @@ import com.vk.sdk.api.model.VKApiPhotoAlbum;
 
 import java.util.List;
 
-public interface MainView {
+public interface VkAlbumsView {
 
     void displayVkAlbums(List<VKApiPhotoAlbum> photoAlbumList);
 
