@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.model.data.vk;
 
-import com.khasang.vkphoto.model.data.AlbumSource;
+import com.khasang.vkphoto.model.data.interfaces.AlbumSource;
 
 public class VkAlbumSource implements AlbumSource {
     @Override

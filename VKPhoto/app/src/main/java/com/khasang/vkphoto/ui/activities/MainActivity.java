@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.database.MySQliteHelper;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.services.SyncService;
 import com.khasang.vkphoto.services.SyncServiceImpl;
@@ -44,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         initServiceConnection();
         initViews();
         VKSdk.login(this, scopes);
+        MySQliteHelper mySQliteHelper = MySQliteHelper.getInstance(this);
+        mySQliteHelper.getWritableDatabase();
     }
 
     private void initNavigator() {

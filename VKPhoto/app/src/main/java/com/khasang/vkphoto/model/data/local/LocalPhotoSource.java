@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.model.data.local;
 
-import com.khasang.vkphoto.model.data.PhotoSource;
+import com.khasang.vkphoto.model.data.interfaces.PhotoSource;
 
 public class LocalPhotoSource implements PhotoSource {
     @Override

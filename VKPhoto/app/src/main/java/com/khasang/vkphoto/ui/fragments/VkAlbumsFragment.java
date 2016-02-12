@@ -11,23 +11,24 @@ import android.view.ViewGroup;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumsAdapter;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
-import com.khasang.vkphoto.model.album.PhotoAlbum;
 import com.khasang.vkphoto.ui.activities.Navigator;
 import com.khasang.vkphoto.ui.presenter.MainPresenter;
 import com.khasang.vkphoto.ui.presenter.MainPresenterImpl;
-import com.khasang.vkphoto.ui.view.MainView;
+import com.khasang.vkphoto.ui.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKApiPhotoAlbum;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainFragment extends Fragment implements MainView {
-    public static final String TAG = MainFragment.class.getSimpleName();
+public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
+    public static final String TAG = VkAlbumsFragment.class.getSimpleName();
     private MainPresenter mainPresenter;
     private RecyclerView albumsRecyclerView;
+    private List<VKApiPhotoAlbum> albumsToSync;
 
-    public MainFragment() {
+    public VkAlbumsFragment() {
     }
 
     @Override
@@ -35,6 +36,7 @@ public class MainFragment extends Fragment implements MainView {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         mainPresenter = new MainPresenterImpl(this, ((SyncServiceProvider) getActivity()), new Navigator(getActivity()));
+        albumsToSync = new ArrayList<>();
     }
 
     @Override
@@ -64,7 +66,8 @@ public class MainFragment extends Fragment implements MainView {
         for (VKApiPhotoAlbum photoAlbum : photoAlbumList) {
             Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
         }
-        PhotoAlbumsAdapter adapter = new PhotoAlbumsAdapter(photoAlbumList);
+
+        PhotoAlbumsAdapter adapter = new PhotoAlbumsAdapter(photoAlbumList, albumsToSync);
         albumsRecyclerView.setAdapter(adapter);
     }
 

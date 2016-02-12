@@ -9,7 +9,7 @@ import com.khasang.vkphoto.domain.listeners.OnGetAllAlbumsListener;
  * @see com.khasang.vkphoto.services.SyncServiceImpl
  */
 //Todo расширить интерфейс необходимыми методами
-public interface MainInteractor  {
+public interface VkAlbumsInteractor {
     void getAllAlbums(OnGetAllAlbumsListener onGetAllAlbumsListener);
 }
       

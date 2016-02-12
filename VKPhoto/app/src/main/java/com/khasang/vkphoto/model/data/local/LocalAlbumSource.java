@@ -1,8 +1,19 @@
 package com.khasang.vkphoto.model.data.local;
 
-import com.khasang.vkphoto.model.data.AlbumSource;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.khasang.vkphoto.database.MySQliteHelper;
+import com.khasang.vkphoto.model.data.interfaces.AlbumSource;
 
 public class LocalAlbumSource implements AlbumSource {
+    private SQLiteDatabase database;
+    private MySQliteHelper dbHelper;
+
+    public LocalAlbumSource(Context context) {
+        this.dbHelper = MySQliteHelper.getInstance(context);
+    }
+
     @Override
     public void saveAlbum() {
 

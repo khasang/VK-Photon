@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.model.data;
+package com.khasang.vkphoto.model.data.interfaces;
 
 public interface AlbumSource {
     void saveAlbum();

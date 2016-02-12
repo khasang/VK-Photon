@@ -3,6 +3,7 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
+<<<<<<< HEAD
   <component name="IdProvider" IDEtalkID="C543A91FB5A5ECBC1EAF1F3A6890167D" />
   <component name="MavenImportPreferences">
     <option name="generalSettings">
@@ -11,6 +12,8 @@
       </MavenGeneralSettings>
     </option>
   </component>
+=======
+>>>>>>> 39ac5e7f14a42a1957dbb82efe00f75b056ab9db
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="android.support.annotation.Nullable" />
     <option name="myDefaultNotNull" value="android.support.annotation.NonNull" />

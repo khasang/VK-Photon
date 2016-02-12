@@ -2,8 +2,8 @@ package com.khasang.vkphoto.services;
 
 
 import com.khasang.vkphoto.domain.listeners.OnGetAllAlbumsListener;
-import com.khasang.vkphoto.model.album.PhotoAlbum;
-import com.khasang.vkphoto.model.photo.Photo;
+import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.model.Photo;
 
 /**
  * интерфейс сервиса синхронизации
