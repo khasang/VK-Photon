@@ -60,6 +60,7 @@ public class MySQliteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.beginTransaction();
         try {
             db.execSQL(getDropSql(PhotoAlbumsTable.TABLE_NAME));
             db.execSQL(getDropSql(CommentsTable.TABLE_NAME));
