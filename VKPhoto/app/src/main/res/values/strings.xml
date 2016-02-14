@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">VKPhoto</string>
     <string name="action_settings">Settings</string>
-<<<<<<< HEAD
     <string name="count_of_albums">Количество альбомов</string>
     <string name="title_of_album">Название альбома</string>
     <string name="count_of_photos_in_album">Количество фотографий в альбоме</string>
-=======
     <string name="sync_service_error">Synchronization service is loading</string>
->>>>>>> feature/architecture
+
 </resources>

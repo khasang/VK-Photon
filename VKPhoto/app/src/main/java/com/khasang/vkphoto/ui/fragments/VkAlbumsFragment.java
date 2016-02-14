@@ -50,14 +50,10 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
         view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-<<<<<<< HEAD
                 if(tv_count_of_albums.getVisibility() == View.INVISIBLE){
                     tv_count_of_albums.setVisibility(View.VISIBLE);
                 }
-                mainPresenter.getAllAlbums();
-=======
                 vKAlbumsPresenter.getAllAlbums();
->>>>>>> feature/architecture
             }
         });
         return view;
