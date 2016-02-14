@@ -1,20 +1,15 @@
 package com.khasang.vkphoto.services;
 
 
-import com.khasang.vkphoto.domain.listeners.OnGetAllAlbumsListener;
-import com.khasang.vkphoto.model.PhotoAlbum;
 import com.khasang.vkphoto.model.Photo;
+import com.khasang.vkphoto.model.PhotoAlbum;
 
 /**
  * интерфейс сервиса синхронизации
  */
 public interface SyncService {
-    /**
-     * Получает все альбомы
-     *
-     * @param onGetAllAlbumsRunnable
-     */
-    void getAllAlbums(OnGetAllAlbumsListener onGetAllAlbumsRunnable);
+
+    void getAllAlbums();
 
     /**
      * Регистрирует изменения доступа к альбому
