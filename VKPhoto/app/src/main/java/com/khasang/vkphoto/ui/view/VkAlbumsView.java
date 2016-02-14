@@ -8,10 +8,6 @@ public interface VkAlbumsView {
 
     void displayVkAlbums(List<VKApiPhotoAlbum> photoAlbumList);
 
-    void displayGalleryAlbums();
-
-    void showConnectionError();
-
-    void showSyncServiceError();
+    void showError(String s);
 }
       

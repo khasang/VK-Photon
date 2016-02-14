@@ -28,6 +28,8 @@ import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 
+import org.greenrobot.eventbus.EventBus;
+
 public class MainActivity extends AppCompatActivity implements SyncServiceProvider {
     public static final String TAG = MainActivity.class.getSimpleName();
     private ServiceConnection sConn;

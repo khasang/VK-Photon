@@ -1,23 +1,31 @@
 package com.khasang.vkphoto.domain.interactors;
 
+import android.content.Context;
+
+import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
-import com.khasang.vkphoto.domain.listeners.OnGetAllAlbumsListener;
+import com.khasang.vkphoto.model.events.ErrorEvent;
 import com.khasang.vkphoto.services.SyncService;
+import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenterImpl;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Реализация интерфейса исполнителя запросов к службе синхронизации.
- * Создается внутри MainPresenterImpl
+ * Создается внутри VKAlbumsPresenterImpl
  *
  * @see VkAlbumsInteractor
- * @see com.khasang.vkphoto.ui.presenter.MainPresenterImpl
+ * @see VKAlbumsPresenterImpl
  * @see com.khasang.vkphoto.services.SyncServiceImpl
  */
 public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     private SyncServiceProvider syncServiceProvider;
     private SyncService syncService;
+    private Context context;
 
-    public VkAlbumsInteractorImpl(SyncServiceProvider syncServiceProvider) {
+    public VkAlbumsInteractorImpl(SyncServiceProvider syncServiceProvider, Context context) {
         this.syncServiceProvider = syncServiceProvider;
+        this.context = context.getApplicationContext();
         setSyncService();
     }
 
@@ -40,14 +48,14 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
      * @see SyncServiceProvider
      */
     @Override
-    public void getAllAlbums(OnGetAllAlbumsListener onGetAllAlbumsListener) {
+    public void getAllAlbums() {
         if (syncService == null) {
             if (!setSyncService()) {
-                onGetAllAlbumsListener.onSyncServiceError();
+                EventBus.getDefault().postSticky(new ErrorEvent(context.getString(R.string.sync_service_error)));
                 return;
             }
         }
-        syncService.getAllAlbums(onGetAllAlbumsListener);
+        syncService.getAllAlbums();
     }
 }
       
