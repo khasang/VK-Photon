@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.ui.presenter;
 
-public interface MainPresenter {
+public interface VKAlbumsPresenter {
     void getAllAlbums();
 }
       
