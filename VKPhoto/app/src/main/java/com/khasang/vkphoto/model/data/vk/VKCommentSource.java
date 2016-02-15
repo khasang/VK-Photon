@@ -1,6 +1,6 @@
-package com.khasang.vkphoto.model.data.local;
+package com.khasang.vkphoto.model.data.vk;
 
-public class LocalCommentSource {
+public class VKCommentSource  {
     public void saveComment() {
 
     }

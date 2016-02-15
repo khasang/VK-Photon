@@ -13,6 +13,9 @@ public class PhotoAlbum extends VKApiPhotoAlbum {
     public int syncStatus;
 
 
+    public PhotoAlbum() {
+    }
+
     public PhotoAlbum(JSONObject from) throws JSONException {
         super(from);
     }
@@ -62,4 +65,50 @@ public class PhotoAlbum extends VKApiPhotoAlbum {
         }
     };
 
+    public PhotoAlbum(VKApiPhotoAlbum vkApiPhotoAlbum) {
+        this.id = vkApiPhotoAlbum.id;
+        this.title = vkApiPhotoAlbum.title;
+        this.size = vkApiPhotoAlbum.size;
+        this.privacy = vkApiPhotoAlbum.privacy;
+        this.description = vkApiPhotoAlbum.description;
+        this.owner_id = vkApiPhotoAlbum.owner_id;
+        this.can_upload = vkApiPhotoAlbum.can_upload;
+        this.updated = vkApiPhotoAlbum.updated;
+        this.created = vkApiPhotoAlbum.created;
+        this.thumb_id = vkApiPhotoAlbum.thumb_id;
+        this.thumb_src = vkApiPhotoAlbum.thumb_src;
+        this.photo = vkApiPhotoAlbum.photo;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PhotoAlbum)) return false;
+        PhotoAlbum that = (PhotoAlbum) o;
+        return id == that.id;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+    //    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof PhotoAlbum)) return false;
+//        PhotoAlbum that = (PhotoAlbum) o;
+//        if (id != that.id) return false;
+//        if (!title.equals(that.title)) return false;
+//        if (size != that.size) return false;
+//        if (privacy != that.privacy) return false;
+//        if (!description.equals(that.description)) return false;
+//        if (owner_id != that.owner_id) return false;
+//        if (can_upload != that.can_upload) return false;
+//        if (updated != that.updated) return false;
+//        if (created != that.created) return false;
+//        if (thumb_id != that.thumb_id) return false;
+//        return thumb_src.equals(that.thumb_src);
+//    }
 }

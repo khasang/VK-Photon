@@ -1,34 +1,27 @@
 package com.khasang.vkphoto.model.data.local;
 
-import android.content.ContentResolver;
+import android.content.Context;
 
-import com.khasang.vkphoto.model.data.interfaces.AlbumSource;
-import com.khasang.vkphoto.model.data.interfaces.CommentSource;
-import com.khasang.vkphoto.model.data.interfaces.DataSource;
-import com.khasang.vkphoto.model.data.interfaces.PhotoSource;
+public class LocalDataSource {
+    private LocalAlbumSource albumSource;
+    private LocalPhotoSource photoSource;
+    private LocalCommentSource commentSource;
+    private Context context;
 
-public class LocalDataSource implements DataSource {
-    private ContentResolver contentResolver;
-    private AlbumSource albumSource;
-    private PhotoSource photoSource;
-    private CommentSource commentSource;
-
-    public LocalDataSource(ContentResolver contentResolver) {
-        this.contentResolver = contentResolver;
+    public LocalDataSource(Context context) {
+        this.context = context;
+        this.albumSource = new LocalAlbumSource(context);
     }
 
-    @Override
-    public AlbumSource getAlbumSource() {
+    public LocalAlbumSource getAlbumSource() {
+        return albumSource;
+    }
+
+    public LocalPhotoSource getPhotoSource() {
         return null;
     }
 
-    @Override
-    public PhotoSource getPhotoSource() {
-        return null;
-    }
-
-    @Override
-    public CommentSource getCommentSource() {
+    public LocalCommentSource getCommentSource() {
         return null;
     }
 }

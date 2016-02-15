@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumsAdapter;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.model.PhotoAlbum;
 import com.khasang.vkphoto.ui.activities.Navigator;
 import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenterImpl;
@@ -27,7 +28,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
     public static final String TAG = VkAlbumsFragment.class.getSimpleName();
     private VKAlbumsPresenter vKAlbumsPresenter;
     private RecyclerView albumsRecyclerView;
-    private List<VKApiPhotoAlbum> albumsToSync;
+    private List<PhotoAlbum> albumsToSync;
 
     public VkAlbumsFragment() {
     }
@@ -78,7 +79,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
 
 
     @Override
-    public void displayVkAlbums(List<VKApiPhotoAlbum> photoAlbumList) {
+    public void displayVkAlbums(List<PhotoAlbum> photoAlbumList) {
         for (VKApiPhotoAlbum photoAlbum : photoAlbumList) {
             Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
         }

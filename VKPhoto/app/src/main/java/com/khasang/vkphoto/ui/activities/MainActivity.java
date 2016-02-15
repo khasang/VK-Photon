@@ -16,12 +16,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.database.MySQliteHelper;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.services.SyncService;
 import com.khasang.vkphoto.services.SyncServiceImpl;
 import com.khasang.vkphoto.util.Logger;
-import com.khasang.vkphoto.util.StorageUtils;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -46,8 +44,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         initServiceConnection();
         loginVk();
         initViews();
-        MySQliteHelper mySQliteHelper = MySQliteHelper.getInstance(this);
-        mySQliteHelper.getWritableDatabase();
     }
 
     private void loginVk() {

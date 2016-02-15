@@ -6,11 +6,11 @@ import android.os.Environment;
 import java.io.File;
 
 public class StorageUtils {
-    public static final String BASE_PATH = "base_path";
+    public static final String STORAGE_PATH = "storage_path";
 
     public static File getStorageDirectories(SharedPreferences sharedPreferences) {
-        if (sharedPreferences.contains(BASE_PATH)) {
-            File file = new File(sharedPreferences.getString(BASE_PATH, ""));
+        if (sharedPreferences.contains(STORAGE_PATH)) {
+            File file = new File(sharedPreferences.getString(STORAGE_PATH, ""));
             if (file.exists()) {
                 return file;
             }
@@ -44,7 +44,7 @@ public class StorageUtils {
         }
         if (mostFreeFile != null) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(BASE_PATH, mostFreeFile.getAbsolutePath());
+            editor.putString(STORAGE_PATH, mostFreeFile.getAbsolutePath());
             editor.apply();
         }
         return mostFreeFile;

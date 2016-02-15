@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.model.PhotoAlbum;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKApiConst;
@@ -23,10 +24,10 @@ import org.json.JSONException;
 import java.util.List;
 
 public class PhotoAlbumsAdapter extends RecyclerView.Adapter<PhotoAlbumsAdapter.PhotoAlbumHolder> {
-    private List<VKApiPhotoAlbum> photoAlbumList;
-    private List<VKApiPhotoAlbum> albumsToSync;
+    private List<PhotoAlbum> photoAlbumList;
+    private List<PhotoAlbum> albumsToSync;
 
-    public PhotoAlbumsAdapter(List<VKApiPhotoAlbum> photoAlbumList, List<VKApiPhotoAlbum> albumsToSync) {
+    public PhotoAlbumsAdapter(List<PhotoAlbum> photoAlbumList, List<PhotoAlbum> albumsToSync) {
         this.photoAlbumList = photoAlbumList;
         this.albumsToSync = albumsToSync;
     }
@@ -39,7 +40,7 @@ public class PhotoAlbumsAdapter extends RecyclerView.Adapter<PhotoAlbumsAdapter.
 
     @Override
     public void onBindViewHolder(PhotoAlbumHolder holder, int position) {
-        VKApiPhotoAlbum photoAlbum = photoAlbumList.get(position);
+        PhotoAlbum photoAlbum = photoAlbumList.get(position);
         holder.bindPhotoAlbum(photoAlbum);
     }
 
@@ -52,16 +53,16 @@ public class PhotoAlbumsAdapter extends RecyclerView.Adapter<PhotoAlbumsAdapter.
         final ImageView albumThumbImageView;
         final TextView albumTitleTextView;
         VKApiPhotoAlbum photoAlbum;
-        List<VKApiPhotoAlbum> albumsToSync;
+        List<PhotoAlbum> albumsToSync;
 
-        public PhotoAlbumHolder(View itemView, List<VKApiPhotoAlbum> albumsToSync) {
+        public PhotoAlbumHolder(View itemView, List<PhotoAlbum> albumsToSync) {
             super(itemView);
             this.albumsToSync = albumsToSync;
             albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
             albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
         }
 
-        public void bindPhotoAlbum(final VKApiPhotoAlbum photoAlbum) {
+        public void bindPhotoAlbum(final PhotoAlbum photoAlbum) {
             this.photoAlbum = photoAlbum;
             albumTitleTextView.setText(photoAlbum.title);
             if (photoAlbum.thumb_id != 0) {
