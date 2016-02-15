@@ -2,6 +2,7 @@ package com.khasang.vkphoto;
 
 import android.app.Application;
 
+import com.khasang.vkphoto.util.FileManager;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
@@ -26,5 +27,8 @@ public class MyApplication extends Application {
                 .sendNoSubscriberEvent(false).installDefaultEventBus();
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(getApplicationContext());
+        if (!FileManager.initBaseDirectory(getApplicationContext())){
+            throw new RuntimeException("Base directory was not created");
+        }
     }
 }

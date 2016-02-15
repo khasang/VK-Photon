@@ -21,14 +21,13 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.services.SyncService;
 import com.khasang.vkphoto.services.SyncServiceImpl;
 import com.khasang.vkphoto.util.Logger;
+import com.khasang.vkphoto.util.StorageUtils;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
-
-import org.greenrobot.eventbus.EventBus;
 
 public class MainActivity extends AppCompatActivity implements SyncServiceProvider {
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -45,10 +44,16 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         setContentView(R.layout.activity_main);
         initNavigator();
         initServiceConnection();
+        loginVk();
         initViews();
-        VKSdk.login(this, scopes);
         MySQliteHelper mySQliteHelper = MySQliteHelper.getInstance(this);
         mySQliteHelper.getWritableDatabase();
+    }
+
+    private void loginVk() {
+        if (VKAccessToken.currentToken() == null) {
+            VKSdk.login(this, scopes);
+        }
     }
 
     private void initNavigator() {

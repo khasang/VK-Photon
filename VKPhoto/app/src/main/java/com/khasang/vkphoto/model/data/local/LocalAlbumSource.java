@@ -7,7 +7,7 @@ import com.khasang.vkphoto.database.MySQliteHelper;
 import com.khasang.vkphoto.model.data.interfaces.AlbumSource;
 
 public class LocalAlbumSource implements AlbumSource {
-    private SQLiteDatabase database;
+    private SQLiteDatabase db;
     private MySQliteHelper dbHelper;
 
     public LocalAlbumSource(Context context) {
