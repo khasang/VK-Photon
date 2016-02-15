@@ -1,7 +1,10 @@
 package com.khasang.vkphoto.ui.fragments;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +16,8 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumsAdapter;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.model.data.AlbumsCursorLoader;
+import com.khasang.vkphoto.model.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.ui.activities.Navigator;
 import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenterImpl;
@@ -24,7 +29,7 @@ import com.vk.sdk.api.model.VKApiPhotoAlbum;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
+public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor>{
     public static final String TAG = VkAlbumsFragment.class.getSimpleName();
     private VKAlbumsPresenter vKAlbumsPresenter;
     private RecyclerView albumsRecyclerView;
@@ -90,6 +95,21 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
     @Override
     public void showError(String s) {
         ToastUtils.showError(s, getContext());
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new AlbumsCursorLoader(getContext(),new LocalAlbumSource(getContext()));
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
 

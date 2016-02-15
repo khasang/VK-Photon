@@ -88,4 +88,9 @@ public class LocalAlbumSource {
         cursor.close();
         return photoAlbumList;
     }
+
+    public Cursor getAllAlbumsCursor() {
+        db = dbHelper.getReadableDatabase();
+        return db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
+    }
 }
