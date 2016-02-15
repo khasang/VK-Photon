@@ -1,13 +1,13 @@
 package com.khasang.vkphoto.model.events;
 
-import com.vk.sdk.api.model.VKApiPhotoAlbum;
+import com.khasang.vkphoto.model.PhotoAlbum;
 
 import java.util.List;
 
-public class GetVkAlbumsEvent {
-    public final List<VKApiPhotoAlbum> albumsList;
+public class GetVKAlbumsEvent {
+    public final List<PhotoAlbum> albumsList;
 
-    public GetVkAlbumsEvent(List<VKApiPhotoAlbum> albumsList) {
+    public GetVKAlbumsEvent(List<PhotoAlbum> albumsList) {
         this.albumsList = albumsList;
     }
 }
