@@ -12,9 +12,10 @@ import android.widget.TextView;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumsAdapter;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.model.PhotoAlbum;
 import com.khasang.vkphoto.ui.activities.Navigator;
-import com.khasang.vkphoto.ui.presenter.MainPresenter;
-import com.khasang.vkphoto.ui.presenter.MainPresenterImpl;
+import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenter;
+import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.ui.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
@@ -25,9 +26,9 @@ import java.util.List;
 
 public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
     public static final String TAG = VkAlbumsFragment.class.getSimpleName();
-    private MainPresenter mainPresenter;
+    private VKAlbumsPresenter vKAlbumsPresenter;
     private RecyclerView albumsRecyclerView;
-    private List<VKApiPhotoAlbum> albumsToSync;
+    private List<PhotoAlbum> albumsToSync;
 
     public VkAlbumsFragment() {
     }
@@ -36,7 +37,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        mainPresenter = new MainPresenterImpl(this, ((SyncServiceProvider) getActivity()), new Navigator(getActivity()));
+        vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()), new Navigator(getActivity()), getContext());
         albumsToSync = new ArrayList<>();
     }
 
@@ -53,12 +54,23 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
                 if(tv_count_of_albums.getVisibility() == View.INVISIBLE){
                     tv_count_of_albums.setVisibility(View.VISIBLE);
                 }
-                mainPresenter.getAllAlbums();
+                vKAlbumsPresenter.getAllAlbums();
             }
         });
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        vKAlbumsPresenter.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        vKAlbumsPresenter.onStop();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -67,28 +79,17 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
 
 
     @Override
-    public void displayVkAlbums(List<VKApiPhotoAlbum> photoAlbumList) {
+    public void displayVkAlbums(List<PhotoAlbum> photoAlbumList) {
         for (VKApiPhotoAlbum photoAlbum : photoAlbumList) {
             Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
         }
-
         PhotoAlbumsAdapter adapter = new PhotoAlbumsAdapter(photoAlbumList, albumsToSync);
         albumsRecyclerView.setAdapter(adapter);
     }
 
     @Override
-    public void displayGalleryAlbums() {
-
-    }
-
-    @Override
-    public void showConnectionError() {
-        ToastUtils.showError("Error", getContext());
-    }
-
-    @Override
-    public void showSyncServiceError() {
-        ToastUtils.showError("SyncService connecting", getContext());
+    public void showError(String s) {
+        ToastUtils.showError(s, getContext());
     }
 }
 

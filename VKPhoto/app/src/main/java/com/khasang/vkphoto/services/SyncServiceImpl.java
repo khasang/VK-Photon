@@ -6,25 +6,35 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.google.gson.Gson;
-import com.khasang.vkphoto.domain.listeners.OnGetAllAlbumsListener;
-import com.khasang.vkphoto.domain.runnables.GetAllAlbumsRunnable;
-import com.khasang.vkphoto.executor.MainThread;
-import com.khasang.vkphoto.executor.MainThreadImpl;
-import com.khasang.vkphoto.executor.ThreadExecutor;
-import com.khasang.vkphoto.model.PhotoAlbum;
 import com.khasang.vkphoto.model.Photo;
+import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.model.data.local.LocalAlbumSource;
+import com.khasang.vkphoto.model.data.local.LocalDataSource;
+import com.khasang.vkphoto.model.data.vk.VKDataSource;
+import com.khasang.vkphoto.model.events.GetVKAlbumsEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.greenrobot.eventbus.util.AsyncExecutor;
+
+import java.util.List;
 
 public class SyncServiceImpl extends Service implements SyncService {
     public static final String TAG = SyncService.class.getSimpleName();
-    private ThreadExecutor executor = new ThreadExecutor();
-    private MainThread mainThread = new MainThreadImpl();
     private MyBinder binder = new MyBinder();
-    private Gson gson;
+    private EventBus eventBus;
+    private AsyncExecutor asyncExecutor;
+    private LocalDataSource localDataSource;
+    private VKDataSource vKDataSource;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        gson = new Gson();
+        eventBus = EventBus.getDefault();
+        eventBus.register(this);
+        asyncExecutor = AsyncExecutor.create();
+        localDataSource = new LocalDataSource(getApplicationContext());
+        vKDataSource = new VKDataSource();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -34,14 +44,30 @@ public class SyncServiceImpl extends Service implements SyncService {
         return binder;
     }
 
-    /**
-     * получает все альбомы
-     *
-     * @param onGetAllAlbumsListener коллбэк
-     */
+
     @Override
-    public void getAllAlbums(OnGetAllAlbumsListener onGetAllAlbumsListener) {
-        executor.execute(new GetAllAlbumsRunnable(mainThread, onGetAllAlbumsListener));
+    public void getAllAlbums() {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                vKDataSource.getAlbumSource().getAllAlbums();
+            }
+        });
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onGetVKAlbumsEvent(GetVKAlbumsEvent getVKAlbumsEvent) {
+        List<PhotoAlbum> vKphotoAlbumList = getVKAlbumsEvent.albumsList;
+        LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
+        List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllAlbums();
+        for (PhotoAlbum photoAlbum : vKphotoAlbumList) {
+            if (localAlbumsList.contains(photoAlbum)) {
+                localAlbumSource.updateAlbum(photoAlbum);
+            } else {
+                localAlbumSource.saveAlbum(photoAlbum);
+            }
+        }
+
     }
 
     @Override
@@ -73,5 +99,11 @@ public class SyncServiceImpl extends Service implements SyncService {
         public SyncService getService() {
             return SyncServiceImpl.this;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        eventBus.unregister(this);
+        super.onDestroy();
     }
 }
