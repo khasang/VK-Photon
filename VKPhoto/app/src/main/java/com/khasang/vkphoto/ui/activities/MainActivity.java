@@ -7,6 +7,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,9 +21,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.database.MySQliteHelper;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.services.SyncService;
 import com.khasang.vkphoto.services.SyncServiceImpl;
+import com.khasang.vkphoto.ui.fragments.VkAlbumsFragment;
+import com.khasang.vkphoto.ui.fragments.GalleryFragment;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.VKAccessToken;
@@ -26,6 +34,9 @@ import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SyncServiceProvider {
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -35,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private SyncService syncService;
     private Navigator navigator;
     private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +56,28 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         setContentView(R.layout.activity_main);
         initNavigator();
         initServiceConnection();
-        loginVk();
         initViews();
+        VKSdk.login(this, scopes);
+        MySQliteHelper mySQliteHelper = MySQliteHelper.getInstance(this);
+        mySQliteHelper.getWritableDatabase();
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
-    private void loginVk() {
-        if (VKAccessToken.currentToken() == null) {
-            VKSdk.login(this, scopes);
-        }
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new VkAlbumsFragment(), "VK Albums");
+        adapter.addFragment(new GalleryFragment(), "Gallery Albums");
+        viewPager.setAdapter(adapter);
     }
 
     private void initNavigator() {
@@ -156,4 +184,34 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     public void onBackPressed() {
         navigator.navigateBack();
     }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
+    }
+
 }
