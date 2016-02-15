@@ -5,6 +5,7 @@ import com.khasang.vkphoto.model.PhotoAlbum;
 import com.khasang.vkphoto.model.events.ErrorEvent;
 import com.khasang.vkphoto.model.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.util.JsonUtils;
+import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
@@ -44,6 +45,7 @@ public class VKAlbumSource {
                 final List<PhotoAlbum> photoAlbumList;
                 try {
                     photoAlbumList = JsonUtils.getItems(response.json, PhotoAlbum.class);
+                    Logger.d("Got VKAlbums successfully");
                     EventBus.getDefault().postSticky(new GetVKAlbumsEvent(photoAlbumList));
                 } catch (Exception e) {
                     sendError(e.toString());
