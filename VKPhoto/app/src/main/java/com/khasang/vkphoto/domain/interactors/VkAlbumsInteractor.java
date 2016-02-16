@@ -10,6 +10,8 @@ import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenterImpl;
  */
 //Todo расширить интерфейс необходимыми методами
 public interface VkAlbumsInteractor {
+    void saveAlbum();
+
     void getAllAlbums();
 }
       

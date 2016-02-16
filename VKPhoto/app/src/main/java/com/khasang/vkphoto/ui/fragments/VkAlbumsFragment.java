@@ -68,6 +68,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
                 }
                 getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
                 vKAlbumsPresenter.getAllAlbums();
+
             }
         });
         initRecyclerView(view);
@@ -98,6 +99,10 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         super.onActivityCreated(savedInstanceState);
     }
 
+    @Override
+    public void displayVkSaveAlbum(PhotoAlbum photoAlbum) {
+        Logger.d("displayVkSaveAlbum");
+    }
 
     @Override
     public void displayVkAlbums(List<PhotoAlbum> photoAlbumList) {

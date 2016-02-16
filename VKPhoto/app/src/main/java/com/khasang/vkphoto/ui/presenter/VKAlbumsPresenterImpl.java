@@ -7,6 +7,7 @@ import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.model.events.ErrorEvent;
 import com.khasang.vkphoto.model.events.GetVKAlbumsEvent;
+import com.khasang.vkphoto.model.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.ui.activities.Navigator;
 import com.khasang.vkphoto.ui.view.VkAlbumsView;
 
@@ -26,6 +27,11 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     }
 
     @Override
+    public void saveAlbum() {
+        vkAlbumsInteractor.saveAlbum();
+    }
+
+    @Override
     public void getAllAlbums() {
         vkAlbumsInteractor.getAllAlbums();
     }
@@ -38,6 +44,11 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSaveAlbumEvent(GetVkSaveAlbumEvent getVkSaveAlbumEvent) {
+        vkAlbumsView.displayVkSaveAlbum(getVkSaveAlbumEvent.photoAlbum);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

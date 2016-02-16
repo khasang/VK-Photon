@@ -40,6 +40,12 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
         return syncService != null;
     }
 
+    @Override
+    public void saveAlbum() {
+        checkSyncService();
+        syncService.saveAlbum();
+    }
+
     /**
      * Отправить запрос в службу синхронизации на получение списка альбомов.
      * Когда служба получит альбомы от ВК, вызовет колбэк метод у onGetAllAlbumsListener
@@ -49,13 +55,16 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
      */
     @Override
     public void getAllAlbums() {
+        checkSyncService();
+        syncService.getAllAlbums();
+    }
+
+    void checkSyncService() {
         if (syncService == null) {
             if (!setSyncService()) {
                 EventBus.getDefault().postSticky(new ErrorEvent(context.getString(R.string.sync_service_error)));
-                return;
             }
         }
-        syncService.getAllAlbums();
     }
 }
       

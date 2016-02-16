@@ -1,5 +1,7 @@
 package com.khasang.vkphoto.util;
 
+import com.khasang.vkphoto.model.PhotoAlbum;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,6 +13,16 @@ import java.util.List;
 public class JsonUtils {
     public static JSONArray getJsonArray(JSONObject jsonObject) throws JSONException {
         return jsonObject.getJSONObject("response").getJSONArray("items");
+    }
+
+    public static <T> PhotoAlbum getJsonTest(JSONObject jsonObject) throws JSONException {
+        PhotoAlbum photoAlbum = null;
+        try {
+            photoAlbum = new PhotoAlbum(jsonObject.getJSONObject("response"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return photoAlbum;
     }
 
     public static <T> List<T> getItems(JSONObject jsonObject, Class<T> tClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, JSONException {
