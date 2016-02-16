@@ -1,4 +1,4 @@
 package com.khasang.vkphoto.model.events;
 
-public class LocalAlbumCreatedEvent {
+public class LocalAlbumEvent {
 }

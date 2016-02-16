@@ -10,7 +10,7 @@ import com.khasang.vkphoto.database.MySQliteHelper;
 import com.khasang.vkphoto.database.tables.PhotoAlbumsTable;
 import com.khasang.vkphoto.model.PhotoAlbum;
 import com.khasang.vkphoto.model.events.ErrorEvent;
-import com.khasang.vkphoto.model.events.LocalAlbumCreatedEvent;
+import com.khasang.vkphoto.model.events.LocalAlbumEvent;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.model.VKApiPhotoAlbum;
@@ -38,7 +38,7 @@ public class LocalAlbumSource {
             PhotoAlbum photoAlbum = new PhotoAlbum(apiPhotoAlbum);
             photoAlbum.filePath = path;
             db.insert(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.getContentValues(photoAlbum));
-            EventBus.getDefault().postSticky(new LocalAlbumCreatedEvent());
+            EventBus.getDefault().postSticky(new LocalAlbumEvent());
         }
     }
 
@@ -53,9 +53,9 @@ public class LocalAlbumSource {
             if (contentValues.size() > 0) {
                 db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
                         new String[]{String.valueOf(photoAlbum.id)});
+                EventBus.getDefault().postSticky(new LocalAlbumEvent());
             }
         }
-        db.close();
     }
 
 
@@ -76,7 +76,6 @@ public class LocalAlbumSource {
             photoAlbum = new PhotoAlbum(cursor);
         }
         cursor.close();
-        db.close();
         return photoAlbum;
     }
 

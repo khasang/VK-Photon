@@ -21,12 +21,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.database.MySQliteHelper;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.services.SyncService;
 import com.khasang.vkphoto.services.SyncServiceImpl;
-import com.khasang.vkphoto.ui.fragments.VkAlbumsFragment;
 import com.khasang.vkphoto.ui.fragments.GalleryFragment;
+import com.khasang.vkphoto.ui.fragments.VkAlbumsFragment;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.VKAccessToken;
@@ -56,21 +55,22 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         setContentView(R.layout.activity_main);
         initNavigator();
         initServiceConnection();
+        loginVk();
         initViews();
-        VKSdk.login(this, scopes);
-        MySQliteHelper mySQliteHelper = MySQliteHelper.getInstance(this);
-        mySQliteHelper.getWritableDatabase();
+        initViewPager();
+    }
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+    private void initViewPager() {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private void loginVk() {
+        if (VKAccessToken.currentToken() == null) {
+            VKSdk.login(this, scopes);
+        }
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
     private void initNavigator() {
         navigator = new Navigator(this);
-        navigator.navigateToMainFragment();
+//        navigator.navigateToMainFragment();
     }
 
     private void initViews() {

@@ -18,7 +18,7 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.model.PhotoAlbum;
 import com.khasang.vkphoto.model.data.AlbumsCursorLoader;
 import com.khasang.vkphoto.model.data.local.LocalAlbumSource;
-import com.khasang.vkphoto.model.events.LocalAlbumCreatedEvent;
+import com.khasang.vkphoto.model.events.LocalAlbumEvent;
 import com.khasang.vkphoto.ui.activities.Navigator;
 import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenterImpl;
@@ -128,7 +128,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLocalAlbumCreatedEvent(LocalAlbumCreatedEvent localAlbumCreatedEvent) {
+    public void onLocalAlbumCreatedEvent(LocalAlbumEvent localAlbumEvent) {
         getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
     }
 }
