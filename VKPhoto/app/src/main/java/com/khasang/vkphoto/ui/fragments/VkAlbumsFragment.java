@@ -77,6 +77,10 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
         super.onActivityCreated(savedInstanceState);
     }
 
+    @Override
+    public void displayVkSaveAlbum(PhotoAlbum photoAlbum) {
+        Logger.d("displayVkSaveAlbum");
+    }
 
     @Override
     public void displayVkAlbums(List<PhotoAlbum> photoAlbumList) {

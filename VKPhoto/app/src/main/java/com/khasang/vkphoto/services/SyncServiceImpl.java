@@ -44,6 +44,15 @@ public class SyncServiceImpl extends Service implements SyncService {
         return binder;
     }
 
+    @Override
+    public void saveAlbum() {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                vKDataSource.getAlbumSource().saveAlbum();
+            }
+        });
+    }
 
     @Override
     public void getAllAlbums() {

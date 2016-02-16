@@ -13,6 +13,15 @@ public class JsonUtils {
         return jsonObject.getJSONObject("response").getJSONArray("items");
     }
 
+    public static <T> JSONObject getJsonTest(JSONObject jsonObject, Class<T> tClass) throws JSONException {
+        try {
+        tClass.getConstructor(JSONObject.class).newInstance(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.getJSONObject("response");
+    }
+
     public static <T> List<T> getItems(JSONObject jsonObject, Class<T> tClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, JSONException {
         JSONArray jsonArray = getJsonArray(jsonObject);
         int length = jsonArray.length();

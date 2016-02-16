@@ -5,6 +5,7 @@ import com.khasang.vkphoto.model.PhotoAlbum;
 import java.util.List;
 
 public interface VkAlbumsView {
+    void displayVkSaveAlbum(PhotoAlbum photoAlbum);
 
     void displayVkAlbums(List<PhotoAlbum> photoAlbumList);
 

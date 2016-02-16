@@ -8,6 +8,7 @@ import com.khasang.vkphoto.model.PhotoAlbum;
  * интерфейс сервиса синхронизации
  */
 public interface SyncService {
+    void saveAlbum();
 
     void getAllAlbums();
 
