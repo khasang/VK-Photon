@@ -1,12 +1,27 @@
 package com.khasang.vkphoto.model;
 
+import android.database.Cursor;
 import android.os.Parcel;
+import android.provider.BaseColumns;
 
 import com.vk.sdk.api.model.VKApiPhotoAlbum;
 import com.vk.sdk.api.model.VKPhotoSizes;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.CAN_UPLOAD;
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.CREATED;
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.DESCRIPTION;
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.FILE_PATH;
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.OWNER_ID;
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.PRIVACY;
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.SIZE;
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.SYNC_STATUS;
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.THUMB_ID;
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.THUMB_SRC;
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.TITLE;
+import static com.khasang.vkphoto.database.tables.PhotoAlbumsTable.UPDATED;
 
 public class PhotoAlbum extends VKApiPhotoAlbum {
     public String filePath;
@@ -20,6 +35,21 @@ public class PhotoAlbum extends VKApiPhotoAlbum {
         super(from);
     }
 
+    public PhotoAlbum(Cursor cursor){
+        this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
+        this.title = cursor.getString(cursor.getColumnIndex(TITLE));
+        this.size = cursor.getInt(cursor.getColumnIndex(SIZE));
+        this.privacy = cursor.getInt(cursor.getColumnIndex(PRIVACY));
+        this.description = cursor.getString(cursor.getColumnIndex(DESCRIPTION));
+        this.owner_id = cursor.getInt(cursor.getColumnIndex(OWNER_ID));
+        this.can_upload = cursor.getInt(cursor.getColumnIndex(CAN_UPLOAD)) == 1;
+        this.updated = cursor.getLong(cursor.getColumnIndex(UPDATED));
+        this.created = cursor.getLong(cursor.getColumnIndex(CREATED));
+        this.thumb_id = cursor.getInt(cursor.getColumnIndex(THUMB_ID));
+        this.thumb_src = cursor.getString(cursor.getColumnIndex(THUMB_SRC));
+        this.filePath = cursor.getString(cursor.getColumnIndex(FILE_PATH));
+        this.syncStatus = cursor.getInt(cursor.getColumnIndex(SYNC_STATUS));
+    }
     public PhotoAlbum(Parcel in) {
         this.id = in.readInt();
         this.title = in.readString();

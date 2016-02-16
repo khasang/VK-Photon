@@ -1,7 +1,6 @@
 package com.khasang.vkphoto.database.tables;
 
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.provider.BaseColumns;
 
 import com.khasang.vkphoto.database.MySQliteHelper;
@@ -53,24 +52,6 @@ public class PhotoAlbumsTable {
         contentValues.put(FILE_PATH, photoAlbum.filePath);
         contentValues.put(SYNC_STATUS, photoAlbum.syncStatus);
         return contentValues;
-    }
-
-    public static PhotoAlbum getPhotoAlbum(Cursor cursor) {
-        PhotoAlbum photoAlbum = new PhotoAlbum();
-        photoAlbum.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-        photoAlbum.title = cursor.getString(cursor.getColumnIndex(TITLE));
-        photoAlbum.size = cursor.getInt(cursor.getColumnIndex(SIZE));
-        photoAlbum.privacy = cursor.getInt(cursor.getColumnIndex(PRIVACY));
-        photoAlbum.description = cursor.getString(cursor.getColumnIndex(DESCRIPTION));
-        photoAlbum.owner_id = cursor.getInt(cursor.getColumnIndex(OWNER_ID));
-        photoAlbum.can_upload = cursor.getInt(cursor.getColumnIndex(CAN_UPLOAD)) == 1;
-        photoAlbum.updated = cursor.getLong(cursor.getColumnIndex(UPDATED));
-        photoAlbum.created = cursor.getLong(cursor.getColumnIndex(CREATED));
-        photoAlbum.thumb_id = cursor.getInt(cursor.getColumnIndex(THUMB_ID));
-        photoAlbum.thumb_src = cursor.getString(cursor.getColumnIndex(THUMB_SRC));
-        photoAlbum.filePath = cursor.getString(cursor.getColumnIndex(FILE_PATH));
-        photoAlbum.syncStatus = cursor.getInt(cursor.getColumnIndex(SYNC_STATUS));
-        return photoAlbum;
     }
 
     public static ContentValues getContentValuesUpdated(PhotoAlbum newAlbum, PhotoAlbum oldAlbum) {
