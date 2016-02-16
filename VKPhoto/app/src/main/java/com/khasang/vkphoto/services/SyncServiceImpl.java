@@ -29,13 +29,13 @@ public class SyncServiceImpl extends Service implements SyncService {
     private VKDataSource vKDataSource;
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        eventBus = EventBus.getDefault();
-        eventBus.register(this);
+    public void onCreate() {
+        super.onCreate();
         asyncExecutor = AsyncExecutor.create();
         localDataSource = new LocalDataSource(getApplicationContext());
         vKDataSource = new VKDataSource();
-        return super.onStartCommand(intent, flags, startId);
+        eventBus = EventBus.getDefault();
+        eventBus.register(this);
     }
 
     @Nullable

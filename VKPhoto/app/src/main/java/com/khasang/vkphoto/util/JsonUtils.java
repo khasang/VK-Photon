@@ -15,6 +15,10 @@ public class JsonUtils {
         return jsonObject.getJSONObject("response").getJSONArray("items");
     }
 
+    public static JSONObject getJsonObject(JSONObject jsonObject) throws JSONException {
+        return jsonObject.getJSONObject("response");
+    }
+
     public static <T> PhotoAlbum getJsonTest(JSONObject jsonObject) throws JSONException {
         PhotoAlbum photoAlbum = null;
         try {

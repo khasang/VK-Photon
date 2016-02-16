@@ -2,6 +2,7 @@ package com.khasang.vkphoto.domain;
 
 import android.support.annotation.NonNull;
 
+import com.khasang.vkphoto.model.PhotoAlbum;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
@@ -49,11 +50,16 @@ public class RequestMaker {
         request.executeWithListener(vkRequestListener);
     }
 
+    public static void getPhotoAlbumThumb(VKRequest.VKRequestListener vkRequestListener, PhotoAlbum photoAlbum) {
+        VKRequest request = new VKRequest("photos.get", VKParameters.from(VKApiConst.ALBUM_ID, photoAlbum.id, VKApiConst.PHOTO_IDS, photoAlbum.thumb_id));
+        request.executeWithListener(vkRequestListener);
+    }
+
     @NonNull
     private static VKRequest getVkRequest(String apiMethod, VKParameters vkParameters) {
-        VKRequest vkRequest = new VKRequest(apiMethod, vkParameters);
-        vkRequest.attempts = ATTEMPTS_COUNT;
-        return vkRequest;
+        VKRequest request = new VKRequest(apiMethod, vkParameters);
+        request.attempts = ATTEMPTS_COUNT;
+        return request;
     }
 
 }
