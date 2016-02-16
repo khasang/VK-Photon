@@ -55,4 +55,5 @@ public class RequestMaker {
         vkRequest.attempts = ATTEMPTS_COUNT;
         return vkRequest;
     }
+
 }

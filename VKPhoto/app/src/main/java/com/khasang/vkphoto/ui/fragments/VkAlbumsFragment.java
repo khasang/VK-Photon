@@ -18,18 +18,12 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.model.PhotoAlbum;
 import com.khasang.vkphoto.model.data.AlbumsCursorLoader;
 import com.khasang.vkphoto.model.data.local.LocalAlbumSource;
-import com.khasang.vkphoto.model.events.LocalAlbumEvent;
 import com.khasang.vkphoto.ui.activities.Navigator;
 import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.ui.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
-import com.vk.sdk.api.model.VKApiPhotoAlbum;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +42,6 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        EventBus.getDefault().register(this);
         vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()), new Navigator(getActivity()), getContext());
         albumsToSync = new ArrayList<>();
         adapter = new PhotoAlbumCursorAdapter(getContext(), null);
@@ -90,7 +83,6 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     @Override
     public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
         vKAlbumsPresenter.onStop();
     }
 
@@ -105,11 +97,11 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     }
 
     @Override
-    public void displayVkAlbums(List<PhotoAlbum> photoAlbumList) {
-        for (VKApiPhotoAlbum photoAlbum : photoAlbumList) {
-            Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
-        }
-
+    public void displayVkAlbums() {
+//        for (VKApiPhotoAlbum photoAlbum : photoAlbumList) {
+//            Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
+//        }
+        getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
     }
 
     @Override
@@ -132,9 +124,5 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         adapter.changeCursor(null);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLocalAlbumCreatedEvent(LocalAlbumEvent localAlbumEvent) {
-        getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
-    }
 }
 
