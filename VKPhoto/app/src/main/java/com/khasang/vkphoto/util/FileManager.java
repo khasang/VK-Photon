@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.domain.entities.PhotoAlbum;
 
 import java.io.BufferedInputStream;
 import java.io.File;

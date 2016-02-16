@@ -11,10 +11,10 @@ import android.widget.TextView;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.DownloadFileAsyncTask;
-import com.khasang.vkphoto.domain.RequestMaker;
-import com.khasang.vkphoto.model.Photo;
-import com.khasang.vkphoto.model.PhotoAlbum;
-import com.khasang.vkphoto.model.events.ErrorEvent;
+import com.khasang.vkphoto.data.RequestMaker;
+import com.khasang.vkphoto.domain.entities.Photo;
+import com.khasang.vkphoto.domain.entities.PhotoAlbum;
+import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;

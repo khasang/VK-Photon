@@ -6,12 +6,12 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.khasang.vkphoto.model.Photo;
-import com.khasang.vkphoto.model.PhotoAlbum;
-import com.khasang.vkphoto.model.data.local.LocalAlbumSource;
-import com.khasang.vkphoto.model.data.local.LocalDataSource;
-import com.khasang.vkphoto.model.data.vk.VKDataSource;
-import com.khasang.vkphoto.model.events.GetVKAlbumsEvent;
+import com.khasang.vkphoto.domain.entities.Photo;
+import com.khasang.vkphoto.domain.entities.PhotoAlbum;
+import com.khasang.vkphoto.data.local.LocalAlbumSource;
+import com.khasang.vkphoto.data.local.LocalDataSource;
+import com.khasang.vkphoto.data.vk.VKDataSource;
+import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

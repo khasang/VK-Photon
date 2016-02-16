@@ -4,9 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
-import com.khasang.vkphoto.model.Photo;
-import com.khasang.vkphoto.model.PhotoAlbum;
-import com.khasang.vkphoto.model.data.local.LocalPhotoSource;
+import com.khasang.vkphoto.domain.entities.Photo;
+import com.khasang.vkphoto.domain.entities.PhotoAlbum;
+import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;

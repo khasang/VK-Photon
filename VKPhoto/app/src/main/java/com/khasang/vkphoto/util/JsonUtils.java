@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.util;
 
-import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.domain.entities.PhotoAlbum;
 
 import org.json.JSONArray;
 import org.json.JSONException;
