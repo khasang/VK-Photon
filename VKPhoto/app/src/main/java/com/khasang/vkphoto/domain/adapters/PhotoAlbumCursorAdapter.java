@@ -10,17 +10,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.DownloadFileAsyncTask;
+import com.khasang.vkphoto.domain.RequestMaker;
+import com.khasang.vkphoto.model.Photo;
 import com.khasang.vkphoto.model.PhotoAlbum;
+import com.khasang.vkphoto.model.events.ErrorEvent;
 import com.khasang.vkphoto.util.JsonUtils;
-import com.squareup.picasso.Picasso;
-import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.model.VKApiPhoto;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import org.greenrobot.eventbus.EventBus;
 
 public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbumCursorAdapter.ViewHolder> {
 
@@ -54,23 +54,29 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
             this.photoAlbum = photoAlbum;
             albumTitleTextView.setText(photoAlbum.title);
             if (photoAlbum.thumb_id != 0) {
-                VKRequest vkRequest = new VKRequest("photos.get", VKParameters.from(VKApiConst.ALBUM_ID, photoAlbum.id, VKApiConst.PHOTO_IDS, photoAlbum.thumb_id));
-                vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
-                    @Override
-                    public void onComplete(VKResponse response) {
-                        super.onComplete(response);
-                        try {
-                            JSONArray jsonArray = JsonUtils.getJsonArray(response.json);
-                            VKApiPhoto vkApiPhoto = new VKApiPhoto(jsonArray.getJSONObject(0));
-                            Picasso.with(albumThumbImageView.getContext())
-                                    .load(vkApiPhoto.photo_130)
-                                    .into(albumThumbImageView);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                loadThumb(photoAlbum);
             }
+        }
+
+        private void loadThumb(final PhotoAlbum photoAlbum) {
+            RequestMaker.getPhotoAlbumThumb(new VKRequest.VKRequestListener() {
+                @Override
+                public void onComplete(VKResponse response) {
+                    super.onComplete(response);
+                    try {
+                        Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
+                        new DownloadFileAsyncTask(albumThumbImageView, photo, photoAlbum).execute(photo.getUrlToMaxPhoto());
+                    } catch (Exception e) {
+                        EventBus.getDefault().postSticky(new ErrorEvent(e.toString()));
+                    }
+                }
+
+                @Override
+                public void onError(VKError error) {
+                    super.onError(error);
+                    EventBus.getDefault().postSticky(new ErrorEvent(error.toString()));
+                }
+            }, photoAlbum);
         }
     }
 }

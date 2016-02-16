@@ -1,17 +1,52 @@
 package com.khasang.vkphoto.model;
 
+import android.database.Cursor;
 import android.os.Parcel;
+import android.provider.BaseColumns;
+import android.text.TextUtils;
 
+import com.khasang.vkphoto.database.tables.PhotosTable;
 import com.vk.sdk.api.model.VKApiPhoto;
 import com.vk.sdk.api.model.VKPhotoSizes;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static com.khasang.vkphoto.database.tables.PhotosTable.ALBUM_ID;
+import static com.khasang.vkphoto.database.tables.PhotosTable.COMMENTS;
+import static com.khasang.vkphoto.database.tables.PhotosTable.DATE;
+import static com.khasang.vkphoto.database.tables.PhotosTable.FILE_PATH;
+import static com.khasang.vkphoto.database.tables.PhotosTable.HEIGHT;
+import static com.khasang.vkphoto.database.tables.PhotosTable.LIKES;
+import static com.khasang.vkphoto.database.tables.PhotosTable.OWNER_ID;
+import static com.khasang.vkphoto.database.tables.PhotosTable.SYNC_STATUS;
+import static com.khasang.vkphoto.database.tables.PhotosTable.TEXT;
+import static com.khasang.vkphoto.database.tables.PhotosTable.WIDTH;
 
 public class Photo extends VKApiPhoto {
     public String filePath;
     public int syncStatus;
 
-    /**
-     * Creates a Photo instance from Parcel.
-     */
+    public Photo(JSONObject from) throws JSONException {
+        super(from);
+    }
+
+
+    public Photo(Cursor cursor) {
+        this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
+        this.album_id = cursor.getInt(cursor.getColumnIndex(ALBUM_ID));
+        this.owner_id = cursor.getInt(cursor.getColumnIndex(OWNER_ID));
+        this.width = cursor.getInt(cursor.getColumnIndex(WIDTH));
+        this.height = cursor.getInt(cursor.getColumnIndex(HEIGHT));
+        this.text = cursor.getString(cursor.getColumnIndex(TEXT));
+        this.date = cursor.getLong(cursor.getColumnIndex(DATE));
+        this.likes = cursor.getInt(cursor.getColumnIndex(LIKES));
+        this.can_comment = cursor.getInt(cursor.getColumnIndex(PhotosTable.CAN_COMMENT)) == 1;
+        this.comments = cursor.getInt(cursor.getColumnIndex(COMMENTS));
+        this.filePath = cursor.getString(cursor.getColumnIndex(FILE_PATH));
+        this.syncStatus = cursor.getInt(cursor.getColumnIndex(SYNC_STATUS));
+    }
+
     public Photo(Parcel in) {
         this.id = in.readInt();
         this.album_id = in.readInt();
@@ -72,4 +107,13 @@ public class Photo extends VKApiPhoto {
             return new Photo[size];
         }
     };
+
+    public String getUrlToMaxPhoto() {
+        if (!TextUtils.isEmpty(photo_2560)) return photo_2560;
+        if (!TextUtils.isEmpty(photo_1280)) return photo_1280;
+        if (!TextUtils.isEmpty(photo_807)) return photo_807;
+        if (!TextUtils.isEmpty(photo_604)) return photo_604;
+        if (!TextUtils.isEmpty(photo_130)) return photo_130;
+        return photo_75;
+    }
 }

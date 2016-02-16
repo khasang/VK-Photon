@@ -86,6 +86,12 @@ public class PhotoAlbumsTable {
         if (!oldAlbum.thumb_src.equals(newAlbum.thumb_src)) {
             contentValues.put(THUMB_SRC, newAlbum.thumb_src);
         }
+        if (!oldAlbum.filePath.equals(newAlbum.filePath)) {
+            contentValues.put(FILE_PATH, newAlbum.filePath);
+        }
+        if (oldAlbum.syncStatus != newAlbum.syncStatus) {
+            contentValues.put(SYNC_STATUS, newAlbum.syncStatus);
+        }
         return contentValues;
     }
 }
