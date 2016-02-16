@@ -10,6 +10,7 @@ import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.model.VKPrivacy;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -24,8 +25,8 @@ public class VKAlbumSource {
                 super.onComplete(response);
                 final PhotoAlbum photoAlbum;
                 try {
-                    photoAlbum = JsonUtils.getJsonTest(response.json, PhotoAlbum.class);
-                    Logger.d("Got VKAlbums successfully");
+                    photoAlbum = JsonUtils.getJsonTest(response.json);
+                    Logger.d("Create Album successfully");
                     EventBus.getDefault().postSticky(new GetVkSaveAlbumEvent(photoAlbum));
                 } catch (Exception e) {
                     sendError(e.toString());
@@ -41,7 +42,7 @@ public class VKAlbumSource {
             void sendError(String s) {
                 EventBus.getDefault().postSticky(new ErrorEvent(s));
             }
-        }, "Test 16.02", "test album", "all", "all");
+        }, "Test 16.02", "test album", VKPrivacy.PRIVACY_FRIENDS , VKPrivacy.PRIVACY_NOBODY);
     }
 
     public void updateAlbum() {

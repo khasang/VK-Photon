@@ -11,10 +11,19 @@ public class RequestMaker {
 
     public static final int ATTEMPTS_COUNT = 10;
 
+    /**
+     * Создаёт пустой альбом (VK API 3.0)
+     *
+     * @param vkRequestListener слушатель запроса
+     * @param title             название альбома
+     * @param description       текст описания альбома
+     * @param privacy           настройки приватности просмотра альбома
+     * @param comment_privacy   настройки приватности комментирования
+     */
     public static void createEmptyAlbum(VKRequest.VKRequestListener vkRequestListener, String title,
-                                        String description, String privacy_view, String privacy_comment) {
-        final VKRequest request = getVkRequest("photos.getAlbums", VKParameters.from("title", title,
-                "description", description, "privacy_view", privacy_view, "privacy_comment", privacy_comment));
+                                        String description, int privacy, int comment_privacy) {
+        final VKRequest request = getVkRequest("photos.createAlbum", VKParameters.from("title", title,
+                "description", description, "privacy", privacy, "comment_privacy", comment_privacy));
         request.executeWithListener(vkRequestListener);
     }
 

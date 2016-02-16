@@ -54,7 +54,8 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView {
                 if(tv_count_of_albums.getVisibility() == View.INVISIBLE){
                     tv_count_of_albums.setVisibility(View.VISIBLE);
                 }
-                vKAlbumsPresenter.getAllAlbums();
+//                vKAlbumsPresenter.getAllAlbums();
+                vKAlbumsPresenter.saveAlbum();
             }
         });
         return view;
