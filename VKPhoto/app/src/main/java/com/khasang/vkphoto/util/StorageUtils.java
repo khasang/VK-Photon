@@ -17,8 +17,9 @@ public class StorageUtils {
         }
 
         final String state = Environment.getExternalStorageState();
+        Logger.d("getExternalStorageState " + state);
         File mostFreeFile = null;
-        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {  // we can read the External Storage...
+        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) || Environment.MEDIA_REMOVED.equals(state)) {  // we can read the External Storage...
             //Retrieve the primary External Storage:
             final File primaryExternalStorage = Environment.getExternalStorageDirectory();
 

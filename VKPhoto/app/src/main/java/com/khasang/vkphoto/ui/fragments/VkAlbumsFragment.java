@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.ui.fragments;
 
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -13,16 +14,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
-import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
 import com.khasang.vkphoto.data.AlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
+import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
+import com.khasang.vkphoto.domain.entities.PhotoAlbum;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.ui.activities.Navigator;
 import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.ui.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
+import com.khasang.vkphoto.util.NetWorkUtils;
 import com.khasang.vkphoto.util.ToastUtils;
 
 import java.util.ArrayList;
@@ -59,9 +61,17 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
                 if (tv_count_of_albums.getVisibility() == View.INVISIBLE) {
                     tv_count_of_albums.setVisibility(View.VISIBLE);
                 }
-                getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
                 vKAlbumsPresenter.getAllAlbums();
+                int networkType = NetWorkUtils.getNetworkType(getContext());
 
+                //check internet connection
+                if (networkType == ConnectivityManager.TYPE_WIFI) {
+                    Logger.d("Connection WiFi");
+                } else if (networkType == ConnectivityManager.TYPE_MOBILE) {
+                    Logger.d("Connection mobile");
+                } else {
+                    Logger.d("no internet connection");
+                }
             }
         });
         initRecyclerView(view);

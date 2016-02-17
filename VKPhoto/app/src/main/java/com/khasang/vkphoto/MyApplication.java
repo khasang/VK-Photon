@@ -27,7 +27,7 @@ public class MyApplication extends Application {
                 .sendNoSubscriberEvent(false).installDefaultEventBus();
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(getApplicationContext());
-        if (!FileManager.initBaseDirectory(getApplicationContext())){
+        if (!FileManager.initBaseDirectory(getApplicationContext())) {
             throw new RuntimeException("Base directory was not created");
         }
     }
