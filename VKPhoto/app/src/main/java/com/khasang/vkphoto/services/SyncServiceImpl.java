@@ -6,12 +6,13 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.khasang.vkphoto.domain.entities.Photo;
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
+import com.khasang.vkphoto.domain.entities.Photo;
+import com.khasang.vkphoto.domain.entities.PhotoAlbum;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
+import com.khasang.vkphoto.util.Constants;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -69,14 +70,23 @@ public class SyncServiceImpl extends Service implements SyncService {
         List<PhotoAlbum> vKphotoAlbumList = getVKAlbumsEvent.albumsList;
         LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
         List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllAlbums();
-        for (PhotoAlbum photoAlbum : vKphotoAlbumList) {
-            if (localAlbumsList.contains(photoAlbum)) {
+        for (int i = 0, vKphotoAlbumListSize = vKphotoAlbumList.size(); i < vKphotoAlbumListSize; i++) {
+            PhotoAlbum photoAlbum = vKphotoAlbumList.get(i);
+            if (localAlbumsList.contains(photoAlbum)) { //update existing albums
                 localAlbumSource.updateAlbum(photoAlbum);
-            } else {
+            } else { //сreate new albums
                 localAlbumSource.saveAlbum(photoAlbum);
             }
         }
 
+        //Update deleted from vk albums syncStatus
+        if (localAlbumsList.removeAll(vKphotoAlbumList)) {
+            for (int i = 0, localAlbumsListSize = localAlbumsList.size(); i < localAlbumsListSize; i++) {
+                PhotoAlbum photoAlbum = localAlbumsList.get(i);
+                photoAlbum.syncStatus = Constants.SYNC_DELETED;
+                localAlbumSource.updateAlbum(photoAlbum);
+            }
+        }
     }
 
     @Override

@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotoAlbumsTable;
+import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.entities.PhotoAlbum;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
@@ -50,7 +52,6 @@ public class LocalAlbumSource {
         } else {
             Logger.d("photoAlbum " + photoAlbum.id + " exists");
             if (photoAlbum.updated != oldAlbum.updated) {
-
                 ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum);
                 if (contentValues.size() > 0) {
                     db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
@@ -62,8 +63,20 @@ public class LocalAlbumSource {
     }
 
 
-    public void deleteAlbum() {
-
+    public void deleteAlbum(PhotoAlbum photoAlbum) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        if (getAlbumById(photoAlbum.id) != null && !TextUtils.isEmpty(photoAlbum.filePath)) {
+            db.beginTransaction();
+            try {
+                String[] whereArgs = {String.valueOf(photoAlbum.id)};
+                db.delete(PhotosTable.TABLE_NAME, PhotosTable.ALBUM_ID + " = ?", whereArgs);
+                db.delete(PhotoAlbumsTable.TABLE_NAME, BaseColumns._ID + " = ?", whereArgs);
+                FileManager.deleteAlbumDirectory(photoAlbum.filePath);
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+        }
     }
 
     public void deleteAlbums() {
