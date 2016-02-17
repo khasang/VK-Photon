@@ -44,17 +44,21 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final ImageView albumThumbImageView;
         final TextView albumTitleTextView;
+        final TextView albumPhotoCountTextView;
         PhotoAlbum photoAlbum;
 
         public ViewHolder(View itemView) {
             super(itemView);
             albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
             albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
+            albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
         }
 
         public void bindPhotoAlbum(final PhotoAlbum photoAlbum) {
             this.photoAlbum = photoAlbum;
             albumTitleTextView.setText(photoAlbum.title);
+            String photoCount = albumPhotoCountTextView.getContext().getString(R.string.count_of_photos_in_album, photoAlbum.size);
+            albumPhotoCountTextView.setText(photoCount);
             if (photoAlbum.thumb_id != 0) {
                 loadThumb(photoAlbum);
             }

@@ -81,7 +81,7 @@ public class LocalPhotoSource {
     }
 
     public Photo getPhotoById(int id) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
         Photo photo = null;
         Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, BaseColumns._ID + " = ?", new String[]{String.valueOf(id)}, null, null, null);
         cursor.moveToFirst();

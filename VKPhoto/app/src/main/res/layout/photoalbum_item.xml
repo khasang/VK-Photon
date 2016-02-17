@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/vk_grey_color">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vk_grey_color">
 
 
     <LinearLayout
@@ -16,9 +16,9 @@
 
         <ImageView
             android:id="@+id/album_thumb"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="5dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_margin="5dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,15 +34,16 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/title_of_album"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_count_of_albums"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:text="@string/count_of_photos_in_album"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
         </LinearLayout>
 
     </LinearLayout>
