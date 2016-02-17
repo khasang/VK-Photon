@@ -10,12 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.domain.DownloadFileAsyncTask;
 import com.khasang.vkphoto.data.RequestMaker;
+import com.khasang.vkphoto.domain.DownloadFileAsyncTask;
 import com.khasang.vkphoto.domain.entities.Photo;
 import com.khasang.vkphoto.domain.entities.PhotoAlbum;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.JsonUtils;
+import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
@@ -59,24 +61,32 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
         }
 
         private void loadThumb(final PhotoAlbum photoAlbum) {
-            RequestMaker.getPhotoAlbumThumb(new VKRequest.VKRequestListener() {
-                @Override
-                public void onComplete(VKResponse response) {
-                    super.onComplete(response);
-                    try {
-                        Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
-                        new DownloadFileAsyncTask(albumThumbImageView, photo, photoAlbum).execute(photo.getUrlToMaxPhoto());
-                    } catch (Exception e) {
-                        EventBus.getDefault().postSticky(new ErrorEvent(e.toString()));
+            if (photoAlbum.thumb_id != Constants.NULL) {
+                RequestMaker.getPhotoAlbumThumb(new VKRequest.VKRequestListener() {
+                    @Override
+                    public void onComplete(VKResponse response) {
+                        super.onComplete(response);
+                        try {
+                            Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
+                            new DownloadFileAsyncTask(albumThumbImageView, photo, photoAlbum).execute(photo.getUrlToMaxPhoto());
+                        } catch (Exception e) {
+                            sendError(e.toString());
+                        }
                     }
-                }
 
-                @Override
-                public void onError(VKError error) {
-                    super.onError(error);
-                    EventBus.getDefault().postSticky(new ErrorEvent(error.toString()));
-                }
-            }, photoAlbum);
+                    @Override
+                    public void onError(VKError error) {
+                        super.onError(error);
+                        sendError(error.toString());
+                    }
+
+                    public void sendError(String s) {
+                        EventBus.getDefault().postSticky(new ErrorEvent(s));
+                    }
+                }, photoAlbum);
+            } else {
+                Picasso.with(albumThumbImageView.getContext()).load(R.drawable.vk_gray_transparent_shape);
+            }
         }
     }
 }

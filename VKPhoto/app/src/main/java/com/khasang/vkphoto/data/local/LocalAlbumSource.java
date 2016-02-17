@@ -49,11 +49,14 @@ public class LocalAlbumSource {
             saveAlbum(photoAlbum);
         } else {
             Logger.d("photoAlbum " + photoAlbum.id + " exists");
-            ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum);
-            if (contentValues.size() > 0) {
-                db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
-                        new String[]{String.valueOf(photoAlbum.id)});
-                EventBus.getDefault().postSticky(new LocalAlbumEvent());
+            if (photoAlbum.updated != oldAlbum.updated) {
+
+                ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum);
+                if (contentValues.size() > 0) {
+                    db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
+                            new String[]{String.valueOf(photoAlbum.id)});
+                    EventBus.getDefault().postSticky(new LocalAlbumEvent());
+                }
             }
         }
     }

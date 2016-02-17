@@ -6,4 +6,6 @@ public class Constants {
     public static final int SYNC_SUCCESS = 2;
     public static final int SYNC_FAILED = 3;
     public static final int SYNC_DELETED = -1;
+
+    public static final int NULL = -1;
 }
