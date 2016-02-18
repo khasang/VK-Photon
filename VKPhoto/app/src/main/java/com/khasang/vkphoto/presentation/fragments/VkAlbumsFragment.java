@@ -17,9 +17,9 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.AlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
@@ -58,12 +58,11 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (tv_count_of_albums.getVisibility() == View.INVISIBLE) {
-                    tv_count_of_albums.setVisibility(View.VISIBLE);
-                }
+//                if (tv_count_of_albums.getVisibility() == View.INVISIBLE) {
+//                    tv_count_of_albums.setVisibility(View.VISIBLE);
+//                }
                 vKAlbumsPresenter.getAllAlbums();
                 int networkType = NetWorkUtils.getNetworkType(getContext());
-
                 //check internet connection
                 if (networkType == ConnectivityManager.TYPE_WIFI) {
                     Logger.d("Connection WiFi");
@@ -94,11 +93,6 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public void onStop() {
         super.onStop();
         vKAlbumsPresenter.onStop();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override

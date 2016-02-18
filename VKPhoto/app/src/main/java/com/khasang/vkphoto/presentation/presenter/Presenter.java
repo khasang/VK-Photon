@@ -1,21 +1,10 @@
 package com.khasang.vkphoto.presentation.presenter;
 
-public abstract class Presenter {
+public interface Presenter {
 
-    /**
-     * Called when the presenter is initialized, this method represents the start of the presenter
-     * lifecycle.
-     */
-    public abstract void initialize();
+    void initialize();
 
-    /**
-     * Called when the presenter is resumed. After the initialization and when the presenter comes
-     * from a pause state.
-     */
-    public abstract void resume();
+    void onStart();
 
-    /**
-     * Called when the presenter is paused.
-     */
-    public abstract void pause();
+    void onStop();
 }

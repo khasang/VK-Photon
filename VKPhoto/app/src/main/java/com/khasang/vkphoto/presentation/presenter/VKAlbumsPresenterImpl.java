@@ -2,12 +2,12 @@ package com.khasang.vkphoto.presentation.presenter;
 
 import android.content.Context;
 
-import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
-import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractorImpl;
-import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
+import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractorImpl;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 
@@ -37,6 +37,11 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     }
 
     @Override
+    public void initialize() {
+
+    }
+
+    @Override
     public void onStart() {
         EventBus.getDefault().register(this);
     }
@@ -47,7 +52,7 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSaveAlbumEvent(GetVkSaveAlbumEvent getVkSaveAlbumEvent) {
+    public void onGetVkSaveAlbumEvent(GetVkSaveAlbumEvent getVkSaveAlbumEvent) {
         vkAlbumsView.displayVkSaveAlbum(getVkSaveAlbumEvent.photoAlbum);
     }
 
