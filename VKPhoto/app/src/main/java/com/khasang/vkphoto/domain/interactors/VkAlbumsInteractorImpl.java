@@ -5,7 +5,8 @@ import android.content.Context;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.services.SyncService;
+import com.khasang.vkphoto.domain.services.SyncServiceImpl;
+import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 
 import org.greenrobot.eventbus.EventBus;
@@ -16,7 +17,7 @@ import org.greenrobot.eventbus.EventBus;
  *
  * @see VkAlbumsInteractor
  * @see VKAlbumsPresenterImpl
- * @see com.khasang.vkphoto.services.SyncServiceImpl
+ * @see SyncServiceImpl
  */
 public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     private SyncServiceProvider syncServiceProvider;

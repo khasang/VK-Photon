@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.services;
+package com.khasang.vkphoto.domain.services;
 
 
 import com.khasang.vkphoto.presentation.model.Photo;

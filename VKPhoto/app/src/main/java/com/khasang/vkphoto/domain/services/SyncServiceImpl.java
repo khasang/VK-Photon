@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.services;
+package com.khasang.vkphoto.domain.services;
 
 import android.app.Service;
 import android.content.Intent;

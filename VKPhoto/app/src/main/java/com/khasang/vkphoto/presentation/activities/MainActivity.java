@@ -22,8 +22,8 @@ import android.widget.Toast;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
-import com.khasang.vkphoto.services.SyncService;
-import com.khasang.vkphoto.services.SyncServiceImpl;
+import com.khasang.vkphoto.domain.services.SyncService;
+import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.GalleryFragment;
 import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
 import com.khasang.vkphoto.util.Logger;

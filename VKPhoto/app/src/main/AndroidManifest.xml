@@ -30,7 +30,7 @@
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />
 
-        <service android:name=".services.SyncServiceImpl" />
+        <service android:name=".domain.services.SyncServiceImpl" />
     </application>
 
 </manifest>
