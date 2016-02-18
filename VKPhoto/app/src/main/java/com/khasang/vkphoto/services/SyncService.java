@@ -1,8 +1,8 @@
 package com.khasang.vkphoto.services;
 
 
-import com.khasang.vkphoto.domain.entities.Photo;
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
+import com.khasang.vkphoto.presentation.model.Photo;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 /**
  * интерфейс сервиса синхронизации

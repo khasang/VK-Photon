@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.ui.presenter;
+package com.khasang.vkphoto.presentation.presenter;
 
 public interface VKAlbumsPresenter {
     void saveAlbum();

@@ -2,7 +2,7 @@ package com.khasang.vkphoto.data;
 
 import android.support.annotation.NonNull;
 
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;

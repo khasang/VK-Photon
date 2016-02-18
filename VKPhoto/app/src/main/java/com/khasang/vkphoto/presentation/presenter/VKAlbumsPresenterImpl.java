@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.ui.presenter;
+package com.khasang.vkphoto.presentation.presenter;
 
 import android.content.Context;
 
@@ -8,8 +8,8 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
-import com.khasang.vkphoto.ui.activities.Navigator;
-import com.khasang.vkphoto.ui.view.VkAlbumsView;
+import com.khasang.vkphoto.presentation.activities.Navigator;
+import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

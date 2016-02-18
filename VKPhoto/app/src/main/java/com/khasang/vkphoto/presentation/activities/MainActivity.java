@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.ui.activities;
+package com.khasang.vkphoto.presentation.activities;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -24,8 +24,8 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.services.SyncService;
 import com.khasang.vkphoto.services.SyncServiceImpl;
-import com.khasang.vkphoto.ui.fragments.GalleryFragment;
-import com.khasang.vkphoto.ui.fragments.VkAlbumsFragment;
+import com.khasang.vkphoto.presentation.fragments.GalleryFragment;
+import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.VKAccessToken;

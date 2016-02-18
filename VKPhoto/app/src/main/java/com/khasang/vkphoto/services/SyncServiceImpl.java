@@ -9,8 +9,8 @@ import android.support.annotation.Nullable;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
-import com.khasang.vkphoto.domain.entities.Photo;
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
+import com.khasang.vkphoto.presentation.model.Photo;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.util.Constants;
 

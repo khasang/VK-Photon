@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.domain.events;
 
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 import java.util.List;
 

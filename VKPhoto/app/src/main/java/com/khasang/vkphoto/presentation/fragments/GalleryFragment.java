@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.ui.fragments;
+package com.khasang.vkphoto.presentation.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,8 +19,6 @@ public class GalleryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View galleryAlbumsView = inflater.inflate(R.layout.fragment_gallery_albums, null);
-        return galleryAlbumsView;
-
+        return inflater.inflate(R.layout.fragment_gallery_albums, null);
     }
 }

@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.ui.activities;
+package com.khasang.vkphoto.presentation.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.ui.fragments.VkAlbumsFragment;
+import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
 
 public class Navigator {
     private final Context activityContext;

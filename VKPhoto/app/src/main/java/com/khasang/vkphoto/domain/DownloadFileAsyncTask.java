@@ -4,9 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
-import com.khasang.vkphoto.domain.entities.Photo;
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
+import com.khasang.vkphoto.presentation.model.Photo;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -17,21 +17,22 @@ public class DownloadFileAsyncTask extends AsyncTask<String, Integer, File> {
     private PhotoAlbum photoAlbum;
     private Photo photo;
     private Context context;
-//    private ProgressDialog mProgressDialog;
+    private LocalPhotoSource localPhotoSource;
+    //    private ProgressDialog mProgressDialog;
 
     public DownloadFileAsyncTask(ImageView imageView, Photo photo, PhotoAlbum photoAlbum) {
         this.imageViewWeakReference = new WeakReference<>(imageView);
         this.context = imageView.getContext().getApplicationContext();
         this.photoAlbum = photoAlbum;
         this.photo = photo;
-//        mProgressDialog = new ProgressDialog(imageView.getContext());
-
+        localPhotoSource = new LocalPhotoSource(context);
     }
 
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        loadImage(localPhotoSource.getLocalPhoto(photo));
 //        mProgressDialog.setMessage("Downloading");
 //        mProgressDialog.setIndeterminate(false);
 //        mProgressDialog.setMax(100);
@@ -42,12 +43,16 @@ public class DownloadFileAsyncTask extends AsyncTask<String, Integer, File> {
 
     @Override
     protected File doInBackground(String... aurl) {
-        return new LocalPhotoSource(context).getPhotoFile(photo, photoAlbum);
+        return localPhotoSource.getPhotoFile(photo, photoAlbum);
     }
 
     @Override
     protected void onPostExecute(File file) {
         super.onPostExecute(file);
+        loadImage(file);
+    }
+
+    private void loadImage(File file) {
         if (file != null && file.exists() && imageViewWeakReference.get() != null) {
             Picasso.with(imageViewWeakReference.get().getContext())
                     .load(file)

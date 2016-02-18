@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.domain.interactors;
 
-import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenterImpl;
+import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 
 /**
  * Интерфейс исполнителя запросов к службе синхронизации.

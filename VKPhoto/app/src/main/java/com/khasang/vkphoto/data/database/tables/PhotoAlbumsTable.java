@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 public class PhotoAlbumsTable {
     public static final String TABLE_NAME = "photoalbums";

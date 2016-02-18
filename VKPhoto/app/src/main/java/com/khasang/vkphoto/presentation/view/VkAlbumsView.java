@@ -1,6 +1,6 @@
-package com.khasang.vkphoto.ui.view;
+package com.khasang.vkphoto.presentation.view;
 
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 public interface VkAlbumsView {
     void displayVkSaveAlbum(PhotoAlbum photoAlbum);

@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.ui.fragments;
+package com.khasang.vkphoto.presentation.fragments;
 
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -17,12 +17,12 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.AlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
-import com.khasang.vkphoto.ui.activities.Navigator;
-import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenter;
-import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenterImpl;
-import com.khasang.vkphoto.ui.view.VkAlbumsView;
+import com.khasang.vkphoto.presentation.activities.Navigator;
+import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
+import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
+import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.NetWorkUtils;
 import com.khasang.vkphoto.util.ToastUtils;

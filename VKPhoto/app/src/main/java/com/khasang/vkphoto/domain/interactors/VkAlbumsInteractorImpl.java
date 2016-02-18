@@ -6,7 +6,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.services.SyncService;
-import com.khasang.vkphoto.ui.presenter.VKAlbumsPresenterImpl;
+import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 
 import org.greenrobot.eventbus.EventBus;
 

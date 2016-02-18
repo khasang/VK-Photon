@@ -5,7 +5,7 @@ import com.khasang.vkphoto.services.SyncService;
 /**
  * Интерфейс, который предоставляет ссылку на Bind Service
  *
- * @see com.khasang.vkphoto.ui.activities.MainActivity
+ * @see com.khasang.vkphoto.presentation.activities.MainActivity
  */
 public interface SyncServiceProvider {
     SyncService getSyncService();

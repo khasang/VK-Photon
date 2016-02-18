@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.domain.entities;
+package com.khasang.vkphoto.presentation.model;
 
 import android.database.Cursor;
 import android.os.Parcel;

@@ -12,9 +12,9 @@ import android.widget.TextView;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.domain.DownloadFileAsyncTask;
-import com.khasang.vkphoto.domain.entities.Photo;
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.presentation.model.Photo;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.squareup.picasso.Picasso;
@@ -24,10 +24,16 @@ import com.vk.sdk.api.VKResponse;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbumCursorAdapter.ViewHolder> {
+    private ExecutorService executor;
 
     public PhotoAlbumCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor);
+        executor = Executors.newCachedThreadPool();
     }
 
     @Override
@@ -38,20 +44,22 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.photoalbum_item, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, executor);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final ImageView albumThumbImageView;
         final TextView albumTitleTextView;
         final TextView albumPhotoCountTextView;
+        private Executor executor;
         PhotoAlbum photoAlbum;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, Executor executor) {
             super(itemView);
             albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
             albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
             albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
+            this.executor = executor;
         }
 
         public void bindPhotoAlbum(final PhotoAlbum photoAlbum) {
@@ -59,9 +67,7 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
             albumTitleTextView.setText(photoAlbum.title);
             String photoCount = albumPhotoCountTextView.getContext().getString(R.string.count_of_photos_in_album, photoAlbum.size);
             albumPhotoCountTextView.setText(photoCount);
-            if (photoAlbum.thumb_id != 0) {
-                loadThumb(photoAlbum);
-            }
+            loadThumb(photoAlbum);
         }
 
         private void loadThumb(final PhotoAlbum photoAlbum) {
@@ -72,7 +78,7 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
                         super.onComplete(response);
                         try {
                             Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
-                            new DownloadFileAsyncTask(albumThumbImageView, photo, photoAlbum).execute(photo.getUrlToMaxPhoto());
+                            new DownloadFileAsyncTask(albumThumbImageView, photo, photoAlbum).executeOnExecutor(executor, photo.getUrlToMaxPhoto());
                         } catch (Exception e) {
                             sendError(e.toString());
                         }
@@ -89,7 +95,7 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
                     }
                 }, photoAlbum);
             } else {
-                Picasso.with(albumThumbImageView.getContext()).load(R.drawable.vk_gray_transparent_shape);
+                Picasso.with(albumThumbImageView.getContext()).load(R.drawable.vk_gray_transparent_shape).into(albumThumbImageView);
             }
         }
     }

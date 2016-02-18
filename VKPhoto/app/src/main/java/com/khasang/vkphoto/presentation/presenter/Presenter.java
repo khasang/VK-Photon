@@ -1,4 +1,4 @@
-package com.valyakinaleksey.vkapitest.ui.presenter;
+package com.khasang.vkphoto.presentation.presenter;
 
 public abstract class Presenter {
 

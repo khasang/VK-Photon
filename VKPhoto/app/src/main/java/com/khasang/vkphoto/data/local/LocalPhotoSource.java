@@ -8,9 +8,9 @@ import android.provider.BaseColumns;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
-import com.khasang.vkphoto.domain.entities.Photo;
-import com.khasang.vkphoto.domain.entities.PhotoAlbum;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.presentation.model.Photo;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
 
@@ -46,17 +46,16 @@ public class LocalPhotoSource {
 
 
     public File getPhotoFile(Photo photo, PhotoAlbum photoAlbum) {
+        File file = getLocalPhoto(photo);
+        return file != null ? file : savePhotoToAlbum(photo, photoAlbum);
+    }
+
+    public File getLocalPhoto(Photo photo) {
         File file;
         Photo localPhoto = getPhotoById(photo.id);
-        if (localPhoto == null) {
-            return savePhotoToAlbum(photo, photoAlbum);
-        } else {
-            file = new File(localPhoto.filePath);
-            if (!file.exists()) {
-                return savePhotoToAlbum(photo, photoAlbum);
-            }
-        }
-        return file;
+        if (localPhoto == null) return null;
+        file = new File(localPhoto.filePath);
+        return file.exists() ? file : null;
     }
 
     public void savePhotos() {
