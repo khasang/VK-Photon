@@ -57,6 +57,8 @@ public class DownloadFileAsyncTask extends AsyncTask<String, Integer, File> {
             Picasso.with(imageViewWeakReference.get().getContext())
                     .load(file)
                     .into(imageViewWeakReference.get());
+//            VKPhotoSource vkPhotoSource = new VKPhotoSource();
+//            vkPhotoSource.savePhotoToAlbum(file,photoAlbum);
         }
     }
 

@@ -4,9 +4,12 @@ import android.support.annotation.NonNull;
 
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
+
+import java.io.File;
 
 public class RequestMaker {
 
@@ -26,6 +29,11 @@ public class RequestMaker {
         final VKRequest request = getVkRequest("photos.createAlbum", VKParameters.from("title", title,
                 "description", description, "privacy", privacy, "comment_privacy", comment_privacy));
         request.executeWithListener(vkRequestListener);
+    }
+
+    public static void uploadPhoto(File file, PhotoAlbum photoAlbum, VKRequest.VKRequestListener vkRequestListener) {
+        VKRequest vkRequest = VKApi.uploadAlbumPhotoRequest(file, photoAlbum.id, 0);
+        vkRequest.executeWithListener(vkRequestListener);
     }
 
     public static void getUploadServer(VKRequest.VKRequestListener vkRequestListener, int albumId) {

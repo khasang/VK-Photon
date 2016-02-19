@@ -15,7 +15,7 @@ public class JsonUtils {
         return jsonObject.getJSONObject("response").getJSONArray("items");
     }
 
-    public static JSONObject getJsonObject(JSONObject jsonObject) throws JSONException {
+    public static JSONObject getJsonResponse(JSONObject jsonObject) throws JSONException {
         return jsonObject.getJSONObject("response");
     }
 
@@ -28,6 +28,7 @@ public class JsonUtils {
         }
         return photoAlbum;
     }
+
 
     public static <T> List<T> getItems(JSONObject jsonObject, Class<T> tClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, JSONException {
         JSONArray jsonArray = getJsonArray(jsonObject);
