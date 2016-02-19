@@ -28,6 +28,8 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.NetWorkUtils;
 import com.khasang.vkphoto.util.ToastUtils;
 
+import java.util.List;
+
 public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = VkAlbumsFragment.class.getSimpleName();
     private VKAlbumsPresenter vKAlbumsPresenter;
@@ -55,7 +57,6 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                vKAlbumsPresenter.getAllAlbums();
                 //check internet connection
                 int networkType = NetWorkUtils.getNetworkType(getContext());
                 if (networkType == ConnectivityManager.TYPE_WIFI) {
@@ -64,6 +65,14 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
                     Logger.d("Connection mobile");
                 } else {
                     Logger.d("no internet connection");
+                }
+                List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+                Cursor cursor = adapter.getCursor();
+                for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
+                    Integer position = selectedPositions.get(i);
+                    cursor.moveToPosition(position);
+                    PhotoAlbum photoAlbum = new PhotoAlbum(cursor);
+                    Logger.d(photoAlbum.title + " " + photoAlbum.id);
                 }
             }
         });
@@ -120,6 +129,12 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         } else {
             adapter.changeCursor(data);
         }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        vKAlbumsPresenter.getAllAlbums();
     }
 
     @Override
