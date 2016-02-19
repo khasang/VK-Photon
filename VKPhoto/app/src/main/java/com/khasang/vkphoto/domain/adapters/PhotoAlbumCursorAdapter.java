@@ -2,13 +2,14 @@ package com.khasang.vkphoto.domain.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bignerdranch.android.multiselector.MultiSelector;
+import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.domain.DownloadFileAsyncTask;
@@ -30,10 +31,12 @@ import java.util.concurrent.Executors;
 
 public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbumCursorAdapter.ViewHolder> {
     private ExecutorService executor;
+    private MultiSelector multiSelector;
 
-    public PhotoAlbumCursorAdapter(Context context, Cursor cursor) {
+    public PhotoAlbumCursorAdapter(Context context, Cursor cursor, MultiSelector multiSelector) {
         super(context, cursor);
         executor = Executors.newCachedThreadPool();
+        this.multiSelector = multiSelector;
     }
 
     @Override
@@ -44,22 +47,27 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.photoalbum_item, parent, false);
-        return new ViewHolder(view, executor);
+        return new ViewHolder(view, executor, multiSelector);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends SwappingHolder implements View.OnLongClickListener, View.OnClickListener {
         final ImageView albumThumbImageView;
         final TextView albumTitleTextView;
         final TextView albumPhotoCountTextView;
-        private Executor executor;
+        final Executor executor;
+        final MultiSelector multiSelector;
         PhotoAlbum photoAlbum;
 
-        public ViewHolder(View itemView, Executor executor) {
-            super(itemView);
+        public ViewHolder(View itemView, Executor executor, MultiSelector multiSelector) {
+            super(itemView, multiSelector);
             albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
             albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
             albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
             this.executor = executor;
+            this.multiSelector = multiSelector;
+            itemView.setLongClickable(true);
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         public void bindPhotoAlbum(final PhotoAlbum photoAlbum) {
@@ -96,6 +104,26 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
                 }, photoAlbum);
             } else {
                 Picasso.with(albumThumbImageView.getContext()).load(R.drawable.vk_gray_transparent_shape).into(albumThumbImageView);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (!multiSelector.isSelectable()) { // (3)
+                multiSelector.setSelectable(true); // (4)
+                multiSelector.setSelected(this, true); // (5)
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (multiSelector.isSelectable()) {
+                multiSelector.tapSelection(this);
+                if (multiSelector.getSelectedPositions().size() == 0) {
+                    multiSelector.setSelectable(false);
+                }
             }
         }
     }

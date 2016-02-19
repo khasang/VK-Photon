@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.AlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
@@ -27,15 +28,12 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.NetWorkUtils;
 import com.khasang.vkphoto.util.ToastUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = VkAlbumsFragment.class.getSimpleName();
     private VKAlbumsPresenter vKAlbumsPresenter;
     private RecyclerView albumsRecyclerView;
-    private List<PhotoAlbum> albumsToSync;
     private PhotoAlbumCursorAdapter adapter;
+    private MultiSelector multiSelector;
 
     public VkAlbumsFragment() {
     }
@@ -44,9 +42,8 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        multiSelector = new MultiSelector();
         vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()), new Navigator(getActivity()), getContext());
-        albumsToSync = new ArrayList<>();
-        adapter = new PhotoAlbumCursorAdapter(getContext(), null);
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
     }
 
@@ -58,12 +55,9 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (tv_count_of_albums.getVisibility() == View.INVISIBLE) {
-//                    tv_count_of_albums.setVisibility(View.VISIBLE);
-//                }
                 vKAlbumsPresenter.getAllAlbums();
-                int networkType = NetWorkUtils.getNetworkType(getContext());
                 //check internet connection
+                int networkType = NetWorkUtils.getNetworkType(getContext());
                 if (networkType == ConnectivityManager.TYPE_WIFI) {
                     Logger.d("Connection WiFi");
                 } else if (networkType == ConnectivityManager.TYPE_MOBILE) {
@@ -120,7 +114,12 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        adapter.changeCursor(data);
+        if (adapter == null) {
+            adapter = new PhotoAlbumCursorAdapter(getContext(), data, multiSelector);
+            albumsRecyclerView.setAdapter(adapter);
+        } else {
+            adapter.changeCursor(data);
+        }
     }
 
     @Override
