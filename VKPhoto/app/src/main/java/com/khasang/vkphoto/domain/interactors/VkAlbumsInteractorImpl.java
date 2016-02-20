@@ -1,12 +1,9 @@
 package com.khasang.vkphoto.domain.interactors;
 
-import android.content.Context;
-
-import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.services.SyncServiceImpl;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
+import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 
 import org.greenrobot.eventbus.EventBus;
@@ -22,11 +19,9 @@ import org.greenrobot.eventbus.EventBus;
 public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     private SyncServiceProvider syncServiceProvider;
     private SyncService syncService;
-    private Context context;
 
-    public VkAlbumsInteractorImpl(SyncServiceProvider syncServiceProvider, Context context) {
+    public VkAlbumsInteractorImpl(SyncServiceProvider syncServiceProvider) {
         this.syncServiceProvider = syncServiceProvider;
-        this.context = context.getApplicationContext();
         setSyncService();
     }
 
@@ -62,7 +57,7 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     boolean checkSyncService() {
         if (syncService == null) {
             if (!setSyncService()) {
-                EventBus.getDefault().postSticky(new ErrorEvent(context.getString(R.string.sync_service_error)));
+                EventBus.getDefault().postSticky(new ErrorEvent("Sync Service error"));
                 return false;
             }
         }

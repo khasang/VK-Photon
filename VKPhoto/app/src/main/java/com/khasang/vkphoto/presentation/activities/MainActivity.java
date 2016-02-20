@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private boolean bound = false;
     private Intent intent;
     private SyncService syncService;
-    private Navigator navigator;
     private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -53,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initNavigator();
         initServiceConnection();
         loginVk();
         initViews();
@@ -78,11 +76,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         adapter.addFragment(new VkAlbumsFragment(), "VK Albums");
         adapter.addFragment(new GalleryFragment(), "Gallery Albums");
         viewPager.setAdapter(adapter);
-    }
-
-    private void initNavigator() {
-        navigator = new Navigator(this);
-//        navigator.navigateToMainFragment();
     }
 
     private void initViews() {
@@ -182,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
     @Override
     public void onBackPressed() {
-        navigator.navigateBack();
+        Navigator.navigateBack(getBaseContext());
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

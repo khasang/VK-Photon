@@ -56,6 +56,8 @@ public class DownloadFileAsyncTask extends AsyncTask<String, Integer, File> {
         if (file != null && file.exists() && imageViewWeakReference.get() != null) {
             Picasso.with(imageViewWeakReference.get().getContext())
                     .load(file)
+                    .placeholder(android.R.drawable.progress_horizontal)
+                    .error(android.R.drawable.stat_notify_error)
                     .into(imageViewWeakReference.get());
 //            VKPhotoSource vkPhotoSource = new VKPhotoSource();
 //            vkPhotoSource.savePhotoToAlbum(file,photoAlbum);
