@@ -21,13 +21,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />
 
-        <service android:name=".services.SyncServiceImpl"/>
+        <service android:name=".services.SyncServiceImpl" />
+
+        <activity android:name=".ui.activities.GalleryActivity" />
+        <activity android:name=".ui.activities.PhotoActivity"></activity>
     </application>
 
 </manifest>
