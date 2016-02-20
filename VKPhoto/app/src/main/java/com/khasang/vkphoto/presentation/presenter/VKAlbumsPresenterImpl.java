@@ -9,6 +9,7 @@ import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,6 +35,11 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     @Override
     public void getAllAlbums() {
         vkAlbumsInteractor.getAllAlbums();
+    }
+
+    @Override
+    public void goToPhotoAlbum(PhotoAlbum photoAlbum) {
+        navigator.navigateToVkAlbumFragment(photoAlbum);
     }
 
     @Override

@@ -46,13 +46,13 @@ public class LocalPhotoSource {
 
 
     public File getPhotoFile(Photo photo, PhotoAlbum photoAlbum) {
-        File file = getLocalPhoto(photo);
+        File file = getLocalPhoto(photo.id);
         return file != null ? file : savePhotoToAlbum(photo, photoAlbum);
     }
 
-    public File getLocalPhoto(Photo photo) {
+    public File getLocalPhoto(int photoId) {
         File file;
-        Photo localPhoto = getPhotoById(photo.id);
+        Photo localPhoto = getPhotoById(photoId);
         if (localPhoto == null) return null;
         file = new File(localPhoto.filePath);
         return file.exists() ? file : null;

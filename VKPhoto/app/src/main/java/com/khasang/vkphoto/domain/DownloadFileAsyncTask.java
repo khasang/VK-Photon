@@ -32,7 +32,7 @@ public class DownloadFileAsyncTask extends AsyncTask<String, Integer, File> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        loadImage(localPhotoSource.getLocalPhoto(photo));
+        loadImage(localPhotoSource.getLocalPhoto(photo.id));
 //        mProgressDialog.setMessage("Downloading");
 //        mProgressDialog.setIndeterminate(false);
 //        mProgressDialog.setMax(100);

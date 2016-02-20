@@ -22,7 +22,7 @@ import com.khasang.vkphoto.util.Logger;
 import java.util.List;
 
 public class Navigator {
-    private final Context activityContext;
+    private Context activityContext;
     private VKAlbumFragment vkAlbumFragment;
     private ViewPager viewPager;
     private TabLayout tabLayout;

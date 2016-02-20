@@ -23,6 +23,7 @@ import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
+import com.khasang.vkphoto.presentation.view.ActionModeVKAlbumsCallback;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.NetWorkUtils;
@@ -46,8 +47,6 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         multiSelector = new MultiSelector();
-        navigator = ((NavigatorProvider) getActivity()).getNavigator();
-        vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()), navigator, getContext());
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
     }
 
@@ -55,6 +54,8 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_vk_albums, container, false);
+        navigator = ((NavigatorProvider) getActivity()).getNavigator();
+        vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()), navigator, getContext());
         view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,7 +126,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (adapter == null) {
-            adapter = new PhotoAlbumCursorAdapter(getContext(), data, multiSelector, navigator);
+            adapter = new PhotoAlbumCursorAdapter(getContext(), data, multiSelector, new ActionModeVKAlbumsCallback(multiSelector, getActivity(), vKAlbumsPresenter), vKAlbumsPresenter);
             albumsRecyclerView.setAdapter(adapter);
         } else {
             adapter.changeCursor(data);

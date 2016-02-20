@@ -15,7 +15,7 @@ public class LocalAlbumsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.photoalbum_item, container, false);
+        View view = inflater.inflate(R.layout.fragment_vk_albums, container, false);
         return view;
     }
 }
