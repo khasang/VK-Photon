@@ -13,10 +13,13 @@ import android.widget.FrameLayout;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.ViewPagerAdapter;
+import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Logger;
+
+import java.util.List;
 
 public class Navigator {
     private final Context activityContext;
@@ -65,11 +68,16 @@ public class Navigator {
         FragmentManager fragmentManager = getFragmentManager();
         if (fragmentManager.getBackStackEntryCount() > 0) {
             fragmentManager.popBackStack();
-            if (fragmentManager.getBackStackEntryCount() == 0) {
-                viewPager.setVisibility(View.VISIBLE);
-                tabLayout.setVisibility(View.VISIBLE);
-                fragmentContainer.setVisibility(View.GONE);
+            List<Fragment> fragments = fragmentManager.getFragments();
+            for (int i = fragments.size() - 2; i >= 0; i--) {
+                Fragment fragment = fragments.get(i);
+                if (!(fragment instanceof VkAlbumsFragment) && !(fragment instanceof LocalAlbumsFragment)) {
+                    return;
+                }
             }
+            viewPager.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.VISIBLE);
+            fragmentContainer.setVisibility(View.GONE);
         } else {
             ((Activity) activityContext).finish();
         }
@@ -102,7 +110,7 @@ public class Navigator {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
         adapter.addFragment(new VkAlbumsFragment(), "VK Albums");
-        adapter.addFragment(VKAlbumFragment.newInstance(new PhotoAlbum()), "Gallery Albums");
+        adapter.addFragment(new LocalAlbumsFragment(), "Gallery Albums");
         viewPager.setAdapter(adapter);
     }
 }
