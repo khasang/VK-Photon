@@ -71,6 +71,7 @@ public class LocalAlbumSource {
                 db.delete(PhotoAlbumsTable.TABLE_NAME, BaseColumns._ID + " = ?", whereArgs);
                 FileManager.deleteAlbumDirectory(photoAlbum.filePath);
                 db.setTransactionSuccessful();
+                EventBus.getDefault().postSticky(new LocalAlbumEvent());
             } finally {
                 db.endTransaction();
             }

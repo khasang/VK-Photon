@@ -56,16 +56,17 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
      */
     @Override
     public void getAllAlbums() {
-        checkSyncService();
-        syncService.getAllAlbums();
+        if (checkSyncService()) syncService.getAllAlbums();
     }
 
-    void checkSyncService() {
+    boolean checkSyncService() {
         if (syncService == null) {
             if (!setSyncService()) {
                 EventBus.getDefault().postSticky(new ErrorEvent(context.getString(R.string.sync_service_error)));
+                return false;
             }
         }
+        return true;
     }
 }
       
