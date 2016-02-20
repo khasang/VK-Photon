@@ -10,6 +10,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.domain.DownloadFileAsyncTask;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
@@ -24,20 +25,22 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.concurrent.Executor;
 
 public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongClickListener, View.OnClickListener {
-    final ImageView albumThumbImageView;
-    final TextView albumTitleTextView;
-    final TextView albumPhotoCountTextView;
-    final Executor executor;
-    final MultiSelector multiSelector;
+    final private ImageView albumThumbImageView;
+    final private TextView albumTitleTextView;
+    final private TextView albumPhotoCountTextView;
+    final private Executor executor;
+    final private MultiSelector multiSelector;
+    final private Navigator navigator;
     PhotoAlbum photoAlbum;
 
-    public PhotoAlbumViewHolder(View itemView, Executor executor, MultiSelector multiSelector) {
+    public PhotoAlbumViewHolder(View itemView, Executor executor, MultiSelector multiSelector, Navigator navigator) {
         super(itemView, multiSelector);
         albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
         albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
         this.executor = executor;
         this.multiSelector = multiSelector;
+        this.navigator = navigator;
         itemView.setLongClickable(true);
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
@@ -97,6 +100,8 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
             if (multiSelector.getSelectedPositions().size() == 0) {
                 multiSelector.setSelectable(false);
             }
+        } else {
+            navigator.navigateToVkAlbumFragment(photoAlbum);
         }
     }
 }

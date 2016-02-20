@@ -11,13 +11,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.AlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
+import com.khasang.vkphoto.domain.interfaces.NavigatorProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -34,6 +34,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     private RecyclerView albumsRecyclerView;
     private PhotoAlbumCursorAdapter adapter;
     private MultiSelector multiSelector;
+    private Navigator navigator;
 
     public VkAlbumsFragment() {
     }
@@ -43,7 +44,8 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         multiSelector = new MultiSelector();
-        vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()), new Navigator(getActivity()), getContext());
+        navigator = ((NavigatorProvider) getActivity()).getNavigator();
+        vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()), navigator, getContext());
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
     }
 
@@ -51,7 +53,6 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_vk_albums, container, false);
-        final TextView tv_count_of_albums = (TextView) view.findViewById(R.id.tv_count_of_albums);
         view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +116,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (adapter == null) {
-            adapter = new PhotoAlbumCursorAdapter(getContext(), data, multiSelector);
+            adapter = new PhotoAlbumCursorAdapter(getContext(), data, multiSelector, navigator);
             albumsRecyclerView.setAdapter(adapter);
         } else {
             adapter.changeCursor(data);
@@ -127,5 +128,10 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         adapter.changeCursor(null);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Logger.d("onResume VkAlbumsFragment");
+    }
 }
 

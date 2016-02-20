@@ -3,16 +3,27 @@ package com.khasang.vkphoto.presentation.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.adapters.ViewPagerAdapter;
+import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.util.Logger;
 
 public class Navigator {
     private final Context activityContext;
-    private VkAlbumsFragment vkAlbumsFragment;
+    private VKAlbumFragment vkAlbumFragment;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
+    private FrameLayout fragmentContainer;
 
     public Navigator(Context activityContext) {
         this.activityContext = activityContext;
@@ -30,26 +41,68 @@ public class Navigator {
         return fragment != null && fragment.isAdded();
     }
 
-    public void navigateToMainFragment() {
-        if (!isFragmentAvailable(vkAlbumsFragment)) {
-            vkAlbumsFragment = new VkAlbumsFragment();
+    public void navigateToVkAlbumFragment(PhotoAlbum photoAlbum) {
+        if (!isFragmentAvailable(vkAlbumFragment)) {
+            vkAlbumFragment = VKAlbumFragment.newInstance(photoAlbum);
         }
-        navigateToFragment(vkAlbumsFragment, VkAlbumsFragment.TAG);
+        navigateToFragmentWithBackStack(vkAlbumFragment, VkAlbumsFragment.TAG);
     }
 
-    private void navigateToFragment(Fragment fragment, String tag) {
-        getFragmentManager().beginTransaction().add(R.id.fragment_container, fragment, tag).commit();
-    }
+//    private void navigateToFragment(Fragment fragment, String tag) {
+//        getFragmentManager().beginTransaction().add(R.id.fragment_container, fragment, tag).commit();
+//    }
 
     private void navigateToFragmentWithBackStack(Fragment fragment, String tag) {
-        getFragmentManager().beginTransaction().add(R.id.fragment_container, fragment, tag).addToBackStack(tag).commit();
+        if (viewPager.getVisibility() == View.VISIBLE) {
+            viewPager.setVisibility(View.GONE);
+            tabLayout.setVisibility(View.GONE);
+            fragmentContainer.setVisibility(View.VISIBLE);
+        }
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment, tag).addToBackStack(tag).commit();
     }
 
     public void navigateBack() {
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
-            getFragmentManager().popBackStack();
+        FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack();
+            if (fragmentManager.getBackStackEntryCount() == 0) {
+                viewPager.setVisibility(View.VISIBLE);
+                tabLayout.setVisibility(View.VISIBLE);
+                fragmentContainer.setVisibility(View.GONE);
+            }
         } else {
             ((Activity) activityContext).finish();
         }
+    }
+
+    public void initViewPager() {
+        fragmentContainer = (FrameLayout) ((Activity) activityContext).findViewById(R.id.fragment_container);
+        viewPager = (ViewPager) ((Activity) activityContext).findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+        tabLayout = (TabLayout) ((Activity) activityContext).findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Logger.d("page " + position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
+        adapter.addFragment(new VkAlbumsFragment(), "VK Albums");
+        adapter.addFragment(VKAlbumFragment.newInstance(new PhotoAlbum()), "Gallery Albums");
+        viewPager.setAdapter(adapter);
     }
 }
