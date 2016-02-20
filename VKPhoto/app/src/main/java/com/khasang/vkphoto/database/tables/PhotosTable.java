@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.database.tables;
 
-import com.khasang.vkphoto.database.MySQliteHelper;
+import com.khasang.vkphoto.database.MySqliteHelper;
 
 public class PhotosTable {
     public static final String TABLE_NAME = "photos";
@@ -16,7 +16,7 @@ public class PhotosTable {
     public static final String FILE_PATH = "filepath";
     public static final String SYNC_STATUS = "sync_status";
 
-    public static final String FIELDS = MySQliteHelper.PRIMARY_KEY
+    public static final String FIELDS = MySqliteHelper.PRIMARY_KEY
             + ALBUM_ID + " integer, "
             + OWNER_ID + " integer, "
             + WIDTH + " integer, "

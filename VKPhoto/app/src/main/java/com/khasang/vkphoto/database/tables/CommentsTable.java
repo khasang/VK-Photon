@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.database.tables;
 
-import com.khasang.vkphoto.database.MySQliteHelper;
+import com.khasang.vkphoto.database.MySqliteHelper;
 
 public class CommentsTable {
     public static final String TABLE_NAME = "comments";
@@ -13,7 +13,7 @@ public class CommentsTable {
     public static final String LIKES = "likes";
     public static final String PHOTO_ID = "photo_id";
 
-    public static final String FIELDS = MySQliteHelper.PRIMARY_KEY
+    public static final String FIELDS = MySqliteHelper.PRIMARY_KEY
             + FROM_ID + " integer, "
             + DATE + " integer, "
             + TEXT + " text, "

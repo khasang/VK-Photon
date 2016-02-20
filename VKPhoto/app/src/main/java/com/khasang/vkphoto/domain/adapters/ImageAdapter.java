@@ -1,16 +1,16 @@
 package com.khasang.vkphoto.domain.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.vk.sdk.api.model.VKApiPhoto;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by admin on 13.02.2016.
@@ -18,19 +18,19 @@ import java.util.ArrayList;
 public class ImageAdapter extends BaseAdapter {
 
     private Context context;
-    private ArrayList<Bitmap> bitmapList;
+    private List<String> urlList;
 
-    public ImageAdapter(Context context, ArrayList<Bitmap> bitmapList) {
+    public ImageAdapter(Context context, List<String> urlList) {
         this.context = context;
-        this.bitmapList = bitmapList;
+        this.urlList = urlList;
     }
 
     public int getCount() {
-        return this.bitmapList.size();
+        return this.urlList.size();
     }
 
-    public Bitmap getItem(int position) {
-        return bitmapList.get(position);
+    public String getItem(int position) {
+        return urlList.get(position);
     }
 
     public long getItemId(int position) {
@@ -47,7 +47,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageBitmap(this.bitmapList.get(position));
+        Picasso.with(context).load(urlList.get(position)).resize(200,400).into(imageView);
         return imageView;
     }
 }

@@ -2,13 +2,15 @@ package com.khasang.vkphoto.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.services.LoadImageService;
+import com.khasang.vkphoto.domain.adapters.ImageAdapter;
+import com.khasang.vkphoto.services.AllImagesService;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
@@ -20,13 +22,15 @@ import com.vk.sdk.api.model.VKList;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class GalleryActivity extends AppCompatActivity {
 
     private GridView imageGrid;
-    private LoadImageService imageService;
-    private String[] photoUrl;
+    private List<String> photoUrl;
+    private ImageAdapter imageAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,13 +46,12 @@ public class GalleryActivity extends AppCompatActivity {
         imageGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                System.out.println(photoUrl[position]);
                 Intent inten = new Intent(GalleryActivity.this, PhotoActivity.class);
-                inten.putExtra("photo", photoUrl[position]);
+                inten.putExtra("photo", photoUrl.get(position));
                 startActivity(inten);
+
             }
         });
-
     }
 
     private void requestByAlbumId(int userid, int albumid, int max) {
@@ -61,7 +64,6 @@ public class GalleryActivity extends AppCompatActivity {
                 try {
                     JSONArray jsonArray = response.json.getJSONObject("response").getJSONArray("items");
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        Logger.d(jsonArray.getJSONObject(i).toString());
                         photoList.add(new VKApiPhoto(jsonArray.getJSONObject(i)));
                         showInGridView();
                     }
@@ -71,23 +73,18 @@ public class GalleryActivity extends AppCompatActivity {
             }
 
             public void showInGridView() {
-                photoUrl = new String[photoList.size()];
-                for (int i = 0; i < photoList.size(); i++) {
-                    photoUrl[i] = photoList.get(i).photo_604;
+                photoUrl = new ArrayList<>();
+                for (VKApiPhoto temp : photoList) {
+                    photoUrl.add(temp.photo_604);
                 }
 
                 try {
-                    imageService = new LoadImageService(GalleryActivity.this);
-                    imageService.execute(photoUrl);
+                    imageAdapter = new ImageAdapter(GalleryActivity.this, photoUrl);
+                    imageGrid.setAdapter(imageAdapter);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
-    }
-
-
-    public void updateAdapter() {
-        imageGrid.setAdapter(imageService.getAdapter());
     }
 }
