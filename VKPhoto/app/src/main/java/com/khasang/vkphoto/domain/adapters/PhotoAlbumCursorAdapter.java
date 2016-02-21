@@ -10,7 +10,6 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
-import com.khasang.vkphoto.presentation.view.ActionModeVKAlbumsCallback;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
