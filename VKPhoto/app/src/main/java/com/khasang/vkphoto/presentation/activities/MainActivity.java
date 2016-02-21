@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
     @Override
     public void onBackPressed() {
-        Navigator.navigateBack(getBaseContext());
+        Navigator.navigateBack(this);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
