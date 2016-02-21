@@ -111,6 +111,11 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     }
 
     @Override
+    public Cursor getAdapterCursor() {
+        return adapter.getCursor();
+    }
+
+    @Override
     public void showError(String s) {
         ToastUtils.showError(s, getContext());
     }
@@ -123,7 +128,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (adapter == null) {
-            adapter = new PhotoAlbumCursorAdapter(getContext(), data, multiSelector,vKAlbumsPresenter);
+            adapter = new PhotoAlbumCursorAdapter(getContext(), data, multiSelector, vKAlbumsPresenter);
             albumsRecyclerView.setAdapter(adapter);
         } else {
             adapter.changeCursor(data);

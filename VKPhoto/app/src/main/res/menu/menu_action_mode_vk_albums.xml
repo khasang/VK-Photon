@@ -1,9 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".presentation.activities.MainActivity">
-    <item android:id="@+id/action_settings"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".presentation.activities.MainActivity">
+      <item android:id="@+id/action_sync_album"
           android:orderInCategory="100"
-          android:title="@string/action_settings"
-          app:showAsAction="never"/>
+          android:title="@string/sync_album"
+          app:showAsAction="always"/>
 </menu>

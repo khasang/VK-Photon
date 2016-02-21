@@ -1,5 +1,8 @@
 package com.khasang.vkphoto.domain.interactors;
 
+import android.database.Cursor;
+
+import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 
@@ -11,7 +14,7 @@ import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
  */
 //Todo расширить интерфейс необходимыми методами
 public interface VkAlbumsInteractor {
-    void saveAlbum();
+    void syncAlbums(MultiSelector multiSelector,Cursor cursor);
 
     void getAllAlbums();
 }

@@ -4,11 +4,12 @@ package com.khasang.vkphoto.domain.services;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
+import java.util.List;
+
 /**
  * интерфейс сервиса синхронизации
  */
 public interface SyncService {
-    void saveAlbum();
 
     void getAllAlbums();
 
@@ -22,7 +23,7 @@ public interface SyncService {
     /**
      * Синхронизирует альбом
      */
-    void syncAlbum(PhotoAlbum photoAlbum);
+    void syncAlbums(List<PhotoAlbum> photoAlbumList);
 
     /**
      * Получает фотографию

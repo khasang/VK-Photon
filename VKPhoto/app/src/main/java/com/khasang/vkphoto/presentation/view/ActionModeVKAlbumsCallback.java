@@ -27,7 +27,7 @@ public class ActionModeVKAlbumsCallback extends ModalMultiSelectorCallback {
     @Override
     public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
         super.onCreateActionMode(actionMode, menu);
-        menuInflater.inflate(R.menu.action_mode_vk_albums, menu);
+        menuInflater.inflate(R.menu.menu_action_mode_vk_albums, menu);
         return true;
     }
 

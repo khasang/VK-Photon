@@ -17,7 +17,7 @@ import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKPhotosPresenter;
 import com.khasang.vkphoto.presentation.presenter.VKPhotosPresenterImpl;
-import com.khasang.vkphoto.presentation.view.VkPhotosView;
+import com.khasang.vkphoto.presentation.view.VkAlbumView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
@@ -26,7 +26,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
-public class VKAlbumFragment extends Fragment implements VkPhotosView {
+public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public static final String TAG = VKAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
     private PhotoAlbum photoAlbum;
@@ -105,8 +105,7 @@ public class VKAlbumFragment extends Fragment implements VkPhotosView {
 
     @Subscribe
     public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
-        List<Photo> vkPhotoList = getVKPhotosEvent.photosList;
-        photoList = vkPhotoList;
+        photoList = getVKPhotosEvent.photosList;
         setAdapter();
     }
 

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
@@ -15,6 +14,7 @@ import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.util.Constants;
+import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,12 +47,23 @@ public class SyncServiceImpl extends Service implements SyncService {
         return binder;
     }
 
-    @Override
-    public void saveAlbum() {
+    public void syncAlbum(final PhotoAlbum photoAlbum) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                vKDataSource.getAlbumSource().saveAlbum();
+                vKDataSource.getPhotoSource().getPhotosByAlbumId(photoAlbum.id);
+            }
+        });
+    }
+    @Override
+    public void syncAlbums(final List<PhotoAlbum> photoAlbumList) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                for (PhotoAlbum  photoAlbum : photoAlbumList) {
+                    vKDataSource.getPhotoSource().getPhotosByAlbumId(photoAlbum.id);
+                    Logger.d(photoAlbum.title);
+                }
             }
         });
     }
@@ -111,15 +122,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         return false;
     }
 
-    /**
-     * Синхронизирует альбом
-     *
-     * @param photoAlbum объект альбома, который синхронизирует
-     */
-    @Override
-    public void syncAlbum(PhotoAlbum photoAlbum) {
 
-    }
 
     @Override
     public Photo getPhoto() {

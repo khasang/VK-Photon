@@ -1,7 +1,6 @@
 package com.khasang.vkphoto.domain.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +13,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-/**
- * Created by Anton on 21.02.2016.
- */
 public class VKPhotoAdapter extends BaseAdapter {
     private Context context;
     private List<Photo> photoList;

@@ -18,7 +18,7 @@ import java.util.List;
 
 public class VKAlbumSource {
 
-    public void saveAlbum() {
+    public void createEmptyAlbum() {
         RequestMaker.createEmptyAlbum(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete (VKResponse response) {
@@ -84,4 +84,5 @@ public class VKAlbumSource {
     void sendError(String s) {
         EventBus.getDefault().postSticky(new ErrorEvent(s));
     }
+
 }

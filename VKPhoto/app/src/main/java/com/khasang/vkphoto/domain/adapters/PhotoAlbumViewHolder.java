@@ -110,12 +110,16 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
                 }
 
                 @Override
+                public void onDestroyActionMode(ActionMode actionMode) {
+                    super.onDestroyActionMode(actionMode);
+                    multiSelector.clearSelections();
+                }
+
+                @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                     switch (item.getItemId()) {
-                        case R.id.action_settings:
-                            // Delete crimes from model
-
-                            multiSelector.clearSelections();
+                        case R.id.action_sync_album:
+                            vkAlbumsPresenter.syncAlbums(multiSelector);
                             return true;
                         default:
                             break;

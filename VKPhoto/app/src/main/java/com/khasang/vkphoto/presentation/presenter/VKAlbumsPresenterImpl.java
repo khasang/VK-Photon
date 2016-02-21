@@ -2,6 +2,7 @@ package com.khasang.vkphoto.presentation.presenter;
 
 import android.content.Context;
 
+import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
@@ -26,8 +27,8 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     }
 
     @Override
-    public void saveAlbum() {
-        vkAlbumsInteractor.saveAlbum();
+    public void syncAlbums(MultiSelector multiSelector) {
+        vkAlbumsInteractor.syncAlbums(multiSelector, vkAlbumsView.getAdapterCursor());
     }
 
     @Override

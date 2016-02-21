@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VKPhoto</string>
+    <string name="action_settings">Настройки</string>
+    <string name="count_of_albums">Количество альбомов</string>
+    <string name="count_of_photos_in_album">Количество фотографий в альбоме: %d</string>
+    <string name="sync_album">Синхронизировать альбом</string>
+    <string name="sync_service_error">Служба синхронизации запускается</string>
+    <string name="title_of_album">Название альбома</string>
+</resources>

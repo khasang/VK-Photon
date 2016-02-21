@@ -10,6 +10,6 @@ public class VKDataSource {
     }
 
     public VKCommentSource getCommentSource() {
-        return null;
+        return new VKCommentSource();
     }
 }

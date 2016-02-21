@@ -1,13 +1,20 @@
 package com.khasang.vkphoto.domain.interactors;
 
+import android.database.Cursor;
+
+import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.util.Constants;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Реализация интерфейса исполнителя запросов к службе синхронизации.
@@ -38,9 +45,19 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     }
 
     @Override
-    public void saveAlbum() {
-        checkSyncService();
-        syncService.saveAlbum();
+    public void syncAlbums(MultiSelector multiSelector, Cursor cursor) {
+        if (checkSyncService()) {
+            List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+            List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+            if (cursor != null) {
+                for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
+                    Integer position = selectedPositions.get(i);
+                    cursor.moveToPosition(position);
+                    photoAlbumList.add(new PhotoAlbum(cursor));
+                }
+                syncService.syncAlbums(photoAlbumList);
+            }
+        }
     }
 
     /**
