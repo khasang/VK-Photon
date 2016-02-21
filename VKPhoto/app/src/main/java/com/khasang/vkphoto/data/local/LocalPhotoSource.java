@@ -17,6 +17,7 @@ import com.khasang.vkphoto.util.Logger;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.util.List;
 
 public class LocalPhotoSource {
     private Context context;
@@ -97,5 +98,9 @@ public class LocalPhotoSource {
 
     public void getAllPhotos() {
 
+    }
+
+    public List<File> getPhotosByAlbum(PhotoAlbum photoAlbum) {
+        return null;
     }
 }

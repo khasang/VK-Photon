@@ -111,4 +111,8 @@ public class LocalAlbumSource {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         return db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
     }
+
+    public List<PhotoAlbum> getAllLocalAlbums() {
+        return null;
+    }
 }
