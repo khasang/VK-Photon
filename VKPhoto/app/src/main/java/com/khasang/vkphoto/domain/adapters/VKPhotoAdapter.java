@@ -47,7 +47,7 @@ public class VKPhotoAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.layout_simple_photo, null);
         }
         ImageView imageView = (ImageView) convertView.findViewById(R.id.image_view);
-        Picasso.with(context).load(photoList.get(position).photo_604).into(imageView);
+        Picasso.with(context).load(photoList.get(position).getUrlToMaxPhoto()).into(imageView);
         return convertView;
     }
 }

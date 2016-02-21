@@ -18,8 +18,6 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
-import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.presentation.presenter.VKPhotosPresenter;
 import com.khasang.vkphoto.presentation.presenter.VKPhotosPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkPhotosView;
@@ -28,7 +26,6 @@ import com.khasang.vkphoto.util.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -73,6 +70,7 @@ public class VKPhotosFragment extends Fragment implements VkPhotosView {
             Logger.d("wtf where is album?");
         }
         albumId = photoAlbum.id;
+        Log.d("333", String.valueOf(albumId));
         vKPhotosPresenter.getPhotosByAlbumId(albumId);
         gridview = (GridView) view.findViewById(R.id.gridView);
         return view;
@@ -99,7 +97,6 @@ public class VKPhotosFragment extends Fragment implements VkPhotosView {
 
     @Override
     public void displayVkPhotosByAlbumId() {
-
     }
 
     @Override
@@ -108,17 +105,15 @@ public class VKPhotosFragment extends Fragment implements VkPhotosView {
     }
 
 
-    private void updateAdapter() {
+    private void setAdapter() {
         gridview.setAdapter(new VKPhotoAdapter(getContext(), photoList));
-        Log.d("333", "sdsd");
-
     }
 
     @Subscribe
     public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
         List<Photo> vkPhotoList = getVKPhotosEvent.photosList;
         photoList = vkPhotoList;
-        updateAdapter();
+        setAdapter();
     }
 
 }
