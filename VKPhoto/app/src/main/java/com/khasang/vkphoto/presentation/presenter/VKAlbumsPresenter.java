@@ -1,5 +1,7 @@
 package com.khasang.vkphoto.presentation.presenter;
 
+import android.content.Context;
+
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 public interface VKAlbumsPresenter extends Presenter {
@@ -7,7 +9,7 @@ public interface VKAlbumsPresenter extends Presenter {
 
     void getAllAlbums();
 
-    void goToPhotoAlbum(PhotoAlbum photoAlbum);
+    void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum);
 
 }
       

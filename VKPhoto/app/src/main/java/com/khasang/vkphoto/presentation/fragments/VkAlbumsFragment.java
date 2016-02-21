@@ -159,7 +159,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (adapter == null) {
-            adapter = new PhotoAlbumCursorAdapter(getContext(), data, multiSelector);
+            adapter = new PhotoAlbumCursorAdapter(getContext(), data, multiSelector,vKAlbumsPresenter);
             albumsRecyclerView.setAdapter(adapter);
         } else {
             adapter.changeCursor(data);

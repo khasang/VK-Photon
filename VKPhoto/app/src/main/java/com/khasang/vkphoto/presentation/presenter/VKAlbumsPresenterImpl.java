@@ -1,11 +1,14 @@
 package com.khasang.vkphoto.presentation.presenter;
 
+import android.content.Context;
+
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -29,6 +32,11 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     @Override
     public void getAllAlbums() {
         vkAlbumsInteractor.getAllAlbums();
+    }
+
+    @Override
+    public void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum) {
+      
     }
 
     @Override

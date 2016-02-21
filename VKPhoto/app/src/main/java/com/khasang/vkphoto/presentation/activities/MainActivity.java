@@ -24,7 +24,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
-import com.khasang.vkphoto.presentation.fragments.GalleryFragment;
+import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new VkAlbumsFragment(), "VK Albums");
-        adapter.addFragment(new GalleryFragment(), "Gallery Albums");
+        adapter.addFragment(new LocalAlbumsFragment(), "Gallery Albums");
         viewPager.setAdapter(adapter);
     }
 

@@ -21,12 +21,11 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
     private ActionModeVKAlbumsCallback actionModeVKAlbumsCallback;
     private VKAlbumsPresenter vkAlbumsPresenter;
 
-    public PhotoAlbumCursorAdapter(Context context, Cursor cursor, MultiSelector multiSelector, ActionModeVKAlbumsCallback actionModeVKAlbumsCallback, VKAlbumsPresenter vkAlbumsPresenter) {
+    public PhotoAlbumCursorAdapter(Context context, Cursor cursor, MultiSelector multiSelector, VKAlbumsPresenter vkAlbumsPresenter) {
         super(context, cursor);
         executor = Executors.newCachedThreadPool();
         this.multiSelector = multiSelector;
         this.vkAlbumsPresenter = vkAlbumsPresenter;
-        this.actionModeVKAlbumsCallback = actionModeVKAlbumsCallback;
     }
 
     @Override

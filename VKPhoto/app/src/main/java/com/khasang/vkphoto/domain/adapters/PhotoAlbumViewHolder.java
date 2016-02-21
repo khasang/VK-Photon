@@ -119,7 +119,7 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
                 }
             }
         } else {
-            vkAlbumsPresenter.goToPhotoAlbum(photoAlbum);
+            vkAlbumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }
     }
 
