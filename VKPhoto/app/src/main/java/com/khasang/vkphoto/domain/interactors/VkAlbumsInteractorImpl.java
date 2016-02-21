@@ -5,6 +5,7 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
+import com.khasang.vkphoto.util.Constants;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -57,7 +58,7 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     boolean checkSyncService() {
         if (syncService == null) {
             if (!setSyncService()) {
-                EventBus.getDefault().postSticky(new ErrorEvent("Sync Service error"));
+                EventBus.getDefault().postSticky(new ErrorEvent(Constants.SYNC_SERVICE_ERROR));
                 return false;
             }
         }
