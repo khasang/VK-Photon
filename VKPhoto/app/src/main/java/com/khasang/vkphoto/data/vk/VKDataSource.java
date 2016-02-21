@@ -6,7 +6,7 @@ public class VKDataSource {
     }
 
     public VKPhotoSource getPhotoSource() {
-        return null;
+        return new VKPhotoSource();
     }
 
     public VKCommentSource getCommentSource() {

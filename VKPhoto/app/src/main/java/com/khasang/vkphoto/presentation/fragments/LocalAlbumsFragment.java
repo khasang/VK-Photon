@@ -9,16 +9,13 @@ import android.view.ViewGroup;
 
 import com.khasang.vkphoto.R;
 
-public class GalleryFragment extends Fragment {
+public class LocalAlbumsFragment extends Fragment {
     public static final String TAG = VkAlbumsFragment.class.getSimpleName();
-
-    public GalleryFragment(){
-
-    }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_gallery_albums, null);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_vk_albums, container, false);
+        return view;
     }
 }

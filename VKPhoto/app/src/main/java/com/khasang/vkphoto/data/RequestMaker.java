@@ -48,8 +48,8 @@ public class RequestMaker {
         request.executeWithListener(vkRequestListener);
     }
 
-    public static void getVkAlbum(VKRequest.VKRequestListener vkRequestListener, int albumId) {
-        final VKRequest request = getVkRequest("photos.getAlbums", VKParameters.from(VKApiConst.ALBUM_ID, albumId));
+    public static void getVkPhotosByAlbumId(VKRequest.VKRequestListener vkRequestListener, int albumId) {
+        final VKRequest request = getVkRequest("photos.get", VKParameters.from(VKApiConst.ALBUM_ID, albumId));
         request.executeWithListener(vkRequestListener);
     }
 
@@ -59,9 +59,10 @@ public class RequestMaker {
     }
 
     public static void getPhotoAlbumThumb(VKRequest.VKRequestListener vkRequestListener, PhotoAlbum photoAlbum) {
-        VKRequest request = new VKRequest("photos.get", VKParameters.from(VKApiConst.ALBUM_ID, photoAlbum.id, VKApiConst.PHOTO_IDS, photoAlbum.thumb_id));
+        VKRequest request = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.ALBUM_ID, photoAlbum.id, VKApiConst.PHOTO_IDS, photoAlbum.thumb_id));
         request.executeWithListener(vkRequestListener);
     }
+
 
     @NonNull
     private static VKRequest getVkRequest(String apiMethod, VKParameters vkParameters) {

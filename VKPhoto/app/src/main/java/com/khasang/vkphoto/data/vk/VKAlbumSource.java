@@ -57,33 +57,6 @@ public class VKAlbumSource {
 
     }
 
-    public void getAlbumById(int albumId) {
-        RequestMaker.getVkAlbum(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-                final PhotoAlbum photoAlbum;
-//                try {
-//                    photoAlbumList = JsonUtils(response.json, PhotoAlbum.class);
-//                    Logger.d("Got VKAlbums successfully");
-//                    EventBus.getDefault().postSticky(new GetVKAlbumsEvent(photoAlbumList));
-//                } catch (Exception e) {
-//                    sendError(e.toString());
-//                }
-            }
-
-            @Override
-            public void onError(VKError error) {
-                super.onError(error);
-                sendError(error.toString());
-            }
-
-            void sendError(String s) {
-                EventBus.getDefault().postSticky(new ErrorEvent(s));
-            }
-        }, albumId);
-    }
-
     public void getAllAlbums() {
         RequestMaker.getAllVkAlbums(new VKRequest.VKRequestListener() {
             @Override
@@ -105,9 +78,10 @@ public class VKAlbumSource {
                 sendError(error.toString());
             }
 
-            void sendError(String s) {
-                EventBus.getDefault().postSticky(new ErrorEvent(s));
-            }
         });
+    }
+
+    void sendError(String s) {
+        EventBus.getDefault().postSticky(new ErrorEvent(s));
     }
 }

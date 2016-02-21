@@ -12,6 +12,8 @@ public interface SyncService {
 
     void getAllAlbums();
 
+    void getPhotosByAlbumId(int albumId);
+
     /**
      * Регистрирует изменения доступа к альбому
      */

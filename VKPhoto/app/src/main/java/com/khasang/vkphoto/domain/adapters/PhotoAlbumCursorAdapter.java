@@ -9,18 +9,24 @@ import android.view.ViewGroup;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
+import com.khasang.vkphoto.presentation.view.ActionModeVKAlbumsCallback;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbumViewHolder> {
-    private ExecutorService executor;
-    private MultiSelector multiSelector;
+    final private ExecutorService executor;
+    final private MultiSelector multiSelector;
+    private ActionModeVKAlbumsCallback actionModeVKAlbumsCallback;
+    private VKAlbumsPresenter vkAlbumsPresenter;
 
-    public PhotoAlbumCursorAdapter(Context context, Cursor cursor, MultiSelector multiSelector) {
+    public PhotoAlbumCursorAdapter(Context context, Cursor cursor, MultiSelector multiSelector, ActionModeVKAlbumsCallback actionModeVKAlbumsCallback, VKAlbumsPresenter vkAlbumsPresenter) {
         super(context, cursor);
         executor = Executors.newCachedThreadPool();
         this.multiSelector = multiSelector;
+        this.vkAlbumsPresenter = vkAlbumsPresenter;
+        this.actionModeVKAlbumsCallback = actionModeVKAlbumsCallback;
     }
 
     @Override
@@ -31,7 +37,7 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
     @Override
     public PhotoAlbumViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.photoalbum_item, parent, false);
-        return new PhotoAlbumViewHolder(view, executor, multiSelector);
+        return new PhotoAlbumViewHolder(view, executor, multiSelector, actionModeVKAlbumsCallback, vkAlbumsPresenter);
     }
 
 }
