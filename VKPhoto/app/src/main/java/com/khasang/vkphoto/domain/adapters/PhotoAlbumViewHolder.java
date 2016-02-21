@@ -2,10 +2,13 @@ package com.khasang.vkphoto.domain.adapters;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.khasang.vkphoto.R;
@@ -16,7 +19,6 @@ import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
-import com.khasang.vkphoto.presentation.view.ActionModeVKAlbumsCallback;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.squareup.picasso.Picasso;
@@ -36,11 +38,10 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
     final private Executor executor;
     final private MultiSelector multiSelector;
     private VKAlbumsPresenter vkAlbumsPresenter;
-    final private ActionModeVKAlbumsCallback actionModeVKAlbumsCallback;
     PhotoAlbum photoAlbum;
     private ActionMode actionMode;
 
-    public PhotoAlbumViewHolder(View itemView, Executor executor, MultiSelector multiSelector, ActionModeVKAlbumsCallback actionModeVKAlbumsCallback, VKAlbumsPresenter vkAlbumsPresenter) {
+    public PhotoAlbumViewHolder(View itemView, Executor executor, MultiSelector multiSelector, VKAlbumsPresenter vkAlbumsPresenter) {
         super(itemView, multiSelector);
         albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
@@ -48,7 +49,6 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
         this.executor = executor;
         this.multiSelector = multiSelector;
         this.vkAlbumsPresenter = vkAlbumsPresenter;
-        this.actionModeVKAlbumsCallback = actionModeVKAlbumsCallback;
         itemView.setLongClickable(true);
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
@@ -99,10 +99,30 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
     @Override
     public boolean onLongClick(View v) {
         if (!multiSelector.isSelectable()) { // (3)
-            AppCompatActivity activity = (AppCompatActivity) albumThumbImageView.getContext();
-            actionMode = activity.startSupportActionMode(actionModeVKAlbumsCallback);
+            final AppCompatActivity activity = (AppCompatActivity) albumThumbImageView.getContext();
             multiSelector.setSelectable(true); // (4)
             multiSelector.setSelected(this, true); // (5)
+            actionMode = activity.startSupportActionMode(new ModalMultiSelectorCallback(multiSelector) {
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    activity.getMenuInflater().inflate(R.menu.menu_action_mode_vk_albums, menu);
+                    return true;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.action_settings:
+                            // Delete crimes from model
+
+                            multiSelector.clearSelections();
+                            return true;
+                        default:
+                            break;
+                    }
+                    return false;
+                }
+            });
             return true;
         }
         return false;

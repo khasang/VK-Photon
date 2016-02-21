@@ -18,7 +18,6 @@ import java.util.concurrent.Executors;
 public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbumViewHolder> {
     final private ExecutorService executor;
     final private MultiSelector multiSelector;
-    private ActionModeVKAlbumsCallback actionModeVKAlbumsCallback;
     private VKAlbumsPresenter vkAlbumsPresenter;
 
     public PhotoAlbumCursorAdapter(Context context, Cursor cursor, MultiSelector multiSelector, VKAlbumsPresenter vkAlbumsPresenter) {
@@ -36,7 +35,7 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
     @Override
     public PhotoAlbumViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.photoalbum_item, parent, false);
-        return new PhotoAlbumViewHolder(view, executor, multiSelector, actionModeVKAlbumsCallback, vkAlbumsPresenter);
+        return new PhotoAlbumViewHolder(view, executor, multiSelector, vkAlbumsPresenter);
     }
 
 }

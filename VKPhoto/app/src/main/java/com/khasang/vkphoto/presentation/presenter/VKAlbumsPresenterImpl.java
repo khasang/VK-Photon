@@ -8,6 +8,7 @@ import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 
@@ -36,7 +37,7 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
 
     @Override
     public void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum) {
-      
+        Navigator.navigateToVKAlbumFragment(context, photoAlbum);
     }
 
     @Override

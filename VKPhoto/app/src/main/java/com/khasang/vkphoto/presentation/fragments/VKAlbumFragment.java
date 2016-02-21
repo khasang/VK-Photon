@@ -3,7 +3,6 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +12,7 @@ import android.widget.GridView;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.VKPhotoAdapter;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
-import com.khasang.vkphoto.domain.interfaces.NavigatorProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
-import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKPhotosPresenter;
@@ -29,21 +26,20 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
-public class VKPhotosFragment extends Fragment implements VkPhotosView {
-    public static final String TAG = VkAlbumsFragment.class.getSimpleName();
+public class VKAlbumFragment extends Fragment implements VkPhotosView {
+    public static final String TAG = VKAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
     private PhotoAlbum photoAlbum;
     private VKPhotosPresenter vKPhotosPresenter;
-    private Navigator navigator;
     GridView gridview;
     private List<Photo> photoList;
     int albumId;
     private EventBus eventBus;
 
-    public static VKPhotosFragment newInstance(PhotoAlbum photoAlbum) {
+    public static VKAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
         args.putParcelable(PHOTOALBUM, photoAlbum);
-        VKPhotosFragment fragment = new VKPhotosFragment();
+        VKAlbumFragment fragment = new VKAlbumFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,8 +56,7 @@ public class VKPhotosFragment extends Fragment implements VkPhotosView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gallery_albums, null);
-        navigator = ((NavigatorProvider) getActivity()).getNavigator();
-        vKPhotosPresenter = new VKPhotosPresenterImpl(this, ((SyncServiceProvider) getActivity()), navigator, getContext());
+        vKPhotosPresenter = new VKPhotosPresenterImpl(this, ((SyncServiceProvider) getActivity()));
 
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (photoAlbum != null) {
@@ -79,8 +74,7 @@ public class VKPhotosFragment extends Fragment implements VkPhotosView {
     @Override
     public void onResume() {
         super.onResume();
-        Logger.d("onResume VKPhotosFragment");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        Logger.d("onResume VKAlbumFragment");
     }
 
     @Override
