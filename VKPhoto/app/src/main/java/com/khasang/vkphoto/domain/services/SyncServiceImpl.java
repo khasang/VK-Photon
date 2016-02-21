@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
+import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
@@ -87,6 +89,21 @@ public class SyncServiceImpl extends Service implements SyncService {
                 localAlbumSource.updateAlbum(photoAlbum);
             }
         }
+    }
+
+    @Override
+    public void getPhotosByAlbumId(final int albumId) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                vKDataSource.getPhotoSource().getPhotosByAlbumId(albumId);
+            }
+        });
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
+        List<Photo> vkPhotoList = getVKPhotosEvent.photosList;
     }
 
     @Override

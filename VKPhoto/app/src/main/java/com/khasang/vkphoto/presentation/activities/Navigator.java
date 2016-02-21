@@ -14,7 +14,7 @@ import android.widget.FrameLayout;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.ViewPagerAdapter;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
-import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
+import com.khasang.vkphoto.presentation.fragments.VKPhotosFragment;
 import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Logger;
@@ -23,7 +23,7 @@ import java.util.List;
 
 public class Navigator {
     private Context activityContext;
-    private VKAlbumFragment vkAlbumFragment;
+    private VKPhotosFragment vkPhotosFragment;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private FrameLayout fragmentContainer;
@@ -45,10 +45,10 @@ public class Navigator {
     }
 
     public void navigateToVkAlbumFragment(PhotoAlbum photoAlbum) {
-        if (!isFragmentAvailable(vkAlbumFragment)) {
-            vkAlbumFragment = VKAlbumFragment.newInstance(photoAlbum);
+        if (!isFragmentAvailable(vkPhotosFragment)) {
+            vkPhotosFragment = VKPhotosFragment.newInstance(photoAlbum);
         }
-        navigateToFragmentWithBackStack(vkAlbumFragment, VkAlbumsFragment.TAG);
+        navigateToFragmentWithBackStack(vkPhotosFragment, VkAlbumsFragment.TAG);
     }
 
 //    private void navigateToFragment(Fragment fragment, String tag) {

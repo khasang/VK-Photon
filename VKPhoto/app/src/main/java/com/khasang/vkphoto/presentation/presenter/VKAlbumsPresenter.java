@@ -9,8 +9,5 @@ public interface VKAlbumsPresenter extends Presenter {
 
     void goToPhotoAlbum(PhotoAlbum photoAlbum);
 
-    void onStart();
-
-    void onStop();
 }
       
