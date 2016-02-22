@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.khasang.vkphoto.R;
@@ -65,9 +66,18 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
             Logger.d("wtf where is album?");
         }
         albumId = photoAlbum.id;
-        Log.d("333", String.valueOf(albumId));
         vKPhotosPresenter.getPhotosByAlbumId(albumId);
         gridview = (GridView) view.findViewById(R.id.gridView);
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                vKPhotosPresenter.deletePhotoById(photoList.get(position).getId());
+                photoList.remove(position);
+                setAdapter();
+            }
+
+
+        });
         return view;
     }
 
@@ -108,5 +118,4 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         photoList = getVKPhotosEvent.photosList;
         setAdapter();
     }
-
 }
