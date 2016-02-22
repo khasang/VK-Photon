@@ -75,8 +75,6 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
                 photoList.remove(position);
                 setAdapter();
             }
-
-
         });
         return view;
     }
