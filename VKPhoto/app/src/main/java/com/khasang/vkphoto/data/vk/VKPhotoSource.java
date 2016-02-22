@@ -43,8 +43,20 @@ public class VKPhotoSource {
 
     }
 
-    public void deletePhoto() {
+    public void deletePhoto(int photoId) {
+        RequestMaker.deleteVkPhotoById(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Logger.d("Delete VKPhoto successfully");
+            }
 
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                sendError(error.toString());
+            }
+        }, photoId);
     }
 
     public void deletePhotos() {

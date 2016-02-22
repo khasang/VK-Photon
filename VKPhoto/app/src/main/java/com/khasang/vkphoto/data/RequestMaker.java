@@ -63,6 +63,10 @@ public class RequestMaker {
         request.executeWithListener(vkRequestListener);
     }
 
+    public static void deleteVkPhotoById(VKRequest.VKRequestListener vkRequestListener, int photoId) {
+        final VKRequest request = getVkRequest("photos.delete", VKParameters.from(photoId, VKAccessToken.currentToken().userId));
+        request.executeWithListener(vkRequestListener);
+    }
 
     @NonNull
     private static VKRequest getVkRequest(String apiMethod, VKParameters vkParameters) {
