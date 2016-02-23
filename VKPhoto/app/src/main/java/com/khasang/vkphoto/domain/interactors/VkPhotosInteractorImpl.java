@@ -28,7 +28,7 @@ public class VkPhotosInteractorImpl implements VkPhotosInteractor {
 
     @Override
     public void deletePhotoById(int photoId) {
-        if (checkSyncService()) syncService.deletePhotoById(photoId);
+        if (checkSyncService()) syncService.deleteVkPhotoById(photoId);
     }
 
     boolean checkSyncService() {
