@@ -68,6 +68,17 @@ public class RequestMaker {
         request.executeWithListener(vkRequestListener);
     }
 
+    public static void deleteVkAlbumById(VKRequest.VKRequestListener vkRequestListener, int albumId) {
+        final VKRequest request = getVkRequest("photos.deleteAlbum", VKParameters.from(VKApiConst.ALBUM_ID, albumId, VKAccessToken.currentToken().userId));
+        request.executeWithListener(vkRequestListener);
+    }
+
+    public static void getPhotoById(VKRequest.VKRequestListener vkRequestListener, int photoId) {
+        VKRequest request = new VKRequest("photos.getAlbums", VKParameters.from("photos", VKAccessToken.currentToken().userId + "_" + String.valueOf(photoId)));
+        request.executeWithListener(vkRequestListener);
+    }
+
+
     @NonNull
     private static VKRequest getVkRequest(String apiMethod, VKParameters vkParameters) {
         VKRequest request = new VKRequest(apiMethod, vkParameters);
