@@ -21,6 +21,7 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.JsonUtils;
+import com.khasang.vkphoto.util.Logger;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
@@ -120,6 +121,9 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
                     switch (item.getItemId()) {
                         case R.id.action_sync_album:
                             vkAlbumsPresenter.syncAlbums(multiSelector);
+                            return true;
+                        case R.id.action_delete_album:
+                            vkAlbumsPresenter.deleteVkAlbums(multiSelector);
                             return true;
                         default:
                             break;
