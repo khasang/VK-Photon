@@ -12,5 +12,6 @@ public interface VKAlbumsPresenter extends Presenter {
 
     void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum);
 
+    void deleteVkAlbums(MultiSelector multiSelector);
 }
       

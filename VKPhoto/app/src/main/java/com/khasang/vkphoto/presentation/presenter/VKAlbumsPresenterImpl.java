@@ -42,6 +42,11 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     }
 
     @Override
+    public void deleteVkAlbums(MultiSelector multiSelector) {
+        vkAlbumsInteractor.deleteVkAlbum(multiSelector, vkAlbumsView.getAdapterCursor());
+    }
+
+    @Override
     public void initialize() {
 
     }
