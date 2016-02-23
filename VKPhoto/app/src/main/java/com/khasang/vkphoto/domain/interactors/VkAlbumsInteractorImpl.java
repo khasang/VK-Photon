@@ -72,6 +72,18 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
         if (checkSyncService()) syncService.getAllAlbums();
     }
 
+    @Override
+    public void deleteVkAlbum(MultiSelector multiSelector, Cursor cursor) {
+        if (checkSyncService()) {
+            List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+            if (selectedPositions.size() == 1) {
+                cursor.moveToPosition(selectedPositions.get(0));
+                PhotoAlbum photoAlbum= new PhotoAlbum(cursor);
+                syncService.deleteVKAlbumById(photoAlbum.getId());
+            }
+        }
+    }
+
     boolean checkSyncService() {
         if (syncService == null) {
             if (!setSyncService()) {
