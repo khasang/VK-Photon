@@ -2,14 +2,23 @@ package com.khasang.vkphoto.data;
 
 import android.support.annotation.NonNull;
 
+import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetVkAddAlbumEvent;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.util.JsonUtils;
+import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
+import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.util.Vector;
 
 public class RequestMaker {
 
@@ -24,11 +33,47 @@ public class RequestMaker {
      * @param privacy           настройки приватности просмотра альбома
      * @param comment_privacy   настройки приватности комментирования
      */
-    public static void createEmptyAlbum(VKRequest.VKRequestListener vkRequestListener, String title,
+    public void requestCreateEmptyAlbum(VKRequest.VKRequestListener vkRequestListener, String title,
                                         String description, int privacy, int comment_privacy) {
         final VKRequest request = getVkRequest("photos.createAlbum", VKParameters.from("title", title,
                 "description", description, "privacy", privacy, "comment_privacy", comment_privacy));
         request.executeWithListener(vkRequestListener);
+    }
+
+    /**
+     * Добавляет альбом на сервере VK
+     * @param title
+     * @param description
+     * @param listUploadedFiles
+     * @param privacy
+     * @param comment_privacy
+     */
+    public void requestAddAlbum(final String title, final String description,
+                                final Vector<String> listUploadedFiles, final int privacy, final int comment_privacy) {
+        requestCreateEmptyAlbum(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                final PhotoAlbum photoAlbum;
+                try {
+                    photoAlbum = JsonUtils.getJsonObject(response.json, PhotoAlbum.class);
+                    Logger.d("Add Album successfully");
+                    EventBus.getDefault().postSticky(new GetVkAddAlbumEvent(photoAlbum));
+                } catch (Exception e) {
+                    sendError(e.toString());
+                }
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                sendError(error.toString());
+            }
+
+            void sendError(String s) {
+                EventBus.getDefault().postSticky(new ErrorEvent(s));
+            }
+        }, title, description, privacy, comment_privacy);
     }
 
     public static void uploadPhoto(File file, PhotoAlbum photoAlbum, VKRequest.VKRequestListener vkRequestListener) {

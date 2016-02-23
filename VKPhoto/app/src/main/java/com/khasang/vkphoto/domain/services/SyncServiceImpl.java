@@ -9,10 +9,11 @@ import android.support.annotation.Nullable;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
+import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
+import com.khasang.vkphoto.domain.events.GetVkAddAlbumEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
 
@@ -22,6 +23,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.greenrobot.eventbus.util.AsyncExecutor;
 
 import java.util.List;
+import java.util.Vector;
 
 public class SyncServiceImpl extends Service implements SyncService {
     public static final String TAG = SyncService.class.getSimpleName();
@@ -69,6 +71,17 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
+    public void addAlbum(final String title, final String description,
+                         final Vector<String> listUploadedFiles, final int privacy, final int comment_privacy) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                vKDataSource.getAlbumSource().addAlbum(title, description, listUploadedFiles, privacy, comment_privacy);
+            }
+        });
+    }
+
+    @Override
     public void getAllAlbums() {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
@@ -76,6 +89,18 @@ public class SyncServiceImpl extends Service implements SyncService {
                 vKDataSource.getAlbumSource().getAllAlbums();
             }
         });
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onGetVKAddAlbumEvent(GetVkAddAlbumEvent getVkAddAlbumEvent) {
+        PhotoAlbum vkAddAlbum = getVkAddAlbumEvent.photoAlbum;
+        LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
+        List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllAlbums();
+        if (localAlbumsList.contains(vkAddAlbum)) { //update existing albums
+            localAlbumSource.updateAlbum(vkAddAlbum);
+        } else { //сreate new albums
+            localAlbumSource.addAlbum(vkAddAlbum);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)

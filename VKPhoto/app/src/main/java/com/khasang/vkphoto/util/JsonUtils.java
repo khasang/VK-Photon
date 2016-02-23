@@ -19,6 +19,10 @@ public class JsonUtils {
         return jsonObject.getJSONObject("response");
     }
 
+    public static <T> T getJsonObject(JSONObject jsonObject, Class<T> tClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, JSONException {
+        return tClass.getConstructor(JSONObject.class).newInstance(jsonObject.getJSONObject("response"));
+    }
+
     public static <T> PhotoAlbum getJsonTest(JSONObject jsonObject) throws JSONException {
         PhotoAlbum photoAlbum = null;
         try {

@@ -7,4 +7,7 @@
     <string name="sync_album">Синхронизировать альбом</string>
     <string name="sync_service_error">Служба синхронизации запускается</string>
     <string name="title_of_album">Название альбома</string>
+    <string name="add_album_description">Опсание</string>
+    <string name="st_btn_ok">Да</string>
+    <string name="st_btn_cancel">Нет</string>
 </resources>

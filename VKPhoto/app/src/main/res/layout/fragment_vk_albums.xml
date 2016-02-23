@@ -15,6 +15,13 @@
         android:layout_height="wrap_content"
         android:text="StartSync!" />
 
+    <Button
+        android:id="@+id/add_album"
+        android:layout_toRightOf="@+id/start_sync"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Album" />
+
     <TextView
         android:id="@+id/tv_count_of_albums"
         android:layout_width="wrap_content"
