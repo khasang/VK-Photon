@@ -31,18 +31,15 @@ public class StorageUtils {
             } else {
                 final File externalStorageRoot = new File(externalStorageRootDir);
                 final File[] files = externalStorageRoot.listFiles();
-                if (files != null) {
-                    for (final File file : files) {
-                        if (file.isDirectory() && file.canRead() && (file.listFiles().length > 0)) {  // it is a real directory (not a USB drive)...
-                            Logger.d("External Storage: " + file.getAbsolutePath() + "\n");
-                            Logger.d("free space " + file.getAbsolutePath() + " " + file.getFreeSpace());
-                            if (mostFreeFile == null || mostFreeFile.getFreeSpace() < file.getFreeSpace()) {
-                                mostFreeFile = file;
-                            }
+
+                for (final File file : files) {
+                    if (file.isDirectory() && file.canRead() && (file.listFiles().length > 0)) {  // it is a real directory (not a USB drive)...
+                        Logger.d("External Storage: " + file.getAbsolutePath() + "\n");
+                        Logger.d("free space " + file.getAbsolutePath() + " " + file.getFreeSpace());
+                        if (mostFreeFile == null || mostFreeFile.getFreeSpace() < file.getFreeSpace()) {
+                            mostFreeFile = file;
                         }
                     }
-                } else {
-                    mostFreeFile = primaryExternalStorage;
                 }
             }
         }
