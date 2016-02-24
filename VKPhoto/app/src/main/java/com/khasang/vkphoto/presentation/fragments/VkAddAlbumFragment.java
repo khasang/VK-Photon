@@ -48,20 +48,6 @@ public class VkAddAlbumFragment extends DialogFragment implements VkAddAlbumView
         View view = inflater.inflate(R.layout.fragment_vk_add_album, null);
         final EditText etTitle = (EditText) view.findViewById(R.id.et_title_add_album);
         final EditText etDescription = (EditText) view.findViewById(R.id.et_description_add_album);
-        view.findViewById(R.id.btn_add_photos).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final OpenFileDialog fileDialog = new OpenFileDialog(context);
-                fileDialog.show();
-                fileDialog.setOpenDialogListener(new OpenFileDialog.OpenDialogListener() {
-                    @Override
-                    public void OnSelectedFile(String fileName) {
-                        listUploadedFiles.add(fileName);
-                        st = fileName;
-                    }
-                });
-            }
-        });
         view.findViewById(R.id.btn_ok_add_album).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

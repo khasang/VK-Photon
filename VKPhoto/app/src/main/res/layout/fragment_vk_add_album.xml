@@ -45,18 +45,10 @@
         android:text="@string/add_album_description"/>
 
     <Button
-        android:id="@+id/btn_add_photos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_description_add_album"
-        android:layout_alignParentLeft="true"
-        android:text="add photo"/>
-
-    <Button
         android:id="@+id/btn_ok_add_album"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_add_photos"
+        android:layout_below="@+id/et_description_add_album"
         android:layout_alignParentLeft="true"
         android:text="@string/st_btn_ok"/>
 
@@ -64,7 +56,7 @@
         android:id="@+id/btn_cancel_add_album"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_add_photos"
+        android:layout_below="@+id/et_description_add_album"
         android:layout_alignParentRight="true"
         android:text="@string/st_btn_cancel"/>
 
