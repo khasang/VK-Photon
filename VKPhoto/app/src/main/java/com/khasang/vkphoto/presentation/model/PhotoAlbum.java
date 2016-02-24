@@ -31,6 +31,11 @@ public class PhotoAlbum extends VKApiPhotoAlbum {
     public PhotoAlbum() {
     }
 
+    public PhotoAlbum(String title, String path){
+        this.title = title;
+        this.filePath = path;
+    }
+
     public PhotoAlbum(JSONObject from) throws JSONException {
         super(from);
     }

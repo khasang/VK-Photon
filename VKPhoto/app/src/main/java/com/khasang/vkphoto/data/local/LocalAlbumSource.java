@@ -4,7 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.provider.BaseColumns;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
@@ -19,7 +21,9 @@ import com.vk.sdk.api.model.VKApiPhotoAlbum;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class LocalAlbumSource {
@@ -94,7 +98,7 @@ public class LocalAlbumSource {
         return photoAlbum;
     }
 
-    public List<PhotoAlbum> getAllAlbums() {
+    public  List<PhotoAlbum> getAllAlbums() {
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
@@ -113,7 +117,39 @@ public class LocalAlbumSource {
     }
 
     public List<PhotoAlbum> getAllLocalAlbums() {
-        return null;
+        List<String> tempPath = new ArrayList<>();
+        List<String> listOfAllImages = getListOfAllImages();
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        for (String path : listOfAllImages){
+            String[] split = path.split("/");
+            String name = split[split.length-2];//получаем название альбома
+            if (!tempPath.contains(name)){
+                Array.set(split, split.length - 1, "");
+                String albumPath = Arrays.toString(split).replaceAll(", ","/").replaceAll("[\\[\\]]","");//получаем путь к альбому
+                tempPath.add(name);
+                photoAlbumList.add(new PhotoAlbum(name,albumPath));//добовляем в лист
+
+                Logger.d("name: "+name + " path:"+albumPath);
+            }
+        }
+        return photoAlbumList;
+    }
+
+    public List<String> getListOfAllImages(){//находит и возвращает все фотографии на девайсе
+        List<String> listOfAllImages = new ArrayList<String>();
+        String absolutePathOfImage = null;
+        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        String[] projection = { MediaStore.MediaColumns.DATA,
+                MediaStore.MediaColumns.DISPLAY_NAME };
+
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        while (cursor.moveToNext()) {
+            absolutePathOfImage = cursor.getString(column_index);
+            listOfAllImages.add(absolutePathOfImage);
+        }
+        return listOfAllImages;
     }
 
     public void setSyncStatus(List<PhotoAlbum> photoAlbumList, int status) {
