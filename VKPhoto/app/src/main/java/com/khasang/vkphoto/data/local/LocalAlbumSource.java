@@ -10,9 +10,9 @@ import android.text.TextUtils;
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotoAlbumsTable;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.model.VKApiPhotoAlbum;
@@ -114,5 +114,10 @@ public class LocalAlbumSource {
 
     public List<PhotoAlbum> getAllLocalAlbums() {
         return null;
+    }
+
+    public void setAlbumSyncStatus(PhotoAlbum photoAlbum, int status) {
+        photoAlbum.syncStatus = status;
+        updateAlbum(photoAlbum);
     }
 }

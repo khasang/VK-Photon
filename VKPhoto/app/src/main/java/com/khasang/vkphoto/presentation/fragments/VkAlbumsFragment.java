@@ -87,6 +87,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public void onStart() {
         super.onStart();
         vKAlbumsPresenter.onStart();
+        vKAlbumsPresenter.getAllAlbums();
     }
 
     @Override
@@ -142,8 +143,9 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        vKAlbumsPresenter.getAllAlbums();
     }
+
+
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {

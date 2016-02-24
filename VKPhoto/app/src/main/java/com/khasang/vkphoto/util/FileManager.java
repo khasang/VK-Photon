@@ -96,27 +96,28 @@ public class FileManager {
         try {
             URL url = new URL(urlPath);
             URLConnection urlConnection = url.openConnection();
-            long total = 0;
+            //  long total = 0;
             urlConnection.connect();
             String targetFileName = String.format(JPEG_FORMAT, photoAlbum.thumb_id);
-            int lenghtOfFile = urlConnection.getContentLength();
-            String PATH = photoAlbum.filePath + "/";
-            File folder = new File(PATH);
+            //  int lenghtOfFile = urlConnection.getContentLength();
+            String folderPath = photoAlbum.filePath + "/";
+            String filePath = folderPath + targetFileName;
+            File folder = new File(folderPath);
             if (!folder.exists()) {
                 folder.mkdirs();//If there is no folder it will be created.
             }
             InputStream input = new BufferedInputStream(url.openStream());
-            OutputStream output = new FileOutputStream(PATH + targetFileName,false);
+            OutputStream output = new FileOutputStream(filePath, false);
             byte data[] = new byte[1024];
             while ((count = input.read(data)) != -1) {
-                total += count;
+                //      total += count;
 //                publishProgress((int) (total * 100 / lenghtOfFile));
                 output.write(data, 0, count);
             }
             output.flush();
             output.close();
             input.close();
-            file = new File(PATH + targetFileName);
+            file = new File(filePath);
         } catch (Exception e) {
             Logger.d(e.toString());
         }

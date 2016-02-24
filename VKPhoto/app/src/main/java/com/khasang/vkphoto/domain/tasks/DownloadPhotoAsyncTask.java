@@ -1,6 +1,5 @@
-package com.khasang.vkphoto.domain;
+package com.khasang.vkphoto.domain.tasks;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
@@ -12,27 +11,25 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
-public class DownloadFileAsyncTask extends AsyncTask<String, Integer, File> {
+public class DownloadPhotoAsyncTask extends AsyncTask<String, Integer, File> {
     private WeakReference<ImageView> imageViewWeakReference;
     private PhotoAlbum photoAlbum;
     private Photo photo;
-    private Context context;
     private LocalPhotoSource localPhotoSource;
     //    private ProgressDialog mProgressDialog;
 
-    public DownloadFileAsyncTask(ImageView imageView, Photo photo, PhotoAlbum photoAlbum) {
+    public DownloadPhotoAsyncTask(ImageView imageView, Photo photo, PhotoAlbum photoAlbum) {
         this.imageViewWeakReference = new WeakReference<>(imageView);
-        this.context = imageView.getContext().getApplicationContext();
         this.photoAlbum = photoAlbum;
         this.photo = photo;
-        localPhotoSource = new LocalPhotoSource(context);
+        localPhotoSource = new LocalPhotoSource(imageView.getContext().getApplicationContext());
     }
 
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        loadImage(localPhotoSource.getLocalPhoto(photo.id));
+        loadImage(localPhotoSource.getLocalPhotoFile(photo.id));
 //        mProgressDialog.setMessage("Downloading");
 //        mProgressDialog.setIndeterminate(false);
 //        mProgressDialog.setMax(100);
@@ -56,7 +53,6 @@ public class DownloadFileAsyncTask extends AsyncTask<String, Integer, File> {
         if (file != null && file.exists() && imageViewWeakReference.get() != null) {
             Picasso.with(imageViewWeakReference.get().getContext())
                     .load(file)
-                    .placeholder(android.R.drawable.progress_horizontal)
                     .error(android.R.drawable.stat_notify_error)
                     .into(imageViewWeakReference.get());
 //            VKPhotoSource vkPhotoSource = new VKPhotoSource();

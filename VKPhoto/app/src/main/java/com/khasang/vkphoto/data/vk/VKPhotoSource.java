@@ -93,10 +93,6 @@ public class VKPhotoSource {
     }
 
 
-    public void getAllPhotos() {
-
-    }
-
     void sendError(String s) {
         EventBus.getDefault().postSticky(new ErrorEvent(s));
     }

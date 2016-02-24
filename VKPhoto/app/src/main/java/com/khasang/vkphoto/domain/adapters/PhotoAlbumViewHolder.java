@@ -14,14 +14,13 @@ import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
-import com.khasang.vkphoto.domain.DownloadFileAsyncTask;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.tasks.DownloadPhotoAsyncTask;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.JsonUtils;
-import com.khasang.vkphoto.util.Logger;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
@@ -64,7 +63,7 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
     }
 
     private void loadThumb(final PhotoAlbum photoAlbum) {
-        File photoById = new LocalPhotoSource(albumThumbImageView.getContext().getApplicationContext()).getLocalPhoto(photoAlbum.thumb_id);
+        File photoById = new LocalPhotoSource(albumThumbImageView.getContext().getApplicationContext()).getLocalPhotoFile(photoAlbum.thumb_id);
         if (photoById != null) {
             Picasso.with(albumThumbImageView.getContext()).load(photoById).into(albumThumbImageView);
             return;
@@ -76,7 +75,7 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
                     super.onComplete(response);
                     try {
                         Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
-                        new DownloadFileAsyncTask(albumThumbImageView, photo, photoAlbum).executeOnExecutor(executor, photo.getUrlToMaxPhoto());
+                        new DownloadPhotoAsyncTask(albumThumbImageView, photo, photoAlbum).executeOnExecutor(executor, photo.getUrlToMaxPhoto());
                     } catch (Exception e) {
                         sendError(e.toString());
                     }

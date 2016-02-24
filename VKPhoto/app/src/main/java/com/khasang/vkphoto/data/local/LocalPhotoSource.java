@@ -17,15 +17,14 @@ import com.khasang.vkphoto.util.Logger;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LocalPhotoSource {
-    private Context context;
     private MySQliteHelper dbHelper;
 
     public LocalPhotoSource(Context context) {
-        this.context = context.getApplicationContext();
-        this.dbHelper = MySQliteHelper.getInstance(context);
+        this.dbHelper = MySQliteHelper.getInstance(context.getApplicationContext());
     }
 
     public File savePhotoToAlbum(Photo photo, PhotoAlbum photoAlbum) {
@@ -47,11 +46,11 @@ public class LocalPhotoSource {
 
 
     public File getPhotoFile(Photo photo, PhotoAlbum photoAlbum) {
-        File file = getLocalPhoto(photo.id);
+        File file = getLocalPhotoFile(photo.id);
         return file != null ? file : savePhotoToAlbum(photo, photoAlbum);
     }
 
-    public File getLocalPhoto(int photoId) {
+    public File getLocalPhotoFile(int photoId) {
         File file;
         Photo localPhoto = getPhotoById(photoId);
         if (localPhoto == null) return null;
@@ -92,15 +91,24 @@ public class LocalPhotoSource {
         return photo;
     }
 
-    public void getPhotosByAlbumId() {
-
+    public List<Photo> getPhotosByAlbumId(int albumId) {
+        List<Photo> photos = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, PhotosTable.ALBUM_ID + " = ?", new String[]{String.valueOf(albumId)}, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            photos.add(new Photo(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return photos;
     }
 
     public void getAllPhotos() {
 
     }
 
-    public List<File> getPhotosByAlbum(PhotoAlbum photoAlbum) {
-        return null;
+    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
+        return getPhotosByAlbumId(photoAlbum.id);
     }
 }
