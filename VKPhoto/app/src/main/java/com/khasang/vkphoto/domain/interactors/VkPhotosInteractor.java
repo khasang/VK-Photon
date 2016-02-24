@@ -5,4 +5,6 @@ package com.khasang.vkphoto.domain.interactors;
  */
 public interface VkPhotosInteractor {
     void getPhotosByAlbumId(int albumId);
+
+    void deletePhotoById(int photoId);
 }

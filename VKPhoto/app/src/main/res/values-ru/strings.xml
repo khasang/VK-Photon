@@ -10,4 +10,5 @@
     <string name="add_album_description">Опсание</string>
     <string name="st_btn_ok">Да</string>
     <string name="st_btn_cancel">Нет</string>
+    <string name="sync_delete_album">Удалить альбом</string>
 </resources>

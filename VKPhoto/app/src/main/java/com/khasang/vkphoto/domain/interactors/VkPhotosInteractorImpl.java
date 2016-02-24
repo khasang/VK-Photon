@@ -26,6 +26,11 @@ public class VkPhotosInteractorImpl implements VkPhotosInteractor {
         if (checkSyncService()) syncService.getPhotosByAlbumId(albumId);
     }
 
+    @Override
+    public void deletePhotoById(int photoId) {
+        if (checkSyncService()) syncService.deleteVkPhotoById(photoId);
+    }
+
     boolean checkSyncService() {
         if (syncService == null) {
             if (!setSyncService()) {

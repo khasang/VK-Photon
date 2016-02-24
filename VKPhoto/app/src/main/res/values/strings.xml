@@ -9,5 +9,6 @@
     <string name="add_album_description">Description</string>
     <string name="st_btn_ok">Ok</string>
     <string name="st_btn_cancel">Cancel</string>
+    <string name="sync_delete_album">Delete Album</string>
 
 </resources>

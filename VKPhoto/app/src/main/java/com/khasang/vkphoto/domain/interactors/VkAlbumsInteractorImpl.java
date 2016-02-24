@@ -10,8 +10,10 @@ import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.util.Constants;
+import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.util.AsyncExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,16 +71,43 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
      */
     @Override
     public void getAllAlbums() {
-        if (checkSyncService()) syncService.getAllAlbums();
+        AsyncExecutor asyncExecutor = AsyncExecutor.create();
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                if (checkSyncService()) syncService.getAllAlbums();
+            }
+        });
+    }
+
+    @Override
+    public void deleteVkAlbum(MultiSelector multiSelector, Cursor cursor) {
+        if (checkSyncService()) {
+            List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+            if (selectedPositions.size() == 1) {
+                cursor.moveToPosition(selectedPositions.get(0));
+                PhotoAlbum photoAlbum = new PhotoAlbum(cursor);
+                syncService.deleteVKAlbumById(photoAlbum.getId());
+            }
+        }
     }
 
     boolean checkSyncService() {
-        if (syncService == null) {
-            if (!setSyncService()) {
-                EventBus.getDefault().postSticky(new ErrorEvent(Constants.SYNC_SERVICE_ERROR));
-                return false;
+        int i = 0;
+        do {
+            if (i == 4) {
+                if (!setSyncService()) {
+                    EventBus.getDefault().postSticky(new ErrorEvent(Constants.SYNC_SERVICE_ERROR));
+                    return false;
+                }
             }
-        }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            i++;
+        } while (syncService == null);
         return true;
     }
 }

@@ -28,6 +28,11 @@ public class VKPhotosPresenterImpl implements VKPhotosPresenter {
     }
 
     @Override
+    public void deletePhotoById(int photoId) {
+        vkPhotosInteractor.deletePhotoById(photoId);
+    }
+
+    @Override
     public void initialize() {
     }
 

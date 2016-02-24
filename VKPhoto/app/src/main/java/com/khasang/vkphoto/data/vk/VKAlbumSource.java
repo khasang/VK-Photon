@@ -3,19 +3,23 @@ package com.khasang.vkphoto.data.vk;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
+import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.model.VKPrivacy;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 import java.util.Vector;
 
+
 public class VKAlbumSource {
+
     private RequestMaker requestMaker = new RequestMaker();
     /**
      * Добавляет альбом на сервер VK с выбранными фотографиями на девайсе
@@ -26,13 +30,13 @@ public class VKAlbumSource {
      */
     public void addAlbum(final String title, final String description,
                          final Vector<String> listUploadedFiles, final int privacy, final int comment_privacy) {
-        requestMaker.requestAddAlbum(title, description, listUploadedFiles, privacy, comment_privacy);
+//        requestAddAlbum(title, description, listUploadedFiles, privacy, comment_privacy);
     }
 
-//    public void createEmptyAlbum() {
-//        RequestMaker.createEmptyAlbum(new VKRequest.VKRequestListener() {
+//    public void requestAddAlbum(String title, String description, int privacy, int commentPrivacy) {
+//        requestMaker.createEmptyAlbum(new VKRequest.VKRequestListener() {
 //            @Override
-//            public void onComplete (VKResponse response) {
+//            public void onComplete(VKResponse response) {
 //                super.onComplete(response);
 //                final PhotoAlbum photoAlbum;
 //                try {
@@ -53,15 +57,28 @@ public class VKAlbumSource {
 //            void sendError(String s) {
 //                EventBus.getDefault().postSticky(new ErrorEvent(s));
 //            }
-//        }, "Test 16.02", "test album", VKPrivacy.PRIVACY_FRIENDS , VKPrivacy.PRIVACY_NOBODY);
+//        }, "Test 16.02", "test album", VKPrivacy.PRIVACY_FRIENDS, VKPrivacy.PRIVACY_NOBODY);
 //    }
+
 
     public void updateAlbum() {
 
     }
 
-    public void deleteAlbum() {
+    public void deleteAlbumById(int albumId) {
+        RequestMaker.deleteVkAlbumById(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Logger.d("Delete VKPhoto successfully");
+            }
 
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                sendError(error.toString());
+            }
+        }, albumId);
     }
 
     public void deleteAlbums() {
