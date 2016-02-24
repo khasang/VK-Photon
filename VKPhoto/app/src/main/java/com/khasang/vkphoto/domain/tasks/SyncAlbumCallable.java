@@ -34,7 +34,7 @@ public class SyncAlbumCallable implements Callable<Boolean> {
         vkPhotoSource.getPhotosByAlbumId(photoAlbum.id);
         localPhotoSource.getPhotosByAlbumId(photoAlbum.id);
         VKRequest vkRequest = RequestMaker.getVkPhotosByAlbumIdRequest(photoAlbum.id);
-        vkRequest.executeSyncWithListener(new VKRequest.VKRequestListener() {
+        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);

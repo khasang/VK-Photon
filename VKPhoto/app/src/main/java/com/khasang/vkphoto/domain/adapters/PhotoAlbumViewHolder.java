@@ -122,7 +122,7 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
                             vkAlbumsPresenter.syncAlbums(multiSelector);
                             return true;
                         case R.id.action_delete_album:
-                            vkAlbumsPresenter.deleteVkAlbums(multiSelector);
+//                            vkAlbumsPresenter.deleteVkAlbums(multiSelector);
                             return true;
                         default:
                             break;

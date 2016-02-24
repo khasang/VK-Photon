@@ -3,20 +3,17 @@ package com.khasang.vkphoto.domain.interactors;
 import android.database.Cursor;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
-import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
-import com.khasang.vkphoto.util.Constants;
-import com.khasang.vkphoto.util.Logger;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.util.AsyncExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Реализация интерфейса исполнителя запросов к службе синхронизации.
@@ -93,22 +90,18 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     }
 
     boolean checkSyncService() {
-        int i = 0;
-        do {
-            if (i == 4) {
-                if (!setSyncService()) {
-                    EventBus.getDefault().postSticky(new ErrorEvent(Constants.SYNC_SERVICE_ERROR));
-                    return false;
+        for (int i = 0; i < 4; i++) {
+            if (setSyncService()) {
+                return true;
+            } else {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            i++;
-        } while (syncService == null);
-        return true;
+        }
+        return false;
     }
 }
       

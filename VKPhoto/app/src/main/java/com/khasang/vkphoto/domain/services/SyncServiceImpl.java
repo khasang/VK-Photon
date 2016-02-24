@@ -73,6 +73,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                     if (booleanFutureTask.get()) {
                         futures.remove(booleanFutureTask);
                     }
+                    Logger.d("exit get");
                 }
             }
         });
