@@ -33,7 +33,7 @@ public class RequestMaker {
      * @param privacy           настройки приватности просмотра альбома
      * @param comment_privacy   настройки приватности комментирования
      */
-    public void requestCreateEmptyAlbum(VKRequest.VKRequestListener vkRequestListener, String title,
+    public static void requestCreateEmptyAlbum(VKRequest.VKRequestListener vkRequestListener, String title,
                                         String description, int privacy, int comment_privacy) {
         final VKRequest request = getVkRequest("photos.createAlbum", VKParameters.from("title", title,
                 "description", description, "privacy", privacy, "comment_privacy", comment_privacy));
@@ -48,7 +48,7 @@ public class RequestMaker {
      * @param privacy
      * @param comment_privacy
      */
-    public void requestAddAlbum(final String title, final String description,
+    public static void requestAddAlbum(final String title, final String description,
                                 final Vector<String> listUploadedFiles, final int privacy, final int comment_privacy) {
         requestCreateEmptyAlbum(new VKRequest.VKRequestListener() {
             @Override

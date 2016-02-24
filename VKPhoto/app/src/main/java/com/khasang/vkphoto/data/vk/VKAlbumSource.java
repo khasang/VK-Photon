@@ -18,7 +18,6 @@ import java.util.Vector;
 
 public class VKAlbumSource {
 
-    private RequestMaker requestMaker = new RequestMaker();
     /**
      * Добавляет альбом на сервер VK с выбранными фотографиями на девайсе
      * @param title
@@ -28,7 +27,7 @@ public class VKAlbumSource {
      */
     public void addAlbum(final String title, final String description,
                          final Vector<String> listUploadedFiles, final int privacy, final int comment_privacy) {
-        requestMaker.requestAddAlbum(title, description, listUploadedFiles, privacy, comment_privacy);
+        RequestMaker.requestAddAlbum(title, description, listUploadedFiles, privacy, comment_privacy);
     }
 
     public void updateAlbum() {
