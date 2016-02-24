@@ -1,5 +1,7 @@
 package com.khasang.vkphoto.domain.interactors;
 
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+
 import java.util.Vector;
 
 /**
@@ -10,5 +12,5 @@ public interface VkPhotosInteractor {
 
     void deletePhotoById(int photoId);
 
-    void addPhotos(Vector<String> listUploadedFiles);
+    void addPhotos(Vector<String> listUploadedFiles, PhotoAlbum photoAlbum);
 }

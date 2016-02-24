@@ -36,9 +36,11 @@ public class VKPhotoSource {
         }
     }
 
-    public void savePhotos(Vector<String> listUploadedFiles) {
-        
-
+    public void savePhotos(Vector<String> listUploadedFiles, PhotoAlbum photoAlbum) {
+        for (int ind = 0; ind < listUploadedFiles.size(); ind++){
+            File file = new File(listUploadedFiles.get(ind));
+            savePhotoToAlbum(file, photoAlbum);
+        }
     }
 
     public void updatePhoto() {

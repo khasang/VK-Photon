@@ -5,6 +5,7 @@ import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.interactors.VkPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.VkPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -35,8 +36,8 @@ public class VKPhotosPresenterImpl implements VKPhotosPresenter {
     }
 
     @Override
-    public void addPhotos(Vector<String> listUploadedFiles) {
-        vkPhotosInteractor.addPhotos(listUploadedFiles);
+    public void addPhotos(Vector<String> listUploadedFiles, PhotoAlbum photoAlbum) {
+        vkPhotosInteractor.addPhotos(listUploadedFiles, photoAlbum);
     }
 
     @Override

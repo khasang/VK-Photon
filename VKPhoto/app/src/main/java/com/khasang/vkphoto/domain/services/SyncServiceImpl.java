@@ -128,11 +128,11 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void addPhotos(final Vector<String> listUploadedFiles) {
+    public void addPhotos(final Vector<String> listUploadedFiles, final PhotoAlbum photoAlbum) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                vKDataSource.getPhotoSource().savePhotos(listUploadedFiles);
+                vKDataSource.getPhotoSource().savePhotos(listUploadedFiles, photoAlbum);
             }
         });
     }

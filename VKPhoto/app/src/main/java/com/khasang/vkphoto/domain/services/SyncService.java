@@ -16,7 +16,7 @@ public interface SyncService {
 
     void getPhotosByAlbumId(int albumId);
 
-    void addPhotos(Vector<String> listUploadedFiles);
+    void addPhotos(Vector<String> listUploadedFiles, PhotoAlbum photoAlbum);
 
     void deleteVkPhotoById(int photoId);
 

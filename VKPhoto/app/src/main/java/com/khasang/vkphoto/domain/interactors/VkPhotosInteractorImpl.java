@@ -3,6 +3,7 @@ package com.khasang.vkphoto.domain.interactors;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,8 +35,8 @@ public class VkPhotosInteractorImpl implements VkPhotosInteractor {
     }
 
     @Override
-    public void addPhotos(Vector<String> listUploadedFiles) {
-        if (checkSyncService()) syncService.addPhotos(listUploadedFiles);
+    public void addPhotos(Vector<String> listUploadedFiles, PhotoAlbum photoAlbum) {
+        if (checkSyncService()) syncService.addPhotos(listUploadedFiles, photoAlbum);
     }
 
     boolean checkSyncService() {

@@ -38,8 +38,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     private EventBus eventBus;
 
     private Vector<String> listUploadedFiles;
-    private String st;
-
+    
     public static VKAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
         args.putParcelable(PHOTOALBUM, photoAlbum);
@@ -54,6 +53,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         setRetainInstance(true);
         eventBus = EventBus.getDefault();
         eventBus.register(this);
+        listUploadedFiles = new Vector<>();
     }
 
     @Nullable
@@ -88,8 +88,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
                     @Override
                     public void OnSelectedFile(String fileName) {
                         listUploadedFiles.add(fileName);
-                        st = fileName;
-                        vKPhotosPresenter.addPhotos(listUploadedFiles);
+                        vKPhotosPresenter.addPhotos(listUploadedFiles, photoAlbum);
                     }
                 });
             }
