@@ -49,8 +49,20 @@ public class VKAlbumSource {
 
     }
 
-    public void deleteAlbum() {
+    public void deleteAlbumBuId(int albumId) {
+        RequestMaker.deleteVkAlbumById(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Logger.d("Delete VKPhoto successfully");
+            }
 
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                sendError(error.toString());
+            }
+        }, albumId);
     }
 
     public void deleteAlbums() {
