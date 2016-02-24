@@ -116,4 +116,18 @@ public class Photo extends VKApiPhoto {
         if (!TextUtils.isEmpty(photo_130)) return photo_130;
         return photo_75;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Photo)) return false;
+        Photo that = (Photo) o;
+        return id == that.id;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 }

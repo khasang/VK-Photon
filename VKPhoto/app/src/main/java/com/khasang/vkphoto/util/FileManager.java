@@ -90,7 +90,7 @@ public class FileManager {
         return file.exists() && file.isDirectory();
     }
 
-    public static File saveImage(String urlPath, PhotoAlbum photoAlbum) {
+    public static File saveImage(String urlPath, PhotoAlbum photoAlbum, int photoId) {
         int count;
         File file = null;
         try {
@@ -98,7 +98,7 @@ public class FileManager {
             URLConnection urlConnection = url.openConnection();
             //  long total = 0;
             urlConnection.connect();
-            String targetFileName = String.format(JPEG_FORMAT, photoAlbum.thumb_id);
+            String targetFileName = String.format(JPEG_FORMAT, photoId);
             //  int lenghtOfFile = urlConnection.getContentLength();
             String folderPath = photoAlbum.filePath + "/";
             String filePath = folderPath + targetFileName;

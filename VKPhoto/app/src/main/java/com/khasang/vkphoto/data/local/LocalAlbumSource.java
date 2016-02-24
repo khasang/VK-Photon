@@ -116,8 +116,23 @@ public class LocalAlbumSource {
         return null;
     }
 
-    public void setAlbumSyncStatus(PhotoAlbum photoAlbum, int status) {
-        photoAlbum.syncStatus = status;
-        updateAlbum(photoAlbum);
+    public void setSyncStatus(List<PhotoAlbum> photoAlbumList, int status) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PhotoAlbumsTable.SYNC_STATUS, status);
+            String[] whereArgs = new String[photoAlbumList.size()];
+            for (int i = 0; i < photoAlbumList.size(); i++) {
+                whereArgs[i] = String.valueOf(photoAlbumList.get(i).id);
+            }
+            db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
+                    whereArgs);
+            db.setTransactionSuccessful();
+            EventBus.getDefault().postSticky(new LocalAlbumEvent());
+        } finally {
+            db.endTransaction();
+        }
+
     }
 }

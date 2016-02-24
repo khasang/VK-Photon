@@ -140,12 +140,6 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         }
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {

@@ -28,7 +28,7 @@ public class LocalPhotoSource {
     }
 
     public File savePhotoToAlbum(Photo photo, PhotoAlbum photoAlbum) {
-        File imageFile = FileManager.saveImage(photo.getUrlToMaxPhoto(), photoAlbum);
+        File imageFile = FileManager.saveImage(photo.getUrlToMaxPhoto(), photoAlbum, photo.id);
         if (imageFile == null) {
             EventBus.getDefault().postSticky(new ErrorEvent("Photo " + photo.id + " wasn't saved"));
         } else {

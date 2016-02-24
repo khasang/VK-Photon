@@ -10,7 +10,6 @@ import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
-import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -62,9 +61,10 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
+                localDataSource.getAlbumSource().setSyncStatus(photoAlbumList, Constants.SYNC_STARTED);
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 for (PhotoAlbum photoAlbum : photoAlbumList) {
-                    Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource.getPhotoSource());
+                    Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource);
                     futures.add(executor.submit(booleanCallable));
                 }
                 Iterator<Future<Boolean>> iterator = futures.iterator();
@@ -75,6 +75,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                     }
                     Logger.d("exit get");
                 }
+                executor.shutdown();
             }
         });
     }
@@ -123,11 +124,6 @@ public class SyncServiceImpl extends Service implements SyncService {
                 vKDataSource.getPhotoSource().getPhotosByAlbumId(albumId);
             }
         });
-    }
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
-        List<Photo> vkPhotoList = getVKPhotosEvent.photosList;
     }
 
     @Override

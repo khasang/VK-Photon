@@ -8,6 +8,7 @@ import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
+import com.vk.sdk.VKAccessToken;
 
 import org.greenrobot.eventbus.util.AsyncExecutor;
 
@@ -91,11 +92,11 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
 
     boolean checkSyncService() {
         for (int i = 0; i < 4; i++) {
-            if (setSyncService()) {
+            if (setSyncService() && VKAccessToken.currentToken() != null) {
                 return true;
             } else {
                 try {
-                    TimeUnit.MILLISECONDS.sleep(10);
+                    TimeUnit.MILLISECONDS.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
