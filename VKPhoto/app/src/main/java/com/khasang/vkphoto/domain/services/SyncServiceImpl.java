@@ -132,7 +132,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                vKDataSource.getAlbumSource().deleteAlbumBuId(albumId);
+                vKDataSource.getAlbumSource().deleteAlbumById(albumId);
             }
         });
     }

@@ -1,10 +1,10 @@
 package com.khasang.vkphoto.data.vk;
 
 import com.khasang.vkphoto.data.RequestMaker;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.VKError;
@@ -18,10 +18,10 @@ import java.util.List;
 
 public class VKAlbumSource {
 
-    public void createEmptyAlbum() {
+    public void createEmptyAlbum(String title, String description, int privacy, int commentPrivacy) {
         RequestMaker.createEmptyAlbum(new VKRequest.VKRequestListener() {
             @Override
-            public void onComplete (VKResponse response) {
+            public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 final PhotoAlbum photoAlbum;
                 try {
@@ -42,14 +42,14 @@ public class VKAlbumSource {
             void sendError(String s) {
                 EventBus.getDefault().postSticky(new ErrorEvent(s));
             }
-        }, "Test 16.02", "test album", VKPrivacy.PRIVACY_FRIENDS , VKPrivacy.PRIVACY_NOBODY);
+        }, "Test 16.02", "test album", VKPrivacy.PRIVACY_FRIENDS, VKPrivacy.PRIVACY_NOBODY);
     }
 
     public void updateAlbum() {
 
     }
 
-    public void deleteAlbumBuId(int albumId) {
+    public void deleteAlbumById(int albumId) {
         RequestMaker.deleteVkAlbumById(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {

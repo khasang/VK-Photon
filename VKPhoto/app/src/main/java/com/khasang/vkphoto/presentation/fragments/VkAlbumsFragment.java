@@ -27,8 +27,6 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.NetWorkUtils;
 import com.khasang.vkphoto.util.ToastUtils;
 
-import java.util.List;
-
 public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = VkAlbumsFragment.class.getSimpleName();
     private VKAlbumsPresenter vKAlbumsPresenter;
@@ -65,14 +63,14 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
                 } else {
                     Logger.d("no internet connection");
                 }
-                List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-                Cursor cursor = adapter.getCursor();
-                for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
-                    Integer position = selectedPositions.get(i);
-                    cursor.moveToPosition(position);
-                    PhotoAlbum photoAlbum = new PhotoAlbum(cursor);
-                    Logger.d(photoAlbum.title + " " + photoAlbum.id);
-                }
+//                List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+//                Cursor cursor = adapter.getCursor();
+//                for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
+//                    Integer position = selectedPositions.get(i);
+//                    cursor.moveToPosition(position);
+//                    PhotoAlbum photoAlbum = new PhotoAlbum(cursor);
+//                    Logger.d(photoAlbum.title + " " + photoAlbum.id);
+//                }
             }
         });
         initRecyclerView(view);
@@ -82,7 +80,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     private void initRecyclerView(View view) {
         albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
         albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        albumsRecyclerView.setAdapter(adapter);
+        initAdapter(null);
     }
 
     @Override
@@ -125,12 +123,18 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         return new AlbumsCursorLoader(getContext(), new LocalAlbumSource(getContext()));
     }
 
+    private boolean initAdapter(Cursor cursor) {
+        if (adapter == null) {
+            adapter = new PhotoAlbumCursorAdapter(getContext(), cursor, multiSelector, vKAlbumsPresenter);
+            albumsRecyclerView.setAdapter(adapter);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (adapter == null) {
-            adapter = new PhotoAlbumCursorAdapter(getContext(), data, multiSelector, vKAlbumsPresenter);
-            albumsRecyclerView.setAdapter(adapter);
-        } else {
+        if (!initAdapter(data)) {
             adapter.changeCursor(data);
         }
     }
