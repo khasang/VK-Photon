@@ -50,7 +50,7 @@ public class LocalAlbumSource {
         if (oldAlbum == null) {
             saveAlbum(photoAlbum);
         } else {
-            Logger.d("photoAlbum " + photoAlbum.id + " exists");
+            Logger.d("update " + photoAlbum.id + " photoAlbum");
             ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum);
             if (contentValues.size() > 0) {
                 db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",

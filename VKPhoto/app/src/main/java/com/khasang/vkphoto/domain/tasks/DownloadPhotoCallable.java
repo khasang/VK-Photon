@@ -20,7 +20,7 @@ public class DownloadPhotoCallable implements Callable<Boolean> {
 
     @Override
     public Boolean call() throws Exception {
-        Logger.d("start download photo " + photo.id);
+        Logger.d("start save photo " + photo.id);
         localPhotoSource.savePhotoToAlbum(photo, photoAlbum);
         return true;
     }
