@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.List;
+import java.util.Vector;
 
 public class VKPhotoSource {
 
@@ -35,7 +36,8 @@ public class VKPhotoSource {
         }
     }
 
-    public void savePhotos() {
+    public void savePhotos(Vector<String> listUploadedFiles) {
+        
 
     }
 

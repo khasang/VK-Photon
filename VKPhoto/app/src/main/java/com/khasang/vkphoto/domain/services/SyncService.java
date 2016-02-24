@@ -5,6 +5,7 @@ import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 import java.util.List;
+import java.util.Vector;
 
 /**
  * интерфейс сервиса синхронизации
@@ -14,6 +15,8 @@ public interface SyncService {
     void getAllAlbums();
 
     void getPhotosByAlbumId(int albumId);
+
+    void addPhotos(Vector<String> listUploadedFiles);
 
     void deleteVkPhotoById(int photoId);
 

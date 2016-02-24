@@ -7,6 +7,8 @@ import com.khasang.vkphoto.util.Constants;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Vector;
+
 public class VkPhotosInteractorImpl implements VkPhotosInteractor {
     private SyncServiceProvider syncServiceProvider;
     private SyncService syncService;
@@ -29,6 +31,11 @@ public class VkPhotosInteractorImpl implements VkPhotosInteractor {
     @Override
     public void deletePhotoById(int photoId) {
         if (checkSyncService()) syncService.deleteVkPhotoById(photoId);
+    }
+
+    @Override
+    public void addPhotos(Vector<String> listUploadedFiles) {
+        if (checkSyncService()) syncService.addPhotos(listUploadedFiles);
     }
 
     boolean checkSyncService() {

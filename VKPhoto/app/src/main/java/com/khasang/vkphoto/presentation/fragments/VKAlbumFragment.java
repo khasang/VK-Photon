@@ -25,6 +25,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
+import java.util.Vector;
 
 public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public static final String TAG = VKAlbumFragment.class.getSimpleName();
@@ -35,6 +36,9 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     private List<Photo> photoList;
     int albumId;
     private EventBus eventBus;
+
+    private Vector<String> listUploadedFiles;
+    private String st;
 
     public static VKAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -78,7 +82,16 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         view.findViewById(R.id.add_photo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                vKPhotosPresenter.addPhotos
+                final OpenFileDialog fileDialog = new OpenFileDialog(getContext());
+                fileDialog.show();
+                fileDialog.setOpenDialogListener(new OpenFileDialog.OpenDialogListener() {
+                    @Override
+                    public void OnSelectedFile(String fileName) {
+                        listUploadedFiles.add(fileName);
+                        st = fileName;
+                        vKPhotosPresenter.addPhotos(listUploadedFiles);
+                    }
+                });
             }
         });
         return view;

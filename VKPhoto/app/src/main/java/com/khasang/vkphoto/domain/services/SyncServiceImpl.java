@@ -24,6 +24,7 @@ import org.greenrobot.eventbus.util.AsyncExecutor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -122,6 +123,16 @@ public class SyncServiceImpl extends Service implements SyncService {
             @Override
             public void run() throws Exception {
                 vKDataSource.getPhotoSource().getPhotosByAlbumId(albumId);
+            }
+        });
+    }
+
+    @Override
+    public void addPhotos(final Vector<String> listUploadedFiles) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                vKDataSource.getPhotoSource().savePhotos(listUploadedFiles);
             }
         });
     }
