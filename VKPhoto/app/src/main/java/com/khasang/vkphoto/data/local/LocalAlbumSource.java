@@ -21,10 +21,10 @@ import com.vk.sdk.api.model.VKApiPhotoAlbum;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class LocalAlbumSource {
     private Context context;
@@ -98,7 +98,7 @@ public class LocalAlbumSource {
         return photoAlbum;
     }
 
-    public  List<PhotoAlbum> getAllAlbums() {
+    public List<PhotoAlbum> getAllAlbums() {
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
@@ -117,37 +117,40 @@ public class LocalAlbumSource {
     }
 
     public List<PhotoAlbum> getAllLocalAlbums() {
-        List<String> tempPath = new ArrayList<>();
-        List<String> listOfAllImages = getListOfAllImages();
+        Set<String> imagePaths = new HashSet<>();
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
-        for (String path : listOfAllImages){
-            String[] split = path.split("/");
-            String name = split[split.length-2];//получаем название альбома
-            if (!tempPath.contains(name)){
-                Array.set(split, split.length - 1, "");
-                String albumPath = Arrays.toString(split).replaceAll(", ","/").replaceAll("[\\[\\]]","");//получаем путь к альбому
-                tempPath.add(name);
-                photoAlbumList.add(new PhotoAlbum(name,albumPath));//добовляем в лист
-
-                Logger.d("name: "+name + " path:"+albumPath);
+        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = {MediaStore.MediaColumns.DATA};
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            int dataIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            while (cursor.moveToNext()) {
+                String string = cursor.getString(dataIndex);
+                imagePaths.add(string.substring(0, string.lastIndexOf("/")));
             }
+            for (String imagePath : imagePaths) {
+                photoAlbumList.add(new PhotoAlbum(imagePath.substring(imagePath.lastIndexOf("/") + 1), imagePath));
+            }
+            cursor.close();
         }
         return photoAlbumList;
     }
 
-    public List<String> getListOfAllImages(){//находит и возвращает все фотографии на девайсе
-        List<String> listOfAllImages = new ArrayList<String>();
-        String absolutePathOfImage = null;
+    public List<String> getAllImagesPathes() {//находит и возвращает все фотографии на девайсе
+        List<String> listOfAllImages = new ArrayList<>();
+        String absolutePathOfImage;
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
-        String[] projection = { MediaStore.MediaColumns.DATA,
-                MediaStore.MediaColumns.DISPLAY_NAME };
-
+        String[] projection = {MediaStore.MediaColumns.DATA,
+                MediaStore.MediaColumns.DISPLAY_NAME};
         Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        while (cursor.moveToNext()) {
-            absolutePathOfImage = cursor.getString(column_index);
-            listOfAllImages.add(absolutePathOfImage);
+        if (cursor != null) {
+            int dataIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(dataIndex);
+                listOfAllImages.add(absolutePathOfImage);
+            }
+            cursor.close();
         }
         return listOfAllImages;
     }

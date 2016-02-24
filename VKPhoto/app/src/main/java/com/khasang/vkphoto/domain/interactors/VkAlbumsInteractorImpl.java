@@ -92,14 +92,13 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
 
     boolean checkSyncService() {
         for (int i = 0; i < 4; i++) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             if (setSyncService() && VKAccessToken.currentToken() != null) {
                 return true;
-            } else {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
         }
         return false;
