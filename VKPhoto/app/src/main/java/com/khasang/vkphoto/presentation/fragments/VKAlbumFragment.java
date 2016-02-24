@@ -3,7 +3,6 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +73,12 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
                 vKPhotosPresenter.deletePhotoById(photoList.get(position).getId());
                 photoList.remove(position);
                 setAdapter();
+            }
+        });
+        view.findViewById(R.id.add_photo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                vKPhotosPresenter.addPhotos
             }
         });
         return view;
