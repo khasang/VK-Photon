@@ -11,6 +11,7 @@ import android.widget.EditText;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VkAddAlbumPresenter;
 import com.khasang.vkphoto.presentation.presenter.VkAddAlbumPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkAddAlbumView;
@@ -68,6 +69,12 @@ public class VkAddAlbumFragment extends DialogFragment implements VkAddAlbumView
                     listUploadedFiles, VKPrivacy.PRIVACY_NOBODY, VKPrivacy.PRIVACY_NOBODY);
             }
         });
+        view.findViewById(R.id.btn_cancel_add_album).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDialog().dismiss();
+            }
+        });
         return view;
     }
 
@@ -88,8 +95,9 @@ public class VkAddAlbumFragment extends DialogFragment implements VkAddAlbumView
     }
 
     @Override
-    public void displayVkAddAlbum() {
+    public void displayVkAddAlbum(PhotoAlbum photoAlbum) {
         getDialog().dismiss();
+        vkAddAlbumPresenter.goToPhotoAlbum(getContext(), photoAlbum);
     }
 
     @Override

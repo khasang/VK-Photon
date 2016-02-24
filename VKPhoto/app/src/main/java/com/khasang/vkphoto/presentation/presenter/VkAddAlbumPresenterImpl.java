@@ -1,9 +1,13 @@
 package com.khasang.vkphoto.presentation.presenter;
 
-import com.khasang.vkphoto.domain.events.LocalAddAlbumEvent;
+import android.content.Context;
+
+import com.khasang.vkphoto.domain.events.GetLocalAddAlbumEvent;
 import com.khasang.vkphoto.domain.interactors.VkAddAlbumInteractor;
 import com.khasang.vkphoto.domain.interactors.VkAddAlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.activities.Navigator;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAddAlbumView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -29,8 +33,8 @@ public class VkAddAlbumPresenterImpl implements VkAddAlbumPresenter {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAddAlbumEvent(LocalAddAlbumEvent localAddAlbumEvent) {
-        vkAddAlbumView.displayVkAddAlbum();
+    public void onAddAlbumEvent(GetLocalAddAlbumEvent getLocalAddAlbumEvent) {
+        vkAddAlbumView.displayVkAddAlbum(getLocalAddAlbumEvent.photoAlbum);
     }
 
     @Override
@@ -46,5 +50,10 @@ public class VkAddAlbumPresenterImpl implements VkAddAlbumPresenter {
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum) {
+        Navigator.navigateToVKAlbumFragment(context, photoAlbum);
     }
 }
