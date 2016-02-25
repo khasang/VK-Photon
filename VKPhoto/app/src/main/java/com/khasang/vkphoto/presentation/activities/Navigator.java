@@ -13,6 +13,7 @@ import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.util.ToastUtils;
 
 import java.util.List;
 
@@ -52,6 +53,9 @@ public class Navigator {
                 Fragment fragment = fragments.get(i);
                 if (!(fragment instanceof VkAlbumsFragment) && !(fragment instanceof LocalAlbumsFragment)) {
                     return;
+                }
+                if (fragment instanceof VkAlbumsFragment) {
+                    ToastUtils.showShortMessage("This will be action Add Album", (Activity) context);
                 }
             }
             changeViewPagerVisibility((Activity) context, true);

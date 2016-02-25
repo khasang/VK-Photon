@@ -87,7 +87,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                ToastUtils.showShortMessage(TAG, getActivity());
+                ToastUtils.showShortMessage("This will be action Add Photos", getActivity());
             }
         });
         return view;
