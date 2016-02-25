@@ -12,6 +12,7 @@ import android.widget.GridView;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.VKPhotoAdapter;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
+import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -75,6 +76,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
                 vKPhotosPresenter.deletePhotoById(photoList.get(position).getId());
                 photoList.remove(position);
                 adapter.notifyDataSetChanged();
+                EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
             }
         });
         gridview.setAdapter(adapter);

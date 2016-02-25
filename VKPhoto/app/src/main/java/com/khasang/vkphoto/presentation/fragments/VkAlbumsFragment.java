@@ -97,6 +97,12 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Logger.d("VkAlbumsFragment onResume()");
+    }
+
+    @Override
     public void displayVkSaveAlbum(PhotoAlbum photoAlbum) {
         Logger.d("displayVkSaveAlbum");
     }
