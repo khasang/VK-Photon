@@ -13,7 +13,8 @@
         android:horizontalSpacing="10dp"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="10dp" >
+        android:verticalSpacing="10dp"
+        android:listSelector="@drawable/gallery_album_selector">
     </GridView>
 
 </RelativeLayout>
