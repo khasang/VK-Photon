@@ -77,12 +77,12 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
 //                }
             }
         });
-        initOnClickListenerFab(view);
+        setOnClickListenerFab(view);
         initRecyclerView(view);
         return view;
     }
 
-    private void initOnClickListenerFab(View view) {
+    private void setOnClickListenerFab(View view) {
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -114,7 +114,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public void onResume() {
         super.onResume();
         Logger.d("VkAlbumsFragment onResume()");
-        initOnClickListenerFab(getView());
+        setOnClickListenerFab(getView());
     }
 
     @Override
