@@ -77,7 +77,6 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
 //                }
             }
         });
-        setOnClickListenerFab(view);
         initRecyclerView(view);
         return view;
     }
@@ -86,7 +85,8 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                ToastUtils.showShortMessage("This will be action Add Album", getActivity());
+                ToastUtils.showShortMessage("Here will be action Add Album", getActivity());
+//                vKAlbumsPresenter.addAlbum();
             }
         });
     }

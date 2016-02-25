@@ -84,18 +84,23 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
             }
         });
         gridview.setAdapter(adapter);
+        return view;
+    }
+
+    private void setOnClickListenerFab (View view){
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                ToastUtils.showShortMessage("This will be action Add Photos", getActivity());
+                ToastUtils.showShortMessage("Here will be action Add Photos", getActivity());
+//                vKPhotosPresenter.addPhotos();
             }
         });
-        return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        setOnClickListenerFab(getView());
         Logger.d("onResume VKAlbumFragment");
     }
 
