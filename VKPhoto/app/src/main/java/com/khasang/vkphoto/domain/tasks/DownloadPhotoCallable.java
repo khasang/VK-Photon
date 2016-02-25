@@ -8,6 +8,7 @@ import com.khasang.vkphoto.util.Logger;
 import java.util.concurrent.Callable;
 
 public class DownloadPhotoCallable implements Callable<Boolean> {
+    public static final int ATTEMPT_COUNT = 3;
     private LocalPhotoSource localPhotoSource;
     private Photo photo;
     private PhotoAlbum photoAlbum;
@@ -21,7 +22,11 @@ public class DownloadPhotoCallable implements Callable<Boolean> {
     @Override
     public Boolean call() throws Exception {
         Logger.d("start save photo " + photo.id);
-        localPhotoSource.savePhotoToAlbum(photo, photoAlbum);
-        return true;
+        for (int i = 0; i < ATTEMPT_COUNT; i++) {
+            if (localPhotoSource.savePhotoToAlbum(photo, photoAlbum).exists()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
