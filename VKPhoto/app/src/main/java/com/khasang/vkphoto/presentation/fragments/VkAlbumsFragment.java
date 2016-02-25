@@ -81,19 +81,25 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
         albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         initAdapter(null);
+        albumsRecyclerView.setAdapter(adapter);
     }
 
     @Override
     public void onStart() {
         super.onStart();
         vKAlbumsPresenter.onStart();
-        vKAlbumsPresenter.getAllAlbums();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         vKAlbumsPresenter.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Logger.d("VkAlbumsFragment onResume()");
     }
 
     @Override
@@ -127,7 +133,6 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     private boolean initAdapter(Cursor cursor) {
         if (adapter == null) {
             adapter = new PhotoAlbumCursorAdapter(getContext(), cursor, multiSelector, vKAlbumsPresenter);
-            albumsRecyclerView.setAdapter(adapter);
             return true;
         }
         return false;

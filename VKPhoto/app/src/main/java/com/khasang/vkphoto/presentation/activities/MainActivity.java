@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
@@ -33,6 +34,8 @@ import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +50,10 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private static String VIEWPAGER_VISIBLE = "viewpager_visible";
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -56,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         loginVk();
         initViews();
         initViewPager();
+        if (savedInstanceState != null) {
+            Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
+        }
     }
 
     private void initViewPager() {
@@ -103,6 +111,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 Logger.d("MainActivity onServiceConnected");
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
+                if (VKAccessToken.currentToken() != null&& viewPager.getVisibility()==View.VISIBLE) {
+                    EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
+                }
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -155,6 +166,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             @Override
             public void onResult(VKAccessToken res) {
                 Toast.makeText(MainActivity.this, "Authorized", Toast.LENGTH_SHORT).show();
+                if (sConn != null) {
+                    EventBus.getDefault().post(new SyncAndTokenReadyEvent());
+                }
                 // User passed Authorization
             }
 
@@ -207,4 +221,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
+        super.onSaveInstanceState(outState);
+    }
 }

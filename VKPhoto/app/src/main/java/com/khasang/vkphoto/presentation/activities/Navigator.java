@@ -60,7 +60,7 @@ public class Navigator {
         }
     }
 
-    private static void changeViewPagerVisibility(Activity activity, boolean visibility) {
+    public static void changeViewPagerVisibility(Activity activity, boolean visibility) {
         View tabLayout = activity.findViewById(R.id.tabs);
         View fragmentContainer = activity.findViewById(R.id.fragment_container);
         View viewPager = activity.findViewById(R.id.viewpager);

@@ -6,6 +6,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
@@ -74,6 +75,11 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent errorEvent) {
         vkAlbumsView.showError(errorEvent.errorMessage);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSyncAndTokenReadyEvent(SyncAndTokenReadyEvent syncAndTokenReadyEvent) {
+        getAllAlbums();
     }
 }
       
