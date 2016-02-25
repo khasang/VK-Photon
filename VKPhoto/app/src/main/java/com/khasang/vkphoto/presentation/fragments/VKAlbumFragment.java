@@ -1,5 +1,8 @@
 package com.khasang.vkphoto.presentation.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -57,7 +60,6 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         vKPhotosPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
-        photoList = new ArrayList<>();
         adapter = new VKPhotoAdapter(getContext(), photoList);
         eventBus = EventBus.getDefault();
         eventBus.register(this);
@@ -75,15 +77,12 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         }
         albumId = photoAlbum.id;
         gridview = (GridView) view.findViewById(R.id.gridView);
-//        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                vKPhotosPresenter.deletePhotoById(photoList.get(position).getId());
-//                photoList.remove(position);
-//                adapter.notifyDataSetChanged();
-//                EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
-//            }
-//        });
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+// Go to PhotoFragment
+            }
+        });
         gridview.setAdapter(adapter);
         gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
         gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -91,15 +90,15 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 if (checked) {
                     selectedPositions.add(position);
-                } else {
-                    selectedPositions.remove(position);
+                }
+                if (!checked){
+                    selectedPositions.remove(((Object) position));
                 }
             }
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-               VKAlbumFragment.this.getActivity().getMenuInflater().inflate(R.menu.menu_action_mode_vk_albums, menu);
-
+                VKAlbumFragment.this.getActivity().getMenuInflater().inflate(R.menu.menu_action_mode_vk_album, menu);
                 return true;
             }
 
@@ -111,12 +110,11 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.action_sync_album:
+                    case R.id.action_sync_photo:
                         Logger.d(selectedPositions.toString());
-                        mode.finish();
                         return true;
-                    case R.id.action_delete_album:
-                        mode.finish();
+                    case R.id.action_delete_photo:
+                        simpleDialog();
                         return true;
                     default:
                         break;
@@ -157,14 +155,41 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
+    public List<Photo> getPhotoList() {
+        return photoList;
+    }
+
+    @Override
     public void showError(String s) {
         ToastUtils.showError(s, getContext());
     }
 
+    private void deletePhotoById() {
+        vKPhotosPresenter.deletePhotoById(selectedPositions);
+        vKPhotosPresenter.getPhotosByAlbumId(albumId);
+        EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
+    }
 
     @Subscribe
     public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
         photoList = getVKPhotosEvent.photosList;
         adapter.setPhotoList(photoList);
+    }
+
+    public void simpleDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Delete Photo?").
+                setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deletePhotoById();
+                    }
+                }).
+                setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
     }
 }
