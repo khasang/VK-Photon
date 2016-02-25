@@ -12,11 +12,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 
-public class VKPhotosPresenterImpl implements VKPhotosPresenter {
+public class VKAlbumPresenterImpl implements VKPhotosPresenter {
     private VkAlbumView vkAlbumView;
     private VkPhotosInteractor vkPhotosInteractor;
 
-    public VKPhotosPresenterImpl(VkAlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
+    public VKAlbumPresenterImpl(VkAlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
         this.vkAlbumView = vkAlbumView;
         vkPhotosInteractor = new VkPhotosInteractorImpl(syncServiceProvider);
     }

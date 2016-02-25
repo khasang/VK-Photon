@@ -22,6 +22,11 @@ public class VKPhotoAdapter extends BaseAdapter {
         this.photoList = photoList;
     }
 
+    public void setPhotoList(List<Photo> photoList) {
+        this.photoList = photoList;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return photoList.size();

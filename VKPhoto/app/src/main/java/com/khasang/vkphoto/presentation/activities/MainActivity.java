@@ -50,8 +50,10 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private static String VIEWPAGER_VISIBLE = "viewpager_visible";
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -59,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         loginVk();
         initViews();
         initViewPager();
+        if (savedInstanceState != null) {
+            Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
+        }
     }
 
     private void initViewPager() {
@@ -106,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 Logger.d("MainActivity onServiceConnected");
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
-                if (VKAccessToken.currentToken() != null) {
+                if (VKAccessToken.currentToken() != null&& viewPager.getVisibility()==View.VISIBLE) {
                     EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
                 }
             }
@@ -216,4 +221,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
+        super.onSaveInstanceState(outState);
+    }
 }
