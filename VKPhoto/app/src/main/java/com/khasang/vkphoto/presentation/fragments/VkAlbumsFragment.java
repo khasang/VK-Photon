@@ -87,7 +87,6 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public void onStart() {
         super.onStart();
         vKAlbumsPresenter.onStart();
-        vKAlbumsPresenter.getAllAlbums();
     }
 
     @Override
