@@ -2,7 +2,7 @@ package com.khasang.vkphoto.presentation.presenter;
 
 import android.content.Context;
 
-import com.khasang.vkphoto.domain.events.GetLocalAddAlbumEvent;
+import com.khasang.vkphoto.domain.events.GetAlbumEvent;
 import com.khasang.vkphoto.domain.interactors.VkAddAlbumInteractor;
 import com.khasang.vkphoto.domain.interactors.VkAddAlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
@@ -13,8 +13,6 @@ import com.khasang.vkphoto.presentation.view.VkAddAlbumView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.Vector;
 
 /** Created by bugtsa on 19-Feb-16. */
 public class VkAddAlbumPresenterImpl implements VkAddAlbumPresenter {
@@ -28,13 +26,13 @@ public class VkAddAlbumPresenterImpl implements VkAddAlbumPresenter {
 
     @Override
     public void addAlbum(final String title, final String description,
-                         final Vector<String> listUploadedFiles, final int privacy, final int comment_privacy) {
-        vkAddAlbumInteractor.addAlbum(title, description, listUploadedFiles, privacy, comment_privacy);
+                         final int privacy, final int commentPrivacy) {
+        vkAddAlbumInteractor.addAlbum(title, description, privacy, commentPrivacy);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAddAlbumEvent(GetLocalAddAlbumEvent getLocalAddAlbumEvent) {
-        vkAddAlbumView.displayVkAddAlbum(getLocalAddAlbumEvent.photoAlbum);
+    public void onAddAlbumEvent(GetAlbumEvent getAlbumEvent) {
+        vkAddAlbumView.displayVkAddAlbum(getAlbumEvent.photoAlbum);
     }
 
     @Override

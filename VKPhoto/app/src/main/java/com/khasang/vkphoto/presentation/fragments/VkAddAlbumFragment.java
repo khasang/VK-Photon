@@ -18,14 +18,11 @@ import com.khasang.vkphoto.presentation.view.VkAddAlbumView;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKPrivacy;
 
-import java.util.Vector;
-
 /** Created by bugtsa on 18-Feb-16. */
 public class VkAddAlbumFragment extends DialogFragment implements VkAddAlbumView {
     public static final String TAG = VkAddAlbumFragment.class.getSimpleName();
     private VkAddAlbumPresenter vkAddAlbumPresenter;
     private Context context;
-    private Vector<String> listUploadedFiles;
     private String st;
 
     public VkAddAlbumFragment() {
@@ -43,7 +40,6 @@ public class VkAddAlbumFragment extends DialogFragment implements VkAddAlbumView
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        initFields();
         getDialog().setTitle("Add Album");
         View view = inflater.inflate(R.layout.fragment_vk_add_album, null);
         final EditText etTitle = (EditText) view.findViewById(R.id.et_title_add_album);
@@ -52,7 +48,7 @@ public class VkAddAlbumFragment extends DialogFragment implements VkAddAlbumView
             @Override
             public void onClick(View v) {
             vkAddAlbumPresenter.addAlbum(etTitle.getText().toString(), etDescription.getText().toString(),
-                    listUploadedFiles, VKPrivacy.PRIVACY_NOBODY, VKPrivacy.PRIVACY_NOBODY);
+                    VKPrivacy.PRIVACY_NOBODY, VKPrivacy.PRIVACY_NOBODY);
             }
         });
         view.findViewById(R.id.btn_cancel_add_album).setOnClickListener(new View.OnClickListener() {
@@ -64,9 +60,6 @@ public class VkAddAlbumFragment extends DialogFragment implements VkAddAlbumView
         return view;
     }
 
-    private void initFields() {
-        listUploadedFiles = new Vector<>();
-    }
 
     @Override
     public void onStart() {

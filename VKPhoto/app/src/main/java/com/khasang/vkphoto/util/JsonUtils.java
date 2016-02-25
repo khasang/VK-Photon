@@ -23,7 +23,7 @@ public class JsonUtils {
         return tClass.getConstructor(JSONObject.class).newInstance(jsonObject.getJSONObject("response"));
     }
 
-    public static <T> PhotoAlbum getJsonTest(JSONObject jsonObject) throws JSONException {
+    public static <T> PhotoAlbum getPhotoAlbum(JSONObject jsonObject) throws JSONException {
         PhotoAlbum photoAlbum = null;
         try {
             photoAlbum = new PhotoAlbum(jsonObject.getJSONObject("response"));

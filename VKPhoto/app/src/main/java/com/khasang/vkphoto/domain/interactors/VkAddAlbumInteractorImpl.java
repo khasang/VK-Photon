@@ -21,9 +21,9 @@ public class VkAddAlbumInteractorImpl implements VkAddAlbumInteractor {
 
     @Override
     public void addAlbum(final String title, final String description,
-                         final Vector<String> listUploadedFiles, final int privacy, final int comment_privacy) {
+                         final int privacy, final int commentPrivacy) {
         checkSyncService();
-        syncService.addAlbum(title, description, listUploadedFiles, privacy, comment_privacy);
+        syncService.addAlbum(title, description, privacy, commentPrivacy);
     }
 
     /**
