@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
+import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
@@ -40,7 +41,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SyncServiceProvider {
+public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider {
     public static final String TAG = MainActivity.class.getSimpleName();
     private ServiceConnection sConn;
     private boolean bound = false;
@@ -51,9 +52,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private static String VIEWPAGER_VISIBLE = "viewpager_visible";
+    private FloatingActionButton fab;
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -185,6 +186,11 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     @Override
     public SyncService getSyncService() {
         return syncService;
+    }
+
+    @Override
+    public FloatingActionButton getFloatingActionButton() {
+        return fab;
     }
 
     @Override
