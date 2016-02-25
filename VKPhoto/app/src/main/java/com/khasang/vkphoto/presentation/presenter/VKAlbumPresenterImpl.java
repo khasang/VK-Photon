@@ -11,6 +11,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
+
 
 public class VKAlbumPresenterImpl implements VKPhotosPresenter {
     private VkAlbumView vkAlbumView;
@@ -28,8 +30,8 @@ public class VKAlbumPresenterImpl implements VKPhotosPresenter {
     }
 
     @Override
-    public void deletePhotoById(int photoId) {
-        vkPhotosInteractor.deletePhotoById(photoId);
+    public void deletePhotoById(List<Integer> selectedPositions) {
+        vkPhotosInteractor.deletePhotoById(selectedPositions, vkAlbumView.getPhotoList());
     }
 
     @Override

@@ -3,9 +3,14 @@ package com.khasang.vkphoto.domain.interactors;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
+import com.khasang.vkphoto.presentation.model.Photo;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class VkPhotosInteractorImpl implements VkPhotosInteractor {
     private SyncServiceProvider syncServiceProvider;
@@ -27,8 +32,18 @@ public class VkPhotosInteractorImpl implements VkPhotosInteractor {
     }
 
     @Override
-    public void deletePhotoById(int photoId) {
-        if (checkSyncService()) syncService.deleteVkPhotoById(photoId);
+    public void deletePhotoById(List<Integer> selectedPositions, List<Photo> photoList) {
+        if (checkSyncService()) {
+            List<Photo> deletePhotoList = new ArrayList<>();
+            if (photoList != null) {
+                for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
+                    Integer position = selectedPositions.get(i);
+                    deletePhotoList.add(photoList.get(position));
+                }
+                syncService.deleteVkPhotoById(deletePhotoList);
+            }
+
+        }
     }
 
     boolean checkSyncService() {

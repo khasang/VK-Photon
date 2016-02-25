@@ -135,12 +135,19 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
+
+    public void deleteVkPhotoById(int photoId) {
+        vKDataSource.getPhotoSource().deletePhoto(photoId);
+    }
+
     @Override
-    public void deleteVkPhotoById(final int photoId) {
+    public void deleteVkPhotoById(final List<Photo> photoList) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                vKDataSource.getPhotoSource().deletePhoto(photoId);
+                for (Photo photo : photoList) {
+                    deleteVkPhotoById(photo.getId());
+                }
             }
         });
     }
