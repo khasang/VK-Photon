@@ -82,12 +82,12 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         view.findViewById(R.id.add_photo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final OpenFileDialog fileDialog = new OpenFileDialog(getContext());
+                final OpenFileDialog fileDialog = new OpenFileDialog(getContext(), getActivity());
                 fileDialog.show();
                 fileDialog.setOpenDialogListener(new OpenFileDialog.OpenDialogListener() {
                     @Override
-                    public void OnSelectedFile(String fileName) {
-                        listUploadedFiles.add(fileName);
+                    public void OnSelectedFile(Vector<String> listSelectedFiles) {
+                        listUploadedFiles = listSelectedFiles;
                         vKPhotosPresenter.addPhotos(listUploadedFiles, photoAlbum);
                     }
                 });

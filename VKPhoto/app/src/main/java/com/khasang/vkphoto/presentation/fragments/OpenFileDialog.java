@@ -1,6 +1,6 @@
 package com.khasang.vkphoto.presentation.fragments;
 
-import android.os.Environment;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,14 +8,37 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.*;
-import android.widget.*;
+import android.view.ActionMode;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.util.Logger;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,9 +58,11 @@ public class OpenFileDialog extends AlertDialog.Builder {
     private Drawable folderIcon;
     private Drawable fileIcon;
     private String accessDeniedMessage;
+    private List<Integer> selectedPositions = new ArrayList<>();
+    private Vector<String> listSelectedFiles ;
 
     public interface OpenDialogListener {
-        public void OnSelectedFile(String fileName);
+        public void OnSelectedFile(Vector<String> listSelectedFiles);
     }
 
     private class FileAdapter extends ArrayAdapter<File> {
@@ -77,25 +102,75 @@ public class OpenFileDialog extends AlertDialog.Builder {
         }
     }
 
-    public OpenFileDialog(Context context) {
+    public OpenFileDialog(Context context, Activity activity) {
         super(context);
         title = createTitle(context);
         changeTitle();
         LinearLayout linearLayout = createMainLayout(context);
         linearLayout.addView(createBackItem(context));
         listView = createListView(context);
+        listSelectedFiles = new Vector<>();
         linearLayout.addView(listView);
+        setChooserOpenFileDialog(listView, activity);
         setCustomTitle(title)
                 .setView(linearLayout)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (selectedIndex > -1 && listener != null) {
-                            listener.OnSelectedFile(listView.getItemAtPosition(selectedIndex).toString());
+                        if (listSelectedFiles.size() > 0 && listener != null) {
+                            listener.OnSelectedFile(listSelectedFiles);
                         }
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null);
+    }
+
+    private void setChooserOpenFileDialog(final ListView listView, final Activity activity) {
+        listView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                if (checked) {
+                    selectedPositions.add(position);
+                    listSelectedFiles.add(files.get(position).toString());
+                } else {
+                    selectedPositions.remove(position);
+                    listSelectedFiles.contains(files.get(position).toString());
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                activity.getMenuInflater().inflate(R.menu.menu_action_mode_vk_albums, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_sync_album:
+                        Logger.d(selectedPositions.toString());
+                        mode.finish();
+                        return true;
+                    case R.id.action_delete_album:
+                        mode.finish();
+                        return true;
+                    default:
+                        break;
+                }
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                selectedPositions.clear();
+            }
+        });
     }
 
     @Override
