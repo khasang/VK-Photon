@@ -3,9 +3,13 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
@@ -33,8 +37,9 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public static final String PHOTOALBUM = "photoalbum";
     private PhotoAlbum photoAlbum;
     private VKPhotosPresenter vKPhotosPresenter;
-    GridView gridview;
+    private GridView gridview;
     private List<Photo> photoList = new ArrayList<>();
+    private List<Integer> selectedPositions = new ArrayList<>();
     int albumId;
     private EventBus eventBus;
     private VKPhotoAdapter adapter;
@@ -70,16 +75,60 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         }
         albumId = photoAlbum.id;
         gridview = (GridView) view.findViewById(R.id.gridView);
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                vKPhotosPresenter.deletePhotoById(photoList.get(position).getId());
+//                photoList.remove(position);
+//                adapter.notifyDataSetChanged();
+//                EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
+//            }
+//        });
+        gridview.setAdapter(adapter);
+        gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+        gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                vKPhotosPresenter.deletePhotoById(photoList.get(position).getId());
-                photoList.remove(position);
-                adapter.notifyDataSetChanged();
-                EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                if (checked) {
+                    selectedPositions.add(position);
+                } else {
+                    selectedPositions.remove(position);
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+               VKAlbumFragment.this.getActivity().getMenuInflater().inflate(R.menu.menu_action_mode_vk_albums, menu);
+
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_sync_album:
+                        Logger.d(selectedPositions.toString());
+                        mode.finish();
+                        return true;
+                    case R.id.action_delete_album:
+                        mode.finish();
+                        return true;
+                    default:
+                        break;
+                }
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                selectedPositions.clear();
             }
         });
-        gridview.setAdapter(adapter);
         return view;
     }
 
