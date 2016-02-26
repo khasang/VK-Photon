@@ -28,6 +28,7 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
 
     @Override
     public void onBindViewHolder(PhotoAlbumViewHolder photoAlbumViewHolder, Cursor cursor) {
+        if (cursor == null) return;
         photoAlbumViewHolder.bindPhotoAlbum(new PhotoAlbum(cursor));
     }
 

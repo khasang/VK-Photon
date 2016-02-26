@@ -1,5 +1,7 @@
 package com.khasang.vkphoto.domain.adapters;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.view.Menu;
@@ -14,34 +16,32 @@ import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
-import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.tasks.DownloadPhotoAsyncTask;
+import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.squareup.picasso.Picasso;
-import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.io.File;
-import java.util.concurrent.Executor;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongClickListener, View.OnClickListener {
     final private ImageView albumThumbImageView;
     final private TextView albumTitleTextView;
     final private TextView albumPhotoCountTextView;
-    final private Executor executor;
+    final private ExecutorService executor;
     final private MultiSelector multiSelector;
     private VKAlbumsPresenter vkAlbumsPresenter;
     PhotoAlbum photoAlbum;
     private ActionMode actionMode;
+    private Handler handler;
 
-    public PhotoAlbumViewHolder(View itemView, Executor executor, MultiSelector multiSelector, VKAlbumsPresenter vkAlbumsPresenter) {
+    public PhotoAlbumViewHolder(View itemView, ExecutorService executor, MultiSelector multiSelector, VKAlbumsPresenter vkAlbumsPresenter) {
         super(itemView, multiSelector);
         albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
@@ -49,6 +49,7 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
         this.executor = executor;
         this.multiSelector = multiSelector;
         this.vkAlbumsPresenter = vkAlbumsPresenter;
+        handler = new Handler(Looper.getMainLooper());
         itemView.setLongClickable(true);
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
@@ -63,37 +64,57 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
     }
 
     private void loadThumb(final PhotoAlbum photoAlbum) {
-        File photoById = new LocalPhotoSource(albumThumbImageView.getContext().getApplicationContext()).getLocalPhotoFile(photoAlbum.thumb_id);
-        if (photoById != null) {
-            Picasso.with(albumThumbImageView.getContext()).load(photoById).into(albumThumbImageView);
-            return;
-        }
-        if (photoAlbum.thumb_id != Constants.NULL) {
-            RequestMaker.getPhotoAlbumThumb(new VKRequest.VKRequestListener() {
-                @Override
-                public void onComplete(VKResponse response) {
-                    super.onComplete(response);
-                    try {
-                        Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
-                        new DownloadPhotoAsyncTask(albumThumbImageView, photo, photoAlbum).executeOnExecutor(executor, photo.getUrlToMaxPhoto());
-                    } catch (Exception e) {
-                        sendError(e.toString());
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!setPhoto(photoAlbum)) {
+                    if (photoAlbum.thumb_id != Constants.NULL) {
+                        RequestMaker.getPhotoAlbumThumb(new MyVkRequestListener() {
+                            @Override
+                            public void onComplete(VKResponse response) {
+                                super.onComplete(response);
+                                try {
+                                    final Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
+                                    Callable<File> saveFile = new Callable<File>() {
+                                        @Override
+                                        public File call() throws Exception {
+                                            return new LocalPhotoSource(albumThumbImageView.getContext().getApplicationContext()).savePhotoToAlbum(photo, photoAlbum);
+                                        }
+                                    };
+                                    Future<File> fileFuture = executor.submit(saveFile);
+                                    File file = fileFuture.get();
+                                    if (file != null) {
+                                        loadPhoto(file);
+                                    }
+                                } catch (Exception e) {
+                                    sendError(e.toString());
+                                }
+                            }
+                        }, photoAlbum);
+                    } else {
+                        Picasso.with(albumThumbImageView.getContext()).load(R.drawable.vk_gray_transparent_shape).into(albumThumbImageView);
                     }
                 }
+            }
+        });
+    }
 
-                @Override
-                public void onError(VKError error) {
-                    super.onError(error);
-                    sendError(error.toString());
-                }
-
-                public void sendError(String s) {
-                    EventBus.getDefault().postSticky(new ErrorEvent(s));
-                }
-            }, photoAlbum);
-        } else {
-            Picasso.with(albumThumbImageView.getContext()).load(R.drawable.vk_gray_transparent_shape).into(albumThumbImageView);
+    private boolean setPhoto(PhotoAlbum photoAlbum) {
+        final File photoById = new LocalPhotoSource(albumThumbImageView.getContext().getApplicationContext()).getLocalPhotoFile(photoAlbum.thumb_id);
+        if (photoById != null) {
+            loadPhoto(photoById);
+            return true;
         }
+        return false;
+    }
+
+    private void loadPhoto(final File photoById) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Picasso.with(albumThumbImageView.getContext()).load(photoById).into(albumThumbImageView);
+            }
+        });
     }
 
     @Override
