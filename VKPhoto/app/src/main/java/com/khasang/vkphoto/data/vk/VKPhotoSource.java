@@ -22,6 +22,7 @@ public class VKPhotoSource {
 
     /**
      * Добавляет фото на сервер ВК
+     *
      * @param file
      * @param photoAlbum
      * @param localAlbumSource
@@ -32,8 +33,9 @@ public class VKPhotoSource {
                 @Override
                 public void onComplete(VKResponse response) {
                     super.onComplete(response);
-                    Logger.d(response.responseString);
+                    Logger.d("savePhotoToAlbum: " + response.responseString);
                 }
+
                 @Override
                 public void onError(VKError error) {
                     super.onError(error);
@@ -44,18 +46,34 @@ public class VKPhotoSource {
 
     /**
      * Добавляет список фотографий на сервер ВК и в альбом на устройсте
+     *
      * @param listUploadedFiles
      * @param photoAlbum
      * @param localAlbumSource
      */
     public void savePhotos(final Vector<String> listUploadedFiles, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
-        for (int ind = 0; ind < listUploadedFiles.size(); ind++){
-            File file = new File(listUploadedFiles.get(ind));
-            savePhotoToAlbum(file, photoAlbum, localAlbumSource);
+        if (listUploadedFiles.size() > 0) {
+            File file = new File(listUploadedFiles.lastElement());
+            if (file.exists()) {
+                RequestMaker.uploadPhoto(file, photoAlbum, new VKRequest.VKRequestListener() {
+                    @Override
+                    public void onComplete(VKResponse response) {
+                        super.onComplete(response);
+                        Logger.d("savePhotoToAlbum: " + response.responseString);
+                        listUploadedFiles.removeElementAt(listUploadedFiles.size() - 1);
+                        if (listUploadedFiles.size() >= 0)
+                            savePhotos(listUploadedFiles, photoAlbum, localAlbumSource);
+                    }
+                    @Override
+                    public void onError(VKError error) {
+                        super.onError(error);
+                    }
+                });
+            }
         }
-        PhotoAlbum tmpPhotoAlbum = localAlbumSource.getAlbumById(photoAlbum.id);
-        localAlbumSource.updateAlbum(tmpPhotoAlbum);
-        getPhotosByAlbumId(tmpPhotoAlbum.id);
+        getPhotosByAlbumId(photoAlbum.id);
+//        PhotoAlbum tmpPhotoAlbum = localAlbumSource.getAlbumById(photoAlbum.id);
+//        localAlbumSource.updateAlbum(tmpPhotoAlbum);
     }
 
     public void updatePhoto() {
