@@ -55,6 +55,9 @@ public class Navigator {
                 }
             }
             changeViewPagerVisibility((Activity) context, true);
+            Fragment fragment = fragmentManager.getFragments()
+                    .get(fragmentManager.getBackStackEntryCount() - 1);
+            fragment.onResume();
         } else {
             ((Activity) context).finish();
         }

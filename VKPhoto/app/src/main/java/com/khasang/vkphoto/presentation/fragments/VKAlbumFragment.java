@@ -2,6 +2,7 @@ package com.khasang.vkphoto.presentation.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.VKPhotoAdapter;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
+import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -38,6 +40,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     int albumId;
     private EventBus eventBus;
     private VKPhotoAdapter adapter;
+    private FloatingActionButton fab;
 
     public static VKAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -56,6 +59,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         adapter = new VKPhotoAdapter(getContext(), photoList);
         eventBus = EventBus.getDefault();
         eventBus.register(this);
+        fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
 
     @Nullable
@@ -83,9 +87,20 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         return view;
     }
 
+    private void setOnClickListenerFab (View view){
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                ToastUtils.showShortMessage("Here will be action Add Photos", getActivity());
+//                vKPhotosPresenter.addPhotos();
+            }
+        });
+    }
+
     @Override
     public void onResume() {
         super.onResume();
+        setOnClickListenerFab(getView());
         Logger.d("onResume VKAlbumFragment");
     }
 

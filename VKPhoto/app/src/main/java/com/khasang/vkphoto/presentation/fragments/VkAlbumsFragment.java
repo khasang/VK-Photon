@@ -3,6 +3,7 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -18,6 +19,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.AlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
+import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
@@ -33,6 +35,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     private RecyclerView albumsRecyclerView;
     private PhotoAlbumCursorAdapter adapter;
     private MultiSelector multiSelector;
+    private FloatingActionButton fab;
 
     public VkAlbumsFragment() {
     }
@@ -44,6 +47,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         multiSelector = new MultiSelector();
         vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
+        fab = ((FabProvider)getActivity()).getFloatingActionButton();
     }
 
     @Override
@@ -77,6 +81,16 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         return view;
     }
 
+    private void setOnClickListenerFab(View view) {
+        fab.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                ToastUtils.showShortMessage("Here will be action Add Album", getActivity());
+//                vKAlbumsPresenter.addAlbum();
+            }
+        });
+    }
+
     private void initRecyclerView(View view) {
         albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
         albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -100,6 +114,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public void onResume() {
         super.onResume();
         Logger.d("VkAlbumsFragment onResume()");
+        setOnClickListenerFab(getView());
     }
 
     @Override
