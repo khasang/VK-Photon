@@ -1,8 +1,15 @@
 package com.khasang.vkphoto.presentation.presenter;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
+import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
@@ -18,9 +25,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.concurrent.ExecutorService;
+
 public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     private VkAlbumsView vkAlbumsView;
     private VkAlbumsInteractor vkAlbumsInteractor;
+    private ActionMode actionMode;
 
     public VKAlbumsPresenterImpl(VkAlbumsView vkAlbumsView, SyncServiceProvider syncServiceProvider) {
         this.vkAlbumsView = vkAlbumsView;
@@ -80,6 +90,51 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncAndTokenReadyEvent(SyncAndTokenReadyEvent syncAndTokenReadyEvent) {
         getAllAlbums();
+    }
+
+    @Override
+    public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
+        this.actionMode = activity.startSupportActionMode(new ModalMultiSelectorCallback(multiSelector) {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                activity.getMenuInflater().inflate(R.menu.menu_action_mode_vk_albums, menu);
+                return true;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+                multiSelector.clearSelections();
+                super.onDestroyActionMode(actionMode);
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_sync_album:
+                        syncAlbums(multiSelector);
+                        return true;
+                    case R.id.action_delete_album:
+//                            vkAlbumsPresenter.deleteVkAlbums(multiSelector);
+                        return true;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void checkActionModeFinish(MultiSelector multiSelector) {
+        if (multiSelector.getSelectedPositions().size() == 0) {
+            if (actionMode != null) {
+                actionMode.finish();
+            }
+        }
+    }
+
+    public void downloadAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
+        vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor);
     }
 }
       

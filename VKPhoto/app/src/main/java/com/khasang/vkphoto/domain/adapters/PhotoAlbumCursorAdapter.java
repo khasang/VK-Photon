@@ -2,6 +2,7 @@ package com.khasang.vkphoto.domain.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbu
     final private ExecutorService executor;
     final private MultiSelector multiSelector;
     private VKAlbumsPresenter vkAlbumsPresenter;
+    private ActionMode actionMode=null;
 
     public PhotoAlbumCursorAdapter(Context context, Cursor cursor, MultiSelector multiSelector, VKAlbumsPresenter vkAlbumsPresenter) {
         super(context, cursor);
