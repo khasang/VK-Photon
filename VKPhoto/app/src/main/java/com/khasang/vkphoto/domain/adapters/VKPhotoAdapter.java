@@ -2,7 +2,6 @@ package com.khasang.vkphoto.domain.adapters;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.ActionMode;
@@ -36,32 +35,17 @@ public class VKPhotoAdapter extends MultiChoiceBaseAdapter {
         this.activity = activity;
         this.vKPhotosPresenter = vKPhotosPresenter;
         this.photoList = photoList;
+
     }
 
-//    public VKPhotoAdapter(Context activity, List<Photo> photoList) {
-//        this.activity = activity;
-//        this.photoList = photoList;
-//    }
-//
     public void setPhotoList(List<Photo> photoList) {
         this.photoList = photoList;
         notifyDataSetChanged();
     }
 
-//    @Override
-//    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-//        if (checked) {
-//            selectedPositions.add(position);
-//        }
-//        if (!checked){
-//            selectedPositions.remove(((Object) position));
-//        }
-//    }
-
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         activity.getMenuInflater().inflate(R.menu.menu_action_mode_vk_album, menu);
-        Logger.d("eeeeeeeeeeeeeeeeee");
         return true;
     }
 
@@ -142,7 +126,7 @@ public class VKPhotoAdapter extends MultiChoiceBaseAdapter {
                 setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        deletePhotoById();
+                        deleteSelectedPhoto();
                     }
                 }).
                 setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -152,4 +136,13 @@ public class VKPhotoAdapter extends MultiChoiceBaseAdapter {
                     }
                 }).show();
     }
+
+    private void deleteSelectedPhoto() {
+        for (Long items : this.getCheckedItems()) {
+            selectedPositions.add(items.intValue());
+        }
+        vKPhotosPresenter.deletePhotoById(selectedPositions);
+    }
+
+
 }

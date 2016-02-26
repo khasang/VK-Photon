@@ -42,7 +42,6 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     private VKPhotosPresenter vKPhotosPresenter;
     private GridView gridview;
     private List<Photo> photoList = new ArrayList<>();
-    private List<Integer> selectedPositions = new ArrayList<>();
     int albumId;
     private EventBus eventBus;
     private VKPhotoAdapter adapter;
@@ -60,7 +59,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         vKPhotosPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
-        adapter = new VKPhotoAdapter(savedInstanceState,getActivity(), vKPhotosPresenter, photoList);
+        adapter = new VKPhotoAdapter(savedInstanceState, getActivity(), vKPhotosPresenter, photoList);
         eventBus = EventBus.getDefault();
         eventBus.register(this);
     }
@@ -83,50 +82,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
 // Go to PhotoFragment
             }
         });
-        gridview.setAdapter(adapter);
-//        gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
-//        gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-//            @Override
-//            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-//                if (checked) {
-//                    selectedPositions.add(position);
-//                }
-//                if (!checked){
-//                    selectedPositions.remove(((Object) position));
-//                }
-//            }
-//
-//            @Override
-//            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//                VKAlbumFragment.this.getActivity().getMenuInflater().inflate(R.menu.menu_action_mode_vk_album, menu);
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.action_sync_photo:
-//                        Logger.d(selectedPositions.toString());
-//                        return true;
-//                    case R.id.action_delete_photo:
-//                        simpleDialog();
-//                        return true;
-//                    default:
-//                        break;
-//                }
-//                return false;
-//            }
-//
-//            @Override
-//            public void onDestroyActionMode(ActionMode mode) {
-//                selectedPositions.clear();
-//            }
-//        });
+        adapter.setAdapterView(gridview);
         return view;
     }
 
@@ -164,32 +120,15 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         ToastUtils.showError(s, getContext());
     }
 
-    private void deletePhotoById() {
-        vKPhotosPresenter.deletePhotoById(selectedPositions);
-        vKPhotosPresenter.getPhotosByAlbumId(albumId);
-        EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
-    }
-
     @Subscribe
     public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
         photoList = getVKPhotosEvent.photosList;
         adapter.setPhotoList(photoList);
     }
 
-    public void simpleDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Delete Photo?").
-                setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deletePhotoById();
-                    }
-                }).
-                setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).show();
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        adapter.save(outState);
     }
 }
