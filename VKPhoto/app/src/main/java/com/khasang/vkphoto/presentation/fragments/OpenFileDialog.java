@@ -68,7 +68,8 @@ public class OpenFileDialog extends AlertDialog.Builder {
     private class FileAdapter extends ArrayAdapter<File> {
 
         public FileAdapter(Context context, List<File> files) {
-            super(context, android.R.layout.simple_list_item_1, files);
+//            super(context, android.R.layout.simple_list_item_1, files);
+            super(context, R.layout.openfiledialog_item, files);
         }
 
         @Override
@@ -81,10 +82,10 @@ public class OpenFileDialog extends AlertDialog.Builder {
                     setDrawable(view, folderIcon);
                 } else {
                     setDrawable(view, fileIcon);
-                    if (selectedIndex == position)
-                        view.setBackgroundColor(getContext().getResources().getColor(android.R.color.holo_blue_dark));
-                    else
-                        view.setBackgroundColor(getContext().getResources().getColor(android.R.color.transparent));
+//                    if (selectedIndex == position)
+//                        view.setBackgroundColor(getContext().getResources().getColor(android.R.color.holo_blue_dark));
+//                    else
+//                        view.setBackgroundColor(getContext().getResources().getColor(android.R.color.transparent));
                 }
             }
             return view;
@@ -109,6 +110,7 @@ public class OpenFileDialog extends AlertDialog.Builder {
         LinearLayout linearLayout = createMainLayout(context);
         linearLayout.addView(createBackItem(context));
         listView = createListView(context);
+        listView.setSelector(R.drawable.selector);
         listSelectedFiles = new Vector<>();
         linearLayout.addView(listView);
         setChooserOpenFileDialog(listView, activity);
