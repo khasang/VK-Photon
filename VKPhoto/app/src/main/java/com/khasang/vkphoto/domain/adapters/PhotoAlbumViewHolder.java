@@ -59,7 +59,7 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
                         vkAlbumsPresenter.downloadAlbumThumb(new LocalPhotoSource(albumThumbImageView.getContext()), photoAlbum, executor);
                         setPhoto();
                     } else {
-                        Picasso.with(albumThumbImageView.getContext()).load(R.drawable.vk_gray_transparent_shape).into(albumThumbImageView);
+                        loadPhoto(R.drawable.vk_gray_transparent_shape);
                     }
                 }
             }
@@ -80,6 +80,15 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
             @Override
             public void run() {
                 Picasso.with(albumThumbImageView.getContext()).load(file).error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
+            }
+        });
+    }
+
+    private void loadPhoto(final int resource) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Picasso.with(albumThumbImageView.getContext()).load(resource).into(albumThumbImageView);
             }
         });
     }
