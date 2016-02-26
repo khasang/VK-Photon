@@ -140,8 +140,10 @@ public class VKPhotoAdapter extends MultiChoiceBaseAdapter {
     private void deleteSelectedPhoto() {
         for (Long items : this.getCheckedItems()) {
             selectedPositions.add(items.intValue());
+            photoList.remove(items.intValue());
         }
-        vKPhotosPresenter.deletePhotoById(selectedPositions);
+        vKPhotosPresenter.deleteSelectedPhoto(selectedPositions);
+        notifyDataSetChanged();
     }
 
 
