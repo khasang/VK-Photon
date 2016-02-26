@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.data.vk.VKCommentSource;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
