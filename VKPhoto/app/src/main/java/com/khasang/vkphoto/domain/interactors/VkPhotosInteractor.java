@@ -10,5 +10,5 @@ import java.util.List;
 public interface VkPhotosInteractor {
     void getPhotosByAlbumId(int albumId);
 
-    void deletePhotoById(List<Integer> selectedPositions, List<Photo> photoList);
+    void deleteSelectedPhoto(List<Integer> selectedPositions, List<Photo> photoList);
 }

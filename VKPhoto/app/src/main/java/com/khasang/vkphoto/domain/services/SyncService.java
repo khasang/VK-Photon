@@ -15,9 +15,11 @@ public interface SyncService {
 
     void getPhotosByAlbumId(int albumId);
 
-    void deleteVkPhotoById(List<Photo> photoList);
+    void deleteSelectedVkPhoto(List<Photo> photoList);
 
     void deleteVKAlbumById(int albumId);
+
+    void deleteVkPhotoById(int photoId);
 
     /**
      * Регистрирует изменения доступа к альбому

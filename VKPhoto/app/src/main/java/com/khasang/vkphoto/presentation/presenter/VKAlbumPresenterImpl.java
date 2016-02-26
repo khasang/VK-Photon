@@ -30,8 +30,8 @@ public class VKAlbumPresenterImpl implements VKPhotosPresenter {
     }
 
     @Override
-    public void deletePhotoById(List<Integer> selectedPositions) {
-        vkPhotosInteractor.deletePhotoById(selectedPositions, vkAlbumView.getPhotoList());
+    public void deleteSelectedPhoto(List<Integer> selectedPositions) {
+        vkPhotosInteractor.deleteSelectedPhoto(selectedPositions, vkAlbumView.getPhotoList());
     }
 
     @Override
