@@ -108,11 +108,11 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
         return false;
     }
 
-    private void loadPhoto(final File photoById) {
+    private void loadPhoto(final File file) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Picasso.with(albumThumbImageView.getContext()).load(photoById).into(albumThumbImageView);
+                Picasso.with(albumThumbImageView.getContext()).load(file).error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
             }
         });
     }
