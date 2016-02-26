@@ -60,7 +60,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         vKPhotosPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
-        adapter = new VKPhotoAdapter(getContext(), photoList);
+        adapter = new VKPhotoAdapter(savedInstanceState,getActivity(), vKPhotosPresenter, photoList);
         eventBus = EventBus.getDefault();
         eventBus.register(this);
     }
@@ -84,49 +84,49 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
             }
         });
         gridview.setAdapter(adapter);
-        gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
-        gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                if (checked) {
-                    selectedPositions.add(position);
-                }
-                if (!checked){
-                    selectedPositions.remove(((Object) position));
-                }
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                VKAlbumFragment.this.getActivity().getMenuInflater().inflate(R.menu.menu_action_mode_vk_album, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_sync_photo:
-                        Logger.d(selectedPositions.toString());
-                        return true;
-                    case R.id.action_delete_photo:
-                        simpleDialog();
-                        return true;
-                    default:
-                        break;
-                }
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                selectedPositions.clear();
-            }
-        });
+//        gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+//        gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+//            @Override
+//            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+//                if (checked) {
+//                    selectedPositions.add(position);
+//                }
+//                if (!checked){
+//                    selectedPositions.remove(((Object) position));
+//                }
+//            }
+//
+//            @Override
+//            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//                VKAlbumFragment.this.getActivity().getMenuInflater().inflate(R.menu.menu_action_mode_vk_album, menu);
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.action_sync_photo:
+//                        Logger.d(selectedPositions.toString());
+//                        return true;
+//                    case R.id.action_delete_photo:
+//                        simpleDialog();
+//                        return true;
+//                    default:
+//                        break;
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public void onDestroyActionMode(ActionMode mode) {
+//                selectedPositions.clear();
+//            }
+//        });
         return view;
     }
 

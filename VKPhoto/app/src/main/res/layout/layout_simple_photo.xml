@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.manuelpeinado.multichoiceadapter.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="?android:attr/activatedBackgroundIndicator">
@@ -17,4 +17,4 @@
         android:indeterminateDrawable="@drawable/spinner_ring"
         android:indeterminateOnly="true"
         android:visibility="invisible" />
-</RelativeLayout>
+</com.manuelpeinado.multichoiceadapter.CheckableRelativeLayout>
