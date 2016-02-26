@@ -47,7 +47,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         multiSelector = new MultiSelector();
         vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
-        fab = ((FabProvider)getActivity()).getFloatingActionButton();
+        fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
 
     @Override
@@ -81,11 +81,11 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         return view;
     }
 
-    private void setOnClickListenerFab(View view) {
-        fab.setOnClickListener(new View.OnClickListener(){
+    private void setOnClickListenerFab() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ToastUtils.showShortMessage("Here will be action Add Album", getActivity());
+                Logger.d("VkAlbumsFragment add album");
 //                vKAlbumsPresenter.addAlbum();
             }
         });
@@ -114,7 +114,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public void onResume() {
         super.onResume();
         Logger.d("VkAlbumsFragment onResume()");
-        setOnClickListenerFab(getView());
+        setOnClickListenerFab();
     }
 
     @Override
