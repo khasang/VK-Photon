@@ -141,7 +141,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                vKDataSource.getPhotoSource().savePhotos(listUploadedFiles, photoAlbum);
+                vKDataSource.getPhotoSource().savePhotos(listUploadedFiles, photoAlbum, localDataSource.getAlbumSource());
             }
         });
     }

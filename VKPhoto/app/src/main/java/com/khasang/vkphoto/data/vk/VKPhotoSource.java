@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.data.vk;
 
 import com.khasang.vkphoto.data.RequestMaker;
+import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
@@ -19,13 +20,15 @@ import java.util.Vector;
 
 public class VKPhotoSource {
 
-    public void savePhotoToAlbum(File file, PhotoAlbum photoAlbum) {
+    public void savePhotoToAlbum(final File file, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
         if (file.exists()) {
             RequestMaker.uploadPhoto(file, photoAlbum, new VKRequest.VKRequestListener() {
                 @Override
                 public void onComplete(VKResponse response) {
                     super.onComplete(response);
                     Logger.d(response.responseString);
+                    localAlbumSource.updateAlbum(photoAlbum);
+                    getPhotosByAlbumId(photoAlbum.id);
                 }
 
                 @Override
@@ -36,10 +39,10 @@ public class VKPhotoSource {
         }
     }
 
-    public void savePhotos(Vector<String> listUploadedFiles, PhotoAlbum photoAlbum) {
+    public void savePhotos(final Vector<String> listUploadedFiles, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
         for (int ind = 0; ind < listUploadedFiles.size(); ind++){
             File file = new File(listUploadedFiles.get(ind));
-            savePhotoToAlbum(file, photoAlbum);
+            savePhotoToAlbum(file, photoAlbum, localAlbumSource);
         }
     }
 
