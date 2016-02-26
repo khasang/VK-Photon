@@ -38,7 +38,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     private AsyncExecutor asyncExecutor;
     private LocalDataSource localDataSource;
     private VKDataSource vKDataSource;
-    private List<Future<Boolean>> futures = new ArrayList<>();
+    private List<Future<Boolean>> futureList = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -66,17 +66,26 @@ public class SyncServiceImpl extends Service implements SyncService {
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 for (PhotoAlbum photoAlbum : photoAlbumList) {
                     Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource);
-                    futures.add(executor.submit(booleanCallable));
+                    futureList.add(executor.submit(booleanCallable));
                 }
-                Iterator<Future<Boolean>> iterator = futures.iterator();
+                execute();
+                if (futureList.isEmpty()) {
+                    Logger.d("full sync success");
+                } else {
+                    Logger.d("full sync fail");
+                }
+                executor.shutdown();
+            }
+
+            private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
+                Iterator<Future<Boolean>> iterator = futureList.iterator();
                 while (iterator.hasNext()) {
                     Future<Boolean> booleanFutureTask = iterator.next();
                     if (booleanFutureTask.get()) {
-                        futures.remove(booleanFutureTask);
+                        iterator.remove();
                     }
                     Logger.d("exit get");
                 }
-                executor.shutdown();
             }
         });
     }

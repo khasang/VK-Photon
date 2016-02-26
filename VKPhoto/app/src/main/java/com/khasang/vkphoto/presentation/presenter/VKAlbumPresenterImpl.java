@@ -1,7 +1,7 @@
 package com.khasang.vkphoto.presentation.presenter;
 
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.interactors.VkPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.VkPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
@@ -15,11 +15,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.Vector;
 
 
-public class VKPhotosPresenterImpl implements VKPhotosPresenter {
+public class VKAlbumPresenterImpl implements VKPhotosPresenter {
     private VkAlbumView vkAlbumView;
     private VkPhotosInteractor vkPhotosInteractor;
 
-    public VKPhotosPresenterImpl(VkAlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
+    public VKAlbumPresenterImpl(VkAlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
         this.vkAlbumView = vkAlbumView;
         vkPhotosInteractor = new VkPhotosInteractorImpl(syncServiceProvider);
     }
@@ -55,12 +55,12 @@ public class VKPhotosPresenterImpl implements VKPhotosPresenter {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void OnLocalAlbumEvent(LocalAlbumEvent localAlbumEvent) {
-        vkAlbumView.displayVkPhotosByAlbumId();
+    public void onErrorEvent(ErrorEvent errorEvent) {
+        vkAlbumView.showError(errorEvent.errorMessage);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onErrorEvent(ErrorEvent errorEvent) {
-        vkAlbumView.showError(errorEvent.errorMessage);
+    public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
+        vkAlbumView.displayVkPhotos(getVKPhotosEvent.photosList);
     }
 }

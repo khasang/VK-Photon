@@ -55,12 +55,15 @@ public class Navigator {
                 }
             }
             changeViewPagerVisibility((Activity) context, true);
+            Fragment fragment = fragmentManager.getFragments()
+                    .get(fragmentManager.getBackStackEntryCount() - 1);
+            fragment.onResume();
         } else {
             ((Activity) context).finish();
         }
     }
 
-    private static void changeViewPagerVisibility(Activity activity, boolean visibility) {
+    public static void changeViewPagerVisibility(Activity activity, boolean visibility) {
         View tabLayout = activity.findViewById(R.id.tabs);
         View fragmentContainer = activity.findViewById(R.id.fragment_container);
         View viewPager = activity.findViewById(R.id.viewpager);

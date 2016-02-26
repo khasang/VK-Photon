@@ -1,5 +1,9 @@
 package com.khasang.vkphoto.presentation.view;
 
-public interface VkAlbumView extends VkView{
-    void displayVkPhotosByAlbumId();
+import com.khasang.vkphoto.presentation.model.Photo;
+
+import java.util.List;
+
+public interface VkAlbumView extends VkView {
+    void displayVkPhotos(List<Photo> photos);
 }

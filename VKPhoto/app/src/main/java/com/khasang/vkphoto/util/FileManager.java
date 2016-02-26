@@ -56,7 +56,7 @@ public class FileManager {
 
     public static boolean initBaseDirectory(Context context) {
         SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        File storageDirectory = getStorageDirectory(defaultSharedPreferences);
+        File storageDirectory = StorageUtils.getStorageDirectories(context);
         if (storageDirectory == null) {
             Logger.d("storageDirectory = null");
             return false;
@@ -71,10 +71,6 @@ public class FileManager {
             return true;
         }
         return false;
-    }
-
-    private static File getStorageDirectory(SharedPreferences sharedPreferences) {
-        return StorageUtils.getStorageDirectories(sharedPreferences);
     }
 
     private static File getBaseDirectory(SharedPreferences sharedPreferences) {

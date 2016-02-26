@@ -64,7 +64,7 @@ public class RequestMaker {
 
     public static void getPhotoAlbumThumb(VKRequest.VKRequestListener vkRequestListener, PhotoAlbum photoAlbum) {
         VKRequest request = new VKRequest("photos.get", VKParameters.from(VKApiConst.ALBUM_ID, photoAlbum.id, VKApiConst.PHOTO_IDS, photoAlbum.thumb_id));
-        request.executeWithListener(vkRequestListener);
+        request.executeSyncWithListener(vkRequestListener);
     }
 
     public static void deleteVkPhotoById(VKRequest.VKRequestListener vkRequestListener, int photoId) {

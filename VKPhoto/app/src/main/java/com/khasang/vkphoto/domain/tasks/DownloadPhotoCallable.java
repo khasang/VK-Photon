@@ -5,9 +5,11 @@ import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Logger;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
-public class DownloadPhotoCallable implements Callable<Boolean> {
+public class DownloadPhotoCallable implements Callable<File> {
+    public static final int ATTEMPT_COUNT = 3;
     private LocalPhotoSource localPhotoSource;
     private Photo photo;
     private PhotoAlbum photoAlbum;
@@ -19,9 +21,14 @@ public class DownloadPhotoCallable implements Callable<Boolean> {
     }
 
     @Override
-    public Boolean call() throws Exception {
+    public File call() throws Exception {
         Logger.d("start save photo " + photo.id);
-        localPhotoSource.savePhotoToAlbum(photo, photoAlbum);
-        return true;
+        File file;
+        for (int i = 0; i < ATTEMPT_COUNT; i++) {
+            if ((file = localPhotoSource.savePhotoToAlbum(photo, photoAlbum)).exists()) {
+                return file;
+            }
+        }
+        return null;
     }
 }
