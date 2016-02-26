@@ -131,8 +131,9 @@ public class OpenFileDialog extends AlertDialog.Builder {
                     selectedPositions.add(position);
                     listSelectedFiles.add(files.get(position).toString());
                 } else {
-                    int iii = selectedPositions.get(position);
-//                    remove(position);
+                    int indPosition = selectedPositions.indexOf(position);
+                    if (indPosition >= 0)
+                        selectedPositions.remove(indPosition);
                     if (listSelectedFiles.contains(files.get(position).toString())) {
                         listSelectedFiles.remove(files.get(position).toString());
                     }
