@@ -20,6 +20,12 @@ import java.util.Vector;
 
 public class VKPhotoSource {
 
+    /**
+     * Добавляет фото на сервер ВК
+     * @param file
+     * @param photoAlbum
+     * @param localAlbumSource
+     */
     public void savePhotoToAlbum(final File file, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
         if (file.exists()) {
             RequestMaker.uploadPhoto(file, photoAlbum, new VKRequest.VKRequestListener() {
@@ -27,10 +33,7 @@ public class VKPhotoSource {
                 public void onComplete(VKResponse response) {
                     super.onComplete(response);
                     Logger.d(response.responseString);
-                    localAlbumSource.updateAlbum(photoAlbum);
-                    getPhotosByAlbumId(photoAlbum.id);
                 }
-
                 @Override
                 public void onError(VKError error) {
                     super.onError(error);
@@ -39,11 +42,20 @@ public class VKPhotoSource {
         }
     }
 
+    /**
+     * Добавляет список фотографий на сервер ВК и в альбом на устройсте
+     * @param listUploadedFiles
+     * @param photoAlbum
+     * @param localAlbumSource
+     */
     public void savePhotos(final Vector<String> listUploadedFiles, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
         for (int ind = 0; ind < listUploadedFiles.size(); ind++){
             File file = new File(listUploadedFiles.get(ind));
             savePhotoToAlbum(file, photoAlbum, localAlbumSource);
         }
+        PhotoAlbum tmpPhotoAlbum = localAlbumSource.getAlbumById(photoAlbum.id);
+        localAlbumSource.updateAlbum(tmpPhotoAlbum);
+        getPhotosByAlbumId(tmpPhotoAlbum.id);
     }
 
     public void updatePhoto() {
