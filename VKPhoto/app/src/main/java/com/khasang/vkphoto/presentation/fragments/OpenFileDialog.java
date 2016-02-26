@@ -59,7 +59,7 @@ public class OpenFileDialog extends AlertDialog.Builder {
     private Drawable fileIcon;
     private String accessDeniedMessage;
     private List<Integer> selectedPositions = new ArrayList<>();
-    private Vector<String> listSelectedFiles ;
+    private Vector<String> listSelectedFiles;
 
     public interface OpenDialogListener {
         public void OnSelectedFile(Vector<String> listSelectedFiles);
@@ -68,7 +68,6 @@ public class OpenFileDialog extends AlertDialog.Builder {
     private class FileAdapter extends ArrayAdapter<File> {
 
         public FileAdapter(Context context, List<File> files) {
-//            super(context, android.R.layout.simple_list_item_1, files);
             super(context, R.layout.openfiledialog_item, files);
         }
 
@@ -82,10 +81,6 @@ public class OpenFileDialog extends AlertDialog.Builder {
                     setDrawable(view, folderIcon);
                 } else {
                     setDrawable(view, fileIcon);
-//                    if (selectedIndex == position)
-//                        view.setBackgroundColor(getContext().getResources().getColor(android.R.color.holo_blue_dark));
-//                    else
-//                        view.setBackgroundColor(getContext().getResources().getColor(android.R.color.transparent));
                 }
             }
             return view;
@@ -136,8 +131,11 @@ public class OpenFileDialog extends AlertDialog.Builder {
                     selectedPositions.add(position);
                     listSelectedFiles.add(files.get(position).toString());
                 } else {
-                    selectedPositions.remove(position);
-                    listSelectedFiles.contains(files.get(position).toString());
+                    int iii = selectedPositions.get(position);
+//                    remove(position);
+                    if (listSelectedFiles.contains(files.get(position).toString())) {
+                        listSelectedFiles.remove(files.get(position).toString());
+                    }
                 }
             }
 
