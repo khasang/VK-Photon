@@ -53,7 +53,7 @@ public class SyncAlbumCallable implements Callable<Boolean> {
                     Logger.d("Got VKPhoto for photoAlbum " + photoAlbum.title);
                     ExecutorService executor = Executors.newFixedThreadPool(3);
                     removeDownloadedPhotos(vkPhotoList, localPhotoSource);
-                    List<Future<Boolean>> futureList = new ArrayList<>();
+                    List<Future<File>> futureList = new ArrayList<>();
                     fillFutureList(vkPhotoList, executor, futureList, localPhotoSource);
                     for (int i = 0; i < ATTEMPTS_COUNT; i++) {
                         if (downloadPhotos(futureList)) {
@@ -78,18 +78,18 @@ public class SyncAlbumCallable implements Callable<Boolean> {
         return success;
     }
 
-    private boolean downloadPhotos(List<Future<Boolean>> futureList) throws InterruptedException, java.util.concurrent.ExecutionException {
-        Iterator<Future<Boolean>> iterator = futureList.iterator();
+    private boolean downloadPhotos(List<Future<File>> futureList) throws InterruptedException, java.util.concurrent.ExecutionException {
+        Iterator<Future<File>> iterator = futureList.iterator();
         while (iterator.hasNext()) {
-            Future<Boolean> next = iterator.next();
-            if (next.get()) {
+            Future<File> next = iterator.next();
+            if (next.get().exists()) {
                 iterator.remove();
             }
         }
         return futureList.isEmpty();
     }
 
-    private void fillFutureList(List<Photo> vkPhotoList, ExecutorService executor, List<Future<Boolean>> futureList, LocalPhotoSource localPhotoSource) {
+    private void fillFutureList(List<Photo> vkPhotoList, ExecutorService executor, List<Future<File>> futureList, LocalPhotoSource localPhotoSource) {
         for (int i = 0; i < vkPhotoList.size(); i++) {
             Photo photo = vkPhotoList.get(i);
             DownloadPhotoCallable downloadPhotoCallable = new DownloadPhotoCallable(localPhotoSource, photo, photoAlbum);

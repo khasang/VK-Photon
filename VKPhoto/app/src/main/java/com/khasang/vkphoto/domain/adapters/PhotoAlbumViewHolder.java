@@ -16,6 +16,7 @@ import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
+import com.khasang.vkphoto.domain.tasks.DownloadPhotoCallable;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -26,7 +27,6 @@ import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKResponse;
 
 import java.io.File;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -75,13 +75,7 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
                                 super.onComplete(response);
                                 try {
                                     final Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
-                                    Callable<File> saveFile = new Callable<File>() {
-                                        @Override
-                                        public File call() throws Exception {
-                                            return new LocalPhotoSource(albumThumbImageView.getContext().getApplicationContext()).savePhotoToAlbum(photo, photoAlbum);
-                                        }
-                                    };
-                                    Future<File> fileFuture = executor.submit(saveFile);
+                                    Future<File> fileFuture = executor.submit(new DownloadPhotoCallable(new LocalPhotoSource(albumThumbImageView.getContext().getApplicationContext()), photo, photoAlbum));
                                     File file = fileFuture.get();
                                     if (file != null) {
                                         loadPhoto(file);
