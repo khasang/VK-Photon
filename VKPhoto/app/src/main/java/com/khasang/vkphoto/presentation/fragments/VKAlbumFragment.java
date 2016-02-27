@@ -60,7 +60,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_gallery_albums, null);
+        View view = inflater.inflate(R.layout.fragment_vk_album, null);
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (photoAlbum != null) {
             Logger.d("photoalbum " + photoAlbum.title);
