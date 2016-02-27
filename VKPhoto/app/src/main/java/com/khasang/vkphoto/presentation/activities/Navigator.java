@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
@@ -32,6 +33,10 @@ public class Navigator {
 
     public static void navigateToVKAlbumFragment(Context context, PhotoAlbum photoAlbum) {
         navigateToFragmentWithBackStack(context, VKAlbumFragment.newInstance(photoAlbum), VKAlbumFragment.TAG);
+    }
+
+    public static void navigateToLocalAlbumFragment(Context context, PhotoAlbum photoAlbum) {
+        navigateToFragmentWithBackStack(context, LocalAlbumFragment.newInstance(photoAlbum), LocalAlbumFragment.TAG);
     }
 
     private static void navigateToFragment(Context context, Fragment fragment, String tag) {
