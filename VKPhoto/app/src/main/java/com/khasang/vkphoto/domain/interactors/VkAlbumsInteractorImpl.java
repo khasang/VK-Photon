@@ -10,7 +10,6 @@ import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.util.Constants;
-import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.util.AsyncExecutor;
@@ -78,6 +77,13 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
                 if (checkSyncService()) syncService.getAllAlbums();
             }
         });
+    }
+
+    @Override
+    public void addAlbum(final String title, final String description,
+                         final int privacy, final int commentPrivacy) {
+        checkSyncService();
+        syncService.addAlbum(title, description, privacy, commentPrivacy);
     }
 
     @Override

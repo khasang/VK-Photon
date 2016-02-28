@@ -12,8 +12,8 @@ import android.widget.EditText;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.presenter.VkAddAlbumPresenter;
-import com.khasang.vkphoto.presentation.presenter.VkAddAlbumPresenterImpl;
+import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
+import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkAddAlbumView;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKPrivacy;
@@ -21,9 +21,8 @@ import com.vk.sdk.api.model.VKPrivacy;
 /** Created by bugtsa on 18-Feb-16. */
 public class VkAddAlbumFragment extends DialogFragment implements VkAddAlbumView {
     public static final String TAG = VkAddAlbumFragment.class.getSimpleName();
-    private VkAddAlbumPresenter vkAddAlbumPresenter;
+    private VKAlbumsPresenter vkAlbumsPresenter;
     private Context context;
-    private String st;
 
     public VkAddAlbumFragment() {
 
@@ -34,7 +33,7 @@ public class VkAddAlbumFragment extends DialogFragment implements VkAddAlbumView
         // TODO Auto-generated method stub
         super.onAttach(activity);
         context = activity;
-        vkAddAlbumPresenter = new VkAddAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
+        vkAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
     }
 
     @Override
@@ -47,7 +46,7 @@ public class VkAddAlbumFragment extends DialogFragment implements VkAddAlbumView
         view.findViewById(R.id.btn_ok_add_album).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            vkAddAlbumPresenter.addAlbum(etTitle.getText().toString(), etDescription.getText().toString(),
+                vkAlbumsPresenter.addAlbum(etTitle.getText().toString(), etDescription.getText().toString(),
                     VKPrivacy.PRIVACY_NOBODY, VKPrivacy.PRIVACY_NOBODY);
             }
         });
@@ -64,19 +63,19 @@ public class VkAddAlbumFragment extends DialogFragment implements VkAddAlbumView
     @Override
     public void onStart() {
         super.onStart();
-        vkAddAlbumPresenter.onStart();
+        vkAlbumsPresenter.onStart();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        vkAddAlbumPresenter.onStop();
+        vkAlbumsPresenter.onStop();
     }
 
     @Override
     public void displayVkAddAlbum(PhotoAlbum photoAlbum) {
         getDialog().dismiss();
-        vkAddAlbumPresenter.goToPhotoAlbum(getContext(), photoAlbum);
+        vkAlbumsPresenter.goToPhotoAlbum(getContext(), photoAlbum);
     }
 
     @Override
