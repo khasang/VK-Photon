@@ -15,8 +15,8 @@ import com.vk.sdk.api.VKResponse;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class VKPhotoSource {
 
@@ -51,16 +51,16 @@ public class VKPhotoSource {
      * @param photoAlbum
      * @param localAlbumSource
      */
-    public void savePhotos(final Vector<String> listUploadedFiles, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
+    public void savePhotos(final ArrayList<String> listUploadedFiles, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
         if (listUploadedFiles.size() > 0) {
-            File file = new File(listUploadedFiles.lastElement());
+            File file = new File(listUploadedFiles.get(listUploadedFiles.size() - 1));
             if (file.exists()) {
                 RequestMaker.uploadPhoto(file, photoAlbum, new VKRequest.VKRequestListener() {
                     @Override
                     public void onComplete(VKResponse response) {
                         super.onComplete(response);
                         Logger.d("savePhotoToAlbum: " + response.responseString);
-                        listUploadedFiles.removeElementAt(listUploadedFiles.size() - 1);
+                        listUploadedFiles.remove(listUploadedFiles.size() - 1);
                         if (listUploadedFiles.size() >= 0)
                             savePhotos(listUploadedFiles, photoAlbum, localAlbumSource);
                     }
@@ -72,8 +72,6 @@ public class VKPhotoSource {
             }
         }
         getPhotosByAlbumId(photoAlbum.id);
-//        PhotoAlbum tmpPhotoAlbum = localAlbumSource.getAlbumById(photoAlbum.id);
-//        localAlbumSource.updateAlbum(tmpPhotoAlbum);
     }
 
     public void updatePhoto() {

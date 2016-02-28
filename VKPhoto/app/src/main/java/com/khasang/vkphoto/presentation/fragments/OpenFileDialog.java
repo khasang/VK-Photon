@@ -38,7 +38,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Created with IntelliJ IDEA.
@@ -59,10 +58,10 @@ public class OpenFileDialog extends AlertDialog.Builder {
     private Drawable fileIcon;
     private String accessDeniedMessage;
     private List<Integer> selectedPositions = new ArrayList<>();
-    private Vector<String> listSelectedFiles;
+    private ArrayList<String> listSelectedFiles;
 
     public interface OpenDialogListener {
-        public void OnSelectedFile(Vector<String> listSelectedFiles);
+        public void OnSelectedFile(ArrayList<String> listSelectedFiles);
     }
 
     private class FileAdapter extends ArrayAdapter<File> {
@@ -106,7 +105,7 @@ public class OpenFileDialog extends AlertDialog.Builder {
         linearLayout.addView(createBackItem(context));
         listView = createListView(context);
         listView.setSelector(R.drawable.selector);
-        listSelectedFiles = new Vector<>();
+        listSelectedFiles = new ArrayList<>();
         linearLayout.addView(listView);
         setChooserOpenFileDialog(listView, activity);
         setCustomTitle(title)

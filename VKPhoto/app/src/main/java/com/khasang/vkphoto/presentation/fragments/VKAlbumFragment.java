@@ -27,7 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public static final String TAG = VKAlbumFragment.class.getSimpleName();
@@ -91,7 +91,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
                 fileDialog.show();
                 fileDialog.setOpenDialogListener(new OpenFileDialog.OpenDialogListener() {
                     @Override
-                    public void OnSelectedFile(Vector<String> listSelectedFiles) {
+                    public void OnSelectedFile(ArrayList<String> listSelectedFiles) {
                         vKPhotosPresenter.addPhotos(listSelectedFiles, photoAlbum);
                     }
                 });
