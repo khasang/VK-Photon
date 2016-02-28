@@ -1,27 +1,34 @@
 package com.khasang.vkphoto.domain.adapters;
 
 import android.content.Context;
+import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.Photo;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+import com.khasang.vkphoto.presentation.presenter.VKAlbumPresenter;
+import com.khasang.vkphoto.util.Logger;
 
 import java.util.List;
 
 public class VKPhotoAdapter extends BaseAdapter {
     private Context context;
     private List<Photo> photoList;
+    private MultiSelector multiSelector;
+    private VKAlbumPresenter vkAlbumPresenter;
 
-    public VKPhotoAdapter(Context context, List<Photo> photoList) {
+    public VKPhotoAdapter(Context context, List<Photo> photoList, MultiSelector multiSelector, VKAlbumPresenter vkAlbumPresenter) {
         this.context = context;
         this.photoList = photoList;
+        this.multiSelector = multiSelector;
+        this.vkAlbumPresenter = vkAlbumPresenter;
     }
 
     public void setPhotoList(List<Photo> photoList) {
@@ -46,27 +53,16 @@ public class VKPhotoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final VKPhotoViewHolder viewHolder;
+        final VKPhotoViewHolder vkPhotoViewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.layout_simple_photo, null);
-            viewHolder = new VKPhotoViewHolder((ImageView) convertView.findViewById(R.id.image_view),
-                    (ProgressBar) convertView.findViewById(R.id.progressBar));
-            convertView.setTag(viewHolder);
+            vkPhotoViewHolder = new VKPhotoViewHolder(convertView, multiSelector, vkAlbumPresenter, VKPhotoAdapter.this);
+            convertView.setTag(vkPhotoViewHolder);
         } else {
-            viewHolder = (VKPhotoViewHolder) convertView.getTag();
+            vkPhotoViewHolder = (VKPhotoViewHolder) convertView.getTag();
         }
-        viewHolder.progressBar.setVisibility(View.VISIBLE);
-        Picasso.with(context).load(photoList.get(position).getUrlToMaxPhoto()).error(R.drawable.vk_share_send_button_background).into(viewHolder.imageView, new Callback() {
-            @Override
-            public void onSuccess() {
-                viewHolder.progressBar.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onError() {
-                viewHolder.progressBar.setVisibility(View.INVISIBLE);
-            }
-        });
+        convertView.setTag(R.id.position_key, position);
+        vkPhotoViewHolder.loadPhoto(photoList.get(position));
         return convertView;
     }
 }
