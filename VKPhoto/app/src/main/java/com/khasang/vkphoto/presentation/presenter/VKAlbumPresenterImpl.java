@@ -5,11 +5,14 @@ import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.interactors.VkPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.VkPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
 
 
 public class VKAlbumPresenterImpl implements VKPhotosPresenter {
@@ -30,6 +33,11 @@ public class VKAlbumPresenterImpl implements VKPhotosPresenter {
     @Override
     public void deletePhotoById(int photoId) {
         vkPhotosInteractor.deletePhotoById(photoId);
+    }
+
+    @Override
+    public void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum) {
+        vkPhotosInteractor.addPhotos(listUploadedFiles, photoAlbum);
     }
 
     @Override

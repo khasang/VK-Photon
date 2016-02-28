@@ -24,6 +24,8 @@ public interface SyncService {
 
     void getPhotosByAlbumId(int albumId);
 
+    void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum);
+
     void deleteVkPhotoById(int photoId);
 
     void deleteVKAlbumById(int albumId);
