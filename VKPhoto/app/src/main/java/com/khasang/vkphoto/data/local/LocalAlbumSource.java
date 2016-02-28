@@ -4,7 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.provider.BaseColumns;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
@@ -14,13 +16,17 @@ import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.FileManager;
+import com.khasang.vkphoto.util.ImageFileFilter;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.model.VKApiPhotoAlbum;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class LocalAlbumSource {
     private Context context;
@@ -50,7 +56,7 @@ public class LocalAlbumSource {
         if (oldAlbum == null) {
             saveAlbum(photoAlbum);
         } else {
-            Logger.d("photoAlbum " + photoAlbum.id + " exists");
+            Logger.d("update " + photoAlbum.id + " photoAlbum");
             ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum);
             if (contentValues.size() > 0) {
                 db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
@@ -113,6 +119,64 @@ public class LocalAlbumSource {
     }
 
     public List<PhotoAlbum> getAllLocalAlbums() {
-        return null;
+        Set<String> imagePaths = new HashSet<>();
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = {MediaStore.MediaColumns.DATA};
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            int dataIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            while (cursor.moveToNext()) {
+                String string = cursor.getString(dataIndex);
+                imagePaths.add(string.substring(0, string.lastIndexOf("/")));
+            }
+            for (String imagePath : imagePaths) {
+                PhotoAlbum photoAlbum = new PhotoAlbum(imagePath.substring(imagePath.lastIndexOf("/") + 1), imagePath);
+                File file = new File(imagePath);
+                photoAlbum.size = file.listFiles(new ImageFileFilter()).length;
+                photoAlbumList.add(photoAlbum);
+            }
+            cursor.close();
+        }
+        return photoAlbumList;
+    }
+
+    public List<String> getAllImagesPathes() {//находит и возвращает все фотографии на девайсе
+        List<String> listOfAllImages = new ArrayList<>();
+        String absolutePathOfImage;
+        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        String[] projection = {MediaStore.MediaColumns.DATA,
+                MediaStore.MediaColumns.DISPLAY_NAME};
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            int dataIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(dataIndex);
+                listOfAllImages.add(absolutePathOfImage);
+            }
+            cursor.close();
+        }
+        return listOfAllImages;
+    }
+
+    public void setSyncStatus(List<PhotoAlbum> photoAlbumList, int status) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PhotoAlbumsTable.SYNC_STATUS, status);
+            String[] whereArgs = new String[photoAlbumList.size()];
+            for (int i = 0; i < photoAlbumList.size(); i++) {
+                whereArgs[i] = String.valueOf(photoAlbumList.get(i).id);
+            }
+            db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
+                    whereArgs);
+            db.setTransactionSuccessful();
+            EventBus.getDefault().postSticky(new LocalAlbumEvent());
+        } finally {
+            db.endTransaction();
+        }
+
     }
 }

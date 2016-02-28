@@ -6,7 +6,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,23 +20,26 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
+import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
 import com.khasang.vkphoto.util.Logger;
-import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SyncServiceProvider {
+public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider {
     public static final String TAG = MainActivity.class.getSimpleName();
     private ServiceConnection sConn;
     private boolean bound = false;
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private static String VIEWPAGER_VISIBLE = "viewpager_visible";
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         loginVk();
         initViews();
         initViewPager();
+        if (savedInstanceState != null) {
+            Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
+        }
     }
 
     private void initViewPager() {
@@ -81,19 +88,19 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ToastUtils.showShortMessage("Undone", getApplicationContext());
-                            }
-                        }).show();
-            }
-        });
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                ToastUtils.showShortMessage("Undone", getApplicationContext());
+//                            }
+//                        }).show();
+//            }
+//        });
     }
 
     private void initServiceConnection() {
@@ -103,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 Logger.d("MainActivity onServiceConnected");
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
+                if (VKAccessToken.currentToken() != null&& viewPager.getVisibility()==View.VISIBLE) {
+                    EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
+                }
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -155,6 +165,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             @Override
             public void onResult(VKAccessToken res) {
                 Toast.makeText(MainActivity.this, "Authorized", Toast.LENGTH_SHORT).show();
+                if (sConn != null) {
+                    EventBus.getDefault().post(new SyncAndTokenReadyEvent());
+                }
                 // User passed Authorization
             }
 
@@ -171,6 +184,11 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     @Override
     public SyncService getSyncService() {
         return syncService;
+    }
+
+    @Override
+    public FloatingActionButton getFloatingActionButton() {
+        return fab;
     }
 
     @Override
@@ -207,4 +225,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
+        super.onSaveInstanceState(outState);
+    }
 }

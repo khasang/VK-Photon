@@ -10,7 +10,7 @@ import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
-import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
+import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
@@ -21,7 +21,14 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.greenrobot.eventbus.util.AsyncExecutor;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class SyncServiceImpl extends Service implements SyncService {
     public static final String TAG = SyncService.class.getSimpleName();
@@ -30,6 +37,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     private AsyncExecutor asyncExecutor;
     private LocalDataSource localDataSource;
     private VKDataSource vKDataSource;
+    private List<Future<Boolean>> futureList = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -39,6 +47,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         vKDataSource = new VKDataSource();
         eventBus = EventBus.getDefault();
         eventBus.register(this);
+        ArrayBlockingQueue<String> strings = new ArrayBlockingQueue<>(15);
     }
 
     @Nullable
@@ -47,22 +56,34 @@ public class SyncServiceImpl extends Service implements SyncService {
         return binder;
     }
 
-    public void syncAlbum(final PhotoAlbum photoAlbum) {
-        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
-            @Override
-            public void run() throws Exception {
-                vKDataSource.getPhotoSource().getPhotosByAlbumId(photoAlbum.id);
-            }
-        });
-    }
     @Override
     public void syncAlbums(final List<PhotoAlbum> photoAlbumList) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                for (PhotoAlbum  photoAlbum : photoAlbumList) {
-                    vKDataSource.getPhotoSource().getPhotosByAlbumId(photoAlbum.id);
-                    Logger.d(photoAlbum.title);
+                localDataSource.getAlbumSource().setSyncStatus(photoAlbumList, Constants.SYNC_STARTED);
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                for (PhotoAlbum photoAlbum : photoAlbumList) {
+                    Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource);
+                    futureList.add(executor.submit(booleanCallable));
+                }
+                execute();
+                if (futureList.isEmpty()) {
+                    Logger.d("full sync success");
+                } else {
+                    Logger.d("full sync fail");
+                }
+                executor.shutdown();
+            }
+
+            private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
+                Iterator<Future<Boolean>> iterator = futureList.iterator();
+                while (iterator.hasNext()) {
+                    Future<Boolean> booleanFutureTask = iterator.next();
+                    if (booleanFutureTask.get()) {
+                        iterator.remove();
+                    }
+                    Logger.d("exit get");
                 }
             }
         });
@@ -84,6 +105,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
+                Logger.d("SyncSerice getAllAlbums");
                 vKDataSource.getAlbumSource().getAllAlbums();
             }
         });
@@ -91,6 +113,7 @@ public class SyncServiceImpl extends Service implements SyncService {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onGetVKAlbumsEvent(GetVKAlbumsEvent getVKAlbumsEvent) {
+        Logger.d("SyncSerice onGetVKAlbumsEvent");
         List<PhotoAlbum> vKphotoAlbumList = getVKAlbumsEvent.albumsList;
         LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
         List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllAlbums();
@@ -123,11 +146,6 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
-        List<Photo> vkPhotoList = getVKPhotosEvent.photosList;
-    }
-
     @Override
     public void deleteVkPhotoById(final int photoId) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
@@ -152,8 +170,6 @@ public class SyncServiceImpl extends Service implements SyncService {
     public boolean changeAlbumPrivacy(int i) {
         return false;
     }
-
-
 
     @Override
     public Photo getPhoto() {

@@ -3,19 +3,28 @@ package com.khasang.vkphoto.domain.interactors;
 import android.database.Cursor;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
-import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.data.RequestMaker;
+import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
+import com.khasang.vkphoto.domain.tasks.DownloadPhotoCallable;
+import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
-import com.khasang.vkphoto.util.Constants;
+import com.khasang.vkphoto.util.JsonUtils;
+import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.api.VKResponse;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.util.AsyncExecutor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Реализация интерфейса исполнителя запросов к службе синхронизации.
@@ -99,22 +108,34 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     }
 
     boolean checkSyncService() {
-        int i = 0;
-        do {
-            if (i == 4) {
-                if (!setSyncService()) {
-                    EventBus.getDefault().postSticky(new ErrorEvent(Constants.SYNC_SERVICE_ERROR));
-                    return false;
-                }
-            }
+        for (int i = 0; i < 4; i++) {
             try {
-                Thread.sleep(500);
+                TimeUnit.MILLISECONDS.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            i++;
-        } while (syncService == null);
-        return true;
+            if (setSyncService() && VKAccessToken.currentToken() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void downloadAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
+        RequestMaker.getPhotoAlbumThumb(new MyVkRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                try {
+                    final Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
+                    Future<File> fileFuture = executor.submit(new DownloadPhotoCallable(localPhotoSource, photo, photoAlbum));
+                    fileFuture.get();
+                } catch (Exception e) {
+                    sendError(e.toString());
+                }
+            }
+        }, photoAlbum);
     }
 }
       

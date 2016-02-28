@@ -53,14 +53,18 @@ public class RequestMaker {
         request.executeWithListener(vkRequestListener);
     }
 
+    public static VKRequest getVkPhotosByAlbumIdRequest(int albumId) {
+        return getVkRequest("photos.get", VKParameters.from(VKApiConst.ALBUM_ID, albumId));
+    }
+
     public static void getAllVkAlbums(VKRequest.VKRequestListener vkRequestListener) {
         final VKRequest request = getVkRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId));
         request.executeWithListener(vkRequestListener);
     }
 
     public static void getPhotoAlbumThumb(VKRequest.VKRequestListener vkRequestListener, PhotoAlbum photoAlbum) {
-        VKRequest request = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.ALBUM_ID, photoAlbum.id, VKApiConst.PHOTO_IDS, photoAlbum.thumb_id));
-        request.executeWithListener(vkRequestListener);
+        VKRequest request = new VKRequest("photos.get", VKParameters.from(VKApiConst.ALBUM_ID, photoAlbum.id, VKApiConst.PHOTO_IDS, photoAlbum.thumb_id));
+        request.executeSyncWithListener(vkRequestListener);
     }
 
     public static void deleteVkPhotoById(VKRequest.VKRequestListener vkRequestListener, int photoId) {

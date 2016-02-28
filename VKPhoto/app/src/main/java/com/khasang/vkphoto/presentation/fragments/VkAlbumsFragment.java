@@ -1,12 +1,12 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 import android.database.Cursor;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,21 +19,22 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.AlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
+import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
-import com.khasang.vkphoto.util.NetWorkUtils;
 import com.khasang.vkphoto.util.ToastUtils;
 
 public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = VkAlbumsFragment.class.getSimpleName();
+    public static final String ACTION_MODE_ACTIVE = "action_mode_active";
     private VKAlbumsPresenter vKAlbumsPresenter;
-    private RecyclerView albumsRecyclerView;
     private PhotoAlbumCursorAdapter adapter;
     private MultiSelector multiSelector;
+    private TextView tvCountOfAlbums;
 
     public VkAlbumsFragment() {
     }
@@ -51,45 +52,34 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_vk_albums, container, false);
-        final TextView tv_count_of_albums = (TextView) view.findViewById(R.id.tv_count_of_albums);
-        view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //check internet connection
-                int networkType = NetWorkUtils.getNetworkType(getContext());
-                if (networkType == ConnectivityManager.TYPE_WIFI) {
-                    Logger.d("Connection WiFi");
-                } else if (networkType == ConnectivityManager.TYPE_MOBILE) {
-                    Logger.d("Connection mobile");
-                } else {
-                    Logger.d("no internet connection");
-                }
-//                List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-//                Cursor cursor = adapter.getCursor();
-//                for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
-//                    Integer position = selectedPositions.get(i);
-//                    cursor.moveToPosition(position);
-//                    PhotoAlbum photoAlbum = new PhotoAlbum(cursor);
-//                    Logger.d(photoAlbum.title + " " + photoAlbum.id);
-//                }
+        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
+        initRecyclerView(view);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {
+                vKAlbumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) getActivity());
             }
-        });
-        view.findViewById(R.id.add_album).setOnClickListener(new View.OnClickListener() {
+        }
+        return view;
+    }
+
+    private void setOnClickListenerFab() {
+        ((FabProvider) getActivity()).getFloatingActionButton().setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+                Logger.d("VkAlbumsFragment add album");
+//                vKAlbumsPresenter.addAlbum();
                 DialogFragment dialogFragment;
                 dialogFragment = new VkAddAlbumFragment();
                 dialogFragment.show(getFragmentManager(), "dialogFragment");
             }
         });
-        initRecyclerView(view);
-        return view;
     }
 
     private void initRecyclerView(View view) {
-        albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
+        RecyclerView albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
         albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         initAdapter(null);
+        albumsRecyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -102,6 +92,13 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public void onStop() {
         super.onStop();
         vKAlbumsPresenter.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setOnClickListenerFab();
+        Logger.d("VkAlbumsFragment onResume()");
     }
 
     @Override
@@ -135,7 +132,6 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     private boolean initAdapter(Cursor cursor) {
         if (adapter == null) {
             adapter = new PhotoAlbumCursorAdapter(getContext(), cursor, multiSelector, vKAlbumsPresenter);
-            albumsRecyclerView.setAdapter(adapter);
             return true;
         }
         return false;
@@ -146,12 +142,14 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         if (!initAdapter(data)) {
             adapter.changeCursor(data);
         }
+        int itemCount = adapter.getItemCount();
+        tvCountOfAlbums.setText(getResources().getQuantityString(R.plurals.count_of_albums, itemCount,itemCount));
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        vKAlbumsPresenter.getAllAlbums();
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(ACTION_MODE_ACTIVE, multiSelector.isSelectable());
     }
 
     @Override
