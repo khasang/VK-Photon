@@ -18,7 +18,7 @@ public interface VKAlbumsPresenter extends Presenter {
 
     void selectAlbum(MultiSelector multiSelector, AppCompatActivity activity);
 
-    void checkActionModeFinish(MultiSelector multiSelector);
+    void checkActionModeFinish(MultiSelector multiSelector, Context context);
 
     void deleteVkAlbums(MultiSelector multiSelector);
 

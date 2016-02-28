@@ -45,6 +45,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         itemView.setLongClickable(true);
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
+        albumSelectedCheckBox.setOnClickListener(this);
     }
 
     public void bindPhotoAlbum(final PhotoAlbum photoAlbum) {
@@ -112,7 +113,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     public void onClick(View v) {
         if (multiSelector.isSelectable()) {
             multiSelector.tapSelection(this);
-            vkAlbumsPresenter.checkActionModeFinish(multiSelector);
+            vkAlbumsPresenter.checkActionModeFinish(multiSelector,v.getContext());
         } else {
             vkAlbumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }

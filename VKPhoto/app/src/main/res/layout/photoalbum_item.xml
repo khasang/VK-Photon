@@ -16,8 +16,7 @@
         <ImageView
             android:id="@+id/album_thumb"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            />
+            android:layout_height="180dp" />
 
 
         <RelativeLayout
@@ -51,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_margin="@dimen/standard_margin"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>
