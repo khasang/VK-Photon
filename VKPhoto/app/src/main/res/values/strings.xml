@@ -7,5 +7,6 @@
     <string name="sync_service_error">Synchronization service is loading</string>
     <string name="sync_album">Synchronize album</string>
     <string name="sync_delete_album">Delete Album</string>
+    <string name="privacy">Privacy settings</string>
 
 </resources>
