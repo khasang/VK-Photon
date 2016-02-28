@@ -16,11 +16,13 @@ import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.FileManager;
+import com.khasang.vkphoto.util.ImageFileFilter;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.model.VKApiPhotoAlbum;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -129,7 +131,10 @@ public class LocalAlbumSource {
                 imagePaths.add(string.substring(0, string.lastIndexOf("/")));
             }
             for (String imagePath : imagePaths) {
-                photoAlbumList.add(new PhotoAlbum(imagePath.substring(imagePath.lastIndexOf("/") + 1), imagePath));
+                PhotoAlbum photoAlbum = new PhotoAlbum(imagePath.substring(imagePath.lastIndexOf("/") + 1), imagePath);
+                File file = new File(imagePath);
+                photoAlbum.size = file.listFiles(new ImageFileFilter()).length;
+                photoAlbumList.add(photoAlbum);
             }
             cursor.close();
         }

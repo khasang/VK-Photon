@@ -16,6 +16,7 @@ import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractorImpl;
+import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -94,6 +95,7 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
 
     @Override
     public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
+        ((FabProvider) activity).getFloatingActionButton().hide();
         this.actionMode = activity.startSupportActionMode(new ModalMultiSelectorCallback(multiSelector) {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -125,8 +127,9 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     }
 
     @Override
-    public void checkActionModeFinish(MultiSelector multiSelector) {
+    public void checkActionModeFinish(MultiSelector multiSelector, Context context) {
         if (multiSelector.getSelectedPositions().size() == 0) {
+            ((FabProvider) context).getFloatingActionButton().show();
             if (actionMode != null) {
                 actionMode.finish();
             }
