@@ -13,4 +13,5 @@
         <item quantity="one">%d albums</item>
         <item quantity="other">%d albums</item>
     </plurals>
+    <item type="id" name="position_key" />
 </resources>
