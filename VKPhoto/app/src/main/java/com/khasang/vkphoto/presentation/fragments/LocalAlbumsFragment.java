@@ -10,12 +10,13 @@ import android.view.ViewGroup;
 import com.khasang.vkphoto.R;
 
 public class LocalAlbumsFragment extends Fragment {
-    public static final String TAG = VkAlbumsFragment.class.getSimpleName();
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vk_albums, container, false);
-        return view;
+        //       List <PhotoAlbum> allAlbumsList = localAlbumSource.getAllAlbums();
+//        for (PhotoAlbum album: allAlbumsList) {
+//            addAlbumViewToLayout(album, localAlbumsGallery);
+//        }
+        return inflater.inflate(R.layout.fragment_vk_albums, container, false);
     }
 }

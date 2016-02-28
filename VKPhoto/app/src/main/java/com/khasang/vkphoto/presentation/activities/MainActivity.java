@@ -6,7 +6,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,13 +21,13 @@ import android.widget.Toast;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
+import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
 import com.khasang.vkphoto.util.Logger;
-import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -40,7 +39,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SyncServiceProvider {
+public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider {
     public static final String TAG = MainActivity.class.getSimpleName();
     private ServiceConnection sConn;
     private boolean bound = false;
@@ -51,9 +50,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private static String VIEWPAGER_VISIBLE = "viewpager_visible";
+    private FloatingActionButton fab;
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -89,19 +88,19 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ToastUtils.showShortMessage("Undone", getApplicationContext());
-                            }
-                        }).show();
-            }
-        });
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                ToastUtils.showShortMessage("Undone", getApplicationContext());
+//                            }
+//                        }).show();
+//            }
+//        });
     }
 
     private void initServiceConnection() {
@@ -185,6 +184,11 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     @Override
     public SyncService getSyncService() {
         return syncService;
+    }
+
+    @Override
+    public FloatingActionButton getFloatingActionButton() {
+        return fab;
     }
 
     @Override

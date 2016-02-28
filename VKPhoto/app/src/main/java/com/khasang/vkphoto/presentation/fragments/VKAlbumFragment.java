@@ -2,6 +2,7 @@ package com.khasang.vkphoto.presentation.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,8 @@ import android.widget.GridView;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.VKPhotoAdapter;
-import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
+import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -23,7 +24,6 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +36,8 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     GridView gridview;
     private List<Photo> photoList = new ArrayList<>();
     int albumId;
-    private EventBus eventBus;
     private VKPhotoAdapter adapter;
+    private FloatingActionButton fab;
 
     public static VKAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -54,14 +54,13 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         vKPhotosPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         photoList = new ArrayList<>();
         adapter = new VKPhotoAdapter(getContext(), photoList);
-        eventBus = EventBus.getDefault();
-        eventBus.register(this);
+        fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_gallery_albums, null);
+        View view = inflater.inflate(R.layout.fragment_vk_album, null);
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (photoAlbum != null) {
             Logger.d("photoalbum " + photoAlbum.title);
@@ -83,9 +82,20 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         return view;
     }
 
+    private void setOnClickListenerFab(View view) {
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ToastUtils.showShortMessage("Here will be action Add Photos", getActivity());
+//                vKPhotosPresenter.addPhotos();
+            }
+        });
+    }
+
     @Override
     public void onResume() {
         super.onResume();
+        setOnClickListenerFab(getView());
         Logger.d("onResume VKAlbumFragment");
     }
 
@@ -104,7 +114,9 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
-    public void displayVkPhotosByAlbumId() {
+    public void displayVkPhotos(List<Photo> photos) {
+        photoList = photos;
+        adapter.setPhotoList(photos);
     }
 
     @Override
@@ -113,9 +125,5 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     }
 
 
-    @Subscribe
-    public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
-        photoList = getVKPhotosEvent.photosList;
-        adapter.setPhotoList(photoList);
-    }
+
 }

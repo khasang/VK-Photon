@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
@@ -34,6 +35,10 @@ public class Navigator {
         navigateToFragmentWithBackStack(context, VKAlbumFragment.newInstance(photoAlbum), VKAlbumFragment.TAG);
     }
 
+    public static void navigateToLocalAlbumFragment(Context context, PhotoAlbum photoAlbum) {
+        navigateToFragmentWithBackStack(context, LocalAlbumFragment.newInstance(photoAlbum), LocalAlbumFragment.TAG);
+    }
+
     private static void navigateToFragment(Context context, Fragment fragment, String tag) {
         getFragmentManager(context).beginTransaction().add(R.id.fragment_container, fragment, tag).commit();
     }
@@ -55,6 +60,9 @@ public class Navigator {
                 }
             }
             changeViewPagerVisibility((Activity) context, true);
+            Fragment fragment = fragmentManager.getFragments()
+                    .get(fragmentManager.getBackStackEntryCount() - 1);
+            fragment.onResume();
         } else {
             ((Activity) context).finish();
         }
