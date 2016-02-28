@@ -46,14 +46,14 @@ public class VKPhotoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final ViewHolder viewHolder;
+        final VKPhotoViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.layout_simple_photo, null);
-            viewHolder = new ViewHolder((ImageView) convertView.findViewById(R.id.image_view),
+            viewHolder = new VKPhotoViewHolder((ImageView) convertView.findViewById(R.id.image_view),
                     (ProgressBar) convertView.findViewById(R.id.progressBar));
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder) convertView.getTag();
+            viewHolder = (VKPhotoViewHolder) convertView.getTag();
         }
         viewHolder.progressBar.setVisibility(View.VISIBLE);
         Picasso.with(context).load(photoList.get(position).getUrlToMaxPhoto()).error(R.drawable.vk_share_send_button_background).into(viewHolder.imageView, new Callback() {
@@ -68,15 +68,5 @@ public class VKPhotoAdapter extends BaseAdapter {
             }
         });
         return convertView;
-    }
-
-    private static class ViewHolder {
-        ImageView imageView;
-        ProgressBar progressBar;
-
-        public ViewHolder(ImageView imageView, ProgressBar progressBar) {
-            this.imageView = imageView;
-            this.progressBar = progressBar;
-        }
     }
 }
