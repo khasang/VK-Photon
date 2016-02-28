@@ -83,7 +83,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Picasso.with(albumThumbImageView.getContext()).load(file).error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
+                Picasso.with(albumThumbImageView.getContext()).load(file).fit().centerCrop().error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
             }
         });
     }
@@ -92,7 +92,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Picasso.with(albumThumbImageView.getContext()).load(resource).into(albumThumbImageView);
+                Picasso.with(albumThumbImageView.getContext()).load(resource).fit().centerCrop().error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
             }
         });
     }
