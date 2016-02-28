@@ -8,7 +8,7 @@ import com.khasang.vkphoto.util.Constants;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class VkPhotosInteractorImpl implements VkPhotosInteractor {
     private SyncServiceProvider syncServiceProvider;
@@ -35,7 +35,7 @@ public class VkPhotosInteractorImpl implements VkPhotosInteractor {
     }
 
     @Override
-    public void addPhotos(ArrayList<String> listUploadedFiles, PhotoAlbum photoAlbum) {
+    public void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum) {
         if (checkSyncService()) syncService.addPhotos(listUploadedFiles, photoAlbum);
     }
 

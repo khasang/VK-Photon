@@ -15,7 +15,6 @@ import com.vk.sdk.api.VKResponse;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class VKPhotoSource {
@@ -51,7 +50,7 @@ public class VKPhotoSource {
      * @param photoAlbum
      * @param localAlbumSource
      */
-    public void savePhotos(final ArrayList<String> listUploadedFiles, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
+    public void savePhotos(final List<String> listUploadedFiles, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
         if (listUploadedFiles.size() > 0) {
             File file = new File(listUploadedFiles.get(listUploadedFiles.size() - 1));
             if (file.exists()) {

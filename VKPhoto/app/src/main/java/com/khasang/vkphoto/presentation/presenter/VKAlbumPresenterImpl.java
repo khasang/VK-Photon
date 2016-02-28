@@ -12,7 +12,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class VKAlbumPresenterImpl implements VKPhotosPresenter {
@@ -36,7 +36,7 @@ public class VKAlbumPresenterImpl implements VKPhotosPresenter {
     }
 
     @Override
-    public void addPhotos(ArrayList<String> listUploadedFiles, PhotoAlbum photoAlbum) {
+    public void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum) {
         vkPhotosInteractor.addPhotos(listUploadedFiles, photoAlbum);
     }
 

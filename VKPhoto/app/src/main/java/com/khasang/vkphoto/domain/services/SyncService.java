@@ -4,7 +4,6 @@ package com.khasang.vkphoto.domain.services;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +15,7 @@ public interface SyncService {
 
     void getPhotosByAlbumId(int albumId);
 
-    void addPhotos(ArrayList<String> listUploadedFiles, PhotoAlbum photoAlbum);
+    void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum);
 
     void deleteVkPhotoById(int photoId);
 
