@@ -10,6 +10,15 @@ import java.util.List;
  * интерфейс сервиса синхронизации
  */
 public interface SyncService {
+    /**
+     * Создаёт пустой альбом в ВК и на устройстве
+     * @param title
+     * @param description
+     * @param privacy
+     * @param commentPrivacy
+     */
+    void addAlbum(final String title, final String description,
+                  final int privacy, final int commentPrivacy);
 
     void getAllAlbums();
 

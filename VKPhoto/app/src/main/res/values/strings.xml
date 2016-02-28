@@ -5,6 +5,9 @@
     <string name="count_of_photos_in_album">Photos in album: %d</string>
     <string name="sync_service_error">Synchronization service is loading</string>
     <string name="sync_album">Synchronize album</string>
+    <string name="add_album_description">Description</string>
+    <string name="st_btn_ok">Ok</string>
+    <string name="st_btn_cancel">Cancel</string>
     <string name="sync_delete_album">Delete Album</string>
     <string name="privacy">Privacy settings</string>
     <plurals name="count_of_albums">

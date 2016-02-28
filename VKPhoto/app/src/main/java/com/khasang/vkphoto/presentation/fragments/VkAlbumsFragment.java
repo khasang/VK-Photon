@@ -2,6 +2,7 @@ package com.khasang.vkphoto.presentation.fragments;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -67,6 +68,9 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
             public void onClick(View view) {
                 Logger.d("VkAlbumsFragment add album");
 //                vKAlbumsPresenter.addAlbum();
+                DialogFragment dialogFragment;
+                dialogFragment = new VkAddAlbumFragment();
+                dialogFragment.show(getFragmentManager(), "dialogFragment");
             }
         });
     }

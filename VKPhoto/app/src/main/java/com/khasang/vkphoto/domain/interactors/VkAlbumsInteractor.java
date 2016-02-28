@@ -23,8 +23,10 @@ public interface VkAlbumsInteractor {
 
     void getAllAlbums();
 
+    void addAlbum(final String title, final String description,
+                  final int privacy, final int commentPrivacy);
+
     void downloadAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor);
 
     void deleteVkAlbum(MultiSelector multiSelector, Cursor cursor);
 }
-      

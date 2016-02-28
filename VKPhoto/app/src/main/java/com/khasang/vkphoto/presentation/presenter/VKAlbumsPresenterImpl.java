@@ -11,6 +11,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetAlbumEvent;
 import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
@@ -20,6 +21,7 @@ import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.presentation.view.VkAddAlbumView;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -30,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 
 public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     private VkAlbumsView vkAlbumsView;
+    private VkAddAlbumView vKAddAlbumView;
     private VkAlbumsInteractor vkAlbumsInteractor;
     private ActionMode actionMode;
 
@@ -37,6 +40,12 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
         this.vkAlbumsView = vkAlbumsView;
         vkAlbumsInteractor = new VkAlbumsInteractorImpl(syncServiceProvider);
     }
+
+    public VKAlbumsPresenterImpl(VkAddAlbumView vkAddAlbumView, SyncServiceProvider syncServiceProvider) {
+        this.vKAddAlbumView = vkAddAlbumView;
+        vkAlbumsInteractor = new VkAlbumsInteractorImpl(syncServiceProvider);
+    }
+
 
     @Override
     public void syncAlbums(MultiSelector multiSelector) {
@@ -52,6 +61,13 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     public void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum) {
         Navigator.navigateToVKAlbumFragment(context, photoAlbum);
     }
+
+    @Override
+    public void addAlbum(final String title, final String description,
+                         final int privacy, final int commentPrivacy) {
+        vkAlbumsInteractor.addAlbum(title, description, privacy, commentPrivacy);
+    }
+
 
     @Override
     public void deleteVkAlbums(MultiSelector multiSelector) {
@@ -82,6 +98,12 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     public void OnLocalAlbumEvent(LocalAlbumEvent localAlbumEvent) {
         vkAlbumsView.displayVkAlbums();
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAddAlbumEvent(GetAlbumEvent getAlbumEvent) {
+        vKAddAlbumView.displayVkAddAlbum(getAlbumEvent.photoAlbum);
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent errorEvent) {
