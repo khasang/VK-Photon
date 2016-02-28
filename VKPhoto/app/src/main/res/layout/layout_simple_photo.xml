@@ -16,4 +16,12 @@
         android:indeterminateDrawable="@drawable/spinner_ring"
         android:indeterminateOnly="true"
         android:visibility="invisible" />
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/cb_photo_selected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/standard_margin"
+        android:visibility="gone" />
 </RelativeLayout>
