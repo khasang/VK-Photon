@@ -22,7 +22,6 @@ build/
 /*/build/
 .gradle
 /build
-.idea
 # Local configuration file (sdk path, etc)
 local.properties
 /local.properties
