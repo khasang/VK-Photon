@@ -1,7 +1,6 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 import android.database.Cursor;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -25,7 +24,6 @@ import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
-import com.khasang.vkphoto.util.NetWorkUtils;
 import com.khasang.vkphoto.util.ToastUtils;
 
 public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
@@ -46,41 +44,18 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         multiSelector = new MultiSelector();
         vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
-        fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_vk_albums, container, false);
-        view.findViewById(R.id.start_sync).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //check internet connection
-                int networkType = NetWorkUtils.getNetworkType(getContext());
-                if (networkType == ConnectivityManager.TYPE_WIFI) {
-                    Logger.d("Connection WiFi");
-                } else if (networkType == ConnectivityManager.TYPE_MOBILE) {
-                    Logger.d("Connection mobile");
-                } else {
-                    Logger.d("no internet connection");
-                }
-//                List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-//                Cursor cursor = adapter.getCursor();
-//                for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
-//                    Integer position = selectedPositions.get(i);
-//                    cursor.moveToPosition(position);
-//                    PhotoAlbum photoAlbum = new PhotoAlbum(cursor);
-//                    Logger.d(photoAlbum.title + " " + photoAlbum.id);
-//                }
-            }
-        });
         initRecyclerView(view);
         return view;
     }
 
     private void setOnClickListenerFab() {
-        fab.setOnClickListener(new View.OnClickListener() {
+        ((FabProvider) getActivity()).getFloatingActionButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Logger.d("VkAlbumsFragment add album");
