@@ -18,14 +18,13 @@ import com.squareup.picasso.Picasso;
 public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickListener, View.OnClickListener {
     final private ImageView imageView;
     final private ProgressBar progressBar;
+    final private CheckBox photoSelectedCheckBox;
+    private boolean selectable;
     private VKAlbumPresenter vkAlbumPresenter;
     private MultiSelector multiSelector;
-    private boolean selectable;
-    final private CheckBox photoSelectedCheckBox;
-    private View view;
+    private int adapterPosition;
 
     public VKPhotoViewHolder(View view, MultiSelector multiSelector, VKAlbumPresenter vkAlbumPresenter) {
-        this.view = view;
         imageView = (ImageView) view.findViewById(R.id.iv_photo);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         this.multiSelector = multiSelector;
@@ -64,12 +63,16 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
 
     @Override
     public int getAdapterPosition() {
-        return (Integer) view.getTag(R.id.position_key);
+        return adapterPosition;
+    }
+
+    public void setAdapterPosition(int adapterPosition) {
+        this.adapterPosition = adapterPosition;
     }
 
     @Override
     public long getItemId() {
-        return getAdapterPosition();
+        return -1;
     }
 
 

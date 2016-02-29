@@ -53,9 +53,9 @@ public class VKPhotoAdapter extends BaseAdapter {
         } else {
             vkPhotoViewHolder = (VKPhotoViewHolder) convertView.getTag();
         }
-        convertView.setTag(R.id.position_key, position);
+        vkPhotoViewHolder.setAdapterPosition(position);
         vkPhotoViewHolder.loadPhoto(photoList.get(position));
-        multiSelector.bindHolder(vkPhotoViewHolder, position, position);
+        multiSelector.bindHolder(vkPhotoViewHolder, position, -1);
         return convertView;
     }
 }
