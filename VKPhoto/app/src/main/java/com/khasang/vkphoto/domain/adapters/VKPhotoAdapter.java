@@ -13,7 +13,8 @@ import com.khasang.vkphoto.presentation.presenter.VKAlbumPresenter;
 import java.util.List;
 
 public class VKPhotoAdapter extends BaseAdapter {
-    private boolean firstTime;
+    private boolean loaded;
+
     private List<Photo> photoList;
     private MultiSelector multiSelector;
     private VKAlbumPresenter vkAlbumPresenter;
@@ -56,10 +57,14 @@ public class VKPhotoAdapter extends BaseAdapter {
         }
         vkPhotoViewHolder.setAdapterPosition(position);
         vkPhotoViewHolder.loadPhoto(photoList.get(position));
-        if (position != 0 || !firstTime) {
+        if (position != 0 || !loaded) {
             multiSelector.bindHolder(vkPhotoViewHolder, position, -1);
         }
-        firstTime = true;
+        loaded = true;
         return convertView;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 }

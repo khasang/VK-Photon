@@ -83,6 +83,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
 //                EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
             }
         });
+        adapter.setLoaded(false);
         gridview.setAdapter(adapter);
         return view;
     }
@@ -109,7 +110,9 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         super.onStart();
         Logger.d("VkAlbumFragment onStart");
         vKAlbumPresenter.onStart();
-        vKAlbumPresenter.getPhotosByAlbumId(albumId);
+        if (photoList.isEmpty()) {
+            vKAlbumPresenter.getPhotosByAlbumId(albumId);
+        }
     }
 
     @Override
