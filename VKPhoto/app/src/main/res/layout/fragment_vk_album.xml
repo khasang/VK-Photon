@@ -11,11 +11,7 @@
         android:horizontalSpacing="10dp"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-<<<<<<< HEAD
         android:verticalSpacing="10dp" >
     </GridView>
-=======
-        android:verticalSpacing="10dp"/>
 
->>>>>>> feature/iss28-add-multiselect
 </RelativeLayout>

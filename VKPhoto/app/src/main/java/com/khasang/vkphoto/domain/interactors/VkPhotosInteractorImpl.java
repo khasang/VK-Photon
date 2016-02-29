@@ -4,19 +4,14 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
-<<<<<<< HEAD
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-=======
 import com.khasang.vkphoto.presentation.model.Photo;
->>>>>>> feature/iss28-add-multiselect
 import com.khasang.vkphoto.util.Constants;
 
 import org.greenrobot.eventbus.EventBus;
 
-<<<<<<< HEAD
-=======
+
 import java.util.ArrayList;
->>>>>>> feature/iss28-add-multiselect
 import java.util.List;
 
 public class VkPhotosInteractorImpl implements VkPhotosInteractor {

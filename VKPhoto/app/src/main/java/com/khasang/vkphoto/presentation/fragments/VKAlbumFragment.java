@@ -26,7 +26,6 @@ import com.khasang.vkphoto.util.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ArrayList;
 
 public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public static final String TAG = VKAlbumFragment.class.getSimpleName();
@@ -93,19 +92,16 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-<<<<<<< HEAD
                 final OpenFileDialog fileDialog = new OpenFileDialog(getContext(), getActivity());
                 fileDialog.show();
                 fileDialog.setOpenDialogListener(new OpenFileDialog.OpenDialogListener() {
                     @Override
                     public void OnSelectedFile(ArrayList<String> listSelectedFiles) {
-                        vKPhotosPresenter.addPhotos(listSelectedFiles, photoAlbum);
+//                        vKPhotosPresenter.addPhotos(listSelectedFiles, photoAlbum);
                     }
                 });
-=======
                 ToastUtils.showShortMessage("Here will be action Add Photos", getActivity());
 //                vKAlbumPresenter.addPhotos();
->>>>>>> feature/iss28-add-multiselect
             }
         });
     }
