@@ -141,6 +141,15 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
+    public void deleteSelectedPhoto(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        for (Integer position : selectedPositions) {
+            photoList.remove(((int) position));
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
     public void showError(String s) {
         ToastUtils.showError(s, getContext());
     }
