@@ -1,6 +1,5 @@
 package com.khasang.vkphoto.presentation.fragments;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -14,14 +13,13 @@ import android.widget.GridView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
 import com.khasang.vkphoto.domain.adapters.VKPhotoAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.presenter.VKAlbumPresenterImpl;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumPresenter;
+import com.khasang.vkphoto.presentation.presenter.VKAlbumPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
@@ -55,7 +53,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         setRetainInstance(true);
         vKAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
-        adapter = new VKPhotoAdapter(getContext(), photoList, multiSelector, vKAlbumPresenter);
+        adapter = new VKPhotoAdapter(photoList, multiSelector, vKAlbumPresenter);
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
 

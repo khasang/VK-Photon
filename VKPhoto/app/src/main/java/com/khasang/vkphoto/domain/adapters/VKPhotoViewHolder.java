@@ -1,14 +1,12 @@
 package com.khasang.vkphoto.domain.adapters;
 
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
-import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.bignerdranch.android.multiselector.SelectableHolder;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.Photo;
@@ -17,11 +15,6 @@ import com.khasang.vkphoto.util.Logger;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
-/**
- * Created by Anton on 28.02.2016.
- */
 public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickListener, View.OnClickListener {
     final private ImageView imageView;
     final private ProgressBar progressBar;
@@ -30,12 +23,10 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
     private boolean selectable;
     final private CheckBox photoSelectedCheckBox;
     private View view;
-    private VKPhotoAdapter vkPhotoAdapter;
 
-    public VKPhotoViewHolder(View view, MultiSelector multiSelector, VKAlbumPresenter vkAlbumPresenter, VKPhotoAdapter vkPhotoAdapter) {
-        this.vkPhotoAdapter = vkPhotoAdapter;
+    public VKPhotoViewHolder(View view, MultiSelector multiSelector, VKAlbumPresenter vkAlbumPresenter) {
         this.view = view;
-        imageView = (ImageView) view.findViewById(R.id.image_view);
+        imageView = (ImageView) view.findViewById(R.id.iv_photo);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         this.multiSelector = multiSelector;
         this.vkAlbumPresenter = vkAlbumPresenter;
@@ -68,18 +59,17 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
 
     @Override
     public boolean isActivated() {
-        return photoSelectedCheckBox.isSelected();
+        return photoSelectedCheckBox.isChecked();
     }
 
     @Override
     public int getAdapterPosition() {
-        Logger.d(String.valueOf((Integer) view.getTag(R.id.position_key)));
         return (Integer) view.getTag(R.id.position_key);
     }
 
     @Override
     public long getItemId() {
-        return vkPhotoAdapter.getItemId((Integer) view.getTag(R.id.position_key));
+        return getAdapterPosition();
     }
 
 
@@ -87,7 +77,7 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
     public void onClick(View v) {
         if (multiSelector.isSelectable()) {
             multiSelector.tapSelection(this);
-            vkAlbumPresenter.checkActionModeFinish(multiSelector,v.getContext());
+            vkAlbumPresenter.checkActionModeFinish(multiSelector, v.getContext());
         } else {
             Logger.d("onClick");
         }
