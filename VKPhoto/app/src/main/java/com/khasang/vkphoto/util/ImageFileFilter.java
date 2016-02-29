@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.util;
 
+import com.khasang.vkphoto.presentation.model.Photo;
 import java.io.*;
 
 /**
@@ -15,6 +16,12 @@ public class ImageFileFilter implements FileFilter {
                 return true;
             }
         }
+        return false;
+    }
+
+    public boolean accept(Photo photo) {
+        for (String extension : okFileExtensions)
+            if (photo.getName().toLowerCase().endsWith(extension)) return true;
         return false;
     }
 }

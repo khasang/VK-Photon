@@ -6,11 +6,17 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
+import com.khasang.vkphoto.util.ImageFileFilter;
 import com.vk.sdk.api.model.VKApiPhoto;
 import com.vk.sdk.api.model.VKPhotoSizes;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.khasang.vkphoto.data.database.tables.PhotosTable.ALBUM_ID;
 import static com.khasang.vkphoto.data.database.tables.PhotosTable.COMMENTS;
@@ -31,6 +37,9 @@ public class Photo extends VKApiPhoto {
         super(from);
     }
 
+    public Photo(String filePath) {
+        this.filePath = filePath;
+    }
 
     public Photo(Cursor cursor) {
         this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
@@ -115,6 +124,13 @@ public class Photo extends VKApiPhoto {
         if (!TextUtils.isEmpty(photo_604)) return photo_604;
         if (!TextUtils.isEmpty(photo_130)) return photo_130;
         return photo_75;
+    }
+
+    public String getName() {
+        char separatorChar = System.getProperty("file.separator", "/").charAt(0);
+        String separator = String.valueOf(separatorChar);
+        int separatorIndex = filePath.lastIndexOf(separator);
+        return (separatorIndex < 0) ? filePath : filePath.substring(separatorIndex + 1, filePath.length());
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.FileManager;
+import com.khasang.vkphoto.util.ImageFileFilter;
 import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -104,11 +105,27 @@ public class LocalPhotoSource {
         return photos;
     }
 
+    public List<Photo> getPhotosByAlbumPath(String dirPath) {
+        List<Photo> result = new ArrayList<>();
+        File dir = new File(dirPath);
+        ImageFileFilter filter = new ImageFileFilter();
+        String[] fileNamesInDir = dir.list();
+        if (fileNamesInDir == null) return result;
+
+        for (String fileName : fileNamesInDir) {
+            char separatorChar = System.getProperty("file.separator", "/").charAt(0);
+            String fullPathToPhoto = dirPath + separatorChar + fileName;
+            Photo photo = new Photo(fullPathToPhoto);
+            if (filter.accept(photo)) result.add(photo);
+        }
+        return result;
+    }
+
     public void getAllPhotos() {
 
     }
 
     public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
-        return getPhotosByAlbumId(photoAlbum.id);
+        return photoAlbum.id !=0 ? getPhotosByAlbumId(photoAlbum.id) : getPhotosByAlbumPath(photoAlbum.filePath);
     }
 }
