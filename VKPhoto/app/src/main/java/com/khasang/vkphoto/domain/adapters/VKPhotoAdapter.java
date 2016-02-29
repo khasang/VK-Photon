@@ -13,6 +13,7 @@ import com.khasang.vkphoto.presentation.presenter.VKAlbumPresenter;
 import java.util.List;
 
 public class VKPhotoAdapter extends BaseAdapter {
+    private boolean firstTime;
     private List<Photo> photoList;
     private MultiSelector multiSelector;
     private VKAlbumPresenter vkAlbumPresenter;
@@ -47,7 +48,7 @@ public class VKPhotoAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         final VKPhotoViewHolder vkPhotoViewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_photo, null);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_photo, parent, false);
             vkPhotoViewHolder = new VKPhotoViewHolder(convertView, multiSelector, vkAlbumPresenter);
             convertView.setTag(vkPhotoViewHolder);
         } else {
@@ -55,7 +56,10 @@ public class VKPhotoAdapter extends BaseAdapter {
         }
         vkPhotoViewHolder.setAdapterPosition(position);
         vkPhotoViewHolder.loadPhoto(photoList.get(position));
-        multiSelector.bindHolder(vkPhotoViewHolder, position, -1);
+        if (position != 0 || !firstTime) {
+            multiSelector.bindHolder(vkPhotoViewHolder, position, -1);
+        }
+        firstTime = true;
         return convertView;
     }
 }

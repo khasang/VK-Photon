@@ -37,7 +37,7 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
 
     @Override
     public void setSelectable(boolean b) {
-        Logger.d("sel");
+        Logger.d("sel" + adapterPosition + " " + b);
         selectable = b;
         if (selectable) {
             photoSelectedCheckBox.setVisibility(View.VISIBLE);
@@ -78,7 +78,9 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
 
     @Override
     public void onClick(View v) {
+        Logger.d(String.valueOf(adapterPosition));
         if (multiSelector.isSelectable()) {
+            Logger.d(String.valueOf(this.hashCode()));
             multiSelector.tapSelection(this);
             vkAlbumPresenter.checkActionModeFinish(multiSelector, v.getContext());
         } else {
@@ -89,9 +91,12 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
     @Override
     public boolean onLongClick(View v) {
         if (!multiSelector.isSelectable()) {
+            Logger.d(String.valueOf(this.hashCode()));
+            Logger.d(String.valueOf(adapterPosition));
             multiSelector.setSelectable(true);
             multiSelector.setSelected(this, true);
             vkAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) v.getContext());
+            Logger.d("" + adapterPosition + " " + isSelectable());
             return true;
         }
         return false;
