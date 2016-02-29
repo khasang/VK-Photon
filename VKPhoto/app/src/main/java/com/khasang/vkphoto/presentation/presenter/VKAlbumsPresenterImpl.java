@@ -3,15 +3,13 @@ package com.khasang.vkphoto.presentation.presenter;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
-import android.view.Menu;
 import android.view.MenuItem;
 
-import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
+import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.GetAlbumEvent;
 import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
@@ -21,7 +19,6 @@ import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.view.VkAddAlbumView;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -32,7 +29,6 @@ import java.util.concurrent.ExecutorService;
 
 public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     private VkAlbumsView vkAlbumsView;
-    private VkAddAlbumView vKAddAlbumView;
     private VkAlbumsInteractor vkAlbumsInteractor;
     private ActionMode actionMode;
 
@@ -40,12 +36,6 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
         this.vkAlbumsView = vkAlbumsView;
         vkAlbumsInteractor = new VkAlbumsInteractorImpl(syncServiceProvider);
     }
-
-    public VKAlbumsPresenterImpl(VkAddAlbumView vkAddAlbumView, SyncServiceProvider syncServiceProvider) {
-        this.vKAddAlbumView = vkAddAlbumView;
-        vkAlbumsInteractor = new VkAlbumsInteractorImpl(syncServiceProvider);
-    }
-
 
     @Override
     public void syncAlbums(MultiSelector multiSelector) {
@@ -100,12 +90,6 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAddAlbumEvent(GetAlbumEvent getAlbumEvent) {
-        vKAddAlbumView.displayVkAddAlbum(getAlbumEvent.photoAlbum);
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent errorEvent) {
         vkAlbumsView.showError(errorEvent.errorMessage);
     }
@@ -118,19 +102,8 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     @Override
     public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
-        this.actionMode = activity.startSupportActionMode(new ModalMultiSelectorCallback(multiSelector) {
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                activity.getMenuInflater().inflate(R.menu.menu_action_mode_vk_albums, menu);
-                return true;
-            }
 
-            @Override
-            public void onDestroyActionMode(ActionMode actionMode) {
-                multiSelector.clearSelections();
-                super.onDestroyActionMode(actionMode);
-            }
-
+        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_albums) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {

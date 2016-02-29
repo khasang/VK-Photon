@@ -2,7 +2,7 @@ package com.khasang.vkphoto.presentation.fragments;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -12,8 +12,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.AlbumsCursorLoader;
@@ -27,6 +30,7 @@ import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
+import com.vk.sdk.api.model.VKPrivacy;
 
 public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = VkAlbumsFragment.class.getSimpleName();
@@ -68,9 +72,22 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
             public void onClick(View view) {
                 Logger.d("VkAlbumsFragment add album");
 //                vKAlbumsPresenter.addAlbum();
-                DialogFragment dialogFragment;
-                dialogFragment = new VkAddAlbumFragment();
-                dialogFragment.show(getFragmentManager(), "dialogFragment");
+                new MaterialDialog.Builder(getContext())
+                        .title(R.string.create_album)
+                        .customView(R.layout.fragment_vk_add_album, true)
+                        .positiveText(R.string.create)
+                        .negativeText(R.string.cancel)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                View dialogView = dialog.getView();
+                                vKAlbumsPresenter.addAlbum(((EditText) dialogView.findViewById(R.id.et_album_title)).getText().toString(),
+                                        ((EditText) dialogView.findViewById(R.id.et_album_description)).getText().toString(),
+                                        VKPrivacy.PRIVACY_ALL,
+                                        VKPrivacy.PRIVACY_ALL);
+                            }
+                        })
+                        .show();
             }
         });
     }
@@ -143,7 +160,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
             adapter.changeCursor(data);
         }
         int itemCount = adapter.getItemCount();
-        tvCountOfAlbums.setText(getResources().getQuantityString(R.plurals.count_of_albums, itemCount,itemCount));
+        tvCountOfAlbums.setText(getResources().getQuantityString(R.plurals.count_of_albums, itemCount, itemCount));
     }
 
     @Override

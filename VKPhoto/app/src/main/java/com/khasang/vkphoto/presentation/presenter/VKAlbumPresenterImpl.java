@@ -3,10 +3,8 @@ package com.khasang.vkphoto.presentation.presenter;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
-import android.view.Menu;
 import android.view.MenuItem;
 
-import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
@@ -16,6 +14,7 @@ import com.khasang.vkphoto.domain.interactors.VkPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -78,27 +77,14 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
     @Override
     public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
-        this.actionMode = activity.startSupportActionMode(new ModalMultiSelectorCallback(multiSelector) {
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                activity.getMenuInflater().inflate(R.menu.menu_action_mode_vk_album, menu);
-                return true;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode actionMode) {
-                multiSelector.clearSelections();
-                super.onDestroyActionMode(actionMode);
-            }
-
+        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_album) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_sync_photo:
-
                         return true;
                     case R.id.action_delete_photo:
-                          deleteSelectedVkPhotos(multiSelector);
+                        deleteSelectedVkPhotos(multiSelector);
                         return true;
                     default:
                         break;
