@@ -11,6 +11,8 @@
     <string name="st_btn_ok">Да</string>
     <string name="st_btn_cancel">Нет</string>
     <string name="sync_delete_album">Удалить альбом</string>
+    <string name="sync_photo">Синхронизировать фото</string>
+    <string name="sync_delete_photo">Удалить фото</string>
     <plurals name="count_of_albums">
         <item quantity="one">%d альбом</item>
         <item quantity="few">%d альбома</item>

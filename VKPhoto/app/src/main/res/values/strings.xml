@@ -10,8 +10,11 @@
     <string name="st_btn_cancel">Cancel</string>
     <string name="sync_delete_album">Delete Album</string>
     <string name="privacy">Privacy settings</string>
+    <string name="sync_photo">Synchronize photo</string>
+    <string name="sync_delete_photo">Delete photo</string>
     <plurals name="count_of_albums">
         <item quantity="one">%d albums</item>
         <item quantity="other">%d albums</item>
     </plurals>
+    <item type="id" name="position_key" />
 </resources>

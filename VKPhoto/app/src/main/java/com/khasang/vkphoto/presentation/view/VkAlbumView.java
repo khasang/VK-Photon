@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface VkAlbumView extends VkView {
     void displayVkPhotos(List<Photo> photos);
+
+    List<Photo> getPhotoList();
 }
