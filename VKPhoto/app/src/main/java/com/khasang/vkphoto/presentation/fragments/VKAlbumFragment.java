@@ -77,7 +77,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                vKAlbumPresenter.deleteSelectedVkPhotos(photoList.get(position).getId());
+//                vKAlbumPresenter.deleteVkPhotosByIds(photoList.get(position).getId());
 //                photoList.remove(position);
 //                adapter.notifyDataSetChanged();
 //                EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());

@@ -28,7 +28,7 @@ public interface SyncService {
 
     void deleteVkPhotoById(int photoId);
 
-    void deleteSelectedVkPhotos(List<Photo> photoList);
+    void deleteVkPhotosByIds(int... photoIds);
 
     void deleteVKAlbumById(int albumId);
 

@@ -37,13 +37,13 @@ public class VkPhotosInteractorImpl implements VkPhotosInteractor {
     public void deleteSelectedVkPhotos(MultiSelector multiSelector, List<Photo> photoList) {
         if (checkSyncService()) {
             List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-            List<Photo> deletePhotoList = new ArrayList<>();
+            int[] photoIds = new int[selectedPositions.size()];
             if (photoList != null) {
                 for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
                     Integer position = selectedPositions.get(i);
-                    deletePhotoList.add(photoList.get(position));
+                    photoIds[i]  = (photoList.get(position)).getId();
                 }
-                syncService.deleteSelectedVkPhotos(deletePhotoList);
+                syncService.deleteVkPhotosByIds(photoIds);
             }
         }
     }

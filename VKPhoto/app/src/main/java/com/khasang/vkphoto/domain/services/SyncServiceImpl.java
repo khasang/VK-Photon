@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
@@ -167,13 +168,11 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void deleteSelectedVkPhotos(final List<Photo> photoList) {
+    public void deleteVkPhotosByIds(final int... photoIds) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                for (Photo photo : photoList) {
-                    deleteVkPhotoById(photo.getId());
-                }
+                vKDataSource.getPhotoSource().deletePhotosByIds(photoIds);
             }
         });
     }
