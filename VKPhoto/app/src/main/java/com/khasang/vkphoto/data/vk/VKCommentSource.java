@@ -8,15 +8,42 @@ import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
+import org.json.JSONException;
+
 import java.util.List;
 
 public class VKCommentSource {
+
+    public void createComment(int photoId, final String message) {
+        RequestMaker.createComment(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Logger.d("Сообщение добавлено");
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                Logger.d(error.errorMessage);
+            }
+        }, photoId, message);
+    }
+
     public void updateComment(int comment_id, String newComment) {
         RequestMaker.updateComment(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                Logger.d(response.responseString);
+                try {
+                    if (response.json.getInt("response") == 1) {
+                        Logger.d("Сообщение изменено");
+                    } else {
+                        Logger.d("Ошибка");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -38,13 +65,21 @@ public class VKCommentSource {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                Logger.d(response.responseString);
+                try {
+                    if (response.json.getInt("response") == 1) {
+                        Logger.d("Сообщение удалено");
+                    } else {
+                        Logger.d("Ошибка");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onError(VKError error) {
                 super.onError(error);
-                Logger.d(error.errorMessage);
+                //Logger.d(error.errorMessage);
             }
         }, comment_id);
     }

@@ -93,7 +93,7 @@ public class RequestMaker {
     }
 
     public static void getCommentsByPhotoId(VKRequest.VKRequestListener vkRequestListener, int photo_id){
-        VKRequest request = new VKRequest("photos.getComments", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, VKApiConst.PHOTO_IDS, photo_id, "need_likes", 1));
+        VKRequest request = new VKRequest("photos.getComments", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "photo_id", photo_id, "need_likes", 1));
         request.executeWithListener(vkRequestListener);
     }
 
@@ -104,6 +104,11 @@ public class RequestMaker {
 
     public static void updateComment(VKRequest.VKRequestListener vkRequestListener, int comment_id, String text){
         VKRequest request = new VKRequest("photos.editComment", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "comment_id", comment_id, VKApiConst.MESSAGE, text));
+        request.executeWithListener(vkRequestListener);
+    }
+
+    public static void createComment(VKRequest.VKRequestListener vkRequestListener, int photo_id, String message){
+        VKRequest request = new VKRequest("photos.createComment", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "photo_id", photo_id, VKApiConst.MESSAGE, message));
         request.executeWithListener(vkRequestListener);
     }
 
