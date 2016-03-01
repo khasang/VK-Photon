@@ -58,7 +58,7 @@ public class LocalAlbumFragment extends Fragment {
 
         LocalPhotoSource localPhotoSource = new LocalPhotoSource(context);
         List<Photo> allPhotosInAlbum;
-        try {allPhotosInAlbum = localPhotoSource.getPhotosByAlbumId(photoAlbum.id);}
+        try {allPhotosInAlbum = localPhotoSource.getPhotosByAlbumPath(photoAlbum.filePath);}
         catch (NullPointerException e) {allPhotosInAlbum = new ArrayList<>();}
 
         for (Photo photo : allPhotosInAlbum) {
