@@ -8,4 +8,7 @@
     <string name="sync_album">Synchronize album</string>
     <string name="sync_delete_album">Delete Album</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
