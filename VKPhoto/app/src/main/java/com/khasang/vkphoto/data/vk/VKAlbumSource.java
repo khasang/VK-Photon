@@ -1,33 +1,46 @@
 package com.khasang.vkphoto.data.vk;
 
 import com.khasang.vkphoto.data.RequestMaker;
+import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetAlbumEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
-import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.model.VKPrivacy;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
+
 public class VKAlbumSource {
 
-    public void createEmptyAlbum(String title, String description, int privacy, int commentPrivacy) {
+    /**
+     * Добавляет альбом на сервер VK с заданными параметрами
+     * Создаёт (Обновляет) локальный альбом на девайсе
+     * @param title
+     * @param description
+     * @param privacy
+     * @param commentPrivacy
+     * @param localAlbumSource
+     */
+    public void addAlbum(final String title, final String description,
+                                 final int privacy, final int commentPrivacy,
+                                 final LocalAlbumSource localAlbumSource) {
         RequestMaker.createEmptyAlbum(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 final PhotoAlbum photoAlbum;
                 try {
-                    photoAlbum = JsonUtils.getJsonTest(response.json);
+                    photoAlbum = JsonUtils.getPhotoAlbum(response.json);
                     Logger.d("Create Album successfully");
-                    EventBus.getDefault().postSticky(new GetVkSaveAlbumEvent(photoAlbum));
+                    localAlbumSource.updateAlbum(photoAlbum);
+                    EventBus.getDefault().post(new GetAlbumEvent(photoAlbum));
                 } catch (Exception e) {
                     sendError(e.toString());
                 }
@@ -42,7 +55,7 @@ public class VKAlbumSource {
             void sendError(String s) {
                 EventBus.getDefault().postSticky(new ErrorEvent(s));
             }
-        }, "Test 16.02", "test album", VKPrivacy.PRIVACY_FRIENDS, VKPrivacy.PRIVACY_NOBODY);
+        }, title, description, privacy, commentPrivacy);
     }
 
     public void updateAlbum() {

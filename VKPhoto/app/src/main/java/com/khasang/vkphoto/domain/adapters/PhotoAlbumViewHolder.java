@@ -4,11 +4,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
-import com.bignerdranch.android.multiselector.SwappingHolder;
+import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -19,13 +20,15 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 
-public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongClickListener, View.OnClickListener {
+public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements View.OnLongClickListener, View.OnClickListener {
     final private ImageView albumThumbImageView;
     final private TextView albumTitleTextView;
     final private TextView albumPhotoCountTextView;
+    final private CheckBox albumSelectedCheckBox;
+    private VKAlbumsPresenter vkAlbumsPresenter;
     final private ExecutorService executor;
     final private MultiSelector multiSelector;
-    private VKAlbumsPresenter vkAlbumsPresenter;
+    private boolean selectable;
     PhotoAlbum photoAlbum;
     private Handler handler;
 
@@ -34,6 +37,7 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
         albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
         albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
+        albumSelectedCheckBox = (CheckBox) itemView.findViewById(R.id.cb_selected);
         this.executor = executor;
         this.multiSelector = multiSelector;
         this.vkAlbumsPresenter = vkAlbumsPresenter;
@@ -41,6 +45,7 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
         itemView.setLongClickable(true);
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
+        albumSelectedCheckBox.setOnClickListener(this);
     }
 
     public void bindPhotoAlbum(final PhotoAlbum photoAlbum) {
@@ -79,7 +84,7 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Picasso.with(albumThumbImageView.getContext()).load(file).error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
+                Picasso.with(albumThumbImageView.getContext()).load(file).fit().centerCrop().error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
             }
         });
     }
@@ -88,7 +93,7 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Picasso.with(albumThumbImageView.getContext()).load(resource).into(albumThumbImageView);
+                Picasso.with(albumThumbImageView.getContext()).load(resource).fit().centerCrop().error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
             }
         });
     }
@@ -108,10 +113,34 @@ public class PhotoAlbumViewHolder extends SwappingHolder implements View.OnLongC
     public void onClick(View v) {
         if (multiSelector.isSelectable()) {
             multiSelector.tapSelection(this);
-            vkAlbumsPresenter.checkActionModeFinish(multiSelector);
-
+            vkAlbumsPresenter.checkActionModeFinish(multiSelector,v.getContext());
         } else {
             vkAlbumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }
+    }
+
+    @Override
+    public void setSelectable(boolean b) {
+        selectable = b;
+        if (selectable) {
+            albumSelectedCheckBox.setVisibility(View.VISIBLE);
+        } else {
+            albumSelectedCheckBox.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public boolean isSelectable() {
+        return selectable;
+    }
+
+    @Override
+    public void setActivated(boolean b) {
+        albumSelectedCheckBox.setChecked(b);
+    }
+
+    @Override
+    public boolean isActivated() {
+        return albumSelectedCheckBox.isChecked();
     }
 }
