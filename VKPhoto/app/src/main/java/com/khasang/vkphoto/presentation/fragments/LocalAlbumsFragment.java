@@ -1,10 +1,12 @@
 package com.khasang.vkphoto.presentation.fragments;
 
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.data.AlbumsCursorLoader;
+import com.khasang.vkphoto.data.LocalAlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.presentation.model.Photo;
@@ -37,6 +41,10 @@ public class LocalAlbumsFragment extends Fragment {
         return rootView;
     }
 
+//    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new LocalAlbumsCursorLoader(getContext(), new LocalAlbumSource(getContext()));
+    }
 
     class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
         private List<PhotoAlbum> allAlbumsList;
