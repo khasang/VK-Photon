@@ -1,11 +1,13 @@
 package com.khasang.vkphoto.data;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
+import com.vk.sdk.api.VKBatchRequest;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 
@@ -82,12 +84,25 @@ public class RequestMaker {
         request.executeWithListener(vkRequestListener);
     }
 
+    public static void deleteVkPhotosByIds(VKBatchRequest.VKBatchRequestListener vkBatchRequestListener, int... photoIds) {
+        VKRequest[] requests = new VKRequest[photoIds.length];
+        for (int i = 0; i < photoIds.length; i++) {
+            requests[i] = getVkRequest("photos.delete", VKParameters.from("photo_id", (photoIds[i]), VKAccessToken.currentToken().userId));
+        }
+        VKBatchRequest batchRequest = getVKBatchRequest(requests);
+        batchRequest.executeWithListener(vkBatchRequestListener);
+    }
 
     @NonNull
     private static VKRequest getVkRequest(String apiMethod, VKParameters vkParameters) {
         VKRequest request = new VKRequest(apiMethod, vkParameters);
         request.attempts = ATTEMPTS_COUNT;
         return request;
+    }
+
+    private static VKBatchRequest getVKBatchRequest(VKRequest... requests) {
+        VKBatchRequest batchRequest = new VKBatchRequest(requests);
+        return batchRequest;
     }
 
 }

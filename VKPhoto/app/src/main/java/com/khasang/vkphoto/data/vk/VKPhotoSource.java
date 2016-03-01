@@ -8,6 +8,7 @@ import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.khasang.vkphoto.util.Logger;
+import com.vk.sdk.api.VKBatchRequest;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
@@ -93,8 +94,22 @@ public class VKPhotoSource {
         }, photoId);
     }
 
-    public void deletePhotos() {
+    public void deletePhotosByIds(int... photoIds) {
+        RequestMaker.deleteVkPhotosByIds(new VKBatchRequest.VKBatchRequestListener() {
+            @Override
+            public void onComplete(VKResponse[] responses) {
+                super.onComplete(responses);
+                Logger.d("Delete VKPhotos successfully");
+                Log.d("responses", responses.toString());
+            }
 
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                sendError(error.toString());
+
+            }
+        }, photoIds);
     }
 
     public void getPhotoById() {
