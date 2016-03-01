@@ -8,5 +8,6 @@
     <string name="sync_album">Synchronize album</string>
     <string name="sync_delete_album">Delete Album</string>
     <string name="privacy">Privacy settings</string>
+    <string name="count_of_photos">Количество фотографий: %d</string>
 
 </resources>

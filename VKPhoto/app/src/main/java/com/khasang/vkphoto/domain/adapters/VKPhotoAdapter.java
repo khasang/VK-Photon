@@ -49,7 +49,10 @@ public class VKPhotoAdapter extends BaseAdapter {
         final ViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.layout_simple_photo, null);
-            viewHolder = new ViewHolder((ImageView) convertView.findViewById(R.id.image_view),
+            ImageView imageView = (ImageView) convertView.findViewById(R.id.image_view);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            imageView.setPadding(8, 8, 8, 8);
+            viewHolder = new ViewHolder(imageView,
                     (ProgressBar) convertView.findViewById(R.id.progressBar));
             convertView.setTag(viewHolder);
         } else {

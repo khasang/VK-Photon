@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.VKPhotoAdapter;
@@ -33,6 +34,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public static final String PHOTOALBUM = "photoalbum";
     private PhotoAlbum photoAlbum;
     private VKPhotosPresenter vKPhotosPresenter;
+    private TextView tvCountOfPhotos;
     GridView gridview;
     private List<Photo> photoList = new ArrayList<>();
     int albumId;
@@ -79,6 +81,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
             }
         });
         gridview.setAdapter(adapter);
+        tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
         return view;
     }
 
@@ -117,13 +120,13 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public void displayVkPhotos(List<Photo> photos) {
         photoList = photos;
         adapter.setPhotoList(photos);
+        tvCountOfPhotos.setText(getResources().getString(R.string.count_of_photos, photos.size()));
     }
 
     @Override
     public void showError(String s) {
         ToastUtils.showError(s, getContext());
     }
-
 
 
 }
