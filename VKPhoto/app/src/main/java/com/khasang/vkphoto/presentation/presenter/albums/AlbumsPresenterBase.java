@@ -1,14 +1,12 @@
-package com.khasang.vkphoto.presentation.presenter;
+package com.khasang.vkphoto.presentation.presenter.albums;
 
-import android.content.Context;
 import android.support.v7.view.ActionMode;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 import org.greenrobot.eventbus.EventBus;
 
-public abstract class AlbumsPresenter implements Presenter {
+public abstract class AlbumsPresenterBase implements AlbumsPresenter {
     private ActionMode actionMode;
 
     @Override
@@ -29,5 +27,8 @@ public abstract class AlbumsPresenter implements Presenter {
         }
     }
 
-    abstract void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum);
+    @Override
+    public void initialize() {
+
+    }
 }

@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.domain.adapters;
+package com.khasang.vkphoto.domain.adapters.viewholders;
 
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,7 +10,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SelectableHolder;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.Photo;
-import com.khasang.vkphoto.presentation.presenter.VKAlbumPresenter;
+import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenter;
 import com.khasang.vkphoto.util.Logger;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -37,6 +37,11 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
     }
 
     @Override
+    public boolean isSelectable() {
+        return selectable;
+    }
+
+    @Override
     public void setSelectable(boolean b) {
         Logger.d("sel" + adapterPosition + " " + b);
         selectable = b;
@@ -48,18 +53,13 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
     }
 
     @Override
-    public boolean isSelectable() {
-        return selectable;
+    public boolean isActivated() {
+        return photoSelectedCheckBox.isChecked();
     }
 
     @Override
     public void setActivated(boolean b) {
         photoSelectedCheckBox.setChecked(b);
-    }
-
-    @Override
-    public boolean isActivated() {
-        return photoSelectedCheckBox.isChecked();
     }
 
     @Override

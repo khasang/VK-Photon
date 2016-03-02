@@ -1,10 +1,11 @@
-package com.khasang.vkphoto.presentation.presenter;
+package com.khasang.vkphoto.presentation.presenter.album;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.presentation.presenter.Presenter;
 
 import java.util.List;
 

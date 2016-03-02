@@ -6,7 +6,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
+import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenterImpl;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;

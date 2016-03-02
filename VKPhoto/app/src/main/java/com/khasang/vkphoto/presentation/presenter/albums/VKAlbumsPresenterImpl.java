@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.presentation.presenter;
+package com.khasang.vkphoto.presentation.presenter.albums;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
@@ -21,14 +21,13 @@ import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 
-public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
+public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbumsPresenter {
     private VkAlbumsView vkAlbumsView;
     private VkAlbumsInteractor vkAlbumsInteractor;
     private ActionMode actionMode;
@@ -38,7 +37,6 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
         vkAlbumsInteractor = new VkAlbumsInteractorImpl(syncServiceProvider);
     }
 
-    @Override
     public void syncAlbums(MultiSelector multiSelector) {
         vkAlbumsInteractor.syncAlbums(multiSelector, vkAlbumsView.getAdapterCursor());
     }
@@ -49,35 +47,18 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     }
 
     @Override
+    public void exportAlbums(MultiSelector multiSelector) {
+
+    }
+
+    @Override
     public void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum) {
         Navigator.navigateToVKAlbumFragment(context, photoAlbum);
     }
 
     @Override
-    public void addAlbum(final String title, final String description,
-                         final int privacy, final int commentPrivacy) {
+    public void addAlbum(String title, String description, int privacy, int commentPrivacy) {
         vkAlbumsInteractor.addAlbum(title, description, privacy, commentPrivacy);
-    }
-
-
-    @Override
-    public void deleteVkAlbums(MultiSelector multiSelector) {
-        vkAlbumsInteractor.deleteVkAlbum(multiSelector, vkAlbumsView.getAdapterCursor());
-    }
-
-    @Override
-    public void initialize() {
-
-    }
-
-    @Override
-    public void onStart() {
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -131,6 +112,11 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
 
     public File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
         return vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor);
+    }
+
+    @Override
+    public void deleteAlbums(MultiSelector multiSelector) {
+        vkAlbumsInteractor.deleteVkAlbum(multiSelector, vkAlbumsView.getAdapterCursor());
     }
 }
       

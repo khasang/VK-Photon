@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.domain.adapters;
+package com.khasang.vkphoto.domain.adapters.viewholders;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -14,7 +14,7 @@ import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
+import com.khasang.vkphoto.presentation.presenter.albums.AlbumsPresenter;
 import com.khasang.vkphoto.util.Constants;
 import com.squareup.picasso.Picasso;
 
@@ -29,12 +29,12 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     final private ExecutorService executor;
     final private MultiSelector multiSelector;
     PhotoAlbum photoAlbum;
-    private VKAlbumsPresenter vkAlbumsPresenter;
+    private AlbumsPresenter albumsPresenter;
     private boolean selectable;
     private Handler handler;
     private LocalDataSource localDataSource;
 
-    public PhotoAlbumViewHolder(View itemView, ExecutorService executor, MultiSelector multiSelector, VKAlbumsPresenter vkAlbumsPresenter) {
+    public PhotoAlbumViewHolder(View itemView, ExecutorService executor, MultiSelector multiSelector, AlbumsPresenter albumsPresenter) {
         super(itemView, multiSelector);
         albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
@@ -43,7 +43,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
 
         this.executor = executor;
         this.multiSelector = multiSelector;
-        this.vkAlbumsPresenter = vkAlbumsPresenter;
+        this.albumsPresenter = albumsPresenter;
         handler = new Handler(Looper.getMainLooper());
         localDataSource = new LocalDataSource(albumThumbImageView.getContext().getApplicationContext());
 
@@ -65,7 +65,6 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
             File file = new File(photoAlbum.thumbFilePath);
             if (file.exists()) {
                 loadPhoto(file);
-//                Picasso.with(albumThumbImageView.getContext()).load(file).fit().centerCrop().error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
             }
         } else {
             executor.execute(new Runnable() {
@@ -77,7 +76,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
                 }
 
                 private File getAlbumThumb() {
-                    return vkAlbumsPresenter.getAlbumThumb(localDataSource.getPhotoSource(), photoAlbum, executor);
+                    return albumsPresenter.getAlbumThumb(localDataSource.getPhotoSource(), photoAlbum, executor);
                 }
             });
         }
@@ -126,7 +125,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         if (!multiSelector.isSelectable()) { // (3)
             multiSelector.setSelectable(true); // (4)
             multiSelector.setSelected(this, true); // (5)
-            vkAlbumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) albumThumbImageView.getContext());
+            albumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) albumThumbImageView.getContext());
             return true;
         }
         return false;
@@ -136,9 +135,9 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     public void onClick(View v) {
         if (multiSelector.isSelectable()) {
             multiSelector.tapSelection(this);
-            vkAlbumsPresenter.checkActionModeFinish(multiSelector);
+            albumsPresenter.checkActionModeFinish(multiSelector);
         } else {
-            vkAlbumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
+            albumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }
     }
 

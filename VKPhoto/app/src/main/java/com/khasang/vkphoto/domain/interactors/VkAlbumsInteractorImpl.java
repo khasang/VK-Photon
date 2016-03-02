@@ -12,7 +12,7 @@ import com.khasang.vkphoto.domain.tasks.DownloadPhotoCallable;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
+import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKResponse;
