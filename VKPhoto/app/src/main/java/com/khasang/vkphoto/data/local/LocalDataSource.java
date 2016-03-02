@@ -6,12 +6,11 @@ public class LocalDataSource {
     private LocalAlbumSource albumSource;
     private LocalPhotoSource photoSource;
     private LocalCommentSource commentSource;
-    private Context context;
 
     public LocalDataSource(Context context) {
-        this.context = context;
         this.albumSource = new LocalAlbumSource(context);
         this.photoSource = new LocalPhotoSource(context);
+        this.commentSource = new LocalCommentSource(context);
     }
 
     public LocalAlbumSource getAlbumSource() {
@@ -23,6 +22,6 @@ public class LocalDataSource {
     }
 
     public LocalCommentSource getCommentSource() {
-        return null;
+        return commentSource;
     }
 }

@@ -25,6 +25,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 
 public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
@@ -120,7 +121,7 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     }
 
     @Override
-    public void checkActionModeFinish(MultiSelector multiSelector, Context context) {
+    public void checkActionModeFinish(MultiSelector multiSelector) {
         if (multiSelector.getSelectedPositions().size() == 0) {
             if (actionMode != null) {
                 actionMode.finish();
@@ -128,8 +129,8 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
         }
     }
 
-    public void downloadAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
-        vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor);
+    public File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
+        return vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor);
     }
 }
       

@@ -7,6 +7,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 
 public interface VKAlbumsPresenter extends Presenter {
@@ -21,10 +22,10 @@ public interface VKAlbumsPresenter extends Presenter {
 
     void selectAlbum(MultiSelector multiSelector, AppCompatActivity activity);
 
-    void checkActionModeFinish(MultiSelector multiSelector, Context context);
+    void checkActionModeFinish(MultiSelector multiSelector);
 
     void deleteVkAlbums(MultiSelector multiSelector);
 
-    void downloadAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor);
+    File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor);
 }
       

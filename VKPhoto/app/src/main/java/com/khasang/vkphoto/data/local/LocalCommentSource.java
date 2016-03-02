@@ -1,6 +1,12 @@
 package com.khasang.vkphoto.data.local;
 
+import android.content.Context;
+
 public class LocalCommentSource {
+
+    public LocalCommentSource(Context context) {
+    }
+
     public void saveComment() {
 
     }

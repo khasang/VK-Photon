@@ -13,7 +13,6 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalDataSource;
-import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
 import com.khasang.vkphoto.util.Constants;
@@ -33,6 +32,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     private VKAlbumsPresenter vkAlbumsPresenter;
     private boolean selectable;
     private Handler handler;
+    private LocalDataSource localDataSource;
 
     public PhotoAlbumViewHolder(View itemView, ExecutorService executor, MultiSelector multiSelector, VKAlbumsPresenter vkAlbumsPresenter) {
         super(itemView, multiSelector);
@@ -40,10 +40,13 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
         albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
         albumSelectedCheckBox = (CheckBox) itemView.findViewById(R.id.cb_selected);
+
         this.executor = executor;
         this.multiSelector = multiSelector;
         this.vkAlbumsPresenter = vkAlbumsPresenter;
         handler = new Handler(Looper.getMainLooper());
+        localDataSource = new LocalDataSource(albumThumbImageView.getContext().getApplicationContext());
+
         itemView.setLongClickable(true);
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
@@ -58,38 +61,46 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     }
 
     private void loadThumb() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                if (!setPhoto()) {
-                    if (photoAlbum.thumb_id != Constants.NULL) {
-                        vkAlbumsPresenter.downloadAlbumThumb(new LocalPhotoSource(albumThumbImageView.getContext()), photoAlbum, executor);
-                        setPhoto();
-                    } else {
-                        loadPhoto(R.drawable.vk_gray_transparent_shape);
-                    }
-                }
-            }
-        });
-    }
-
-    private boolean setPhoto() {
         if (!TextUtils.isEmpty(photoAlbum.thumbFilePath)) {
             File file = new File(photoAlbum.thumbFilePath);
             if (file.exists()) {
                 loadPhoto(file);
-                return true;
+//                Picasso.with(albumThumbImageView.getContext()).load(file).fit().centerCrop().error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
             }
+        } else {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (!setThumb(getAlbumThumb())) {
+                        setThumb(getAlbumThumb());
+                    }
+                }
+
+                private File getAlbumThumb() {
+                    return vkAlbumsPresenter.getAlbumThumb(localDataSource.getPhotoSource(), photoAlbum, executor);
+                }
+            });
         }
-        LocalDataSource localDataSource = new LocalDataSource(albumThumbImageView.getContext().getApplicationContext());
-        final File albumThumb = localDataSource.getPhotoSource().getLocalPhotoFile(photoAlbum.thumb_id);
-        if (albumThumb != null) {
-            photoAlbum.thumbFilePath = albumThumb.getAbsolutePath();
-            localDataSource.getAlbumSource().updateAlbum(photoAlbum);
-            loadPhoto(albumThumb);
-            return true;
+    }
+
+    private boolean setThumb(File thumb) {
+        boolean success = false;
+        if (thumb != null && thumb.exists() && thumb.getAbsolutePath().equals(photoAlbum.thumbFilePath)) {
+            loadPhoto(thumb);
+            success = true;
+        } else if (photoAlbum.thumb_id != Constants.NULL) {
+            thumb = localDataSource.getPhotoSource().getLocalPhotoFile(photoAlbum.thumb_id);
+            if (thumb != null) {
+                photoAlbum.thumbFilePath = thumb.getAbsolutePath();
+                localDataSource.getAlbumSource().updateAlbum(photoAlbum);
+                loadPhoto(thumb);
+                success = true;
+            }
+        } else if (TextUtils.isEmpty(photoAlbum.thumbFilePath)) {
+            loadPhoto(R.drawable.vk_gray_transparent_shape);
+            success = true;
         }
-        return false;
+        return success;
     }
 
     private void loadPhoto(final File file) {
@@ -125,7 +136,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     public void onClick(View v) {
         if (multiSelector.isSelectable()) {
             multiSelector.tapSelection(this);
-            vkAlbumsPresenter.checkActionModeFinish(multiSelector, v.getContext());
+            vkAlbumsPresenter.checkActionModeFinish(multiSelector);
         } else {
             vkAlbumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }
