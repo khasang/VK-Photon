@@ -101,9 +101,7 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
 
     @Override
     public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
-        ((FabProvider) activity).getFloatingActionButton().hide();
-
-        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_albums) {
+        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_albums, ((FabProvider) activity).getFloatingActionButton()) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
@@ -124,7 +122,6 @@ public class VKAlbumsPresenterImpl implements VKAlbumsPresenter {
     @Override
     public void checkActionModeFinish(MultiSelector multiSelector, Context context) {
         if (multiSelector.getSelectedPositions().size() == 0) {
-            ((FabProvider) context).getFloatingActionButton().show();
             if (actionMode != null) {
                 actionMode.finish();
             }

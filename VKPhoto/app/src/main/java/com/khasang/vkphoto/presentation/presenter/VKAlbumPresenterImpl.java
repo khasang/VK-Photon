@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.interactors.VkPhotosInteractor;
@@ -14,7 +15,6 @@ import com.khasang.vkphoto.domain.interactors.VkPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -76,8 +76,8 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
 
     @Override
     public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
-        ((FabProvider) activity).getFloatingActionButton().hide();
-        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_album) {
+//        ((FabProvider) activity).getFloatingActionButton().hide();
+        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_album, ((FabProvider) activity).getFloatingActionButton()) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
@@ -97,7 +97,7 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
     @Override
     public void checkActionModeFinish(MultiSelector multiSelector, Context context) {
         if (multiSelector.getSelectedPositions().size() == 0) {
-            ((FabProvider) context).getFloatingActionButton().show();
+//            ((FabProvider) context).getFloatingActionButton().show();
             if (actionMode != null) {
                 actionMode.finish();
             }
