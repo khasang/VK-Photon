@@ -90,6 +90,17 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
+    public void addAlbum(final String title, final String description,
+                         final int privacy, final int commentPrivacy) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                vKDataSource.getAlbumSource().addAlbum(title, description, privacy, commentPrivacy, localDataSource.getAlbumSource());
+            }
+        });
+    }
+
+    @Override
     public void getAllAlbums() {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
@@ -136,11 +147,33 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
+    public void addPhotos(final List<String> listUploadedFiles, final PhotoAlbum photoAlbum) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                vKDataSource.getPhotoSource().savePhotos(listUploadedFiles, photoAlbum, localDataSource.getAlbumSource());
+            }
+        });
+    }
+
+    @Override
     public void deleteVkPhotoById(final int photoId) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
                 vKDataSource.getPhotoSource().deletePhoto(photoId);
+            }
+        });
+    }
+
+    @Override
+    public void deleteSelectedVkPhotos(final List<Photo> photoList) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                for (Photo photo : photoList) {
+                    deleteVkPhotoById(photo.getId());
+                }
             }
         });
     }

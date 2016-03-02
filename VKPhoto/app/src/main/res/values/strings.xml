@@ -1,13 +1,27 @@
 <resources>
     <string name="app_name">VKPhoto</string>
     <string name="action_settings">Settings</string>
-    <string name="count_of_albums">Count of albums</string>
     <string name="title_of_album">Title</string>
     <string name="count_of_photos_in_album">Photos in album: %d</string>
     <string name="sync_service_error">Synchronization service is loading</string>
     <string name="sync_album">Synchronize album</string>
+    <string name="add_album_description">Description</string>
+    <string name="st_btn_ok">OK</string>
+    <string name="st_btn_cancel">Cancel</string>
     <string name="sync_delete_album">Delete Album</string>
     <string name="privacy">Privacy settings</string>
     <string name="count_of_photos">Количество фотографий: %d</string>
-
+    <string name="sync_photo">Synchronize photo</string>
+    <string name="sync_delete_photo">Delete photo</string>
+    <string name="create_album">Create album</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="title">Title</string>
+    <plurals name="count_of_albums">
+        <item quantity="one">%d albums</item>
+        <item quantity="other">%d albums</item>
+    </plurals>
+    <item name="position_key" type="id" />
+    <string name="count_of_albums">%d albums</string>
+>>>>>>> develop
 </resources>

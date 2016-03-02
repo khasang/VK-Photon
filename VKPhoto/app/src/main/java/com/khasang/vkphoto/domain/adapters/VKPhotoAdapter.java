@@ -1,27 +1,29 @@
 package com.khasang.vkphoto.domain.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.Photo;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+import com.khasang.vkphoto.presentation.presenter.VKAlbumPresenter;
 
 import java.util.List;
 
 public class VKPhotoAdapter extends BaseAdapter {
-    private Context context;
-    private List<Photo> photoList;
+    private boolean loaded;
 
-    public VKPhotoAdapter(Context context, List<Photo> photoList) {
-        this.context = context;
+    private List<Photo> photoList;
+    private MultiSelector multiSelector;
+    private VKAlbumPresenter vkAlbumPresenter;
+
+    public VKPhotoAdapter(List<Photo> photoList, MultiSelector multiSelector, VKAlbumPresenter vkAlbumPresenter) {
         this.photoList = photoList;
+        this.multiSelector = multiSelector;
+        this.vkAlbumPresenter = vkAlbumPresenter;
     }
 
     public void setPhotoList(List<Photo> photoList) {
@@ -46,40 +48,24 @@ public class VKPhotoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final ViewHolder viewHolder;
+        final VKPhotoViewHolder vkPhotoViewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.layout_simple_photo, null);
-            ImageView imageView = (ImageView) convertView.findViewById(R.id.image_view);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            imageView.setPadding(8, 8, 8, 8);
-            viewHolder = new ViewHolder(imageView,
-                    (ProgressBar) convertView.findViewById(R.id.progressBar));
-            convertView.setTag(viewHolder);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_photo, parent, false);
+            vkPhotoViewHolder = new VKPhotoViewHolder(convertView, multiSelector, vkAlbumPresenter);
+            convertView.setTag(vkPhotoViewHolder);
         } else {
-            viewHolder = (ViewHolder) convertView.getTag();
+            vkPhotoViewHolder = (VKPhotoViewHolder) convertView.getTag();
         }
-        viewHolder.progressBar.setVisibility(View.VISIBLE);
-        Picasso.with(context).load(photoList.get(position).getUrlToMaxPhoto()).error(R.drawable.vk_share_send_button_background).into(viewHolder.imageView, new Callback() {
-            @Override
-            public void onSuccess() {
-                viewHolder.progressBar.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onError() {
-                viewHolder.progressBar.setVisibility(View.INVISIBLE);
-            }
-        });
+        vkPhotoViewHolder.setAdapterPosition(position);
+        vkPhotoViewHolder.loadPhoto(photoList.get(position));
+        if (position != 0 || !loaded) {
+            multiSelector.bindHolder(vkPhotoViewHolder, position, -1);
+        }
+        loaded = true;
         return convertView;
     }
 
-    private static class ViewHolder {
-        ImageView imageView;
-        ProgressBar progressBar;
-
-        public ViewHolder(ImageView imageView, ProgressBar progressBar) {
-            this.imageView = imageView;
-            this.progressBar = progressBar;
-        }
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 }
