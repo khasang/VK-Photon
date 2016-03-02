@@ -12,7 +12,7 @@ import com.khasang.vkphoto.domain.tasks.DownloadPhotoCallable;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenterImpl;
+import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKResponse;
@@ -122,7 +122,8 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     }
 
     @Override
-    public void downloadAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
+    public File downloadAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
+        final File[] files = new File[1];
         RequestMaker.getPhotoAlbumThumb(new MyVkRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -130,12 +131,13 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
                 try {
                     final Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
                     Future<File> fileFuture = executor.submit(new DownloadPhotoCallable(localPhotoSource, photo, photoAlbum));
-                    fileFuture.get();
+                    files[0] = fileFuture.get();
                 } catch (Exception e) {
                     sendError(e.toString());
                 }
             }
         }, photoAlbum);
+        return files[0];
     }
 }
       

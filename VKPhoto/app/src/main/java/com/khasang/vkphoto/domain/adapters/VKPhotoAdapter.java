@@ -8,8 +8,9 @@ import android.widget.ProgressBar;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.adapters.viewholders.VKPhotoViewHolder;
 import com.khasang.vkphoto.presentation.model.Photo;
-import com.khasang.vkphoto.presentation.presenter.VKAlbumPresenter;
+import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenter;
 
 import java.util.List;
 

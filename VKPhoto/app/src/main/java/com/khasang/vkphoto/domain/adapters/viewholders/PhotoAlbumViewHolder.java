@@ -1,8 +1,9 @@
-package com.khasang.vkphoto.domain.adapters;
+package com.khasang.vkphoto.domain.adapters.viewholders;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -11,9 +12,9 @@ import android.widget.TextView;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.data.local.LocalPhotoSource;
+import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
+import com.khasang.vkphoto.presentation.presenter.albums.AlbumsPresenter;
 import com.khasang.vkphoto.util.Constants;
 import com.squareup.picasso.Picasso;
 
@@ -25,23 +26,27 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     final private TextView albumTitleTextView;
     final private TextView albumPhotoCountTextView;
     final private CheckBox albumSelectedCheckBox;
-    private VKAlbumsPresenter vkAlbumsPresenter;
     final private ExecutorService executor;
     final private MultiSelector multiSelector;
-    private boolean selectable;
     PhotoAlbum photoAlbum;
+    private AlbumsPresenter albumsPresenter;
+    private boolean selectable;
     private Handler handler;
+    private LocalDataSource localDataSource;
 
-    public PhotoAlbumViewHolder(View itemView, ExecutorService executor, MultiSelector multiSelector, VKAlbumsPresenter vkAlbumsPresenter) {
+    public PhotoAlbumViewHolder(View itemView, ExecutorService executor, MultiSelector multiSelector, AlbumsPresenter albumsPresenter) {
         super(itemView, multiSelector);
         albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
         albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
         albumSelectedCheckBox = (CheckBox) itemView.findViewById(R.id.cb_selected);
+
         this.executor = executor;
         this.multiSelector = multiSelector;
-        this.vkAlbumsPresenter = vkAlbumsPresenter;
+        this.albumsPresenter = albumsPresenter;
         handler = new Handler(Looper.getMainLooper());
+        localDataSource = new LocalDataSource(albumThumbImageView.getContext().getApplicationContext());
+
         itemView.setLongClickable(true);
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
@@ -56,28 +61,45 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     }
 
     private void loadThumb() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                if (!setPhoto()) {
-                    if (photoAlbum.thumb_id != Constants.NULL) {
-                        vkAlbumsPresenter.downloadAlbumThumb(new LocalPhotoSource(albumThumbImageView.getContext()), photoAlbum, executor);
-                        setPhoto();
-                    } else {
-                        loadPhoto(R.drawable.vk_gray_transparent_shape);
+        if (!TextUtils.isEmpty(photoAlbum.thumbFilePath)) {
+            File file = new File(photoAlbum.thumbFilePath);
+            if (file.exists()) {
+                loadPhoto(file);
+            }
+        } else {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (!setThumb(getAlbumThumb())) {
+                        setThumb(getAlbumThumb());
                     }
                 }
-            }
-        });
+
+                private File getAlbumThumb() {
+                    return albumsPresenter.getAlbumThumb(localDataSource.getPhotoSource(), photoAlbum, executor);
+                }
+            });
+        }
     }
 
-    private boolean setPhoto() {
-        final File photoById = new LocalPhotoSource(albumThumbImageView.getContext().getApplicationContext()).getLocalPhotoFile(photoAlbum.thumb_id);
-        if (photoById != null) {
-            loadPhoto(photoById);
-            return true;
+    private boolean setThumb(File thumb) {
+        boolean success = false;
+        if (thumb != null && thumb.exists() && thumb.getAbsolutePath().equals(photoAlbum.thumbFilePath)) {
+            loadPhoto(thumb);
+            success = true;
+        } else if (photoAlbum.thumb_id != Constants.NULL) {
+            thumb = localDataSource.getPhotoSource().getLocalPhotoFile(photoAlbum.thumb_id);
+            if (thumb != null) {
+                photoAlbum.thumbFilePath = thumb.getAbsolutePath();
+                localDataSource.getAlbumSource().updateAlbum(photoAlbum);
+                loadPhoto(thumb);
+                success = true;
+            }
+        } else if (TextUtils.isEmpty(photoAlbum.thumbFilePath)) {
+            loadPhoto(R.drawable.vk_gray_transparent_shape);
+            success = true;
         }
-        return false;
+        return success;
     }
 
     private void loadPhoto(final File file) {
@@ -103,7 +125,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         if (!multiSelector.isSelectable()) { // (3)
             multiSelector.setSelectable(true); // (4)
             multiSelector.setSelected(this, true); // (5)
-            vkAlbumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) albumThumbImageView.getContext());
+            albumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) albumThumbImageView.getContext());
             return true;
         }
         return false;
@@ -113,10 +135,15 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     public void onClick(View v) {
         if (multiSelector.isSelectable()) {
             multiSelector.tapSelection(this);
-            vkAlbumsPresenter.checkActionModeFinish(multiSelector,v.getContext());
+            albumsPresenter.checkActionModeFinish(multiSelector);
         } else {
-            vkAlbumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
+            albumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }
+    }
+
+    @Override
+    public boolean isSelectable() {
+        return selectable;
     }
 
     @Override
@@ -130,17 +157,12 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     }
 
     @Override
-    public boolean isSelectable() {
-        return selectable;
+    public boolean isActivated() {
+        return albumSelectedCheckBox.isChecked();
     }
 
     @Override
     public void setActivated(boolean b) {
         albumSelectedCheckBox.setChecked(b);
-    }
-
-    @Override
-    public boolean isActivated() {
-        return albumSelectedCheckBox.isChecked();
     }
 }
