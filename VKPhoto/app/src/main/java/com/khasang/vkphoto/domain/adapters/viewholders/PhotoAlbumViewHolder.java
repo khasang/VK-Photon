@@ -38,7 +38,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         super(itemView, multiSelector);
         albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
-        albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
+        albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_photos);
         albumSelectedCheckBox = (CheckBox) itemView.findViewById(R.id.cb_selected);
 
         this.executor = executor;

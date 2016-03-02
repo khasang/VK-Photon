@@ -10,7 +10,7 @@
     tools:showIn="@layout/activity_main">
 
     <TextView
-        android:id="@+id/tv_count_of_albums"
+        android:id="@+id/tv_count_of_photos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true" />
@@ -19,6 +19,6 @@
         android:id="@+id/albums_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tv_count_of_albums" />
+        android:layout_below="@+id/tv_count_of_photos" />
 
 </RelativeLayout>

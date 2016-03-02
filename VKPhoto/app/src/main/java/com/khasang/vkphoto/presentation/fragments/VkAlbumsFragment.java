@@ -56,7 +56,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_vk_albums, container, false);
-        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
+        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_photos);
         initRecyclerView(view);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {

@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/vk_white"
     android:layout_marginBottom="10dp"
     android:layout_marginLeft="12dp"
     android:layout_marginRight="12dp"
@@ -16,28 +17,28 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/padding10">
 
         <TextView
             android:id="@+id/album_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin5"
             android:layout_marginLeft="@dimen/margin10"
-            android:layout_marginStart="@dimen/margin10"
-            android:layout_marginTop="@dimen/margin10"
+            android:layout_marginStart="@dimen/margin5"
+            android:layout_marginTop="@dimen/margin5"
             android:text="@string/title_of_album"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tv_count_of_albums"
+            android:id="@+id/tv_count_of_photos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/album_title"
             android:layout_marginBottom="@dimen/margin5"
             android:layout_marginLeft="@dimen/margin10"
-            android:layout_marginStart="@dimen/margin10"
+            android:layout_marginStart="@dimen/margin5"
             android:text="@string/count_of_photos_in_album"
             android:textSize="14sp" />
 

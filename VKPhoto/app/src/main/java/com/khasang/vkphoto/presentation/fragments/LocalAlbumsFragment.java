@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.data.AlbumsCursorLoader;
 import com.khasang.vkphoto.data.LocalAlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
@@ -87,7 +86,7 @@ public class LocalAlbumsFragment extends Fragment {
                 super(itemView);
                 mAlbumThumb  = (ImageView) itemView.findViewById(R.id.album_thumb);
                 mAlbumTitle  = (TextView)  itemView.findViewById(R.id.album_title);
-                mPhotosCount = (TextView)  itemView.findViewById(R.id.tv_count_of_albums);
+                mPhotosCount = (TextView)  itemView.findViewById(R.id.tv_count_of_photos);
             }
         }
     }
