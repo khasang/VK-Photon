@@ -3,6 +3,7 @@ package com.khasang.vkphoto.domain.adapters;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.VKAlbumsPresenter;
@@ -25,11 +27,11 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     final private TextView albumTitleTextView;
     final private TextView albumPhotoCountTextView;
     final private CheckBox albumSelectedCheckBox;
-    private VKAlbumsPresenter vkAlbumsPresenter;
     final private ExecutorService executor;
     final private MultiSelector multiSelector;
-    private boolean selectable;
     PhotoAlbum photoAlbum;
+    private VKAlbumsPresenter vkAlbumsPresenter;
+    private boolean selectable;
     private Handler handler;
 
     public PhotoAlbumViewHolder(View itemView, ExecutorService executor, MultiSelector multiSelector, VKAlbumsPresenter vkAlbumsPresenter) {
@@ -72,9 +74,19 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     }
 
     private boolean setPhoto() {
-        final File photoById = new LocalPhotoSource(albumThumbImageView.getContext().getApplicationContext()).getLocalPhotoFile(photoAlbum.thumb_id);
-        if (photoById != null) {
-            loadPhoto(photoById);
+        if (!TextUtils.isEmpty(photoAlbum.thumbFilePath)) {
+            File file = new File(photoAlbum.thumbFilePath);
+            if (file.exists()) {
+                loadPhoto(file);
+                return true;
+            }
+        }
+        LocalDataSource localDataSource = new LocalDataSource(albumThumbImageView.getContext().getApplicationContext());
+        final File albumThumb = localDataSource.getPhotoSource().getLocalPhotoFile(photoAlbum.thumb_id);
+        if (albumThumb != null) {
+            photoAlbum.thumbFilePath = albumThumb.getAbsolutePath();
+            localDataSource.getAlbumSource().updateAlbum(photoAlbum);
+            loadPhoto(albumThumb);
             return true;
         }
         return false;
@@ -113,10 +125,15 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     public void onClick(View v) {
         if (multiSelector.isSelectable()) {
             multiSelector.tapSelection(this);
-            vkAlbumsPresenter.checkActionModeFinish(multiSelector,v.getContext());
+            vkAlbumsPresenter.checkActionModeFinish(multiSelector, v.getContext());
         } else {
             vkAlbumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }
+    }
+
+    @Override
+    public boolean isSelectable() {
+        return selectable;
     }
 
     @Override
@@ -130,17 +147,12 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     }
 
     @Override
-    public boolean isSelectable() {
-        return selectable;
+    public boolean isActivated() {
+        return albumSelectedCheckBox.isChecked();
     }
 
     @Override
     public void setActivated(boolean b) {
         albumSelectedCheckBox.setChecked(b);
-    }
-
-    @Override
-    public boolean isActivated() {
-        return albumSelectedCheckBox.isChecked();
     }
 }

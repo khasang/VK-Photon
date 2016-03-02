@@ -21,6 +21,7 @@ public class PhotoAlbumsTable {
     public static final String THUMB_ID = "thumb_id";
     public static final String THUMB_SRC = "thumb_src";
     public static final String FILE_PATH = "filepath";
+    public static final String THUMB_FILE_PATH = "thumb_filepath";
     public static final String SYNC_STATUS = "sync_status";
 
     public static final String FIELDS = MySQliteHelper.PRIMARY_KEY
@@ -35,6 +36,7 @@ public class PhotoAlbumsTable {
             + THUMB_ID + " integer, "
             + THUMB_SRC + " text, "
             + FILE_PATH + " text, "
+            + THUMB_FILE_PATH + " text, "
             + SYNC_STATUS + " integer";
 
     public static ContentValues getContentValues(PhotoAlbum photoAlbum) {
@@ -51,6 +53,7 @@ public class PhotoAlbumsTable {
         contentValues.put(THUMB_ID, photoAlbum.thumb_id);
         contentValues.put(THUMB_SRC, photoAlbum.thumb_src);
         contentValues.put(FILE_PATH, photoAlbum.filePath);
+        contentValues.put(THUMB_FILE_PATH, photoAlbum.thumbFilePath);
         contentValues.put(SYNC_STATUS, photoAlbum.syncStatus);
         return contentValues;
     }
@@ -87,8 +90,11 @@ public class PhotoAlbumsTable {
         if (!oldAlbum.thumb_src.equals(newAlbum.thumb_src)) {
             contentValues.put(THUMB_SRC, newAlbum.thumb_src);
         }
-        if (!TextUtils.isEmpty(newAlbum.filePath) && !oldAlbum.filePath.equals(newAlbum.filePath)) {
+        if (!TextUtils.isEmpty(newAlbum.filePath) && !newAlbum.filePath.equals(oldAlbum.filePath)) {
             contentValues.put(FILE_PATH, newAlbum.filePath);
+        }
+        if (!TextUtils.isEmpty(newAlbum.thumbFilePath) && !newAlbum.thumbFilePath.equals(oldAlbum.thumbFilePath)) {
+            contentValues.put(THUMB_FILE_PATH, newAlbum.thumbFilePath);
         }
         if (oldAlbum.syncStatus != newAlbum.syncStatus) {
             contentValues.put(SYNC_STATUS, newAlbum.syncStatus);
