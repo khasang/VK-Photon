@@ -150,6 +150,11 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
+    public void confirmDelete(MultiSelector multiSelector) {
+
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE, multiSelector.isSelectable());

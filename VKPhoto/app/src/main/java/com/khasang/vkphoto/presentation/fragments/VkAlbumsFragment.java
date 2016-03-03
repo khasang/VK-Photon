@@ -96,11 +96,11 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
 
     private void initRecyclerView(View view) {
         RecyclerView albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
-        if (getResources().getConfiguration().orientation== Configuration.ORIENTATION_PORTRAIT){
-            albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         } else {
             albumsRecyclerView.setHasFixedSize(true);
-            albumsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL,false));
+            albumsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false));
         }
         initAdapter(null);
         albumsRecyclerView.setAdapter(adapter);
@@ -146,6 +146,21 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     @Override
     public void showError(String s) {
         ToastUtils.showError(s, getContext());
+    }
+
+    @Override
+    public void confirmDelete(final MultiSelector multiSelector) {
+        new MaterialDialog.Builder(getContext())
+                .content(R.string.sync_delete_album_question)
+                .positiveText(R.string.delete)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        vKAlbumsPresenter.deleteAlbums(multiSelector);
+                    }
+                })
+                .show();
     }
 
     @Override

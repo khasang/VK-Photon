@@ -91,6 +91,7 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
                         syncAlbums(multiSelector);
                         return true;
                     case R.id.action_delete_album:
+                        vkAlbumsView.confirmDelete(multiSelector);
 //                            vkAlbumsPresenter.deleteVkAlbums(multiSelector);
                         return true;
                     default:
@@ -111,7 +112,7 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
     }
 
     public File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
-        return vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor);
+        return photoAlbum.thumb_id > 0 ? vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor) : null;
     }
 
     @Override

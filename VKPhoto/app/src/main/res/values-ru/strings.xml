@@ -24,4 +24,8 @@
     <string name="create_album">Создать альбом</string>
     <string name="privacy">Настройки приватности</string>
     <string name="title">Название</string>
+    <string name="count_of_photos">Количество фотографий: %d</string>
+    <string name="delete">Удалить</string>
+    <string name="hello_blank_fragment"></string>
+    <string name="sync_delete_album_question">Удалить альбом?</string>
 </resources>

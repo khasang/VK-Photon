@@ -10,7 +10,7 @@
     <string name="st_btn_cancel">Cancel</string>
     <string name="sync_delete_album">Delete Album</string>
     <string name="privacy">Privacy settings</string>
-    <string name="count_of_photos">Количество фотографий: %d</string>
+    <string name="count_of_photos">Count of photos: %d</string>
     <string name="sync_photo">Synchronize photo</string>
     <string name="sync_delete_photo">Delete photo</string>
     <string name="create_album">Create album</string>
@@ -25,6 +25,8 @@
     <string name="count_of_albums">%d albums</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sync_delete_album_question">Delete album?</string>
+    <string name="delete">Delete</string>
 
 
 </resources>
