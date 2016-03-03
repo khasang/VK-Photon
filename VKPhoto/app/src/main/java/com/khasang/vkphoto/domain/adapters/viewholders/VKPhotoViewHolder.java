@@ -27,6 +27,8 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
 
     public VKPhotoViewHolder(View view, MultiSelector multiSelector, VKAlbumPresenter vkAlbumPresenter) {
         imageView = (ImageView) view.findViewById(R.id.iv_photo);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        imageView.setPadding(8, 8, 8, 8);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         this.multiSelector = multiSelector;
         this.vkAlbumPresenter = vkAlbumPresenter;

@@ -26,6 +26,10 @@ public class Comment extends VKApiComment {
         dest.writeInt(this.photo_id);
     }
 
+    public Comment(JSONObject from) {
+        super(from);
+    }
+
     public Comment(JSONObject from, int photo_id) {
         super(from);
         this.photo_id = photo_id;

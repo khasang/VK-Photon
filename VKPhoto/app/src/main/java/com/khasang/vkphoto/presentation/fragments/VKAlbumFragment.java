@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
@@ -32,6 +33,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public static final String PHOTOALBUM = "photoalbum";
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
     private PhotoAlbum photoAlbum;
+    private TextView tvCountOfPhotos;
     private VKAlbumPresenter vKAlbumPresenter;
     private List<Photo> photoList = new ArrayList<>();
     private int albumId;
@@ -85,6 +87,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         });
         adapter.setLoaded(false);
         gridview.setAdapter(adapter);
+        tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
         return view;
     }
 
@@ -133,6 +136,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public void displayVkPhotos(List<Photo> photos) {
         photoList = photos;
         adapter.setPhotoList(photos);
+        tvCountOfPhotos.setText(getResources().getString(R.string.count_of_photos, photos.size()));
     }
 
     @Override
