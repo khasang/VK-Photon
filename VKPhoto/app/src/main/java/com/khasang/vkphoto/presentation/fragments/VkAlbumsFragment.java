@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.presentation.fragments;
 
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -94,7 +96,12 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
 
     private void initRecyclerView(View view) {
         RecyclerView albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
-        albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        if (getResources().getConfiguration().orientation== Configuration.ORIENTATION_PORTRAIT){
+            albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
+        } else {
+            albumsRecyclerView.setHasFixedSize(true);
+            albumsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL,false));
+        }
         initAdapter(null);
         albumsRecyclerView.setAdapter(adapter);
     }
