@@ -22,4 +22,7 @@
     </plurals>
     <item name="position_key" type="id" />
     <string name="count_of_albums">%d albums</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
