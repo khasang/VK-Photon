@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.provider.BaseColumns;
 
+import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.model.VKApiPhotoAlbum;
 import com.vk.sdk.api.model.VKPhotoSizes;
 
@@ -58,19 +59,23 @@ public class PhotoAlbum extends VKApiPhotoAlbum {
 
     public PhotoAlbum(Cursor cursor) {
         this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-        this.title = cursor.getString(cursor.getColumnIndex(TITLE));
-        this.size = cursor.getInt(cursor.getColumnIndex(SIZE));
-        this.privacy = cursor.getInt(cursor.getColumnIndex(PRIVACY));
-        this.description = cursor.getString(cursor.getColumnIndex(DESCRIPTION));
-        this.owner_id = cursor.getInt(cursor.getColumnIndex(OWNER_ID));
-        this.can_upload = cursor.getInt(cursor.getColumnIndex(CAN_UPLOAD)) == 1;
-        this.updated = cursor.getLong(cursor.getColumnIndex(UPDATED));
-        this.created = cursor.getLong(cursor.getColumnIndex(CREATED));
-        this.thumb_id = cursor.getInt(cursor.getColumnIndex(THUMB_ID));
-        this.thumb_src = cursor.getString(cursor.getColumnIndex(THUMB_SRC));
         this.filePath = cursor.getString(cursor.getColumnIndex(FILE_PATH));
+        this.title = cursor.getString(cursor.getColumnIndex(TITLE));
         this.thumbFilePath = cursor.getString(cursor.getColumnIndex(THUMB_FILE_PATH));
-        this.syncStatus = cursor.getInt(cursor.getColumnIndex(SYNC_STATUS));
+        this.size = cursor.getInt(cursor.getColumnIndex(SIZE));
+        try {
+            this.privacy = cursor.getInt(cursor.getColumnIndex(PRIVACY));
+            this.description = cursor.getString(cursor.getColumnIndex(DESCRIPTION));
+            this.owner_id = cursor.getInt(cursor.getColumnIndex(OWNER_ID));
+            this.can_upload = cursor.getInt(cursor.getColumnIndex(CAN_UPLOAD)) == 1;
+            this.updated = cursor.getLong(cursor.getColumnIndex(UPDATED));
+            this.created = cursor.getLong(cursor.getColumnIndex(CREATED));
+            this.thumb_id = cursor.getInt(cursor.getColumnIndex(THUMB_ID));
+            this.thumb_src = cursor.getString(cursor.getColumnIndex(THUMB_SRC));
+            this.syncStatus = cursor.getInt(cursor.getColumnIndex(SYNC_STATUS));
+        } catch (Exception e) {
+            Logger.d("check");
+        }
     }
 
     public PhotoAlbum(Parcel in) {

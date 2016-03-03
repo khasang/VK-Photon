@@ -7,7 +7,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import org.greenrobot.eventbus.EventBus;
 
 public abstract class AlbumsPresenterBase implements AlbumsPresenter {
-    private ActionMode actionMode;
+    protected ActionMode actionMode;
 
     @Override
     public void onStart() {
