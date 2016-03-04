@@ -21,6 +21,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.greenrobot.eventbus.util.AsyncExecutor;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class SyncServiceImpl extends Service implements SyncService {
     public static final String TAG = SyncService.class.getSimpleName();
@@ -173,6 +175,11 @@ public class SyncServiceImpl extends Service implements SyncService {
             public void run() throws Exception {
                 for (Photo photo : photoList) {
                     deleteVkPhotoById(photo.getId());
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(340);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
