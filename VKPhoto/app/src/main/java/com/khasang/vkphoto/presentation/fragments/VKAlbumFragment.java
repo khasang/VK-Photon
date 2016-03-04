@@ -25,6 +25,8 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class VKAlbumFragment extends Fragment implements VkAlbumView {
@@ -143,13 +145,9 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     @Override
     public void deleteSelectedPhoto(MultiSelector multiSelector) {
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-        List<Photo> deletePhotoList = new ArrayList<>();
-        for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
-            Integer position = selectedPositions.get(i);
-            deletePhotoList.add(photoList.get(position));
-        }
-        for (Photo photo : deletePhotoList) {
-            photoList.remove(photo);
+        Collections.sort(selectedPositions, Collections.reverseOrder());
+        for (Integer position : selectedPositions) {
+            photoList.remove(position);
         }
         adapter.notifyDataSetChanged();
     }
