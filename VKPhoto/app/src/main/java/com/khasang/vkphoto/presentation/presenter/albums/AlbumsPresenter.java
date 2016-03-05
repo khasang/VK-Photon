@@ -26,4 +26,6 @@ public interface AlbumsPresenter extends Presenter {
     void getAllAlbums();
 
     void exportAlbums(MultiSelector multiSelector);
+
+    void syncAlbums(MultiSelector multiSelector);
 }

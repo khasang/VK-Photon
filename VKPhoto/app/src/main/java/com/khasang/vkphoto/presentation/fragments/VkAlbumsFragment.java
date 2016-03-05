@@ -109,13 +109,8 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     @Override
     public void onStart() {
         super.onStart();
+        Logger.d("VkAlbumsFragment onStart()");
         vKAlbumsPresenter.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        vKAlbumsPresenter.onStop();
     }
 
     @Override
@@ -123,6 +118,13 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         super.onResume();
         setOnClickListenerFab();
         Logger.d("VkAlbumsFragment onResume()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Logger.d("VkAlbumsFragment onStop()");
+        vKAlbumsPresenter.onStop();
     }
 
     @Override
