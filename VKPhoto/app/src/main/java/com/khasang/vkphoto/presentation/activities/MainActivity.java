@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 Logger.d("MainActivity onServiceConnected");
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
-                if (VKAccessToken.currentToken() != null&& viewPager.getVisibility()==View.VISIBLE) {
+                if (VKAccessToken.currentToken() != null && viewPager.getVisibility() == View.VISIBLE) {
                     EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
                 }
             }

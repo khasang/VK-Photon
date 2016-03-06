@@ -81,6 +81,12 @@ public class RequestMaker {
         VKRequest request = new VKRequest("photos.getAlbums", VKParameters.from("photos", VKAccessToken.currentToken().userId + "_" + String.valueOf(photoId)));
         request.executeWithListener(vkRequestListener);
     }
+
+    public static void getUserInfoById(VKRequest.VKRequestListener vkRequestListener, int userId) {
+        VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.USER_ID, userId, VKApiConst.FIELDS, "photo_50,photo_200,city,verified"));
+        request.executeWithListener(vkRequestListener);
+    }
+
     //начало работы с коментариями
     public static void getAllComments(VKRequest.VKRequestListener vkRequestListener){
         VKRequest request = new VKRequest("photos.getAllComments", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "need_likes", 1));
