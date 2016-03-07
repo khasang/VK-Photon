@@ -12,6 +12,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
+import com.khasang.vkphoto.presentation.fragments.VKCommentsFragment;
 import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
@@ -33,6 +34,10 @@ public class Navigator {
 
     public static void navigateToVKAlbumFragment(Context context, PhotoAlbum photoAlbum) {
         navigateToFragmentWithBackStack(context, VKAlbumFragment.newInstance(photoAlbum), VKAlbumFragment.TAG);
+    }
+
+    public static void navigateToVKCommentsFragment(Context context, int photoId) {
+        navigateToFragmentWithBackStack(context, VKCommentsFragment.newInstance(photoId), VKCommentsFragment.TAG);
     }
 
     public static void navigateToLocalAlbumFragment(Context context, PhotoAlbum photoAlbum) {

@@ -41,13 +41,14 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Comment comment = comments.get(position);
-        getUser(comment.from_id);
+        //getUser(comment.from_id);
         if (user !=null){
             Picasso.with(holder.userImage.getContext()).load(user.photo_50).into(holder.userImage);
             holder.name.setText(user.first_name+" "+user.last_name);
         }else {
             Logger.d("where is user!?");
         }
+        holder.text.setText(comment.text);
     }
 
     private void getUser(final int userId) {
@@ -70,7 +71,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         });
         thread.start();
         try {
-            thread.join(1500);
+            thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -83,6 +84,11 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
     public void setUser(VKApiUser user) {
         this.user = user;
+    }
+
+    public void setCommentsList(List<Comment> commentsList) {
+        this.comments = commentsList;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

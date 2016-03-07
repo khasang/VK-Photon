@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.domain.adapters.viewholders;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
@@ -9,13 +10,14 @@ import android.widget.ProgressBar;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SelectableHolder;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenter;
 import com.khasang.vkphoto.util.Logger;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-    public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickListener, View.OnClickListener {
+public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickListener, View.OnClickListener {
     final private ImageView imageView;
     final private ProgressBar progressBar;
     final private CheckBox photoSelectedCheckBox;
@@ -89,6 +91,7 @@ import com.squareup.picasso.Picasso;
             vkAlbumPresenter.checkActionModeFinish(multiSelector, v.getContext());
         } else {
             Logger.d("onClick");
+            Navigator.navigateToVKCommentsFragment(v.getContext(), 380555250);
         }
     }
 
