@@ -90,6 +90,8 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
                     case R.id.action_sync_album:
                         syncAlbums(multiSelector);
                         return true;
+                    case R.id.action_edit_album:
+                        return true;
                     case R.id.action_delete_album:
                         vkAlbumsView.confirmDelete(multiSelector);
 //                            vkAlbumsPresenter.deleteVkAlbums(multiSelector);

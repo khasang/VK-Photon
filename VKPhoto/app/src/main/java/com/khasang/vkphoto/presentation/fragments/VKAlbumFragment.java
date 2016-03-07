@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.VKPhotoAdapter;
@@ -26,7 +29,6 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
     private PhotoAlbum photoAlbum;
     private TextView tvCountOfPhotos;
-    private VKAlbumPresenter vKAlbumPresenter;
+    private VKAlbumPresenter vkAlbumPresenter;
     private List<Photo> photoList = new ArrayList<>();
     private int albumId;
     private VKPhotoAdapter adapter;
@@ -55,9 +57,9 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        vKAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
+        vkAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
-        adapter = new VKPhotoAdapter(photoList, multiSelector, vKAlbumPresenter);
+        adapter = new VKPhotoAdapter(photoList, multiSelector, vkAlbumPresenter);
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
 
@@ -67,7 +69,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         View view = inflater.inflate(R.layout.fragment_vk_album, container, false);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
-                vKAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
+                vkAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
             }
         }
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
@@ -81,7 +83,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                vKAlbumPresenter.deleteSelectedVkPhotos(photoList.get(position).getId());
+//                vkAlbumPresenter.deleteSelectedVkPhotos(photoList.get(position).getId());
 //                photoList.remove(position);
 //                adapter.notifyDataSetChanged();
 //                EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
@@ -106,7 +108,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
                     }
                 });
                 ToastUtils.showShortMessage("Here will be action Add Photos", getActivity());
-//                vKAlbumPresenter.addPhotos();
+//                vkAlbumPresenter.addPhotos();
             }
         });
     }
@@ -115,9 +117,9 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public void onStart() {
         super.onStart();
         Logger.d("VkAlbumFragment onStart");
-        vKAlbumPresenter.onStart();
+        vkAlbumPresenter.onStart();
         if (photoList.isEmpty()) {
-            vKAlbumPresenter.getPhotosByAlbumId(albumId);
+            vkAlbumPresenter.getPhotosByAlbumId(albumId);
         }
     }
 
@@ -132,7 +134,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     public void onStop() {
         super.onStop();
         Logger.d("VkAlbumFragment onStop");
-        vKAlbumPresenter.onStop();
+        vkAlbumPresenter.onStop();
     }
 
     @Override
@@ -148,12 +150,11 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
-    public void deleteSelectedPhoto(MultiSelector multiSelector) {
+    public void removePhotosFromView(MultiSelector multiSelector) {
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
         Collections.sort(selectedPositions, Collections.reverseOrder());
-        for (Integer position : selectedPositions) {
-            photoList.remove(position);
-        }
+        for (Integer position : selectedPositions)
+            photoList.remove((int) position);
         adapter.notifyDataSetChanged();
     }
 
@@ -163,8 +164,19 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
-    public void confirmDelete(MultiSelector multiSelector) {
-
+    public void confirmDelete(final MultiSelector multiSelector) {
+        new MaterialDialog.Builder(getContext())
+                .content(multiSelector.getSelectedPositions().size() > 1 ?
+                        R.string.sync_delete_photos_question : R.string.sync_delete_photo_question)
+                .positiveText(R.string.delete)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        vkAlbumPresenter.deleteSelectedVkPhotos(multiSelector);
+                    }
+                })
+                .show();
     }
 
     @Override

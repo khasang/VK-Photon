@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,9 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.LocalPhotoAdapter;
@@ -24,6 +28,7 @@ import com.khasang.vkphoto.presentation.view.VkAlbumView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -90,6 +95,18 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
         return view;
     }
 
+    //на самом деле это не метод для удаления фото, а только для отображения этих изменений в адаптере
+    //физическое удаление происходит в интерэкторе
+    @Override
+    public void removePhotosFromView(MultiSelector multiSelector) {
+        Logger.d("user wants to removePhotosFromView");
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Collections.sort(selectedPositions, Collections.reverseOrder());
+        for (Integer position : selectedPositions)
+            photoList.remove((int) position);
+        adapter.notifyDataSetChanged();
+    }
+
     private void setOnClickListenerFab(View view) {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +169,20 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
-    public void confirmDelete(MultiSelector multiSelector) {}
+    public void confirmDelete(final MultiSelector multiSelector) {
+        new MaterialDialog.Builder(getContext())
+                .content(multiSelector.getSelectedPositions().size() > 1 ?
+                        R.string.sync_delete_photos_question : R.string.sync_delete_photo_question)
+                .positiveText(R.string.delete)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        localAlbumPresenter.deleteSelectedLocalPhotos(multiSelector);
+                    }
+                })
+                .show();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

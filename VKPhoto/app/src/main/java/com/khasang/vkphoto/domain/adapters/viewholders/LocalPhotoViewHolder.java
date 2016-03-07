@@ -121,6 +121,7 @@ public class LocalPhotoViewHolder implements SelectableHolder, View.OnLongClickL
             }
         };
         Picasso picasso = Picasso.with(imageView.getContext());
+        Logger.d("loading file://" + photo.filePath);
         RequestCreator requestCreator = picasso.load("file://" + photo.filePath);
         requestCreator.error(R.drawable.vk_share_send_button_background);
         requestCreator.into(imageView, callback);
