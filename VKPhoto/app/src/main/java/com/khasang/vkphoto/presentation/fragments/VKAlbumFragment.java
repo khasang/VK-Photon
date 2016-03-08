@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.VKPhotoAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenter;
@@ -58,7 +60,6 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         adapter = new VKPhotoAdapter(photoList, multiSelector, vKAlbumPresenter);
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -108,6 +109,17 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
             }
         });
     }
+
+     @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+         switch (item.getItemId()) {
+             // Respond to the action bar's Up/Home button
+             case android.R.id.home:
+                 Navigator.navigateBack(getActivity());
+                 return true;
+         }
+         return super.onOptionsItemSelected(item);
+     }
 
     @Override
     public void onResume() {

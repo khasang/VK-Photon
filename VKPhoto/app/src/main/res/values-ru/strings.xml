@@ -89,7 +89,7 @@
     <!-- Settings for Notifications -->
     <string name="pref_header_notifications">Уведомления</string>
 
-    <string name="pref_title_new_message_notifications">Уведомление о новом сообщении</string>
+    <string name="pref_new_message_notifications_title">Уведомление о новом сообщении</string>
 
     <string name="pref_ringtone_title">Рингтон</string>
     <string name="pref_rington_summary">Выберите рингтон</string>
