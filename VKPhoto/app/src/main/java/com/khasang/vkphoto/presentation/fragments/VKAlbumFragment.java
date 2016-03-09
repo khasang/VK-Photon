@@ -26,6 +26,8 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class VKAlbumFragment extends Fragment implements VkAlbumView {
@@ -62,7 +64,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vk_album, null);
+        View view = inflater.inflate(R.layout.fragment_vk_album, container, false);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
                 vKAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
@@ -110,13 +112,6 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        setOnClickListenerFab(getView());
-        Logger.d("onResume VKAlbumFragment");
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         Logger.d("VkAlbumFragment onStart");
@@ -127,8 +122,16 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Logger.d("VKAlbumFragment onResume");
+        setOnClickListenerFab(getView());
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
+        Logger.d("VkAlbumFragment onStop");
         vKAlbumPresenter.onStop();
     }
 
@@ -145,8 +148,23 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
+    public void deleteSelectedPhoto(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Collections.sort(selectedPositions, Collections.reverseOrder());
+        for (Integer position : selectedPositions) {
+            photoList.remove(position);
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
     public void showError(String s) {
         ToastUtils.showError(s, getContext());
+    }
+
+    @Override
+    public void confirmDelete(MultiSelector multiSelector) {
+
     }
 
     @Override
@@ -154,5 +172,4 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         super.onSaveInstanceState(outState);
         outState.putBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE, multiSelector.isSelectable());
     }
-
 }

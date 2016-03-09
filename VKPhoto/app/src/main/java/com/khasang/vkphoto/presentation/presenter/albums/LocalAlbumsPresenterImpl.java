@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
@@ -20,70 +21,81 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
+import com.khasang.vkphoto.util.Logger;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 
-public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbumsPresenter {
+public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements LocalAlbumsPresenter {
     private VkAlbumsView vkAlbumsView;
     private VkAlbumsInteractor vkAlbumsInteractor;
     private ActionMode actionMode;
 
-    public VKAlbumsPresenterImpl(VkAlbumsView vkAlbumsView, SyncServiceProvider syncServiceProvider) {
+    public LocalAlbumsPresenterImpl(VkAlbumsView vkAlbumsView, SyncServiceProvider syncServiceProvider) {
         this.vkAlbumsView = vkAlbumsView;
         vkAlbumsInteractor = new VkAlbumsInteractorImpl(syncServiceProvider);
     }
 
+    @Override
+    public void addAlbum(String title, String thumbPath) {
+        //TODO: implement metod
+        Logger.d("user wants to add new local album");
+//        vkAlbumsInteractor.addAlbum(title, description, privacy, commentPrivacy);
+    }
+
     public void syncAlbums(MultiSelector multiSelector) {
+        Logger.d("user wants to sync local albums list");
         vkAlbumsInteractor.syncAlbums(multiSelector, vkAlbumsView.getAdapterCursor());
     }
 
     @Override
-    public void getAllAlbums() {
-        vkAlbumsInteractor.getAllAlbums();
-    }
-
-    @Override
-    public void exportAlbums(MultiSelector multiSelector) {
-
-    }
-
-    @Override
     public void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum) {
-        Navigator.navigateToVKAlbumFragment(context, photoAlbum);
+        Navigator.navigateToLocalAlbumFragment(context, photoAlbum);
     }
 
     @Override
-    public void addAlbum(String title, String description, int privacy, int commentPrivacy) {
-        vkAlbumsInteractor.addAlbum(title, description, privacy, commentPrivacy);
+    public File getAlbumThumb(LocalPhotoSource localPhotoSource, PhotoAlbum photoAlbum, ExecutorService executor) {
+        return new File(photoAlbum.thumbFilePath);
     }
 
+    @Override
+    public void deleteAlbums(MultiSelector multiSelector) {
+        //TODO: implement metod
+        Logger.d("user wants to delete some local albums");
+//        vkAlbumsInteractor.deleteVkAlbum(multiSelector, vkAlbumsView.getAdapterCursor());
+    }
+
+
+    //TODO: понятия не имею, что такое @Subscribe. код ниже может быть не работоспособен
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGetVkSaveAlbumEvent(GetVkSaveAlbumEvent getVkSaveAlbumEvent) {
-        vkAlbumsView.displayVkSaveAlbum(getVkSaveAlbumEvent.photoAlbum);
+//        vkAlbumsView.displayVkSaveAlbum(getVkSaveAlbumEvent.photoAlbum);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void OnLocalAlbumEvent(LocalAlbumEvent localAlbumEvent) {
-        vkAlbumsView.displayVkAlbums();
+//        vkAlbumsView.displayVkAlbums();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent errorEvent) {
-        vkAlbumsView.showError(errorEvent.errorMessage);
+//        vkAlbumsView.showError(errorEvent.errorMessage);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncAndTokenReadyEvent(SyncAndTokenReadyEvent syncAndTokenReadyEvent) {
-        getAllAlbums();
+//        getAllAlbums();
     }
 
     @Override
     public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
-        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_albums, ((FabProvider) activity).getFloatingActionButton()) {
+        this.actionMode = activity.startSupportActionMode(
+                new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_albums,
+                        ((FabProvider) activity).getFloatingActionButton()) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
@@ -111,13 +123,13 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
         }
     }
 
-    public File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
-        return photoAlbum.thumb_id > 0 ? vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor) : null;
+    @Override
+    public void getAllAlbums() {
+        vkAlbumsInteractor.getAllAlbums();
     }
 
     @Override
-    public void deleteAlbums(MultiSelector multiSelector) {
-        vkAlbumsInteractor.deleteVkAlbum(multiSelector, vkAlbumsView.getAdapterCursor());
+    public void exportAlbums(MultiSelector multiSelector) {
+        Logger.d("user wants to export local albums");
     }
 }
-      

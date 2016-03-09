@@ -10,7 +10,7 @@
     <string name="st_btn_cancel">Cancel</string>
     <string name="sync_delete_album">Delete Album</string>
     <string name="privacy">Privacy settings</string>
-    <string name="count_of_photos">Количество фотографий: %d</string>
+    <string name="count_of_photos">Count of photos: %d</string>
     <string name="sync_photo">Synchronize photo</string>
     <string name="sync_delete_photo">Delete photo</string>
     <string name="create_album">Create album</string>
@@ -25,6 +25,76 @@
     <string name="count_of_albums">%d albums</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sync_delete_album_question">Delete album?</string>
+    <string name="delete">Delete</string>
 
+    <!-- Strings related to Settings -->
+
+    <!-- General settings -->
+    <string name="pref_header_general">General settings</string>
+
+    <string name="pref_title_sync_device">Enable synchronization</string>
+    <string name="pref_description_sync_device">Synchronization with device</string>
+
+    <string name="make_album_title">Make album</string>
+    <string name="make_album_summary">Make your album</string>
+    <string name="pref_default_album">My album</string>
+
+    <string name="edit_album_title">Edit album</string>
+    <string name="edit_album_summary">Edit your album</string>
+
+    <string name="delete_album_title">Delete album</string>
+    <string name="delete_album_summary">Delete selected album</string>
+
+    <string name="access_control_title">Access control</string>
+    <string name="access_control_summary">Choose album accessibility</string>
+    <string name="access_control_current_settings">Current settings:</string>
+    <string-array name="pref_example_list_titles">
+        <item>Everybody</item>
+        <item>Friends only</item>
+        <item>Only me</item>
+    </string-array>
+
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_new_message_notifications_title">New message notifications</string>
+
+    <string name="pref_ringtone_title">Ringtone</string>
+    <string name="pref_rington_summary">Select a ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+
+    <string name="icon_heart" translatable="false">&#xf004;</string>
 
 </resources>

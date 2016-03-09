@@ -7,7 +7,7 @@
     <string name="sync_album">Синхронизировать альбом</string>
     <string name="sync_service_error">Служба синхронизации запускается</string>
     <string name="title_of_album">Название альбома</string>
-    <string name="add_album_description">Опсание</string>
+    <string name="add_album_description">Описание</string>
     <string name="st_btn_ok">Да</string>
     <string name="st_btn_cancel">Нет</string>
     <string name="sync_delete_album">Удалить альбом</string>
@@ -24,4 +24,78 @@
     <string name="create_album">Создать альбом</string>
     <string name="privacy">Настройки приватности</string>
     <string name="title">Название</string>
+    <string name="count_of_photos">Количество фотографий: %d</string>
+    <string name="delete">Удалить</string>
+    <string name="hello_blank_fragment"></string>
+    <string name="sync_delete_album_question">Удалить альбом?</string>
+
+
+    <!-- Strings related to Settings -->
+
+    <!-- General settings -->
+    <string name="pref_header_general">Общие настройки</string>
+
+    <string name="pref_title_sync_device">Синхронизация</string>
+    <string name="pref_description_sync_device">Синхронизация с устройством</string>
+
+    <string name="make_album_title">Создание альбома</string>
+    <string name="make_album_summary">Создайте свой альбом</string>
+    <string name="pref_default_album">Мой альбом</string>
+
+    <string name="edit_album_title">Редактирование альбома</string>
+    <string name="edit_album_summary">Редактируйте свой альбом</string>
+
+    <string name="delete_album_title">Удаление альбома</string>
+    <string name="delete_album_summary">Удалить выбранный альбом</string>
+
+    <string name="access_control_title">Управление доступом</string>
+    <string name="access_control_summary">Выберите доступность альбома</string>
+    <string name="access_control_current_settings">Текущая настройка: </string>
+    <string-array name="pref_example_list_titles">
+        <item>Всем</item>
+        <item>Только друзьям</item>
+        <item>Только мне</item>
+    </string-array>
+
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Settings for Data & Sync -->
+    <string name="pref_header_data_sync">Настройки синхронизации</string>
+
+    <string name="pref_title_sync_frequency">Частота синхронизации</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">Системные настройки синхронизации</string>
+
+    <!-- Settings for Notifications -->
+    <string name="pref_header_notifications">Уведомления</string>
+
+    <string name="pref_title_new_message_notifications">Уведомление о новом сообщении</string>
+
+    <string name="pref_ringtone_title">Рингтон</string>
+    <string name="pref_rington_summary">Выберите рингтон</string>
+    <string name="pref_ringtone_silent">Без звука</string>
+
+    <string name="pref_title_vibrate">Вибрация</string>
+
+    <string name="icon_heart" translatable="false">&#xf004;</string>
 </resources>
