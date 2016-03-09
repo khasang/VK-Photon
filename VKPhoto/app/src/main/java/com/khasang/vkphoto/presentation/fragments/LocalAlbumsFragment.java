@@ -11,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
@@ -75,7 +77,6 @@ public class LocalAlbumsFragment extends Fragment implements LoaderManager.Loade
         int itemCount = adapter.getItemCount();
     }
 
-<<<<<<< HEAD
         public class MyViewHolder extends RecyclerView.ViewHolder {
             private ImageView mAlbumThumb;
             private TextView mAlbumTitle;
@@ -88,10 +89,8 @@ public class LocalAlbumsFragment extends Fragment implements LoaderManager.Loade
                 mPhotosCount = (TextView)  itemView.findViewById(R.id.tv_count_of_photos);
             }
         }
-=======
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.changeCursor(null);
->>>>>>> develop
     }
 }
