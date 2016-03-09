@@ -82,7 +82,6 @@ public class LocalAlbumsCursorLoader extends android.support.v4.content.CursorLo
                         + "  _data=" + thumbPath);
             } while (cursor.moveToNext());
         }
-
         return matrixCursor;
     }
 }

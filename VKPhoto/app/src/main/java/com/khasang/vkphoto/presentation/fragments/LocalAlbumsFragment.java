@@ -108,6 +108,7 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
     public void onResume() {
         super.onResume();
         Logger.d("localAlbumsFragment onResume()");
+        getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
         setOnClickListenerFab();
     }
 
