@@ -15,6 +15,8 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
+import java.io.File;
+
 /**
  * Created by TAU on 05.03.2016.
  */
@@ -109,21 +111,23 @@ public class LocalPhotoViewHolder implements SelectableHolder, View.OnLongClickL
         Callback callback = new Callback() {
             @Override
             public void onSuccess() {
-                Logger.d(photo.filePath + " loaded successfully");
+                Logger.d("LocalPhotoViewHolder " + "success with " + photo.filePath);
                 progressBar.setVisibility(View.INVISIBLE);
                 LocalPhotoViewHolder.this.photo = photo;
             }
 
             @Override
             public void onError() {
-                Logger.d("some error happened in LocalPhotoViewHolder.loadPhoto");
+                Logger.d("LocalPhotoViewHolder " + "error with " + photo.filePath);
                 progressBar.setVisibility(View.INVISIBLE);
             }
         };
         Picasso picasso = Picasso.with(imageView.getContext());
-        Logger.d("loading file://" + photo.filePath);
+        Logger.d("LocalPhotoViewHolder " + "loading file://" + photo.filePath);
         RequestCreator requestCreator = picasso.load("file://" + photo.filePath);
-        requestCreator.error(R.drawable.vk_share_send_button_background);
-        requestCreator.into(imageView, callback);
+        requestCreator.resize(200, 200)
+                .centerInside()//сохраняет пропорции
+                .error(R.drawable.vk_share_send_button_background)
+                .into(imageView, callback);
     }
 }

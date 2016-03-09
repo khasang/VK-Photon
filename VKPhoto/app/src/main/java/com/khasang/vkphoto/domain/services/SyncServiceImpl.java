@@ -107,7 +107,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                Logger.d("SyncSerice getAllAlbums");
+                Logger.d("SyncSerice getAllVKAlbums");
                 vKDataSource.getAlbumSource().getAllAlbums();
             }
         });

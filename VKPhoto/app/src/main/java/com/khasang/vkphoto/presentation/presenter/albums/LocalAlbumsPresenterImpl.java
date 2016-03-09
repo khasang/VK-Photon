@@ -13,6 +13,7 @@ import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
+import com.khasang.vkphoto.domain.interactors.LocalAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
@@ -26,16 +27,17 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements LocalAlbumsPresenter {
     private VkAlbumsView albumsView;
-    private VkAlbumsInteractor albumsInteractor;
+    private LocalAlbumsInteractorImpl albumsInteractor;
     private ActionMode actionMode;
 
-    public LocalAlbumsPresenterImpl(VkAlbumsView albumsView, SyncServiceProvider syncServiceProvider) {
+    public LocalAlbumsPresenterImpl(VkAlbumsView albumsView, Context context) {
         this.albumsView = albumsView;
-        albumsInteractor = new VkAlbumsInteractorImpl(syncServiceProvider);
+        albumsInteractor = new LocalAlbumsInteractorImpl(context);
     }
 
     @Override
@@ -47,7 +49,7 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
 
     public void syncAlbums(MultiSelector multiSelector) {
         Logger.d("user wants to sync local albums list");
-        albumsInteractor.syncAlbums(multiSelector, albumsView.getAdapterCursor());
+        albumsInteractor.syncLocalAlbums(multiSelector, albumsView.getAdapterCursor());
     }
 
     @Override
@@ -62,9 +64,9 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
 
     @Override
     public void deleteAlbums(MultiSelector multiSelector) {
-        //TODO: implement metod
-        Logger.d("user wants to delete some local albums");
-//        albumsInteractor.deleteVkAlbum(multiSelector, albumsView.getAdapterCursor());
+        albumsInteractor.deleteSelectedLocalAlbums(multiSelector, albumsView.getAlbumsList());
+        albumsView.removePhotosFromView(multiSelector);
+        actionMode.finish();
     }
 
 
@@ -86,7 +88,7 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncAndTokenReadyEvent(SyncAndTokenReadyEvent syncAndTokenReadyEvent) {
-//        getAllAlbums();
+//        getAllVKAlbums();
     }
 
     @Override
@@ -123,8 +125,8 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     }
 
     @Override
-    public void getAllAlbums() {
-        albumsInteractor.getAllAlbums();
+    public List<PhotoAlbum> getAllLocalAlbums() {
+        return albumsInteractor.getAllLocalAlbums();
     }
 
     @Override

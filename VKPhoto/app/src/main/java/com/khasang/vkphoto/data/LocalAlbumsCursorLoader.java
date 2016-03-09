@@ -64,23 +64,28 @@ public class LocalAlbumsCursorLoader extends android.support.v4.content.CursorLo
 
             do {
                 // Get the field values
-                builder = matrixCursor.newRow();
                 bucketID = cursor.getString(bucketIDColumn);
-                builder.add(bucketID);
                 bucketName = cursor.getString(bucketNameColumn);
-                builder.add(bucketName);
+                date = cursor.getString(dateColumn);
                 thumbPath = cursor.getString(dataColumn);
                 String filePath = thumbPath.substring(0, thumbPath.lastIndexOf("/"));
-                builder.add(filePath);
-                builder.add(thumbPath);
-                builder.add(new File(filePath).listFiles(new ImageFileFilter()).length);
-                date = cursor.getString(dateColumn);
+                //TODO: убрать костыль ниже, выяснив, почему в cursor попадают пустые альбомы
+                int photosCount = new File(filePath).listFiles(new ImageFileFilter()).length;
+                if (photosCount > 0) {
+                    builder = matrixCursor.newRow();
+                    builder.add(bucketID)
+                            .add(bucketName)
+                            .add(filePath)
+                            .add(thumbPath)
+                            .add(photosCount);
+                }
                 // Do something with the values.
                 Log.i("ListingImages", " bucket=" + bucketID
                         + "  bucketName=" + bucketName
                         + "  date_taken=" + date
                         + "  _data=" + thumbPath);
             } while (cursor.moveToNext());
+            cursor.close();
         }
 
         return matrixCursor;

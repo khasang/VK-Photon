@@ -42,7 +42,7 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
     }
 
     @Override
-    public void getAllAlbums() {
+    public void getAllVKAlbums() {
         vkAlbumsInteractor.getAllAlbums();
     }
 
@@ -78,7 +78,7 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncAndTokenReadyEvent(SyncAndTokenReadyEvent syncAndTokenReadyEvent) {
-        getAllAlbums();
+        getAllVKAlbums();
     }
 
     @Override

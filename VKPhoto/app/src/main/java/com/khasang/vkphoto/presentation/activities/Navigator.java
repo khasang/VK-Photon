@@ -12,7 +12,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
-import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
+import com.khasang.vkphoto.presentation.fragments.VKAlbumsFragment;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 import java.util.List;
@@ -52,10 +52,20 @@ public class Navigator {
         FragmentManager fragmentManager = getFragmentManager(context);
         if (fragmentManager.getBackStackEntryCount() > 0) {
             fragmentManager.popBackStack();
+//            changeViewPagerVisibility((Activity) context, true);
+//            List<Fragment> fragments = fragmentManager.getFragments();
+//            Fragment fragment = fragments.get(fragments.size() - 1);
+//            if (fragment instanceof VKAlbumFragment)
+//                fragment = fragments.get(0);
+//            else if (fragment instanceof LocalAlbumFragment)
+//                fragment = fragments.get(1);
+//            fragment.onResume();
+
+            //не понятная и не работающая реализация
             List<Fragment> fragments = fragmentManager.getFragments();
             for (int i = fragments.size() - 2; i >= 0; i--) {
                 Fragment fragment = fragments.get(i);
-                if (!(fragment instanceof VkAlbumsFragment) && !(fragment instanceof LocalAlbumsFragment)) {
+                if (!(fragment instanceof VKAlbumsFragment) && !(fragment instanceof LocalAlbumsFragment)) {
                     return;
                 }
             }
@@ -63,6 +73,7 @@ public class Navigator {
             Fragment fragment = fragmentManager.getFragments()
                     .get(fragmentManager.getBackStackEntryCount() - 1);
             fragment.onResume();
+
         } else {
             ((Activity) context).finish();
         }

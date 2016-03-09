@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.presentation.fragments;
 
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,7 +24,6 @@ import com.khasang.vkphoto.data.LocalAlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
-import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenter;
 import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenterImpl;
@@ -29,25 +31,38 @@ import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
+    public static final String ACTION_MODE_ACTIVE = "action_mode_active";
     private PhotoAlbumCursorAdapter adapter;
     private MultiSelector multiSelector;
     private LocalAlbumsPresenter localAlbumsPresenter;
+    private List<PhotoAlbum> albumsList = new ArrayList<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        localAlbumsPresenter = new LocalAlbumsPresenterImpl(this, getContext());
         multiSelector = new MultiSelector();
-        localAlbumsPresenter = new LocalAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         getActivity().getSupportLoaderManager().initLoader(1, null, this);
+        if (albumsList.isEmpty())
+            albumsList = localAlbumsPresenter.getAllLocalAlbums();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_vk_albums, container, false);
-        initRecyclerView(rootView);
-        return rootView;
+        View view = inflater.inflate(R.layout.fragment_albums, container, false);
+        initRecyclerView(view);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {
+                localAlbumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) getActivity());
+            }
+        }
+        return view;
     }
 
     @Override
@@ -80,13 +95,6 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
         });
     }
 
-    private void initRecyclerView(View view) {
-        RecyclerView albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
-        albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        initAdapter(null);
-        albumsRecyclerView.setAdapter(adapter);
-    }
-
     private boolean initAdapter(Cursor cursor) {
         if (adapter == null) {
             adapter = new PhotoAlbumCursorAdapter(getContext(), cursor, multiSelector, localAlbumsPresenter);
@@ -95,6 +103,18 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
         return false;
     }
 
+
+    private void initRecyclerView(View view) {
+        RecyclerView albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        } else {
+            albumsRecyclerView.setHasFixedSize(true);
+            albumsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false));
+        }
+        initAdapter(null);
+        albumsRecyclerView.setAdapter(adapter);
+    }
 
     //lifecycle methods
     @Override
@@ -109,6 +129,8 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
         super.onResume();
         Logger.d("localAlbumsFragment onResume()");
         setOnClickListenerFab();
+        adapter.notifyDataSetChanged();
+        getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
     }
 
     @Override
@@ -143,6 +165,11 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
 
     //VkView implementations
     @Override
+    public List<PhotoAlbum> getAlbumsList() {
+        return albumsList;
+    }
+
+    @Override
     public void showError(String s) {
         ToastUtils.showError(s, getContext());
     }
@@ -150,7 +177,8 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
     @Override
     public void confirmDelete(final MultiSelector multiSelector) {
         new MaterialDialog.Builder(getContext())
-                .content(R.string.sync_delete_album_question)
+                .content(multiSelector.getSelectedPositions().size() > 1 ?
+                        R.string.sync_delete_albums_question : R.string.sync_delete_album_question)
                 .positiveText(R.string.delete)
                 .negativeText(R.string.cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -160,6 +188,19 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
                     }
                 })
                 .show();
+    }
+
+    //на самом деле это не метод для удаления альбомов, а только для отображения этих изменений в адаптере
+    //физическое удаление происходит в интерэкторе
+    @Override
+    public void removePhotosFromView(MultiSelector multiSelector) {
+        Logger.d("user wants to removeAlbumsFromView");
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Collections.sort(selectedPositions, Collections.reverseOrder());
+        for (Integer position : selectedPositions)
+            albumsList.remove((int) position);
+        adapter.notifyDataSetChanged();
+        getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
     }
 
     @Override
@@ -173,6 +214,12 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
             adapter.changeCursor(data);
         }
         int itemCount = adapter.getItemCount();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(ACTION_MODE_ACTIVE, multiSelector.isSelectable());
     }
 
     @Override

@@ -34,15 +34,17 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKPrivacy;
 
-public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
-    public static final String TAG = VkAlbumsFragment.class.getSimpleName();
+import java.util.List;
+
+public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
+    public static final String TAG = VKAlbumsFragment.class.getSimpleName();
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
     private VKAlbumsPresenter vKAlbumsPresenter;
     private PhotoAlbumCursorAdapter adapter;
     private MultiSelector multiSelector;
     private TextView tvCountOfAlbums;
 
-    public VkAlbumsFragment() {
+    public VKAlbumsFragment() {
     }
 
     @Override
@@ -55,9 +57,8 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vk_albums, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_albums, container, false);
         tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
         initRecyclerView(view);
         if (savedInstanceState != null) {
@@ -72,7 +73,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         ((FabProvider) getActivity()).getFloatingActionButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Logger.d("VkAlbumsFragment add album");
+                Logger.d("VKAlbumsFragment add album");
 //                vKAlbumsPresenter.addAlbum();
                 new MaterialDialog.Builder(getContext())
                         .title(R.string.create_album)
@@ -109,22 +110,35 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     @Override
     public void onStart() {
         super.onStart();
-        Logger.d("VkAlbumsFragment onStart()");
+        Logger.d("VKAlbumsFragment onStart()");
         vKAlbumsPresenter.onStart();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Logger.d("VKAlbumsFragment onResume()");
         setOnClickListenerFab();
-        Logger.d("VkAlbumsFragment onResume()");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Logger.d("VkAlbumsFragment onStop()");
+        Logger.d("VKAlbumsFragment onStop()");
         vKAlbumsPresenter.onStop();
+    }
+
+
+    //VkAlbumsView implementations
+    @Override
+    public List<PhotoAlbum> getAlbumsList() {
+        Logger.d("big fat crutch");
+        return null;
+    }
+
+    @Override
+    public void removePhotosFromView(MultiSelector multiSelector) {
+        Logger.d("big fat crutch");
     }
 
     @Override
