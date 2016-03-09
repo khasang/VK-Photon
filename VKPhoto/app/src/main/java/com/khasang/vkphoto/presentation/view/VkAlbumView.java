@@ -10,5 +10,5 @@ public interface VkAlbumView extends VkView {
 
     List<Photo> getPhotoList();
 
-    void deleteSelectedPhoto(MultiSelector multiSelector);
+    void removePhotosFromView(MultiSelector multiSelector);
 }
