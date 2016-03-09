@@ -2,10 +2,12 @@ package com.khasang.vkphoto.ui.activities;
 
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -14,10 +16,16 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.khasang.vkphoto.R;
 
@@ -180,31 +188,16 @@ public class SettingsActivity extends PreferenceActivity {
         }
     }
 
-
-    private void setupActionBar() {
-/*        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-  */
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean onIsMultiPane() {
         return isXLargeTablet(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void onBuildHeaders(List<Header> target) {
         loadHeadersFromResource(R.xml.pref_headers, target);
+//        findViewById(android.R.id.list).setBackgroundColor(Color.BLUE);
     }
 
     /**

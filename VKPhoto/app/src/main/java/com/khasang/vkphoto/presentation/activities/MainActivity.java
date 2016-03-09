@@ -1,8 +1,10 @@
 package com.khasang.vkphoto.presentation.activities;
 
+import android.app.ActionBar;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (savedInstanceState != null) {
             Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
         }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Providing Up Navigation
     }
 
     private void initViewPager() {
