@@ -99,7 +99,7 @@ public class RequestMaker {
     }
 
     public static void getCommentsByPhotoId(VKRequest.VKRequestListener vkRequestListener, int photo_id){
-        VKRequest request = new VKRequest("photos.getComments", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "photo_id", photo_id, "need_likes", 1));
+        VKRequest request = new VKRequest("photos.getComments", VKParameters.from(VKApiConst.OWNER_ID,2314852,"count",50/* VKAccessToken.currentToken().userId,*/, "photo_id", photo_id, "need_likes", 1,"extended",1));
         request.executeWithListener(vkRequestListener);
     }
 

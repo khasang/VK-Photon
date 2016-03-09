@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.presentation.view;
 
 import com.khasang.vkphoto.presentation.model.Comment;
+import com.khasang.vkphoto.presentation.model.VkProfile;
 
 import java.util.List;
 
@@ -9,5 +10,5 @@ import java.util.List;
  */
 public interface VkCommentsView extends VkView{
 
-    void displayVkComments(List<Comment> comments);
+    void displayVkComments(List<Comment> comments, List<VkProfile> profiles);
 }

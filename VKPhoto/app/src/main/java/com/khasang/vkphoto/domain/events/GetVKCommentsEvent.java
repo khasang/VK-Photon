@@ -2,6 +2,7 @@ package com.khasang.vkphoto.domain.events;
 
 import com.khasang.vkphoto.presentation.model.Comment;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.presentation.model.VkProfile;
 
 import java.util.List;
 
@@ -10,8 +11,11 @@ import java.util.List;
  */
 public class GetVKCommentsEvent {
     public final List<Comment> commentsList;
+    public final List<VkProfile> profiles;
 
-    public GetVKCommentsEvent(List<Comment> albumsList) {
+    public GetVKCommentsEvent(List<Comment> albumsList, List<VkProfile> profiles) {
         this.commentsList = albumsList;
+        this.profiles = profiles;
     }
+
 }

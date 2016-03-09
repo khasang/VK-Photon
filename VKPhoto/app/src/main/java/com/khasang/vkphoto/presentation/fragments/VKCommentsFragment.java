@@ -18,6 +18,9 @@ import com.khasang.vkphoto.data.vk.VKCommentSource;
 import com.khasang.vkphoto.domain.adapters.CommentRecyclerViewAdapter;
 import com.khasang.vkphoto.domain.events.GetVKCommentsEvent;
 import com.khasang.vkphoto.presentation.model.Comment;
+import com.khasang.vkphoto.presentation.model.VkProfile;
+import com.khasang.vkphoto.presentation.presenter.VkCommentsPresenter;
+import com.khasang.vkphoto.presentation.presenter.VkCommentsPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkCommentsView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -27,19 +30,12 @@ import java.util.List;
 
 public class VKCommentsFragment extends Fragment implements VkCommentsView{
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String PHOTO_ID = "photoId";
-    public static final String TAG = "comments";
+    public static final String TAG = VKCommentsFragment.class.getSimpleName();
     private int photoId;
     private RecyclerView recyclerView;
-    private List<Comment> coments;
     private CommentRecyclerViewAdapter adapter;
-
-    // TODO: Rename and change types of parameters
-    private List<Comment> comments ;
-
-    private OnFragmentInteractionListener mListener;
-
+    private VkCommentsPresenter presenter;
     public static VKCommentsFragment newInstance(int photoId) {
         Bundle args = new Bundle();
         args.putInt(PHOTO_ID, photoId);
@@ -51,7 +47,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+        presenter = new VkCommentsPresenterImpl(this);
         photoId = getArguments().getInt(PHOTO_ID);
 
     }
@@ -60,42 +56,37 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_comments, container, false);
-
-        VKCommentSource vkCommentSource = new VKCommentSource();
-        vkCommentSource.getCommentsByPhotoId(photoId);
+        presenter.getCommentsByPhotoId(photoId);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
         return view;
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-    @Subscribe
-    public void onGetVKCommentsEvent(GetVKCommentsEvent event){
-        adapter = new CommentRecyclerViewAdapter(event.commentsList);
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        presenter.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onResume();
+        presenter.onStop();
+    }
+
+    @Override
+    public void displayVkComments(List<Comment> comments, List<VkProfile> profiles) {
+        adapter = new CommentRecyclerViewAdapter(comments, profiles);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(itemAnimator);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
-    public void displayVkComments(List<Comment> comments) {
     }
 
     @Override
@@ -108,9 +99,5 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView{
 
     }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }
 

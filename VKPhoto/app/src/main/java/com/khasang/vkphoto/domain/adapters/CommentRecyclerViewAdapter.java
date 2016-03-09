@@ -4,77 +4,54 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.data.RequestMaker;
+import com.khasang.vkphoto.domain.adapters.viewholders.VkCommentsViewHolder;
 import com.khasang.vkphoto.presentation.model.Comment;
-import com.khasang.vkphoto.util.Logger;
+import com.khasang.vkphoto.presentation.model.VkProfile;
 import com.squareup.picasso.Picasso;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKApiUser;
 
-import org.json.JSONException;
-
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
  * Created by admin on 06.03.2016.
  */
-public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder> {
+public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<VkCommentsViewHolder> {
 
     private List<Comment> comments;
-    private VKApiUser user;
+    private List<VkProfile> profiles;
 
-    public CommentRecyclerViewAdapter(List<Comment> comments) {
+    public CommentRecyclerViewAdapter(List<Comment> comments, List<VkProfile> profiles) {
         this.comments = comments;
+        this.profiles = profiles;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public VkCommentsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_item, parent, false);
-        return new ViewHolder(v);
+        return new VkCommentsViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(VkCommentsViewHolder holder, int position) {
         Comment comment = comments.get(position);
-        //getUser(comment.from_id);
-        if (user !=null){
-            Picasso.with(holder.userImage.getContext()).load(user.photo_50).into(holder.userImage);
-            holder.name.setText(user.first_name+" "+user.last_name);
-        }else {
-            Logger.d("where is user!?");
+        VkProfile profile = null;
+        for (VkProfile temp : profiles) {
+            if (temp.id == comment.from_id) {
+                profile = temp;
+            }
+        }
+        if (profile != null) {
+            holder.name.setText(profile.first_name + " " + profile.last_name);
+            Picasso.with(holder.itemView.getContext()).load(profile.photo_100).into(holder.userImage);
         }
         holder.text.setText(comment.text);
-    }
-
-    private void getUser(final int userId) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                RequestMaker.getUserInfoById(new VKRequest.VKRequestListener() {
-                    @Override
-                    public void onComplete(VKResponse response) {
-                        super.onComplete(response);
-                        try {
-                            VKApiUser tempUser = new VKApiUser(response.json.getJSONArray("response").getJSONObject(0));
-                            setUser(tempUser);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, userId);
-            }
-        });
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String dateString = formatter.format(new Date(comment.date * 1000L));
+        holder.date.setText(dateString);
     }
 
     @Override
@@ -82,29 +59,8 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         return comments.size();
     }
 
-    public void setUser(VKApiUser user) {
-        this.user = user;
-    }
-
     public void setCommentsList(List<Comment> commentsList) {
         this.comments = commentsList;
         notifyDataSetChanged();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView name;
-        private TextView text;
-        private ImageView userImage;
-        private TextView date;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-
-            name = (TextView) itemView.findViewById(R.id.recyclerViewName);
-            text = (TextView) itemView.findViewById(R.id.recyclerViewUserText);
-            date = (TextView) itemView.findViewById(R.id.recyclerViewDate);
-            userImage = (ImageView) itemView.findViewById(R.id.recyclerViewUserImage);
-        }
     }
 }
