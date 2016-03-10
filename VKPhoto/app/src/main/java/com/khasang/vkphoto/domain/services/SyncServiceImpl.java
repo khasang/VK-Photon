@@ -195,6 +195,39 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
+    public void deleteAlbumFromDbById(final int photoAlbumId) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
+                List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllAlbums();
+                for (PhotoAlbum localAlbum : localAlbumsList) {
+                    if (localAlbum.getId() == photoAlbumId) {
+                        localAlbumSource.deleteAlbum(localAlbum);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void deleteSelectedVkPhotoAlbums(final List<PhotoAlbum> photoAlbumList) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                for (PhotoAlbum photoAlbum : photoAlbumList) {
+                    deleteAlbumFromDbById(photoAlbum.getId());
+                    deleteVKAlbumById(photoAlbum.getId());
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(340);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
     @Override
     public boolean changeAlbumPrivacy(int i) {
         return false;

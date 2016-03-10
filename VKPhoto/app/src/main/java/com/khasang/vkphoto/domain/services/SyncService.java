@@ -32,6 +32,8 @@ public interface SyncService {
 
     void deleteVKAlbumById(int albumId);
 
+    void deleteSelectedVkPhotoAlbums(List<PhotoAlbum> photoAlbumList);
+
     /**
      * Регистрирует изменения доступа к альбому
      */
