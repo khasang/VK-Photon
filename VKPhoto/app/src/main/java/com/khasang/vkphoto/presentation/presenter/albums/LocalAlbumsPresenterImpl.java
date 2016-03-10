@@ -61,7 +61,7 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     }
 
     @Override
-    public void deleteAlbums(MultiSelector multiSelector) {
+    public void deleteSelectedAlbums(MultiSelector multiSelector) {
         //TODO: implement metod
         Logger.d("user wants to delete some local albums");
 //        albumsInteractor.deleteVkAlbum(multiSelector, albumsView.getAdapterCursor());

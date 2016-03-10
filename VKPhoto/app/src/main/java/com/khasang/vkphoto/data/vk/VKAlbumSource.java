@@ -67,7 +67,7 @@ public class VKAlbumSource {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                Logger.d("Delete VKPhoto successfully");
+                Logger.d("Delete VKPhotoAlbum successfully");
             }
 
             @Override
