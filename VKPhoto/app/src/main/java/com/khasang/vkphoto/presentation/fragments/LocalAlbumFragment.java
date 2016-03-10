@@ -163,7 +163,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
         return photoList;
     }
 
-    @Override
+
     public void deleteSelectedPhoto(MultiSelector multiSelector) {
 
     }
