@@ -19,12 +19,7 @@
         android:id="@+id/albums_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-<<<<<<< HEAD
-        android:layout_below="@+id/tv_count_of_photos" />
-=======
-        android:layout_below="@+id/tv_count_of_albums"
+        android:layout_below="@+id/tv_count_of_photos"
         android:scrollbarThumbVertical="@drawable/scrollbar_thumb"
         android:scrollbars="vertical" />
->>>>>>> develop
-
 </RelativeLayout>

@@ -17,5 +17,4 @@
         <item name="colorControlActivated">@color/colorAccent</item>
         <item name="android:textColorSecondary">@color/vk_share_gray_line</item>
     </style>
-
 </resources>

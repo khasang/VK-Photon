@@ -6,4 +6,20 @@
           android:orderInCategory="100"
           android:title="@string/action_settings"
           app:showAsAction="never"/>
+      <item
+          android:id="@+id/action_search"
+          android:title="@android:string/search_go"
+          android:icon="@drawable/ic_action_search"
+          app:showAsAction="always"
+          app:actionViewClass="android.support.v7.widget.SearchView" />
+      <item
+          android:id="@+id/action_micro"
+          android:title="@string/microphone"
+          android:icon="@drawable/ic_action_mic"
+          app:showAsAction="ifRoom|collapseActionView" />
+      <item
+          android:id="@+id/action_remove"
+          android:title="@string/remove"
+          android:icon="@drawable/ic_action_cancel"
+          app:showAsAction="ifRoom|collapseActionView" />
 </menu>
