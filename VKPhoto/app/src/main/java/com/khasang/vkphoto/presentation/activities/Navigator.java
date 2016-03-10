@@ -18,6 +18,7 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import java.util.List;
 
 public class Navigator {
+    private static int tabPosition = 0;
 
     private static FragmentManager getFragmentManager(Context context) {
         return ((FragmentActivity) context).getSupportFragmentManager();
@@ -71,7 +72,7 @@ public class Navigator {
             }
             changeViewPagerVisibility((Activity) context, true);
             Fragment fragment = fragmentManager.getFragments()
-                    .get(fragmentManager.getBackStackEntryCount() - 1);
+                    .get(tabPosition);
             fragment.onResume();
 
         } else {
@@ -94,5 +95,9 @@ public class Navigator {
                 fragmentContainer.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    public static void setTabPosition(int tabPosition) {
+        Navigator.tabPosition = tabPosition;
     }
 }

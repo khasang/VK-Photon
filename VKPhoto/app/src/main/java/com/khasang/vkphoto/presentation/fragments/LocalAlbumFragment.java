@@ -164,6 +164,11 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
+    public void deleteSelectedPhoto(MultiSelector multiSelector) {
+
+    }
+
+    @Override
     public void showError(String s) {
         ToastUtils.showError(s, getContext());
     }

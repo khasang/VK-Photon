@@ -18,4 +18,8 @@
         <item name="android:textColorSecondary">@color/vk_share_gray_line</item>
     </style>
 
+    <style name="MySettingsTheme">
+        <item name="android:windowBackground">@color/colorPrimaryDark</item>
+    </style>
+
 </resources>

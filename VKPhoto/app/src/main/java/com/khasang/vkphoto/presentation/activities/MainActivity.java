@@ -1,8 +1,10 @@
 package com.khasang.vkphoto.presentation.activities;
 
+import android.app.ActionBar;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
@@ -42,15 +44,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider {
     public static final String TAG = MainActivity.class.getSimpleName();
+    private static String VIEWPAGER_VISIBLE = "viewpager_visible";
+    private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
     private ServiceConnection sConn;
     private boolean bound = false;
     private Intent intent;
     private SyncService syncService;
-    private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private static String VIEWPAGER_VISIBLE = "viewpager_visible";
     private FloatingActionButton fab;
 
     @Override
@@ -64,11 +66,28 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (savedInstanceState != null) {
             Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
         }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Providing Up Navigation
     }
 
     private void initViewPager() {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Navigator.setTabPosition(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -99,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 Logger.d("MainActivity onServiceConnected");
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
-                if (VKAccessToken.currentToken() != null&& viewPager.getVisibility()==View.VISIBLE) {
+                if (VKAccessToken.currentToken() != null && viewPager.getVisibility() == View.VISIBLE) {
                     EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
                 }
             }
@@ -187,6 +206,12 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         Navigator.navigateBack(this);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
+        super.onSaveInstanceState(outState);
+    }
+
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
@@ -214,11 +239,5 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
-        super.onSaveInstanceState(outState);
     }
 }
