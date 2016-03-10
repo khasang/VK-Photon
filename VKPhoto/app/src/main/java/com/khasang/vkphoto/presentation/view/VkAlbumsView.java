@@ -9,9 +9,7 @@ import java.util.List;
 
 public interface VkAlbumsView extends VkView {
     void displayVkSaveAlbum(PhotoAlbum photoAlbum);
-    void displayVkAlbums();
+    void displayAlbums();
     Cursor getAdapterCursor();
-    void removePhotosFromView(MultiSelector multiSelector);
-    List<PhotoAlbum> getAlbumsList();
 }
       

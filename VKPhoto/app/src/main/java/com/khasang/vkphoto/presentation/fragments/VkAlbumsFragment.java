@@ -131,23 +131,12 @@ public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
 
     //VkAlbumsView implementations
     @Override
-    public List<PhotoAlbum> getAlbumsList() {
-        Logger.d("big fat crutch");
-        return null;
-    }
-
-    @Override
-    public void removePhotosFromView(MultiSelector multiSelector) {
-        Logger.d("big fat crutch");
-    }
-
-    @Override
     public void displayVkSaveAlbum(PhotoAlbum photoAlbum) {
         Logger.d("displayVkSaveAlbum");
     }
 
     @Override
-    public void displayVkAlbums() {
+    public void displayAlbums() {
 //        for (VKApiPhotoAlbum photoAlbum : photoAlbumList) {
 //            Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
 //        }

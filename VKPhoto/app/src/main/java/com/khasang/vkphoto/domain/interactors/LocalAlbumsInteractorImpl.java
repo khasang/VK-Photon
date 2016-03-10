@@ -39,23 +39,16 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
     }
 
     @Override
-    public void deleteSelectedLocalAlbums(MultiSelector multiSelector, List<PhotoAlbum> albumsList) {
-        Logger.d("user wants to deleteSelectedLocalAlbums");
+    public void deleteSelectedLocalAlbums(MultiSelector multiSelector, Cursor cursor) {
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
         List<PhotoAlbum> deleteList = new ArrayList<>();
-//        Collections.sort(selectedPositions, Collections.reverseOrder());
-        for (Integer position : selectedPositions)
-            deleteList.add(albumsList.get(position));
-        localAlbumSource.deleteLocalAlbums(deleteList);
-
-//        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-//        List<PhotoAlbum> deleteList = new ArrayList<>();
-//        if (albumsList != null) {
-//            for (int i = 0; i < selectedPositions.size(); i++) {
-//                Integer position = selectedPositions.get(i);
-//                deleteList.add(albumsList.get(position));
-//            }
-//            localAlbumSource.deleteLocalAlbums(deleteList);
-//        }
+        if (cursor != null) {
+            for (Integer position : selectedPositions) {
+                cursor.moveToPosition(position);
+                PhotoAlbum deleteAlbum = new PhotoAlbum(cursor);
+                deleteList.add(deleteAlbum);
+            }
+            localAlbumSource.deleteLocalAlbums(deleteList);
+        }
     }
 }

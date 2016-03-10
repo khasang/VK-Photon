@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -31,16 +32,12 @@ import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
     private PhotoAlbumCursorAdapter adapter;
     private MultiSelector multiSelector;
     private LocalAlbumsPresenter localAlbumsPresenter;
-    private List<PhotoAlbum> albumsList = new ArrayList<>();
+    private TextView tvCountOfAlbums;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,13 +46,12 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
         localAlbumsPresenter = new LocalAlbumsPresenterImpl(this, getContext());
         multiSelector = new MultiSelector();
         getActivity().getSupportLoaderManager().initLoader(1, null, this);
-        if (albumsList.isEmpty())
-            albumsList = localAlbumsPresenter.getAllLocalAlbums();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_albums, container, false);
+        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
         initRecyclerView(view);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {
@@ -128,7 +124,6 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
     public void onResume() {
         super.onResume();
         Logger.d("localAlbumsFragment onResume()");
-        getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
         setOnClickListenerFab();
         adapter.notifyDataSetChanged();
         getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
@@ -150,12 +145,8 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
     }
 
     @Override
-    public void displayVkAlbums() {
-        //TODO: implement metod
-//        for (VKApiPhotoAlbum photoAlbum : photoAlbumList) {
-//            Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
-//        }
-//        getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
+    public void displayAlbums() {
+        getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
     }
 
     @Override
@@ -165,11 +156,6 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
 
 
     //VkView implementations
-    @Override
-    public List<PhotoAlbum> getAlbumsList() {
-        return albumsList;
-    }
-
     @Override
     public void showError(String s) {
         ToastUtils.showError(s, getContext());
@@ -191,19 +177,6 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
                 .show();
     }
 
-    //на самом деле это не метод для удаления альбомов, а только для отображения этих изменений в адаптере
-    //физическое удаление происходит в интерэкторе
-    @Override
-    public void removePhotosFromView(MultiSelector multiSelector) {
-        Logger.d("user wants to removeAlbumsFromView");
-        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-        Collections.sort(selectedPositions, Collections.reverseOrder());
-        for (Integer position : selectedPositions)
-            albumsList.remove((int) position);
-        adapter.notifyDataSetChanged();
-        getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new LocalAlbumsCursorLoader(getContext(), new LocalAlbumSource(getContext()));
@@ -215,6 +188,7 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
             adapter.changeCursor(data);
         }
         int itemCount = adapter.getItemCount();
+        tvCountOfAlbums.setText(getResources().getQuantityString(R.plurals.count_of_albums, itemCount, itemCount));
     }
 
     @Override

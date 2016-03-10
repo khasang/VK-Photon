@@ -14,10 +14,7 @@ import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interactors.LocalAlbumsInteractorImpl;
-import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
-import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
-import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
@@ -64,8 +61,8 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
 
     @Override
     public void deleteAlbums(MultiSelector multiSelector) {
-        albumsInteractor.deleteSelectedLocalAlbums(multiSelector, albumsView.getAlbumsList());
-        albumsView.removePhotosFromView(multiSelector);
+        albumsInteractor.deleteSelectedLocalAlbums(multiSelector, albumsView.getAdapterCursor());
+        albumsView.displayAlbums();
         actionMode.finish();
     }
 
@@ -78,7 +75,7 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void OnLocalAlbumEvent(LocalAlbumEvent localAlbumEvent) {
-//        albumsView.displayVkAlbums();
+//        albumsView.displayAlbums();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

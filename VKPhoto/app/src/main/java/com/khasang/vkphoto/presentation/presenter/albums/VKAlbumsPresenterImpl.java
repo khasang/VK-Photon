@@ -68,7 +68,7 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void OnLocalAlbumEvent(LocalAlbumEvent localAlbumEvent) {
-        vkAlbumsView.displayVkAlbums();
+        vkAlbumsView.displayAlbums();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

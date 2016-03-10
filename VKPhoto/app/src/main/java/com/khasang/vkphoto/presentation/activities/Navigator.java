@@ -53,16 +53,6 @@ public class Navigator {
         FragmentManager fragmentManager = getFragmentManager(context);
         if (fragmentManager.getBackStackEntryCount() > 0) {
             fragmentManager.popBackStack();
-//            changeViewPagerVisibility((Activity) context, true);
-//            List<Fragment> fragments = fragmentManager.getFragments();
-//            Fragment fragment = fragments.get(fragments.size() - 1);
-//            if (fragment instanceof VKAlbumFragment)
-//                fragment = fragments.get(0);
-//            else if (fragment instanceof LocalAlbumFragment)
-//                fragment = fragments.get(1);
-//            fragment.onResume();
-
-            //не понятная и не работающая реализация
             List<Fragment> fragments = fragmentManager.getFragments();
             for (int i = fragments.size() - 2; i >= 0; i--) {
                 Fragment fragment = fragments.get(i);
