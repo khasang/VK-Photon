@@ -194,7 +194,8 @@ public class SyncServiceImpl extends Service implements SyncService {
             }
         });
     }
-
+    
+    @Override
     public void deleteAlbumFromDbById(final int photoAlbumId) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
