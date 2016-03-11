@@ -2,7 +2,6 @@ package com.khasang.vkphoto.domain.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +15,12 @@ import com.khasang.vkphoto.presentation.presenter.albums.AlbumsPresenter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class PhotoAlbumCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbumViewHolder> {
+public class PhotoAlbumsCursorAdapter extends CursorRecyclerViewAdapter<PhotoAlbumViewHolder> {
     final private ExecutorService executor;
     final private MultiSelector multiSelector;
     private AlbumsPresenter albumsPresenter;
-    private ActionMode actionMode=null;
 
-    public PhotoAlbumCursorAdapter(Context context, Cursor cursor, MultiSelector multiSelector, AlbumsPresenter albumsPresenter) {
+    public PhotoAlbumsCursorAdapter(Context context, Cursor cursor, MultiSelector multiSelector, AlbumsPresenter albumsPresenter) {
         super(context, cursor);
         executor = Executors.newCachedThreadPool();
         this.multiSelector = multiSelector;

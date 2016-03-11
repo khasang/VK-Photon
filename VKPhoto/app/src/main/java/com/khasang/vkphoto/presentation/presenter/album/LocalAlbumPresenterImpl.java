@@ -12,10 +12,7 @@ import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
-import com.khasang.vkphoto.domain.interactors.VkPhotosInteractor;
-import com.khasang.vkphoto.domain.interactors.VkPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
-import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
@@ -68,9 +65,8 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     }
 
     @Override
-    public void checkActionModeFinish(MultiSelector multiSelector, Context context) {
+    public void checkActionModeFinish(MultiSelector multiSelector) {
         if (multiSelector.getSelectedPositions().size() == 0) {
-            ((FabProvider) context).getFloatingActionButton().show();
             if (actionMode != null) actionMode.finish();
         }
     }

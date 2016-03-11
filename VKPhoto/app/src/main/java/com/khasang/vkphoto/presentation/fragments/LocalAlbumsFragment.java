@@ -23,7 +23,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.LocalAlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
-import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
+import com.khasang.vkphoto.domain.adapters.PhotoAlbumsCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenter;
@@ -34,7 +34,7 @@ import com.khasang.vkphoto.util.ToastUtils;
 
 public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
-    private PhotoAlbumCursorAdapter adapter;
+    private PhotoAlbumsCursorAdapter adapter;
     private MultiSelector multiSelector;
     private LocalAlbumsPresenter localAlbumsPresenter;
     private TextView tvCountOfAlbums;
@@ -93,7 +93,7 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
 
     private boolean initAdapter(Cursor cursor) {
         if (adapter == null) {
-            adapter = new PhotoAlbumCursorAdapter(getContext(), cursor, multiSelector, localAlbumsPresenter);
+            adapter = new PhotoAlbumsCursorAdapter(getContext(), cursor, multiSelector, localAlbumsPresenter);
             return true;
         }
         return false;

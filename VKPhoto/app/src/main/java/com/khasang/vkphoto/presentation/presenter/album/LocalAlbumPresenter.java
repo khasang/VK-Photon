@@ -16,5 +16,6 @@ public interface LocalAlbumPresenter extends Presenter {
     List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum);
     void deleteSelectedLocalPhotos(MultiSelector multiSelector);
     void selectPhoto(MultiSelector multiSelector, final AppCompatActivity activity);
-    void checkActionModeFinish(MultiSelector multiSelector, Context context);
+
+    void checkActionModeFinish(MultiSelector multiSelector);
 }

@@ -80,7 +80,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
             Logger.d("wtf where is album?");
         }
         albumId = photoAlbum.id;
-        GridView gridview = (GridView) view.findViewById(R.id.gridView);
+        GridView gridview = (GridView) view.findViewById(R.id.photo_container);
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

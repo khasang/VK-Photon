@@ -6,19 +6,19 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.domain.adapters.LocalPhotoAdapter;
+import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -27,6 +27,7 @@ import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     private TextView tvCountOfPhotos;
     private LocalAlbumPresenter localAlbumPresenter;
     private List<Photo> photoList = new ArrayList<>();
-    private LocalPhotoAdapter adapter;
+    private PhotoAlbumAdapter adapter;
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
 
@@ -64,10 +65,10 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (photoAlbum != null) Logger.d("photoalbum " + photoAlbum.title);
         else Logger.d("wtf where is album?");
-
-        if (photoList.isEmpty())
+        if (photoList.isEmpty()) {
             photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum);
-        adapter = new LocalPhotoAdapter(photoList, multiSelector, localAlbumPresenter);
+        }
+        adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
 
@@ -81,17 +82,20 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
             }
         }
 
-        GridView gridview = (GridView) view.findViewById(R.id.gridView);
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getContext(), String.valueOf(photoList.get(position).filePath), Toast.LENGTH_SHORT).show();
-            }
-        });
-        adapter.setLoaded(false);
-        gridview.setAdapter(adapter);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.photo_container);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setAdapter(adapter);
+//        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(getContext(), String.valueOf(photoList.get(position).filePath), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        adapter.setLoaded(false);
+//        gridview.setAdapter(adapter);
         tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
-
+        tvCountOfPhotos.setText(getString(R.string.count_of_photos, photoList.size()));
         return view;
     }
 

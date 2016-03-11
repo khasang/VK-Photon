@@ -10,10 +10,7 @@ import com.bignerdranch.android.multiselector.SelectableHolder;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
-import com.khasang.vkphoto.util.BitmapTransform;
-import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
-import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
@@ -95,7 +92,7 @@ public class LocalPhotoViewHolder implements SelectableHolder, View.OnLongClickL
             Logger.d(String.valueOf(this.hashCode()));
 //            multiSelector.bindHolder(this, adapterPosition, -1);
             multiSelector.tapSelection(this);
-            localAlbumPresenter.checkActionModeFinish(multiSelector, v.getContext());
+            localAlbumPresenter.checkActionModeFinish(multiSelector);
         } else Logger.d("onClick");
     }
 
@@ -103,9 +100,8 @@ public class LocalPhotoViewHolder implements SelectableHolder, View.OnLongClickL
         Picasso picasso = Picasso.with(imageView.getContext());
         Logger.d("LocalPhotoViewHolder " + "loading file://" + photo.filePath);
         RequestCreator requestCreator = picasso.load("file://" + photo.filePath);
-        requestCreator.transform(new BitmapTransform(Constants.MAX_WIDTH, Constants.MAX_HEIGHT))
-                .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .resize(200, 200)
+        requestCreator
+                .fit()
                 .centerInside()//сохраняет пропорции
                 .error(R.drawable.vk_share_send_button_background)
                 .into(imageView);
