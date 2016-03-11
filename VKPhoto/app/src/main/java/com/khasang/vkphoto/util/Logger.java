@@ -6,7 +6,7 @@ import android.util.Log;
  * Created by aleksandrlihovidov on 07.02.16.
  */
 public class Logger {
-    public static final String TAG = "LOG";
+    public static final String TAG = "VKphotoLog";
     private static boolean isDebug = true;
 
     public static void d(String message) {
