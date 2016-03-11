@@ -58,7 +58,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        localAlbumPresenter = new LocalAlbumPresenterImpl(this);
+        localAlbumPresenter = new LocalAlbumPresenterImpl(this, getContext());
         multiSelector = new MultiSelector();
 
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
@@ -66,7 +66,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
         else Logger.d("wtf where is album?");
 
         if (photoList.isEmpty())
-            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum, getContext());
+            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum);
         adapter = new LocalPhotoAdapter(photoList, multiSelector, localAlbumPresenter);
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
@@ -74,7 +74,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vk_album, container, false);
+        View view = inflater.inflate(R.layout.fragment_album, container, false);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
                 localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
@@ -161,11 +161,6 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     @Override
     public List<Photo> getPhotoList() {
         return photoList;
-    }
-
-    @Override
-    public void deleteSelectedPhoto(MultiSelector multiSelector) {
-
     }
 
     @Override

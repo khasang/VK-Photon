@@ -12,7 +12,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
-import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
+import com.khasang.vkphoto.presentation.fragments.VKAlbumsFragment;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 import java.util.List;
@@ -56,7 +56,7 @@ public class Navigator {
             List<Fragment> fragments = fragmentManager.getFragments();
             for (int i = fragments.size() - 2; i >= 0; i--) {
                 Fragment fragment = fragments.get(i);
-                if (!(fragment instanceof VkAlbumsFragment) && !(fragment instanceof LocalAlbumsFragment)) {
+                if (!(fragment instanceof VKAlbumsFragment) && !(fragment instanceof LocalAlbumsFragment)) {
                     return;
                 }
             }
@@ -64,6 +64,7 @@ public class Navigator {
             Fragment fragment = fragmentManager.getFragments()
                     .get(tabPosition);
             fragment.onResume();
+
         } else {
             ((Activity) context).finish();
         }

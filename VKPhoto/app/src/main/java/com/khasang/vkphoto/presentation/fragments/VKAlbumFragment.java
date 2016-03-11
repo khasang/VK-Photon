@@ -67,7 +67,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vk_album, container, false);
+        View view = inflater.inflate(R.layout.fragment_album, container, false);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
                 vkAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
@@ -128,7 +128,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     @Override
     public void onStart() {
         super.onStart();
-        Logger.d("VkAlbumFragment onStart");
+        Logger.d("VkAlbumFragment onStart()");
         vkAlbumPresenter.onStart();
         if (photoList.isEmpty()) {
             vkAlbumPresenter.getPhotosByAlbumId(albumId);
@@ -138,14 +138,14 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     @Override
     public void onResume() {
         super.onResume();
-        Logger.d("VKAlbumFragment onResume");
+        Logger.d("VKAlbumFragment onResume()");
         setOnClickListenerFab(getView());
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Logger.d("VkAlbumFragment onStop");
+        Logger.d("VkAlbumFragment onStop()");
         vkAlbumPresenter.onStop();
     }
 

@@ -16,12 +16,12 @@ import java.util.List;
 public class LocalPhotosInteractorImpl implements LocalPhotosInteractor {
     LocalPhotoSource localPhotoSource;
 
-    public LocalPhotosInteractorImpl() {
+    public LocalPhotosInteractorImpl(Context context) {
+        localPhotoSource = new LocalPhotoSource(context);
     }
 
     @Override
-    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum, Context context) {
-        localPhotoSource = new LocalPhotoSource(context);
+    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
         return localPhotoSource.getPhotosByAlbumPath(photoAlbum.filePath);
     }
 

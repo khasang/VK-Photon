@@ -35,15 +35,15 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     private LocalPhotosInteractor localPhotosInteractor;
     private ActionMode actionMode;
 
-    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView) {
+    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView, Context context) {
         this.albumView = vkAlbumView;
-        localPhotosInteractor = new LocalPhotosInteractorImpl();
+        localPhotosInteractor = new LocalPhotosInteractorImpl(context);
     }
 
 
     @Override
-    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum, Context context) {
-        return localPhotosInteractor.getPhotosByAlbum(photoAlbum, context);
+    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
+        return localPhotosInteractor.getPhotosByAlbum(photoAlbum);
     }
 
     @Override
