@@ -76,6 +76,11 @@ public class LocalPhotoSource {
         for (Photo photo: photoList) {
             Logger.d("now deleting file: " + photo.filePath);
             File file = new File(photo.filePath);
+            //TODO: проверить, не является ли удаляемый файл обложкой альбома
+//            PhotoAlbum album = new LocalAlbumSource().getAllLocalAlbums();
+//            if (album.thumbFilePath.equals(photo.filePath)){
+                //TODO: назначить новую обложку альбому
+//            }
             if (!file.delete())
                 Logger.d("error while deleting file: " + photo.filePath);
         }

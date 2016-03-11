@@ -1,11 +1,14 @@
 package com.khasang.vkphoto.domain.adapters.viewholders;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -63,9 +66,9 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     private void loadThumb() {
         if (!TextUtils.isEmpty(photoAlbum.thumbFilePath)) {
             File file = new File(photoAlbum.thumbFilePath);
-            if (file.exists()) {
-                loadPhoto(file);
-            }
+            if (!file.exists())
+                file = albumsPresenter.getAlbumThumb(localDataSource.getPhotoSource(), photoAlbum, executor);
+            loadPhoto(file);
         } else {
             executor.execute(new Runnable() {
                 @Override
@@ -106,7 +109,9 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Picasso.with(albumThumbImageView.getContext()).load(file).fit().centerCrop().error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
+                Picasso.with(albumThumbImageView.getContext()).load(file).fit().centerCrop()
+                        .error(R.drawable.vk_share_send_button_background)
+                        .into(albumThumbImageView);
             }
         });
     }
@@ -115,7 +120,9 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Picasso.with(albumThumbImageView.getContext()).load(resource).fit().centerCrop().error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
+                Picasso.with(albumThumbImageView.getContext()).load(resource).fit().centerCrop()
+                        .error(R.drawable.vk_share_send_button_background)
+                        .into(albumThumbImageView);
             }
         });
     }

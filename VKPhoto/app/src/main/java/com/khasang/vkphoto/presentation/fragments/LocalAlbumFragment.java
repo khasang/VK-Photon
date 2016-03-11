@@ -58,7 +58,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        localAlbumPresenter = new LocalAlbumPresenterImpl(this, getContext());
+        localAlbumPresenter = new LocalAlbumPresenterImpl(this);
         multiSelector = new MultiSelector();
 
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
@@ -66,7 +66,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
         else Logger.d("wtf where is album?");
 
         if (photoList.isEmpty())
-            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum);
+            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum, getContext());
         adapter = new LocalPhotoAdapter(photoList, multiSelector, localAlbumPresenter);
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
@@ -178,7 +178,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        localAlbumPresenter.deleteSelectedLocalPhotos(multiSelector);
+                        localAlbumPresenter.deleteSelectedLocalPhotos(multiSelector, getContext());
                     }
                 })
                 .show();

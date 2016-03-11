@@ -32,18 +32,16 @@ import java.util.List;
  */
 public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     private VkAlbumView albumView;
-    private LocalPhotosInteractor localPhotosInteractor;
     private ActionMode actionMode;
 
-    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView, Context context) {
+    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView) {
         this.albumView = vkAlbumView;
-        localPhotosInteractor = new LocalPhotosInteractorImpl(context);
     }
 
 
     @Override
-    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
-        return localPhotosInteractor.getPhotosByAlbum(photoAlbum);
+    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum, Context context) {
+        return new LocalPhotosInteractorImpl(context).getPhotosByAlbum(photoAlbum);
     }
 
     @Override
@@ -76,8 +74,8 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     }
 
     @Override
-    public void deleteSelectedLocalPhotos(MultiSelector multiSelector) {
-        localPhotosInteractor.deleteSelectedLocalPhotos(multiSelector, albumView.getPhotoList());
+    public void deleteSelectedLocalPhotos(MultiSelector multiSelector, Context context) {
+        new LocalPhotosInteractorImpl(context).deleteSelectedLocalPhotos(multiSelector, albumView.getPhotoList());
         albumView.removePhotosFromView(multiSelector);
         actionMode.finish();
     }

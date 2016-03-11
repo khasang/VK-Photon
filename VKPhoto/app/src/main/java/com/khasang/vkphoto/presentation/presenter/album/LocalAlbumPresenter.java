@@ -13,8 +13,8 @@ import java.util.List;
  * Created by TAU on 05.03.2016.
  */
 public interface LocalAlbumPresenter extends Presenter {
-    List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum);
-    void deleteSelectedLocalPhotos(MultiSelector multiSelector);
+    List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum, Context context);
+    void deleteSelectedLocalPhotos(MultiSelector multiSelector, Context context);
     void selectPhoto(MultiSelector multiSelector, final AppCompatActivity activity);
     void checkActionModeFinish(MultiSelector multiSelector, Context context);
 }
