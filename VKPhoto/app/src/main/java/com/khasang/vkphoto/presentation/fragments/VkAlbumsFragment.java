@@ -34,15 +34,15 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKPrivacy;
 
-public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
-    public static final String TAG = VKAlbumsFragment.class.getSimpleName();
+public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
+    public static final String TAG = VkAlbumsFragment.class.getSimpleName();
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
     private VKAlbumsPresenter vKAlbumsPresenter;
     private PhotoAlbumsCursorAdapter adapter;
     private MultiSelector multiSelector;
     private TextView tvCountOfAlbums;
 
-    public VKAlbumsFragment() {
+    public VkAlbumsFragment() {
     }
 
     @Override
