@@ -183,18 +183,14 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
 
     private List<String> getNamesSelectedAlbums(MultiSelector multiSelector) {
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        List<String> names = new ArrayList<>();
         Cursor cursor = getAdapterCursor();
         if (cursor != null) {
             for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
                 Integer position = selectedPositions.get(i);
                 cursor.moveToPosition(position);
-                photoAlbumList.add(new PhotoAlbum(cursor));
+                names.add(new PhotoAlbum(cursor).toString());
             }
-        }
-        List<String> names = new ArrayList<>();
-        for (PhotoAlbum photoAlbum : photoAlbumList) {
-            names.add(photoAlbum.toString());
         }
         return names;
     }
