@@ -34,6 +34,8 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKPrivacy;
 
+import java.util.List;
+
 public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = VkAlbumsFragment.class.getSimpleName();
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
@@ -152,8 +154,20 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
 
     @Override
     public void confirmDelete(final MultiSelector multiSelector) {
+        List<String> names = vKAlbumsPresenter.getNamesSelectedAlbums(multiSelector);
+        StringBuilder content = new StringBuilder();
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question, names.size()));
+        for (int i = 0; i < names.size(); i++) {
+            content.append(names.get(i));
+            if (i != names.size() - 1) {
+                content.append(", ");
+            }
+        }
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_2, names.size()));
+//        content.append(" будут полностью удалены!" + "\n" + "Вы уверены?");
         new MaterialDialog.Builder(getContext())
-                .content(R.string.sync_delete_album_question)
+//                .content(R.string.sync_delete_album_question)
+                .content(content)
                 .positiveText(R.string.delete)
                 .negativeText(R.string.cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {

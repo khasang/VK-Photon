@@ -29,6 +29,8 @@ import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
+import java.util.List;
+
 public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     private PhotoAlbumCursorAdapter adapter;
     private MultiSelector multiSelector;
@@ -150,8 +152,11 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
 
     @Override
     public void confirmDelete(final MultiSelector multiSelector) {
+        StringBuilder content = new StringBuilder();
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question, multiSelector.getSelectedPositions().size()));
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_2, multiSelector.getSelectedPositions().size()));
         new MaterialDialog.Builder(getContext())
-                .content(R.string.sync_delete_album_question)
+                .content(content)
                 .positiveText(R.string.delete)
                 .negativeText(R.string.cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
