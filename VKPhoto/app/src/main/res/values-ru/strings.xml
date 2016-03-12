@@ -29,13 +29,19 @@
     <string name="count_of_photos">Количество фотографий: %d</string>
     <string name="delete">Удалить</string>
     <string name="hello_blank_fragment"></string>
-    <plurals name="sync_delete_album_question">
+    <plurals name="sync_delete_albums_question_title">
+        <item quantity="one" tools:ignore="ImpliedQuantity">Удалить альбом?</item>
+        <item quantity="few">Удалить альбомы?</item>
+        <item quantity="many">Удалить альбомы?</item>
+        <item quantity="other">Удалить альбомы?</item>
+    </plurals>
+    <plurals name="sync_delete_album_question_content_1">
         <item quantity="one" tools:ignore="ImpliedQuantity">Альбом&#160;</item>
         <item quantity="few">Альбомы&#160;</item>
         <item quantity="many">Альбомы&#160;</item>
         <item quantity="other">Альбомы&#160;</item>
     </plurals>
-    <plurals name="sync_delete_album_question_2">
+    <plurals name="sync_delete_album_question_content_2">
         <item quantity="one" tools:ignore="ImpliedQuantity">&#160;будет полностью удален!\nВы уверены?</item>
         <item quantity="few">&#160;будут полностью удалены!\nВы уверены?</item>
         <item quantity="many">&#160;будут полностью удалены!\nВы уверены?</item>
