@@ -34,6 +34,7 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKPrivacy;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
@@ -154,19 +155,20 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
 
     @Override
     public void confirmDelete(final MultiSelector multiSelector) {
-        List<String> names = vKAlbumsPresenter.getNamesSelectedAlbums(multiSelector);
+        List<String> names = getNamesSelectedAlbums(multiSelector);
         StringBuilder content = new StringBuilder();
-        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question, names.size()));
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_1, names.size()));
+        content.append(" ");
         for (int i = 0; i < names.size(); i++) {
             content.append(names.get(i));
             if (i != names.size() - 1) {
                 content.append(", ");
             }
         }
-        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_2, names.size()));
-//        content.append(" будут полностью удалены!" + "\n" + "Вы уверены?");
+        content.append(" ");
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_2, names.size()));
         new MaterialDialog.Builder(getContext())
-//                .content(R.string.sync_delete_album_question)
+                .title(getResources().getQuantityString(R.plurals.sync_delete_albums_question_title, names.size()))
                 .content(content)
                 .positiveText(R.string.delete)
                 .negativeText(R.string.cancel)
@@ -177,6 +179,24 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
                     }
                 })
                 .show();
+    }
+
+    private List<String> getNamesSelectedAlbums(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        Cursor cursor = getAdapterCursor();
+        if (cursor != null) {
+            for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
+                Integer position = selectedPositions.get(i);
+                cursor.moveToPosition(position);
+                photoAlbumList.add(new PhotoAlbum(cursor));
+            }
+        }
+        List<String> names = new ArrayList<>();
+        for (PhotoAlbum photoAlbum : photoAlbumList) {
+            names.add(photoAlbum.toString());
+        }
+        return names;
     }
 
     @Override
