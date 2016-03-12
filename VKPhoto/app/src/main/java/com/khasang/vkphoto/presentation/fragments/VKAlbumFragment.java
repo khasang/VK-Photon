@@ -6,19 +6,20 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.domain.adapters.VKPhotoAdapter;
+import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
@@ -43,7 +44,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     private VKAlbumPresenter vkAlbumPresenter;
     private List<Photo> photoList = new ArrayList<>();
     private int albumId;
-    private VKPhotoAdapter adapter;
+    private PhotoAlbumAdapter adapter;
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
 
@@ -61,7 +62,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         setRetainInstance(true);
         vkAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
-        adapter = new VKPhotoAdapter(photoList, multiSelector, vkAlbumPresenter);
+        adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter);
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
     @Nullable
@@ -80,18 +81,10 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
             Logger.d("wtf where is album?");
         }
         albumId = photoAlbum.id;
-        GridView gridview = (GridView) view.findViewById(R.id.photo_container);
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                vkAlbumPresenter.deleteSelectedVkPhotos(photoList.get(position).getId());
-//                photoList.remove(position);
-//                adapter.notifyDataSetChanged();
-//                EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
-            }
-        });
-        adapter.setLoaded(false);
-        gridview.setAdapter(adapter);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.photo_container);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setAdapter(adapter);
         tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
         return view;
     }
@@ -185,7 +178,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        vkAlbumPresenter.deleteSelectedVkPhotos(multiSelector);
+                        vkAlbumPresenter.deleteSelectedPhotos(multiSelector);
                     }
                 })
                 .show();

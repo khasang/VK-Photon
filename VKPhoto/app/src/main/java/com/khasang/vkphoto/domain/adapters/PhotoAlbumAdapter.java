@@ -2,6 +2,7 @@ package com.khasang.vkphoto.domain.adapters;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.Photo;
-import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
+import com.khasang.vkphoto.presentation.presenter.album.AlbumPresenter;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -20,18 +21,18 @@ import java.util.List;
 public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.ViewHolder> {
     private MultiSelector multiSelector;
     private List<Photo> photoList;
-    private LocalAlbumPresenter localAlbumPresenter;
+    private AlbumPresenter albumPresenter;
 
-    public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, LocalAlbumPresenter localAlbumPresenter) {
+    public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter) {
         this.multiSelector = multiSelector;
         this.photoList = photoList;
-        this.localAlbumPresenter = localAlbumPresenter;
+        this.albumPresenter = albumPresenter;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_photo, parent, false);
-        return new ViewHolder(view, multiSelector, localAlbumPresenter);
+        return new ViewHolder(view, multiSelector, albumPresenter);
     }
 
     @Override
@@ -55,10 +56,10 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         final private CheckBox checkBox;
         private MultiSelector multiSelector;
         private boolean selectable;
-        private LocalAlbumPresenter localAlbumPresenter;
+        private AlbumPresenter localAlbumPresenter;
         private Photo photo;
 
-        public ViewHolder(View itemView, MultiSelector multiSelector, LocalAlbumPresenter localAlbumPresenter) {
+        public ViewHolder(View itemView, MultiSelector multiSelector, AlbumPresenter localAlbumPresenter) {
             super(itemView, multiSelector);
             this.multiSelector = multiSelector;
             this.localAlbumPresenter = localAlbumPresenter;
@@ -95,8 +96,13 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
 
         public void bindPhotoAlbum(Photo photo) {
             this.photo = photo;
-            Picasso.with(imageView.getContext()).load("file://" + photo.filePath).fit()
-                    .centerCrop().error(R.drawable.vk_share_send_button_background).into(imageView);
+            if (!TextUtils.isEmpty(photo.filePath)) {
+                Picasso.with(imageView.getContext()).load("file://" + photo.filePath).fit()
+                        .centerCrop().error(R.drawable.vk_share_send_button_background).into(imageView);
+            } else {
+                Picasso.with(imageView.getContext()).load(photo.getUrlToMaxPhoto()).fit()
+                        .centerCrop().error(R.drawable.vk_share_send_button_background).into(imageView);
+            }
 
         }
 
@@ -106,7 +112,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
                 multiSelector.tapSelection(this);
                 localAlbumPresenter.checkActionModeFinish(multiSelector);
             } else {
-//                        localAlbumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
+//                        albumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
             }
         }
 

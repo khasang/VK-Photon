@@ -14,11 +14,11 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VkPhotosInteractorImpl implements VkPhotosInteractor {
+public class VKAlbumInteractorImpl implements VKAlbumInteractor {
     private SyncServiceProvider syncServiceProvider;
     private SyncService syncService;
 
-    public VkPhotosInteractorImpl(SyncServiceProvider syncServiceProvider) {
+    public VKAlbumInteractorImpl(SyncServiceProvider syncServiceProvider) {
         this.syncServiceProvider = syncServiceProvider;
         setSyncService();
     }

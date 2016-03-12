@@ -32,9 +32,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by TAU on 27.02.2016.
- */
 public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     public static final String TAG = LocalAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
@@ -86,14 +83,6 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
-//        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(getContext(), String.valueOf(photoList.get(position).filePath), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        adapter.setLoaded(false);
-//        gridview.setAdapter(adapter);
         tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photoList.size()));
         return view;
@@ -182,7 +171,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        localAlbumPresenter.deleteSelectedLocalPhotos(multiSelector);
+                        localAlbumPresenter.deleteSelectedPhotos(multiSelector);
                     }
                 })
                 .show();

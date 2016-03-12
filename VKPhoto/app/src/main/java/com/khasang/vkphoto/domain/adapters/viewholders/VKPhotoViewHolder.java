@@ -81,7 +81,7 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
             Logger.d(String.valueOf(this.hashCode()));
 //            multiSelector.bindHolder(this, adapterPosition, -1);
             multiSelector.tapSelection(this);
-            vkAlbumPresenter.checkActionModeFinish(multiSelector, v.getContext());
+            vkAlbumPresenter.checkActionModeFinish(multiSelector);
         } else {
             Logger.d("onClick");
         }

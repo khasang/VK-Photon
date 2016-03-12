@@ -1,22 +1,5 @@
 package com.khasang.vkphoto.presentation.presenter.album;
 
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+public interface VKAlbumPresenter extends AlbumPresenter {
 
-import com.bignerdranch.android.multiselector.MultiSelector;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.presenter.Presenter;
-
-import java.util.List;
-
-public interface VKAlbumPresenter extends Presenter {
-    void getPhotosByAlbumId(int albumId);
-
-    void deleteSelectedVkPhotos(MultiSelector multiSelector);
-
-    void selectPhoto(MultiSelector multiSelector, final AppCompatActivity activity);
-
-    void checkActionModeFinish(MultiSelector multiSelector, Context context);
-
-    void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum);
 }
