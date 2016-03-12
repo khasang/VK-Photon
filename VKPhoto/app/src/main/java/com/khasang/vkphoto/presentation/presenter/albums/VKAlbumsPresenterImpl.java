@@ -25,7 +25,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbumsPresenter {
@@ -60,11 +59,6 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
     @Override
     public void addAlbum(String title, String description, int privacy, int commentPrivacy) {
         vkAlbumsInteractor.addAlbum(title, description, privacy, commentPrivacy);
-    }
-
-    @Override
-    public List<String> getNamesSelectedAlbums(MultiSelector multiSelector) {
-        return  vkAlbumsInteractor.getNamesSelectedAlbums(multiSelector, vkAlbumsView.getAdapterCursor());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
