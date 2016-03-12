@@ -14,6 +14,7 @@ import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
+import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -194,16 +195,19 @@ public class SyncServiceImpl extends Service implements SyncService {
             }
         });
     }
-    
+
     @Override
     public void deleteAlbumFromDbById(final int photoAlbumId) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
                 LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
-                List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllAlbums();
+                List<PhotoAlbum> localAlbumsList = localAlbumSource.getAllAlbums();
                 for (PhotoAlbum localAlbum : localAlbumsList) {
                     if (localAlbum.getId() == photoAlbumId) {
+                        if (localAlbum.syncStatus == Constants.SYNC_STARTED) {
+                            FileManager.deleteAlbumDirectory(localAlbum.filePath);
+                        }
                         localAlbumSource.deleteAlbum(localAlbum);
                     }
                 }
