@@ -9,6 +9,7 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenterImpl;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -30,4 +31,6 @@ public interface VkAlbumsInteractor {
     File downloadAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor);
 
     void deleteVkAlbum(MultiSelector multiSelector, Cursor cursor);
+
+    List<String> getNamesSelectedAlbums(MultiSelector multiSelector, Cursor cursor);
 }

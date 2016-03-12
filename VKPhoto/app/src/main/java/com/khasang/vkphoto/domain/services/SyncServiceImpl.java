@@ -248,6 +248,15 @@ public class SyncServiceImpl extends Service implements SyncService {
         return null;
     }
 
+    @Override
+    public List<String> getNamesSelectedAlbums(List<PhotoAlbum> photoAlbumList) {
+        List<String> names = new ArrayList<>();
+        for (PhotoAlbum photoAlbum : photoAlbumList) {
+            names.add(photoAlbum.toString());
+        }
+        return names;
+    }
+
     public class MyBinder extends Binder {
         public SyncService getService() {
             return SyncServiceImpl.this;

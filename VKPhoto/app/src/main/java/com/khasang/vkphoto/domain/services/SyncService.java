@@ -56,5 +56,6 @@ public interface SyncService {
      */
     PhotoAlbum createAlbum();
 
+    List<String> getNamesSelectedAlbums(List<PhotoAlbum> photoAlbumList);
 }
       

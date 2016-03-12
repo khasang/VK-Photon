@@ -111,6 +111,23 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
         }
     }
 
+    @Override
+    public List<String> getNamesSelectedAlbums(MultiSelector multiSelector, Cursor cursor) {
+        if (checkSyncService()) {
+            List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+            List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+            if (cursor != null) {
+                for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
+                    Integer position = selectedPositions.get(i);
+                    cursor.moveToPosition(position);
+                    photoAlbumList.add(new PhotoAlbum(cursor));
+                }
+                return syncService.getNamesSelectedAlbums(photoAlbumList);
+            }
+        }
+        return null;
+    }
+
     boolean checkSyncService() {
         for (int i = 0; i < 4; i++) {
             try {
