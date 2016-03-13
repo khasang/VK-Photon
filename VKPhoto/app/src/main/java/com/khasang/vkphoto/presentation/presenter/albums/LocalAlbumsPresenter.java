@@ -1,9 +1,10 @@
 package com.khasang.vkphoto.presentation.presenter.albums;
 
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import java.util.List;
+import android.content.Context;
+
+import com.bignerdranch.android.multiselector.MultiSelector;
 
 public interface LocalAlbumsPresenter extends AlbumsPresenter {
     void addAlbum(String title, String thumbPath);
-    List<PhotoAlbum> getAllLocalAlbums();
+    void deleteAlbums(MultiSelector multiSelector, Context context);
 }

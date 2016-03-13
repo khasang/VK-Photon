@@ -20,8 +20,6 @@ public interface AlbumsPresenter extends Presenter {
 
     File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor);
 
-    void deleteAlbums(MultiSelector multiSelector);
-
     void selectAlbum(MultiSelector multiSelector, AppCompatActivity activity);
 
     void exportAlbums(MultiSelector multiSelector);

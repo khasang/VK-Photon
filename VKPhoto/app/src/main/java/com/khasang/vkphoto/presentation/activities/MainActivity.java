@@ -1,10 +1,10 @@
 package com.khasang.vkphoto.presentation.activities;
 
-import android.app.ActionBar;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FloatingActionButton fab;
+    public static int heightOfAlbumThumb = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Providing Up Navigation
+        getHeightOfAlbumThumb(getApplicationContext());
     }
 
     private void initViewPager() {
@@ -210,6 +213,23 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
         super.onSaveInstanceState(outState);
+    }
+
+    public void getHeightOfAlbumThumb(Context context) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        //1 dp = 1 пиксель при density = 160dpi (mdpi)
+        int screenWidth = Math.round(metrics.widthPixels);
+        int paddingsLR = 60 * 2;
+
+        int widthOfAlbumThumb;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            widthOfAlbumThumb = (screenWidth - paddingsLR - 40) / 2; // 2 колонки в ландшафте
+        else
+            widthOfAlbumThumb = screenWidth - paddingsLR;
+
+        heightOfAlbumThumb = widthOfAlbumThumb * 9 / 16;
+        Logger.d("screenWidth=" + screenWidth);
+        Logger.d("heightOfAlbumThumb=" + heightOfAlbumThumb);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

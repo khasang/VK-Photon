@@ -7,7 +7,6 @@ import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Logger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,22 +23,18 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
     public void syncLocalAlbums(MultiSelector multiSelector, Cursor cursor) {
         Logger.d("user wants to syncLocalAlbums");
         Logger.d("no body");
+        //TODO: implement metod
     }
 
-    @Override
-    public List<PhotoAlbum> getAllLocalAlbums() {
-        Logger.d("user wants to getAllLocalAlbums");
-        return localAlbumSource.getAllLocalAlbums();
-    }
-
-    @Override
-    public void addAlbum(String title, String description, int privacy, int commentPrivacy) {
+   @Override
+    public void addAlbum(String title, String description) {
         Logger.d("user wants to addAlbum");
         Logger.d("no body");
-    }
+       //TODO: implement metod
+   }
 
     @Override
-    public void deleteSelectedLocalAlbums(MultiSelector multiSelector, Cursor cursor) {
+    public void deleteSelectedLocalAlbums(MultiSelector multiSelector, Cursor cursor, Context context) {
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
         List<PhotoAlbum> deleteList = new ArrayList<>();
         if (cursor != null) {
@@ -48,7 +43,7 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
                 PhotoAlbum deleteAlbum = new PhotoAlbum(cursor);
                 deleteList.add(deleteAlbum);
             }
-            localAlbumSource.deleteLocalAlbums(deleteList);
+            localAlbumSource.deleteLocalAlbums(deleteList, context);
         }
     }
 }

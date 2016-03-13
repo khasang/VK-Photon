@@ -1,8 +1,0 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView
-        android:id="@+id/album_thumb"
-        android:layout_width="wrap_content"
-        android:layout_height="360dp"
-        android:contentDescription="@null"
-        android:layout_gravity="center_horizontal"/>
-</merge>

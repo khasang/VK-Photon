@@ -39,14 +39,6 @@ public class PhotoAlbum extends VKApiPhotoAlbum {
     public String thumbFilePath;
     public int syncStatus;
 
-    public PhotoAlbum() {
-    }
-
-    public PhotoAlbum(String title, String path) {
-        this.title = title;
-        this.filePath = path;
-    }
-
     public PhotoAlbum(String title, String path, String thumbFilePath) {
         this.title = title;
         this.filePath = path;

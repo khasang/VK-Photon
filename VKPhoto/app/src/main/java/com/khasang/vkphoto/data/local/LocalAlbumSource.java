@@ -3,30 +3,30 @@ package com.khasang.vkphoto.data.local;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-
+import android.util.Log;
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotoAlbumsTable;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.ImageFileFilter;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.model.VKApiPhotoAlbum;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class LocalAlbumSource {
     private Context context;
@@ -86,18 +86,12 @@ public class LocalAlbumSource {
 
     //метод не уничтожает папку. только все ФОТО в ней
     //после его использования необходимо заново выполнить поиск всего, что программа считает альбомом
-    public void deleteLocalAlbums(List<PhotoAlbum> photoAlbumList) {
+    public void deleteLocalAlbums(List<PhotoAlbum> photoAlbumList, Context context) {
         for (PhotoAlbum photoAlbum: photoAlbumList) {
             Logger.d("now deleting file: " + photoAlbum.filePath);
-            File dir = new File(photoAlbum.filePath);
-            String[] children = dir.list();
-            ImageFileFilter filter = new ImageFileFilter();
-            for (String child : children) {
-                File file = new File(dir, child);
-                if (filter.accept(file))
-                    if (!file.delete())
-                        Logger.d("error while deleting file: " + photoAlbum.filePath);
-            }
+            LocalPhotoSource localPhotoSource = new LocalPhotoSource(context);
+            List<Photo> photosInAlbum = localPhotoSource.getPhotosByAlbumPath(photoAlbum.filePath, context);
+            localPhotoSource.deleteLocalPhotos(photosInAlbum, context);
         }
     }
 
@@ -111,6 +105,14 @@ public class LocalAlbumSource {
         }
         cursor.close();
         return photoAlbum;
+    }
+    public PhotoAlbum getAlbumByPhoto(Photo photo, Context context){
+        String albumPathNeeded = photo.filePath.substring(0, photo.filePath.lastIndexOf("/"));
+        List<PhotoAlbum> allAlbumsList = getAllLocalAlbumsList(context);
+        PhotoAlbum album = allAlbumsList.get(0);
+        for (PhotoAlbum albumIter: allAlbumsList)
+            if (albumPathNeeded.equals(albumIter.filePath)) album = albumIter;
+        return album;
     }
 
     public List<PhotoAlbum> getAllAlbums() {
@@ -131,26 +133,83 @@ public class LocalAlbumSource {
         return db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
     }
 
-    public List<PhotoAlbum> getAllLocalAlbums() {
-        Set<String> imagePaths = new HashSet<>();
-        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
-        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+    public Cursor getAllLocalAlbums(Context context) {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID,
+                PhotoAlbumsTable.TITLE,
+                PhotoAlbumsTable.FILE_PATH,
+                PhotoAlbumsTable.THUMB_FILE_PATH,
+                PhotoAlbumsTable.SIZE});
+        MatrixCursor.RowBuilder builder;
+        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] PROJECTION_BUCKET = {
+                MediaStore.Images.ImageColumns.BUCKET_ID,
+                MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME,
                 MediaStore.Images.ImageColumns.DATE_TAKEN,
-                MediaStore.MediaColumns.DATA};
+                MediaStore.Images.ImageColumns.DATA};
+        // We want to order the albums by reverse chronological order. We abuse the
+        // "WHERE" parameter to insert a "GROUP BY" clause into the SQL statement.
+        // The template for "WHERE" parameter is like:
+        //    SELECT ... FROM ... WHERE (%s)
+        // and we make it look like:
+        //    SELECT ... FROM ... WHERE (1) GROUP BY 1,(2)
+        // The "(1)" means true. The "1,(2)" means the first two columns specified
+        // after SELECT. Note that because there is a ")" in the template, we use
+        // "(2" to match it.
         String BUCKET_GROUP_BY = "1) GROUP BY 1,(2";
         String BUCKET_ORDER_BY = "MAX(datetaken) DESC";
-        Cursor cursor = context.getContentResolver().query(uri, PROJECTION_BUCKET, BUCKET_GROUP_BY, null, BUCKET_ORDER_BY);
+
+        Cursor cursor = context.getContentResolver().query(
+                images, PROJECTION_BUCKET, BUCKET_GROUP_BY, null, BUCKET_ORDER_BY);
+        Log.i("ListingAlbums", " query count=" + cursor.getCount());
+
+        if (cursor.moveToFirst()) {
+            String bucketID, bucketName, date, thumbPath;
+            int bucketIDColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID);
+            int bucketNameColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+            int dateColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
+            int thumbPathColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+
+            do {
+                // Get the field values
+                bucketID = cursor.getString(bucketIDColumn);
+                bucketName = cursor.getString(bucketNameColumn);
+                date = cursor.getString(dateColumn);
+                thumbPath = cursor.getString(thumbPathColumn);
+                String dirFilePath = thumbPath.substring(0, thumbPath.lastIndexOf("/"));
+                int photosCount = new File(dirFilePath).listFiles(new ImageFileFilter()).length;
+                builder = matrixCursor.newRow();
+                builder.add(bucketID)
+                        .add(bucketName)
+                        .add(dirFilePath)
+                        .add(thumbPath)
+                        .add(photosCount);
+                // Do something with the values.
+                SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss Z");
+                String dateString = formatter.format(new Date(Long.parseLong(date)));
+                Log.i("ListingAlbums", "  bucketID=" + bucketID
+                        + "  bucketName=" + bucketName
+                        + "  thumbPhotoDateTaken=" + dateString
+                        + "  _data=" + thumbPath
+                        + "  photosCount=" + photosCount);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return matrixCursor;
+    }
+
+    private List<PhotoAlbum> getAllLocalAlbumsList(Context context) {
+        List<String> albumPaths = new ArrayList<>();
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        Cursor cursor = getAllLocalAlbums(context);
         if (cursor != null) {
-            int dataIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            int dataIndex = cursor.getColumnIndex(PhotoAlbumsTable.FILE_PATH);
             while (cursor.moveToNext()) {
                 String string = cursor.getString(dataIndex);
-                imagePaths.add(string);
+                albumPaths.add(string);
             }
             cursor.close();
 
-            for (String imagePath : imagePaths) {
-                String albumPath = imagePath.substring(0, imagePath.lastIndexOf("/"));
+            for (String albumPath : albumPaths) {
                 String title = albumPath.substring(albumPath.lastIndexOf("/") + 1);
 
                 boolean isInTheList = false;
@@ -160,10 +219,17 @@ public class LocalAlbumSource {
                         break;
                     }
                 if (!isInTheList) {
-                    PhotoAlbum photoAlbum = new PhotoAlbum(title, albumPath);
                     File dir = new File(albumPath);
-                    File [] photosInDir = dir.listFiles();
-//                    File [] photosInDir = dir.listFiles(new ImageFileFilter());
+                    File [] photosInDir = dir.listFiles(new ImageFileFilter());
+                    long youngestModified = 0;
+                    File thumbFile = photosInDir[0];
+                    for (File file: photosInDir) {
+                        if (file.lastModified() > youngestModified) {
+                            youngestModified = file.lastModified();
+                            thumbFile = file;
+                        }
+                    }
+                    PhotoAlbum photoAlbum = new PhotoAlbum(title, albumPath, thumbFile.getPath());
                     photoAlbum.size = photosInDir.length;
                     if (photoAlbum.size > 0) photoAlbumList.add(photoAlbum);
                 }
@@ -208,6 +274,5 @@ public class LocalAlbumSource {
         } finally {
             db.endTransaction();
         }
-
     }
 }

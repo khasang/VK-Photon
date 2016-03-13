@@ -10,12 +10,8 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
-import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
-import com.khasang.vkphoto.domain.interactors.VkPhotosInteractor;
-import com.khasang.vkphoto.domain.interactors.VkPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
-import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
@@ -41,7 +37,7 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
 
     @Override
     public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum, Context context) {
-        return new LocalPhotosInteractorImpl(context).getPhotosByAlbum(photoAlbum);
+        return new LocalPhotosInteractorImpl(context).getPhotosByAlbum(photoAlbum, context);
     }
 
     @Override
@@ -75,7 +71,7 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
 
     @Override
     public void deleteSelectedLocalPhotos(MultiSelector multiSelector, Context context) {
-        new LocalPhotosInteractorImpl(context).deleteSelectedLocalPhotos(multiSelector, albumView.getPhotoList());
+        new LocalPhotosInteractorImpl(context).deleteSelectedLocalPhotos(multiSelector, albumView.getPhotoList(), context);
         albumView.removePhotosFromView(multiSelector);
         actionMode.finish();
     }

@@ -1,22 +1,20 @@
 package com.khasang.vkphoto.presentation.model;
 
+import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Parcel;
 import android.provider.BaseColumns;
+import android.provider.MediaStore;
 import android.text.TextUtils;
-
+import android.util.Log;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
-import com.khasang.vkphoto.util.ImageFileFilter;
 import com.vk.sdk.api.model.VKApiPhoto;
 import com.vk.sdk.api.model.VKPhotoSizes;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static com.khasang.vkphoto.data.database.tables.PhotosTable.ALBUM_ID;
 import static com.khasang.vkphoto.data.database.tables.PhotosTable.COMMENTS;
@@ -37,8 +35,29 @@ public class Photo extends VKApiPhoto {
         super(from);
     }
 
-    public Photo(String filePath) {
+    public Photo(String filePath, Context context) {
         this.filePath = filePath;
+        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] PROJECTION_BUCKET = {
+                MediaStore.Images.ImageColumns._ID,
+                MediaStore.Images.ImageColumns.DATE_TAKEN,
+                MediaStore.Images.ImageColumns.DATA};
+        Cursor cursor = context.getContentResolver().query(images, PROJECTION_BUCKET, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                int IDColumn = cursor.getColumnIndex(MediaStore.Images.Media._ID);
+                int pathColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+                int dateModifiedColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
+                int ID = cursor.getInt(IDColumn);
+                String path = cursor.getString(pathColumn);
+                long dateModified = cursor.getLong(dateModifiedColumn);
+                if (path.equals(filePath)) {
+                    this.id = ID;
+                    this.date = dateModified;
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
     }
 
     public Photo(Cursor cursor) {
@@ -131,6 +150,13 @@ public class Photo extends VKApiPhoto {
         String separator = String.valueOf(separatorChar);
         int separatorIndex = filePath.lastIndexOf(separator);
         return (separatorIndex < 0) ? filePath : filePath.substring(separatorIndex + 1, filePath.length());
+    }
+
+    public void logLocalPhoto(){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss Z");
+        Log.i("ListingImages", " filePath=" + filePath +
+                "  lastModifiedOrAdded=" + formatter.format(new Date(date)) +
+                "  id=" + id);
     }
 
     @Override

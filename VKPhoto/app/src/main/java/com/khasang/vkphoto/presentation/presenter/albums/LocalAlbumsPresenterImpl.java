@@ -41,6 +41,7 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     public void addAlbum(String title, String thumbPath) {
         //TODO: implement metod
         Logger.d("user wants to add new local album");
+        Logger.d("no body");
 //        albumsInteractor.addAlbum(title, description, privacy, commentPrivacy);
     }
 
@@ -60,8 +61,8 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     }
 
     @Override
-    public void deleteAlbums(MultiSelector multiSelector) {
-        albumsInteractor.deleteSelectedLocalAlbums(multiSelector, albumsView.getAdapterCursor());
+    public void deleteAlbums(MultiSelector multiSelector, Context context) {
+        albumsInteractor.deleteSelectedLocalAlbums(multiSelector, albumsView.getAdapterCursor(), context);
         albumsView.displayAlbums();
         actionMode.finish();
     }
@@ -119,11 +120,6 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
                 actionMode.finish();
             }
         }
-    }
-
-    @Override
-    public List<PhotoAlbum> getAllLocalAlbums() {
-        return albumsInteractor.getAllLocalAlbums();
     }
 
     @Override

@@ -1,10 +1,12 @@
 package com.khasang.vkphoto.data.local;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
+import android.provider.MediaStore;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
@@ -14,9 +16,7 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.ImageFileFilter;
 import com.khasang.vkphoto.util.Logger;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,16 +72,13 @@ public class LocalPhotoSource {
         }
     }
 
-    public void deleteLocalPhotos(List<Photo> photoList) {
+    public void deleteLocalPhotos(List<Photo> photoList, Context context) {
         for (Photo photo: photoList) {
             Logger.d("now deleting file: " + photo.filePath);
-            File file = new File(photo.filePath);
-            //TODO: проверить, не является ли удаляемый файл обложкой альбома
-//            PhotoAlbum album = new LocalAlbumSource().getAllLocalAlbums();
-//            if (album.thumbFilePath.equals(photo.filePath)){
-                //TODO: назначить новую обложку альбому
-//            }
-            if (!file.delete())
+            ContentResolver cr = context.getContentResolver();
+            if (-1 == cr.delete(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    BaseColumns._ID + "=" + photo.id, null))
                 Logger.d("error while deleting file: " + photo.filePath);
         }
     }
@@ -111,7 +108,7 @@ public class LocalPhotoSource {
         return photos;
     }
 
-    public List<Photo> getPhotosByAlbumPath(String dirPath) {
+    public List<Photo> getPhotosByAlbumPath(String dirPath, Context context) {
         List<Photo> result = new ArrayList<>();
         File dir = new File(dirPath);
         ImageFileFilter filter = new ImageFileFilter();
@@ -121,17 +118,12 @@ public class LocalPhotoSource {
         for (String fileName : fileNamesInDir) {
             char separatorChar = System.getProperty("file.separator", "/").charAt(0);
             String fullPathToPhoto = dirPath + separatorChar + fileName;
-            Photo photo = new Photo(fullPathToPhoto);
-            if (filter.accept(photo)) result.add(photo);
+            Photo photo = new Photo(fullPathToPhoto, context);
+            if (filter.accept(photo)) {
+                result.add(photo);
+                photo.logLocalPhoto();
+            }
         }
         return result;
-    }
-
-    public void getAllPhotos() {
-
-    }
-
-    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
-        return photoAlbum.id !=0 ? getPhotosByAlbumId(photoAlbum.id) : getPhotosByAlbumPath(photoAlbum.filePath);
     }
 }

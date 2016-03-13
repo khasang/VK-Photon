@@ -21,8 +21,8 @@ public class LocalPhotosInteractorImpl implements LocalPhotosInteractor {
     }
 
     @Override
-    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
-        return localPhotoSource.getPhotosByAlbumPath(photoAlbum.filePath);
+    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum, Context context) {
+        return localPhotoSource.getPhotosByAlbumPath(photoAlbum.filePath, context);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class LocalPhotosInteractorImpl implements LocalPhotosInteractor {
     }
 
     @Override
-    public void deleteSelectedLocalPhotos(MultiSelector multiSelector, List<Photo> photoList) {
+    public void deleteSelectedLocalPhotos(MultiSelector multiSelector, List<Photo> photoList, Context context) {
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
         List<Photo> deletePhotoList = new ArrayList<>();
         if (photoList != null) {
@@ -40,7 +40,7 @@ public class LocalPhotosInteractorImpl implements LocalPhotosInteractor {
                 Integer position = selectedPositions.get(i);
                 deletePhotoList.add(photoList.get(position));
             }
-            localPhotoSource.deleteLocalPhotos(deletePhotoList);
+            localPhotoSource.deleteLocalPhotos(deletePhotoList, context);
         }
     }
 }
