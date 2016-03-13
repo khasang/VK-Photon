@@ -13,6 +13,7 @@ import com.khasang.vkphoto.domain.interactors.VKAlbumInteractor;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
 
@@ -47,7 +48,7 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
     }
 
     @Override
-    public void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum) {
+    public void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum) {
         VKAlbumInteractor.addPhotos(listUploadedFiles, photoAlbum);
     }
 

@@ -73,7 +73,7 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     }
 
     @Override
-    public void addPhotos(List<String> photosList, PhotoAlbum photoAlbum) {
+    public void addPhotos(List<Photo> photosList, PhotoAlbum photoAlbum) {
 
     }
 

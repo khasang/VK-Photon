@@ -149,7 +149,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void addPhotos(final List<String> listUploadedFiles, final PhotoAlbum photoAlbum) {
+    public void addPhotos(final List<Photo> listUploadedFiles, final PhotoAlbum photoAlbum) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
