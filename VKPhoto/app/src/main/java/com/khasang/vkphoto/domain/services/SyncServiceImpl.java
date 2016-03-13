@@ -210,6 +210,26 @@ public class SyncServiceImpl extends Service implements SyncService {
         return null;
     }
 
+    @Override
+    public void getLocalPhotosByAlbumId(final int albumId) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                localDataSource.getPhotoSource().getPhotosByAlbumId(albumId);
+            }
+        });
+    }
+
+    @Override
+    public void deleteSelectedLocalPhotos(final List<Photo> deletePhotoList) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
+            }
+        });
+    }
+
     public class MyBinder extends Binder {
         public SyncService getService() {
             return SyncServiceImpl.this;
