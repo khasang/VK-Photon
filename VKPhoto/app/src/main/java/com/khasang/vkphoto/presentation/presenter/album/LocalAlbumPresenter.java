@@ -6,5 +6,5 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import java.util.List;
 
 public interface LocalAlbumPresenter extends AlbumPresenter {
-    List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum);
+    void getPhotosByAlbum(int albumId);
 }

@@ -9,6 +9,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetLocalPhotosEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
@@ -39,8 +40,8 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
 
 
     @Override
-    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
-        return localPhotosInteractor.getPhotosByAlbum(photoAlbum);
+    public void getPhotosByAlbum(int albumId) {
+      localPhotosInteractor.getPhotosByAlbumId(albumId);
     }
 
     @Override
@@ -110,7 +111,7 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
-        albumView.displayVkPhotos(getVKPhotosEvent.photosList);
+    public void onGetLocalPhotosEvent(GetLocalPhotosEvent getLocalPhotosEvent) {
+        albumView.displayVkPhotos(getLocalPhotosEvent.photosList);
     }
 }

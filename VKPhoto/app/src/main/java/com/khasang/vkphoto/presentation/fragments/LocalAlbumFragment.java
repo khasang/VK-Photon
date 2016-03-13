@@ -43,6 +43,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     private PhotoAlbumAdapter adapter;
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
+    private int albumId;
 
     public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -62,9 +63,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (photoAlbum != null) Logger.d("photoalbum " + photoAlbum.title);
         else Logger.d("wtf where is album?");
-        if (photoList.isEmpty()) {
-            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum);
-        }
+        albumId = photoAlbum.id;
         adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
@@ -124,8 +123,9 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
         super.onStart();
         Logger.d("LocalAlbumFragment onStart");
         localAlbumPresenter.onStart();
-//        if (photoList.isEmpty())
-//            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum, getContext());
+        if (photoList.isEmpty()) {
+            localAlbumPresenter.getPhotosByAlbum(albumId);
+        }
     }
 
     @Override
@@ -146,6 +146,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     //VkAlbumView implementations
     @Override
     public void displayVkPhotos(List<Photo> photos) {
+        Logger.d(String.valueOf(photos.size()));
         photoList = photos;
         adapter.setPhotoList(photos);
         tvCountOfPhotos.setText(getResources().getString(R.string.count_of_photos, photos.size()));
