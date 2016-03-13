@@ -171,7 +171,7 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        localAlbumsPresenter.deleteAlbums(multiSelector);
+                        localAlbumsPresenter.deleteSelectedAlbums(multiSelector);
                     }
                 })
                 .show();

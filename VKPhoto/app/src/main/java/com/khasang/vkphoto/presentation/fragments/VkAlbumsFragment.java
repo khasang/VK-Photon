@@ -160,7 +160,7 @@ public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        vKAlbumsPresenter.deleteAlbums(multiSelector);
+                        vKAlbumsPresenter.deleteSelectedAlbums(multiSelector);
                     }
                 })
                 .show();
