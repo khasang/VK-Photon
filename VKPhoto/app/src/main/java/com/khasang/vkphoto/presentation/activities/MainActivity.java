@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (savedInstanceState != null) {
             Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
         }
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Providing Up Navigation
     }
 
     private void initViewPager() {
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             @Override
             public void onPageSelected(int position) {
                 Navigator.setTabPosition(position);
+
             }
 
             @Override

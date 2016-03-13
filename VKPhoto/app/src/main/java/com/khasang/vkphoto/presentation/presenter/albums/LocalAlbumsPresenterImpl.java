@@ -9,12 +9,16 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
+import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.interactors.LocalAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 import com.khasang.vkphoto.util.Logger;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.List;
@@ -23,7 +27,6 @@ import java.util.concurrent.ExecutorService;
 public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements LocalAlbumsPresenter {
     private VkAlbumsView albumsView;
     private LocalAlbumsInteractorImpl albumsInteractor;
-    private ActionMode actionMode;
 
     public LocalAlbumsPresenterImpl(VkAlbumsView albumsView, Context context) {
         this.albumsView = albumsView;
@@ -83,14 +86,11 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
                 });
     }
 
-    @Override
-    public void checkActionModeFinish(MultiSelector multiSelector) {
-        if (multiSelector.getSelectedPositions().size() == 0) {
-            if (actionMode != null) {
-                actionMode.finish();
-            }
-        }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onErrorEvent(ErrorEvent errorEvent) {
+//        vkAlbumsView.showError(errorEvent.errorMessage);
     }
+
 
     @Override
     public List<PhotoAlbum> getAllLocalAlbums() {

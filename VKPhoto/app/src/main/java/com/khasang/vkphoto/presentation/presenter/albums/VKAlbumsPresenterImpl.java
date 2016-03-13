@@ -30,7 +30,6 @@ import java.util.concurrent.ExecutorService;
 public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbumsPresenter {
     private VkAlbumsView vkAlbumsView;
     private VkAlbumsInteractor vkAlbumsInteractor;
-    private ActionMode actionMode;
 
     public VKAlbumsPresenterImpl(VkAlbumsView vkAlbumsView, SyncServiceProvider syncServiceProvider) {
         this.vkAlbumsView = vkAlbumsView;
@@ -94,7 +93,6 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
                         return true;
                     case R.id.action_delete_album:
                         vkAlbumsView.confirmDelete(multiSelector);
-//                            vkAlbumsPresenter.deleteVkAlbums(multiSelector);
                         return true;
                     default:
                         break;
@@ -102,15 +100,6 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
                 return false;
             }
         });
-    }
-
-    @Override
-    public void checkActionModeFinish(MultiSelector multiSelector) {
-        if (multiSelector.getSelectedPositions().size() == 0) {
-            if (actionMode != null) {
-                actionMode.finish();
-            }
-        }
     }
 
     public File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
