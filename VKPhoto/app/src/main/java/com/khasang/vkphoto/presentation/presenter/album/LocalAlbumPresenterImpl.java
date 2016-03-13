@@ -14,6 +14,7 @@ import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
@@ -33,11 +34,10 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     private LocalPhotosInteractor localPhotosInteractor;
     private ActionMode actionMode;
 
-    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView, Context context) {
+    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
         this.albumView = vkAlbumView;
-        localPhotosInteractor = new LocalPhotosInteractorImpl(context);
+        localPhotosInteractor = new LocalPhotosInteractorImpl(syncServiceProvider);
     }
-
 
     @Override
     public void getPhotosByAlbum(int albumId) {
