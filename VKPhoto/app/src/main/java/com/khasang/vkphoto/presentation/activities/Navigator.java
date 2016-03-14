@@ -10,12 +10,8 @@ import android.view.View;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
-import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
-import com.khasang.vkphoto.presentation.fragments.VKAlbumsFragment;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-
-import java.util.List;
 
 public class Navigator {
     private static int tabPosition = 0;
@@ -52,19 +48,19 @@ public class Navigator {
     public static void navigateBack(Context context) {
         FragmentManager fragmentManager = getFragmentManager(context);
         if (fragmentManager.getBackStackEntryCount() > 0) {
+            Fragment fragment;
+            int backStackEntryCount = fragmentManager.getBackStackEntryCount();
             fragmentManager.popBackStack();
-            List<Fragment> fragments = fragmentManager.getFragments();
-            for (int i = fragments.size() - 2; i >= 0; i--) {
-                Fragment fragment = fragments.get(i);
-                if (!(fragment instanceof VKAlbumsFragment) && !(fragment instanceof LocalAlbumsFragment)) {
-                    return;
-                }
+            if (backStackEntryCount == 1) {
+                changeViewPagerVisibility((Activity) context, true);
+                fragment = fragmentManager.getFragments()
+                        .get(tabPosition);
+            } else {
+                FragmentManager.BackStackEntry backEntry = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1);
+                String str = backEntry.getName();
+                fragment = fragmentManager.findFragmentByTag(str);
             }
-            changeViewPagerVisibility((Activity) context, true);
-            Fragment fragment = fragmentManager.getFragments()
-                    .get(tabPosition);
             fragment.onResume();
-
         } else {
             ((Activity) context).finish();
         }

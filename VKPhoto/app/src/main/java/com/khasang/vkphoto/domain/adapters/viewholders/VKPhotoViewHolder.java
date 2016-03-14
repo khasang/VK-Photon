@@ -14,6 +14,7 @@ import com.khasang.vkphoto.util.Logger;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+@Deprecated
 public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickListener, View.OnClickListener {
     final private ImageView imageView;
     final private CheckBox photoSelectedCheckBox;

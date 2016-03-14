@@ -11,10 +11,10 @@ import android.widget.ImageView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
+import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.presenter.album.AlbumPresenter;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -97,13 +97,20 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         public void bindPhotoAlbum(Photo photo) {
             this.photo = photo;
             if (!TextUtils.isEmpty(photo.filePath)) {
-                Picasso.with(imageView.getContext()).load("file://" + photo.filePath).fit()
-                        .centerCrop().error(R.drawable.vk_share_send_button_background).into(imageView);
+                Glide.with(imageView.getContext())
+                        .load("file://" + photo.filePath)
+                        .centerCrop()
+                        .crossFade()
+                        .error(R.drawable.vk_share_send_button_background)
+                        .into(imageView);
             } else {
-                Picasso.with(imageView.getContext()).load(photo.getUrlToMaxPhoto()).fit()
-                        .centerCrop().error(R.drawable.vk_share_send_button_background).into(imageView);
+                Glide.with(imageView.getContext())
+                        .load(photo.photo_130)
+                        .centerCrop()
+                        .crossFade()
+                        .error(R.drawable.vk_share_send_button_background)
+                        .into(imageView);
             }
-
         }
 
         @Override

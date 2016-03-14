@@ -14,6 +14,7 @@ import com.khasang.vkphoto.util.Logger;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
+@Deprecated
 public class LocalPhotoViewHolder implements SelectableHolder, View.OnLongClickListener, View.OnClickListener {
     final private ImageView imageView;
     final private CheckBox photoSelectedCheckBox;
