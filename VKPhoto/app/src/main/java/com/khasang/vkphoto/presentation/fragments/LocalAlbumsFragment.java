@@ -61,12 +61,6 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
         return view;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
-    }
-
     private void setOnClickListenerFab() {
         ((FabProvider) getActivity()).getFloatingActionButton().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +119,6 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
         super.onResume();
         Logger.d("localAlbumsFragment onResume()");
         setOnClickListenerFab();
-        adapter.notifyDataSetChanged();
         getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
     }
 

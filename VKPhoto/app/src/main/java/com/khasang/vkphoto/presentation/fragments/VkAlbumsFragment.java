@@ -1,12 +1,15 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,6 +44,7 @@ public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     private PhotoAlbumsCursorAdapter adapter;
     private MultiSelector multiSelector;
     private TextView tvCountOfAlbums;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public VKAlbumsFragment() {
     }
@@ -58,6 +62,7 @@ public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_albums, container, false);
         tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
+        initSwipeRefreshLayout(view);
         initRecyclerView(view);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {
@@ -65,6 +70,33 @@ public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
             }
         }
         return view;
+    }
+
+    private void initSwipeRefreshLayout(View view) {
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        Resources resources = getResources();
+        swipeRefreshLayout.setColorSchemeColors(resources.getColor(R.color.colorPrimary),
+                resources.getColor(R.color.colorAccentLight),
+                resources.getColor(R.color.colorAccent),
+                resources.getColor(R.color.colorAccentDark));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                vKAlbumsPresenter.getAllVKAlbums();
+            }
+        });
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                Logger.d("startRefreshing");
+                swipeRefreshLayout.setRefreshing(true);
+            }
+        });
     }
 
     private void setOnClickListenerFab() {
@@ -135,10 +167,9 @@ public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
 
     @Override
     public void displayAlbums() {
-//        for (VKApiPhotoAlbum photoAlbum : photoAlbumList) {
-//            Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
-//        }
         getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
+        Logger.d("displayAlbums");
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

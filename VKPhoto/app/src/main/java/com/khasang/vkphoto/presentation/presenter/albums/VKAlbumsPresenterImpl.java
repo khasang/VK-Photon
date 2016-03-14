@@ -20,6 +20,7 @@ import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -72,6 +73,15 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncAndTokenReadyEvent(SyncAndTokenReadyEvent syncAndTokenReadyEvent) {
         getAllVKAlbums();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        SyncAndTokenReadyEvent stickyEvent = EventBus.getDefault().removeStickyEvent(SyncAndTokenReadyEvent.class);
+        if (stickyEvent != null) {
+            onSyncAndTokenReadyEvent(stickyEvent);
+        }
     }
 
     @Override

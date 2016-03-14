@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.presenter.album.AlbumPresenter;
+import com.khasang.vkphoto.util.Logger;
 
 import java.util.List;
 
@@ -120,6 +121,9 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
                 localAlbumPresenter.checkActionModeFinish(multiSelector);
             } else {
 //                        albumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
+            }
+            if (photo.filePath != null) {
+                Logger.d(photo.filePath);
             }
         }
 
