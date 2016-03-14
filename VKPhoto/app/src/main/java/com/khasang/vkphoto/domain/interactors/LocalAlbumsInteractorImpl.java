@@ -30,7 +30,7 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
     @Override
     public List<PhotoAlbum> getAllLocalAlbums() {
         Logger.d("user wants to getAllLocalAlbums");
-        return localAlbumSource.getAllLocalAlbums();
+        return localAlbumSource.getAllLocalAlbumsList();
     }
 
     @Override
