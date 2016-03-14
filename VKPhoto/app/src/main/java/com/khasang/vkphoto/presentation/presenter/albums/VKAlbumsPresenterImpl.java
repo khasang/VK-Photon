@@ -42,7 +42,7 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
     }
 
     @Override
-    public void getAllAlbums() {
+    public void getAllVKAlbums() {
         vkAlbumsInteractor.getAllAlbums();
     }
 
@@ -68,7 +68,7 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void OnLocalAlbumEvent(LocalAlbumEvent localAlbumEvent) {
-        vkAlbumsView.displayVkAlbums();
+        vkAlbumsView.displayAlbums();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -78,7 +78,7 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncAndTokenReadyEvent(SyncAndTokenReadyEvent syncAndTokenReadyEvent) {
-        getAllAlbums();
+        getAllVKAlbums();
     }
 
     @Override
@@ -89,6 +89,8 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
                 switch (item.getItemId()) {
                     case R.id.action_sync_album:
                         syncAlbums(multiSelector);
+                        return true;
+                    case R.id.action_edit_album:
                         return true;
                     case R.id.action_delete_album:
                         vkAlbumsView.confirmDelete(multiSelector);

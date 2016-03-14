@@ -1,20 +1,24 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.domain.adapters.LocalPhotoAdapter;
+import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -23,7 +27,9 @@ import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,7 +43,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     private TextView tvCountOfPhotos;
     private LocalAlbumPresenter localAlbumPresenter;
     private List<Photo> photoList = new ArrayList<>();
-    private LocalPhotoAdapter adapter;
+    private PhotoAlbumAdapter adapter;
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
 
@@ -53,41 +59,56 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        localAlbumPresenter = new LocalAlbumPresenterImpl(this);
+        localAlbumPresenter = new LocalAlbumPresenterImpl(this, getContext());
         multiSelector = new MultiSelector();
 
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (photoAlbum != null) Logger.d("photoalbum " + photoAlbum.title);
         else Logger.d("wtf where is album?");
-
-        if (photoList.isEmpty())
-            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum, getContext());
-        adapter = new LocalPhotoAdapter(photoList, multiSelector, localAlbumPresenter);
+        if (photoList.isEmpty()) {
+            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum);
+        }
+        adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vk_album, container, false);
+        View view = inflater.inflate(R.layout.fragment_album, container, false);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
                 localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
             }
         }
 
-        GridView gridview = (GridView) view.findViewById(R.id.gridView);
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getContext(), String.valueOf(photoList.get(position).filePath), Toast.LENGTH_SHORT).show();
-            }
-        });
-        adapter.setLoaded(false);
-        gridview.setAdapter(adapter);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.photo_container);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setAdapter(adapter);
+//        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(getContext(), String.valueOf(photoList.get(position).filePath), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        adapter.setLoaded(false);
+//        gridview.setAdapter(adapter);
         tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
-
+        tvCountOfPhotos.setText(getString(R.string.count_of_photos, photoList.size()));
         return view;
+    }
+
+    //на самом деле это не метод для удаления фото, а только для отображения этих изменений в адаптере
+    //физическое удаление происходит в интерэкторе
+    @Override
+    public void removePhotosFromView(MultiSelector multiSelector) {
+        Logger.d("user wants to removePhotosFromView");
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Collections.sort(selectedPositions, Collections.reverseOrder());
+        for (Integer position : selectedPositions)
+            photoList.remove((int) position);
+        adapter.notifyDataSetChanged();
     }
 
     private void setOnClickListenerFab(View view) {
@@ -147,17 +168,25 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     }
 
     @Override
-    public void deleteSelectedPhoto(MultiSelector multiSelector) {
-
-    }
-
-    @Override
     public void showError(String s) {
         ToastUtils.showError(s, getContext());
     }
 
     @Override
-    public void confirmDelete(MultiSelector multiSelector) {}
+    public void confirmDelete(final MultiSelector multiSelector) {
+        new MaterialDialog.Builder(getContext())
+                .content(multiSelector.getSelectedPositions().size() > 1 ?
+                        R.string.sync_delete_photos_question : R.string.sync_delete_photo_question)
+                .positiveText(R.string.delete)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        localAlbumPresenter.deleteSelectedLocalPhotos(multiSelector);
+                    }
+                })
+                .show();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

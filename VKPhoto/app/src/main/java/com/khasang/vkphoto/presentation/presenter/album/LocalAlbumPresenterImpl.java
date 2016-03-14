@@ -12,10 +12,7 @@ import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
-import com.khasang.vkphoto.domain.interactors.VkPhotosInteractor;
-import com.khasang.vkphoto.domain.interactors.VkPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
-import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
@@ -31,19 +28,19 @@ import java.util.List;
  * Created by TAU on 05.03.2016.
  */
 public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
-    private VkAlbumView vkAlbumView;
+    private VkAlbumView albumView;
     private LocalPhotosInteractor localPhotosInteractor;
     private ActionMode actionMode;
 
-    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView) {
-        this.vkAlbumView = vkAlbumView;
-        localPhotosInteractor = new LocalPhotosInteractorImpl();
+    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView, Context context) {
+        this.albumView = vkAlbumView;
+        localPhotosInteractor = new LocalPhotosInteractorImpl(context);
     }
 
 
     @Override
-    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum, Context context) {
-        return localPhotosInteractor.getPhotosByAlbum(photoAlbum, context);
+    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
+        return localPhotosInteractor.getPhotosByAlbum(photoAlbum);
     }
 
     @Override
@@ -57,7 +54,7 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
                         Logger.d("user wants to sync local photos");
                         return true;
                     case R.id.action_delete_photo:
-                        deleteSelectedLocalPhotos(multiSelector);
+                        albumView.confirmDelete(multiSelector);
                         return true;
                     default:
                         break;
@@ -68,17 +65,17 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     }
 
     @Override
-    public void checkActionModeFinish(MultiSelector multiSelector, Context context) {
+    public void checkActionModeFinish(MultiSelector multiSelector) {
         if (multiSelector.getSelectedPositions().size() == 0) {
-            ((FabProvider) context).getFloatingActionButton().show();
             if (actionMode != null) actionMode.finish();
         }
     }
 
     @Override
     public void deleteSelectedLocalPhotos(MultiSelector multiSelector) {
-        Logger.d("user wants to deleteSelectedLocalPhotos");
-//        vkPhotosInteractor.deleteSelectedVkPhotos(multiSelector, vkAlbumView.getPhotoList());
+        localPhotosInteractor.deleteSelectedLocalPhotos(multiSelector, albumView.getPhotoList());
+        albumView.removePhotosFromView(multiSelector);
+        actionMode.finish();
     }
 
 
@@ -99,11 +96,11 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent errorEvent) {
-        vkAlbumView.showError(errorEvent.errorMessage);
+        albumView.showError(errorEvent.errorMessage);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
-        vkAlbumView.displayVkPhotos(getVKPhotosEvent.photosList);
+        albumView.displayVkPhotos(getVKPhotosEvent.photosList);
     }
 }

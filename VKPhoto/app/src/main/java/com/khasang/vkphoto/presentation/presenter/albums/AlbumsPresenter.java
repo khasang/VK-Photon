@@ -9,6 +9,7 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.Presenter;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public interface AlbumsPresenter extends Presenter {
@@ -22,8 +23,6 @@ public interface AlbumsPresenter extends Presenter {
     void deleteAlbums(MultiSelector multiSelector);
 
     void selectAlbum(MultiSelector multiSelector, AppCompatActivity activity);
-
-    void getAllAlbums();
 
     void exportAlbums(MultiSelector multiSelector);
 

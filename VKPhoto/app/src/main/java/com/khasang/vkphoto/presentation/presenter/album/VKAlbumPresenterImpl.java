@@ -15,7 +15,6 @@ import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
-import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenter;
 import com.khasang.vkphoto.presentation.view.VkAlbumView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -44,7 +43,7 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
     @Override
     public void deleteSelectedVkPhotos(MultiSelector multiSelector) {
         vkPhotosInteractor.deleteSelectedVkPhotos(multiSelector, vkAlbumView.getPhotoList());
-        vkAlbumView.deleteSelectedPhoto(multiSelector);
+        vkAlbumView.removePhotosFromView(multiSelector);
         actionMode.finish();
     }
 
@@ -87,7 +86,7 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
                     case R.id.action_sync_photo:
                         return true;
                     case R.id.action_delete_photo:
-                        deleteSelectedVkPhotos(multiSelector);
+                        vkAlbumView.confirmDelete(multiSelector);
                         return true;
                     default:
                         break;

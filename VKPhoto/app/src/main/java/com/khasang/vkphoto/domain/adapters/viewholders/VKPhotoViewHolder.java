@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SelectableHolder;
@@ -17,7 +16,6 @@ import com.squareup.picasso.Picasso;
 
 public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickListener, View.OnClickListener {
     final private ImageView imageView;
-    final private ProgressBar progressBar;
     final private CheckBox photoSelectedCheckBox;
     private boolean selectable;
     private Photo photo;
@@ -27,9 +25,6 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
 
     public VKPhotoViewHolder(View view, MultiSelector multiSelector, VKAlbumPresenter vkAlbumPresenter) {
         imageView = (ImageView) view.findViewById(R.id.iv_photo);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        imageView.setPadding(8, 8, 8, 8);
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         this.multiSelector = multiSelector;
         this.vkAlbumPresenter = vkAlbumPresenter;
         photoSelectedCheckBox = (CheckBox) view.findViewById(R.id.cb_photo_selected);
@@ -96,6 +91,7 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
     public boolean onLongClick(View v) {
         if (!multiSelector.isSelectable()) {
             Logger.d(String.valueOf(this.hashCode()));
+            Logger.d(photo.filePath);
             Logger.d(String.valueOf(adapterPosition));
 //            multiSelector.bindHolder(this, adapterPosition, -1);
             multiSelector.setSelectable(true);
@@ -108,18 +104,15 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
     }
 
     public void loadPhoto(final Photo photo) {
-        progressBar.setVisibility(View.VISIBLE);
         Picasso.with(imageView.getContext()).load(photo.getUrlToMaxPhoto()).error(R.drawable.vk_share_send_button_background).into(imageView, new Callback() {
             @Override
             public void onSuccess() {
                 Logger.d(photo.toString() + " loaded successfully");
-                progressBar.setVisibility(View.INVISIBLE);
                 VKPhotoViewHolder.this.photo = photo;
             }
 
             @Override
             public void onError() {
-                progressBar.setVisibility(View.INVISIBLE);
             }
         });
     }

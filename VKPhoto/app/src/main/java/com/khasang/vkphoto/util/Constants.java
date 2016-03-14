@@ -1,6 +1,8 @@
 package com.khasang.vkphoto.util;
 
 public class Constants {
+    public static final int MAX_WIDTH = 1024;
+    public static final int MAX_HEIGHT = 768;
     public static final int SYNC_NOT_STARTED = 0;
     public static final int SYNC_STARTED = 1;
     public static final int SYNC_SUCCESS = 2;

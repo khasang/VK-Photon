@@ -28,7 +28,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.AlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
-import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
+import com.khasang.vkphoto.domain.adapters.PhotoAlbumsCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.MyActionExpandListener;
@@ -45,7 +45,7 @@ public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public static final String TAG = VKAlbumsFragment.class.getSimpleName();
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
     private VKAlbumsPresenter vKAlbumsPresenter;
-    private PhotoAlbumCursorAdapter adapter;
+    private PhotoAlbumsCursorAdapter adapter;
     private MultiSelector multiSelector;
     private TextView tvCountOfAlbums;
     private MenuItem searchMenuItem;
@@ -67,10 +67,9 @@ public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vk_albums, container, false);
-        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_photos);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_albums, container, false);
+        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
         initRecyclerView(view);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {
@@ -128,8 +127,8 @@ public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     @Override
     public void onResume() {
         super.onResume();
-        setOnClickListenerFab();
         Logger.d("VKAlbumsFragment onResume()");
+        setOnClickListenerFab();
     }
 
     @Override
@@ -139,13 +138,15 @@ public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         vKAlbumsPresenter.onStop();
     }
 
+
+    //VkAlbumsView implementations
     @Override
     public void displayVkSaveAlbum(PhotoAlbum photoAlbum) {
         Logger.d("displayVkSaveAlbum");
     }
 
     @Override
-    public void displayVkAlbums() {
+    public void displayAlbums() {
 //        for (VKApiPhotoAlbum photoAlbum : photoAlbumList) {
 //            Logger.d("id " + photoAlbum.id + "\ntitle " + photoAlbum.title + "\ndescription" + photoAlbum.description + "\nPhoto count " + photoAlbum.size + "\nThumb id " + photoAlbum.thumb_id);
 //        }
@@ -184,7 +185,7 @@ public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
 
     private boolean initAdapter(Cursor cursor) {
         if (adapter == null) {
-            adapter = new PhotoAlbumCursorAdapter(getContext(), cursor, multiSelector, vKAlbumsPresenter);
+            adapter = new PhotoAlbumsCursorAdapter(getContext(), cursor, multiSelector, vKAlbumsPresenter);
             return true;
         }
         return false;

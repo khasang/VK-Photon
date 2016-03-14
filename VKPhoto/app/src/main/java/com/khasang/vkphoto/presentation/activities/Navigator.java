@@ -81,6 +81,7 @@ public class Navigator {
                     .get(tabPosition);
             changeActionBarTitle((AppCompatActivity) context, context.getString(R.string.app_name));
             fragment.onResume();
+
         } else {
             ((Activity) context).finish();
         }

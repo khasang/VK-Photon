@@ -12,7 +12,9 @@
     <string name="st_btn_cancel">Нет</string>
     <string name="sync_delete_album">Удалить альбом</string>
     <string name="sync_photo">Синхронизировать фото</string>
-    <string name="sync_delete_photo">Удалить фото</string>
+    <string name="sync_delete_photos">Удалить фотографии</string>
+    <string name="sync_delete_photo_question">Удалить фотографию?</string>
+    <string name="sync_delete_photos_question">Удалить фотографии?</string>
     <plurals name="count_of_albums">
         <item quantity="one">%d альбом</item>
         <item quantity="few">%d альбома</item>
@@ -28,6 +30,7 @@
     <string name="delete">Удалить</string>
     <string name="hello_blank_fragment"></string>
     <string name="sync_delete_album_question">Удалить альбом?</string>
+    <string name="sync_delete_albums_question">Удалить альбомы?</string>
 
 
     <!-- Strings related to Settings -->
@@ -89,7 +92,7 @@
     <!-- Settings for Notifications -->
     <string name="pref_header_notifications">Уведомления</string>
 
-    <string name="pref_title_new_message_notifications">Уведомление о новом сообщении</string>
+    <string name="pref_new_message_notifications_title">Уведомление о новом сообщении</string>
 
     <string name="pref_ringtone_title">Рингтон</string>
     <string name="pref_rington_summary">Выберите рингтон</string>

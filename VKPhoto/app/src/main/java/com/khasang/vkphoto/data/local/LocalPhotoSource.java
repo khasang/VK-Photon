@@ -72,12 +72,13 @@ public class LocalPhotoSource {
         }
     }
 
-    public void deletePhoto() {
-
-    }
-
-    public void deletePhotos() {
-
+    public void deleteLocalPhotos(List<Photo> photoList) {
+        for (Photo photo: photoList) {
+            Logger.d("now deleting file: " + photo.filePath);
+            File file = new File(photo.filePath);
+            if (!file.delete())
+                Logger.d("error while deleting file: " + photo.filePath);
+        }
     }
 
     public Photo getPhotoById(int id) {
@@ -111,9 +112,8 @@ public class LocalPhotoSource {
         ImageFileFilter filter = new ImageFileFilter();
         String[] fileNamesInDir = dir.list();
         if (fileNamesInDir == null) return result;
-
+        char separatorChar = System.getProperty("file.separator", "/").charAt(0);
         for (String fileName : fileNamesInDir) {
-            char separatorChar = System.getProperty("file.separator", "/").charAt(0);
             String fullPathToPhoto = dirPath + separatorChar + fileName;
             Photo photo = new Photo(fullPathToPhoto);
             if (filter.accept(photo)) result.add(photo);

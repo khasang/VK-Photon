@@ -84,8 +84,21 @@ public class LocalAlbumSource {
         }
     }
 
-    public void deleteAlbums() {
-
+    //метод не уничтожает папку. только все ФОТО в ней
+    //после его использования необходимо заново выполнить поиск всего, что программа считает альбомом
+    public void deleteLocalAlbums(List<PhotoAlbum> photoAlbumList) {
+        for (PhotoAlbum photoAlbum: photoAlbumList) {
+            Logger.d("now deleting file: " + photoAlbum.filePath);
+            File dir = new File(photoAlbum.filePath);
+            String[] children = dir.list();
+            ImageFileFilter filter = new ImageFileFilter();
+            for (String child : children) {
+                File file = new File(dir, child);
+                if (filter.accept(file))
+                    if (!file.delete())
+                        Logger.d("error while deleting file: " + photoAlbum.filePath);
+            }
+        }
     }
 
     public PhotoAlbum getAlbumById(int id) {
@@ -122,21 +135,39 @@ public class LocalAlbumSource {
         Set<String> imagePaths = new HashSet<>();
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = {MediaStore.MediaColumns.DATA};
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        String[] PROJECTION_BUCKET = {
+                MediaStore.Images.ImageColumns.DATE_TAKEN,
+                MediaStore.MediaColumns.DATA};
+        String BUCKET_GROUP_BY = "1) GROUP BY 1,(2";
+        String BUCKET_ORDER_BY = "MAX(datetaken) DESC";
+        Cursor cursor = context.getContentResolver().query(uri, PROJECTION_BUCKET, BUCKET_GROUP_BY, null, BUCKET_ORDER_BY);
         if (cursor != null) {
             int dataIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
             while (cursor.moveToNext()) {
                 String string = cursor.getString(dataIndex);
-                imagePaths.add(string.substring(0, string.lastIndexOf("/")));
-            }
-            for (String imagePath : imagePaths) {
-                PhotoAlbum photoAlbum = new PhotoAlbum(imagePath.substring(imagePath.lastIndexOf("/") + 1), imagePath);
-                File file = new File(imagePath);
-                photoAlbum.size = file.listFiles(new ImageFileFilter()).length;
-                photoAlbumList.add(photoAlbum);
+                imagePaths.add(string);
             }
             cursor.close();
+
+            for (String imagePath : imagePaths) {
+                String albumPath = imagePath.substring(0, imagePath.lastIndexOf("/"));
+                String title = albumPath.substring(albumPath.lastIndexOf("/") + 1);
+
+                boolean isInTheList = false;
+                for (PhotoAlbum photoAlbumListed: photoAlbumList)
+                    if (photoAlbumListed.filePath.equals(albumPath)) {
+                        isInTheList = true;
+                        break;
+                    }
+                if (!isInTheList) {
+                    PhotoAlbum photoAlbum = new PhotoAlbum(title, albumPath);
+                    File dir = new File(albumPath);
+                    File [] photosInDir = dir.listFiles();
+//                    File [] photosInDir = dir.listFiles(new ImageFileFilter());
+                    photoAlbum.size = photosInDir.length;
+                    if (photoAlbum.size > 0) photoAlbumList.add(photoAlbum);
+                }
+            }
         }
         return photoAlbumList;
     }

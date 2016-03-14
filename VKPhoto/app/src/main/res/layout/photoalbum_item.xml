@@ -32,7 +32,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tv_count_of_photos"
+            android:id="@+id/tv_count_of_albums"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/album_title"

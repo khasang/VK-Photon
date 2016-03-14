@@ -1,0 +1,35 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_photos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:textColor="@color/secondary_text"
+        android:textSize="18sp" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/photo_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_photos"
+        android:scrollbarThumbVertical="@drawable/scrollbar_thumb"
+        android:scrollbars="vertical" />
+
+    <!--<GridView-->
+    <!--android:id="@+id/photo_container"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="fill_parent"-->
+    <!--android:layout_below="@id/tv_photos"-->
+    <!--android:columnWidth="90dp"-->
+    <!--android:gravity="center"-->
+    <!--android:horizontalSpacing="10dp"-->
+    <!--android:numColumns="auto_fit"-->
+    <!--android:stretchMode="columnWidth"-->
+    <!--android:verticalSpacing="10dp" />-->
+
+</RelativeLayout>

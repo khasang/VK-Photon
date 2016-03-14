@@ -4,11 +4,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.viewholders.LocalPhotoViewHolder;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
+
 import java.util.List;
 
 /**
@@ -57,8 +59,9 @@ public class LocalPhotoAdapter extends BaseAdapter {
             localPhotoViewHolder = (LocalPhotoViewHolder) convertView.getTag();
         localPhotoViewHolder.setAdapterPosition(position);
         localPhotoViewHolder.loadPhoto(photoList.get(position));
-        if (position != 0 || !loaded)
+        if (position != 0 || !loaded) {
             multiSelector.bindHolder(localPhotoViewHolder, position, -1);
+        }
         loaded = true;
         return convertView;
     }
