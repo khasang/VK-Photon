@@ -3,8 +3,8 @@ package com.khasang.vkphoto.data.vk;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.GetAlbumEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
+import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.khasang.vkphoto.util.Logger;
@@ -22,6 +22,7 @@ public class VKAlbumSource {
     /**
      * Добавляет альбом на сервер VK с заданными параметрами
      * Создаёт (Обновляет) локальный альбом на девайсе
+     *
      * @param title
      * @param description
      * @param privacy
@@ -29,8 +30,8 @@ public class VKAlbumSource {
      * @param localAlbumSource
      */
     public void addAlbum(final String title, final String description,
-                                 final int privacy, final int commentPrivacy,
-                                 final LocalAlbumSource localAlbumSource) {
+                         final int privacy, final int commentPrivacy,
+                         final LocalAlbumSource localAlbumSource) {
         RequestMaker.createEmptyAlbum(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -40,7 +41,7 @@ public class VKAlbumSource {
                     photoAlbum = JsonUtils.getPhotoAlbum(response.json);
                     Logger.d("Create Album successfully");
                     localAlbumSource.updateAlbum(photoAlbum);
-                    EventBus.getDefault().post(new GetAlbumEvent(photoAlbum));
+                    EventBus.getDefault().postSticky(new LocalAlbumEvent());
                 } catch (Exception e) {
                     sendError(e.toString());
                 }

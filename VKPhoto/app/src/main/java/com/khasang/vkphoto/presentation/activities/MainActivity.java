@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.events.CloseActionModeEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
@@ -48,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private boolean bound = false;
     private Intent intent;
     private SyncService syncService;
-    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FloatingActionButton fab;
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             @Override
             public void onPageSelected(int position) {
                 Navigator.setTabPosition(position);
-
+                EventBus.getDefault().post(new CloseActionModeEvent());
             }
 
             @Override

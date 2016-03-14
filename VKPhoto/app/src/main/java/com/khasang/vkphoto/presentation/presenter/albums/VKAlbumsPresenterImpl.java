@@ -10,7 +10,6 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
@@ -58,11 +57,6 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
     @Override
     public void addAlbum(String title, String description, int privacy, int commentPrivacy) {
         vkAlbumsInteractor.addAlbum(title, description, privacy, commentPrivacy);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetVkSaveAlbumEvent(GetVkSaveAlbumEvent getVkSaveAlbumEvent) {
-        vkAlbumsView.displayVkSaveAlbum(getVkSaveAlbumEvent.photoAlbum);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
