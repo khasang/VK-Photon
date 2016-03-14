@@ -15,6 +15,8 @@ import com.vk.sdk.api.model.VKApiUser;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by admin on 06.03.2016.
@@ -42,16 +44,41 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<VkCommentsV
         for (VkProfile temp : profiles) {
             if (temp.id == comment.from_id) {
                 profile = temp;
+                break;
             }
         }
         if (profile != null) {
             holder.name.setText(profile.first_name + " " + profile.last_name);
             Picasso.with(holder.itemView.getContext()).load(profile.photo_100).into(holder.userImage);
         }
-        holder.text.setText(comment.text);
+            holder.text.setText(userReplayed(comment.text));
+
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         String dateString = formatter.format(new Date(comment.date * 1000L));
         holder.date.setText(dateString);
+
+        if (comment.likes>0){
+            holder.commentsLikes.setText(String.valueOf(comment.likes));
+            holder.isCommentLikes.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private String userReplayed(String text) {
+        Pattern p = Pattern.compile("\\[id(.+)\\|.+\\].+");
+        Matcher matcher = p.matcher(text);
+        if(matcher.matches()){
+            Matcher m = p.matcher(text);
+            int userId = 0;
+            if (m.find()){
+                userId = Integer.valueOf(m.group(1));
+            }
+            for (VkProfile temp : profiles) {
+                if (temp.id == userId) {
+                    return text.replaceAll("\\[id(.+)\\|.+\\]","replied to "+ temp.first_name);
+                }
+            }
+        }
+        return text;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.util;
 
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.model.VkProfile;
 
@@ -55,6 +56,20 @@ public class JsonUtils {
 
     public static <T> List<T> getItems(JSONObject jsonObject, Class<T> tClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, JSONException {
         JSONArray jsonArray = getJsonArray(jsonObject);
+        int length = jsonArray.length();
+        final List<T> items = new ArrayList<>(length);
+        for (int i = 0; i < length; i++) {
+            try {
+                items.add(tClass.getConstructor(JSONObject.class).newInstance(jsonArray.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return items;
+    }
+
+    public static <T> List<T> getPhotos(JSONObject jsonObject, Class<T> tClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, JSONException {
+        JSONArray jsonArray = jsonObject.getJSONArray("response");
         int length = jsonArray.length();
         final List<T> items = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {

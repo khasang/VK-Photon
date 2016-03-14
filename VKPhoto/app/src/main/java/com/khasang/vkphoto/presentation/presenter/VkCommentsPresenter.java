@@ -5,4 +5,6 @@ package com.khasang.vkphoto.presentation.presenter;
  */
 public interface VkCommentsPresenter extends Presenter {
     public void getCommentsByPhotoId(int photoId);
+
+    void getPhotoById(int photoId);
 }

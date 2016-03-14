@@ -96,5 +96,5 @@
     <string name="pref_title_vibrate">Vibrate</string>
 
     <string name="icon_heart" translatable="false">&#xf004;</string>
-
+    <string name="userReplaye">replied to</string>
 </resources>

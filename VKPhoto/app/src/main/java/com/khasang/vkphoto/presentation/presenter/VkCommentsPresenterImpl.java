@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import com.khasang.vkphoto.data.vk.VKCommentSource;
 import com.khasang.vkphoto.domain.adapters.CommentRecyclerViewAdapter;
 import com.khasang.vkphoto.domain.events.GetVKCommentsEvent;
+import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
 import com.khasang.vkphoto.domain.interactors.VkCommentsInteractor;
 import com.khasang.vkphoto.domain.interactors.VkCommentsInteractorImpl;
 import com.khasang.vkphoto.presentation.view.VkCommentsView;
@@ -33,9 +34,19 @@ public class VkCommentsPresenterImpl implements VkCommentsPresenter {
         commentsView.displayVkComments(event.commentsList, event.profiles);
     }
 
+    @Subscribe
+    public void onGetVKPhotoEvent(GetVKPhotoEvent event){
+        commentsView.displayVkPhoto(event.photo);
+    }
+
     @Override
     public void getCommentsByPhotoId(int photoId) {
         interactor.getCommentsByPhotoId(photoId);
+    }
+
+    @Override
+    public void getPhotoById(int photoId) {
+        interactor.getPhotoById(photoId);
     }
 
     @Override

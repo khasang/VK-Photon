@@ -11,6 +11,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
@@ -18,10 +23,13 @@ import com.khasang.vkphoto.data.vk.VKCommentSource;
 import com.khasang.vkphoto.domain.adapters.CommentRecyclerViewAdapter;
 import com.khasang.vkphoto.domain.events.GetVKCommentsEvent;
 import com.khasang.vkphoto.presentation.model.Comment;
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.VkProfile;
 import com.khasang.vkphoto.presentation.presenter.VkCommentsPresenter;
 import com.khasang.vkphoto.presentation.presenter.VkCommentsPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkCommentsView;
+import com.khasang.vkphoto.util.Logger;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,6 +44,8 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView{
     private RecyclerView recyclerView;
     private CommentRecyclerViewAdapter adapter;
     private VkCommentsPresenter presenter;
+    private ImageView userImage;
+    private TextView photolikes, commentCount;
     public static VKCommentsFragment newInstance(int photoId) {
         Bundle args = new Bundle();
         args.putInt(PHOTO_ID, photoId);
@@ -56,9 +66,22 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_comments, container, false);
-        presenter.getCommentsByPhotoId(photoId);
+        userImage = (ImageView) view.findViewById(R.id.userImage);
+        presenter.getPhotoById(photoId);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-
+        commentCount = (TextView) view.findViewById(R.id.commentsCount);
+        photolikes = (TextView) view.findViewById(R.id.photoLikes);
+        ((ImageButton)view.findViewById(R.id.commetnsButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(recyclerView.getVisibility()==RecyclerView.GONE) {
+                    presenter.getCommentsByPhotoId(photoId);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }else {
+                    recyclerView.setVisibility(View.GONE);
+                }
+            }
+        });
         return view;
     }
 
@@ -87,6 +110,14 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView{
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(itemAnimator);
+    }
+
+    @Override
+    public void displayVkPhoto(Photo photo) {
+        Logger.d("load image " + photo.getUrlToMaxPhoto() + " into imageView");
+        Picasso.with(getContext()).load(photo.getUrlToMaxPhoto()).into(userImage);
+        photolikes.setText(String.valueOf(photo.likes));
+        commentCount.setText(String.valueOf(photo.comments));
     }
 
     @Override

@@ -6,4 +6,6 @@ package com.khasang.vkphoto.domain.interactors;
 public interface VkCommentsInteractor {
 
     public void getCommentsByPhotoId(int photoId);
+
+    void getPhotoById(int photoId);
 }

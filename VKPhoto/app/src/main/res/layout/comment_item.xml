@@ -15,6 +15,7 @@
         android:layout_marginLeft="4dp"
         android:src="@drawable/test" />
     <LinearLayout
+        android:id="@+id/mainLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/recyclerViewUserImage"
@@ -43,6 +44,26 @@
             tools:text="Date"
             android:textSize="15sp"
             android:textColor="#9f9f9f" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/isCommentLikes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@id/mainLinearLayout"
+        android:layout_marginRight="10dp"
+        android:visibility="gone">
+        <ImageView
+            android:id="@+id/likeIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/thumb"/>
+        <TextView
+            android:id="@+id/commentsLikes"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:text="1"/>
     </LinearLayout>
 
 

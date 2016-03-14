@@ -3,6 +3,7 @@ package com.khasang.vkphoto.data.vk;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -13,8 +14,10 @@ import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class VKPhotoSource {
@@ -97,7 +100,26 @@ public class VKPhotoSource {
 
     }
 
-    public void getPhotoById() {
+    public void getPhotoById(int photoId) {
+        RequestMaker.getPhotoById(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                try {
+                    List<Photo> photos = JsonUtils.getPhotos(response.json, Photo.class);
+                    Logger.d(String.valueOf(photos.size()));
+                    EventBus.getDefault().post(new GetVKPhotoEvent(photos.get(0)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                System.out.println(error.errorMessage);
+            }
+        },photoId);
 
     }
 
