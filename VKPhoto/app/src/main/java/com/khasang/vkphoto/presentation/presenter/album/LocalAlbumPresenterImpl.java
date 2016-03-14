@@ -40,11 +40,6 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     }
 
     @Override
-    public void getPhotosByAlbum(int albumId) {
-      localPhotosInteractor.getPhotosByAlbumId(albumId);
-    }
-
-    @Override
     public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_album, ((FabProvider) activity).getFloatingActionButton()) {
@@ -79,7 +74,7 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
 
     @Override
     public void getPhotosByAlbumId(int albumId) {
-
+        localPhotosInteractor.getPhotosByAlbumId(albumId);
     }
 
     @Override

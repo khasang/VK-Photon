@@ -125,7 +125,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
         Logger.d("LocalAlbumFragment onStart");
         localAlbumPresenter.onStart();
         if (photoList.isEmpty()) {
-            localAlbumPresenter.getPhotosByAlbum(albumId);
+            localAlbumPresenter.getPhotosByAlbumId(albumId);
         }
     }
 
@@ -147,7 +147,6 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     //VkAlbumView implementations
     @Override
     public void displayVkPhotos(List<Photo> photos) {
-        Logger.d(String.valueOf(photos.size()));
         photoList = photos;
         adapter.setPhotoList(photos);
         tvCountOfPhotos.setText(getResources().getString(R.string.count_of_photos, photos.size()));

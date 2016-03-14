@@ -121,6 +121,7 @@ public class LocalPhotoSource {
             Photo photo = new Photo(fullPathToPhoto);
             if (filter.accept(photo)) result.add(photo);
         }
+        EventBus.getDefault().postSticky(new GetLocalPhotosEvent(result));
         return result;
     }
 
