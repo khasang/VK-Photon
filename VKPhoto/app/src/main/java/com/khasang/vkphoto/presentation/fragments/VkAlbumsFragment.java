@@ -7,11 +7,16 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -26,6 +31,8 @@ import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.model.MyActionExpandListener;
+import com.khasang.vkphoto.presentation.model.MyOnQuerrySearchListener;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenter;
 import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenterImpl;
@@ -34,21 +41,26 @@ import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKPrivacy;
 
-public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
-    public static final String TAG = VkAlbumsFragment.class.getSimpleName();
+public class VKAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
+    public static final String TAG = VKAlbumsFragment.class.getSimpleName();
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
     private VKAlbumsPresenter vKAlbumsPresenter;
     private PhotoAlbumCursorAdapter adapter;
     private MultiSelector multiSelector;
     private TextView tvCountOfAlbums;
+    private MenuItem searchMenuItem;
+    private SearchView mSearchView;
+    private MyActionExpandListener myActionExpandListener;
+    private MyOnQuerrySearchListener myOnQuerrySearchListener = new MyOnQuerrySearchListener();
 
-    public VkAlbumsFragment() {
+    public VKAlbumsFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
         multiSelector = new MultiSelector();
         vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
@@ -72,7 +84,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         ((FabProvider) getActivity()).getFloatingActionButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Logger.d("VkAlbumsFragment add album");
+                Logger.d("VKAlbumsFragment add album");
 //                vKAlbumsPresenter.addAlbum();
                 new MaterialDialog.Builder(getContext())
                         .title(R.string.create_album)
@@ -109,7 +121,7 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     @Override
     public void onStart() {
         super.onStart();
-        Logger.d("VkAlbumsFragment onStart()");
+        Logger.d("VKAlbumsFragment onStart()");
         vKAlbumsPresenter.onStart();
     }
 
@@ -117,13 +129,13 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
     public void onResume() {
         super.onResume();
         setOnClickListenerFab();
-        Logger.d("VkAlbumsFragment onResume()");
+        Logger.d("VKAlbumsFragment onResume()");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Logger.d("VkAlbumsFragment onStop()");
+        Logger.d("VKAlbumsFragment onStop()");
         vKAlbumsPresenter.onStop();
     }
 
@@ -198,5 +210,19 @@ public class VkAlbumsFragment extends Fragment implements VkAlbumsView, LoaderMa
         adapter.changeCursor(null);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_albums, menu);
+        searchMenuItem = menu.findItem(R.id.action_search);
+        MenuItem microMenuItem = menu.findItem(R.id.action_micro);
+        mSearchView = (SearchView) searchMenuItem.getActionView();
+        mSearchView.setOnQueryTextListener(myOnQuerrySearchListener);
+        searchMenuItem
+                .setShowAsAction(MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW
+                        | MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+        myActionExpandListener = new MyActionExpandListener(microMenuItem);
+        MenuItemCompat.setOnActionExpandListener(searchMenuItem, myActionExpandListener);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 }
 

@@ -12,6 +12,11 @@ public class Constants {
     //Errors
     public static final String SYNC_SERVICE_ERROR = "Sync Service error";
 
+    public static final int START = 1;
+    public static final int SEARCH = 2;
+    public static final int ALBUM = 3;
+    public static final int PHOTO = 4;
+
 }
 
 

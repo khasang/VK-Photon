@@ -1,25 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".presentation.activities.MainActivity">
-    <item android:id="@+id/action_settings"
-          android:orderInCategory="100"
-          android:title="@string/action_settings"
-          app:showAsAction="never"/>
-      <item
-          android:id="@+id/action_search"
-          android:title="@android:string/search_go"
-          android:icon="@drawable/ic_action_search"
-          app:showAsAction="always"
-          app:actionViewClass="android.support.v7.widget.SearchView" />
-      <item
-          android:id="@+id/action_micro"
-          android:title="@string/microphone"
-          android:icon="@drawable/ic_action_mic"
-          app:showAsAction="ifRoom|collapseActionView" />
-      <item
-          android:id="@+id/action_remove"
-          android:title="@string/remove"
-          android:icon="@drawable/ic_action_cancel"
-          app:showAsAction="ifRoom|collapseActionView" />
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".presentation.activities.MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
 </menu>

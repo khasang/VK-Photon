@@ -10,7 +10,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -20,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
@@ -28,9 +26,7 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
-import com.khasang.vkphoto.presentation.fragments.VkAlbumsFragment;
-import com.khasang.vkphoto.presentation.model.MyActionExpandListener;
-import com.khasang.vkphoto.presentation.model.MyOnQuerrySearchListener;
+import com.khasang.vkphoto.presentation.fragments.VKAlbumsFragment;
 import com.khasang.vkphoto.ui.activities.SettingsActivity;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.VKAccessToken;
@@ -55,20 +51,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FloatingActionButton fab;
-    private SearchView searchView;
-    private MyActionExpandListener myActionExpandListener = new MyActionExpandListener();
-    private MyOnQuerrySearchListener myOnQuerrySearchListener = new MyOnQuerrySearchListener();
-    private MenuItem microMenuItem;
-    private MenuItem removeMenuItem;
-    private MenuItem searchMenuItem;
-    private SearchView mSearchView;
-    private Toolbar toolbar;
-
-    public static enum Mode {
-        START, SEARCH, ALBUM, PHOTO;
-    }
-
-    public static Mode mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         loginVk();
         initViews();
         initViewPager();
-        mode = Mode.START;
         if (savedInstanceState != null) {
             Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
         }
@@ -115,16 +96,16 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new VkAlbumsFragment(), "VK Albums");
+        adapter.addFragment(new VKAlbumsFragment(), "VK Albums");
         adapter.addFragment(new LocalAlbumsFragment(), "Gallery Albums");
         viewPager.setAdapter(adapter);
     }
 
     private void initViews() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Navigator.initToolbar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        searchView = (SearchView) findViewById(R.id.action_search);
     }
 
     private void initServiceConnection() {
@@ -165,25 +146,18 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        microMenuItem = menu.findItem(R.id.action_micro);
-        removeMenuItem = menu.findItem(R.id.action_remove);
-        searchMenuItem = menu.findItem(R.id.action_search);
-        mSearchView = (SearchView) searchMenuItem.getActionView();
-        mSearchView.setOnQueryTextListener(myOnQuerrySearchListener);
-        MenuItemCompat.setOnActionExpandListener(searchMenuItem, myActionExpandListener);
-        startMode(Mode.START);
         return true;
     }
 
-    private void startMode(Mode mode) {
-        if(mode == Mode.START){
-            searchMenuItem.setVisible(true);
-            microMenuItem.setVisible(false);
-            toolbar.setTitle(getString(R.string.app_name));
-        }else if(mode == Mode.ALBUM){
-//            toolbar.setTitle(getString());
-        }
-    }
+//    private void startMode(Mode mode) {
+//        if(mode == Mode.START){
+//            searchMenuItem.setVisible(true);
+//            microMenuItem.setVisible(false);
+//            toolbar.setTitle(getString(R.string.app_name));
+//        }else if(mode == Mode.ALBUM){
+////            toolbar.setTitle(getString());
+//        }
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
