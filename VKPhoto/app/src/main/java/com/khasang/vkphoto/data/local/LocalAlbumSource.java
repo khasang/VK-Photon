@@ -3,11 +3,13 @@ package com.khasang.vkphoto.data.local;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotoAlbumsTable;
@@ -131,45 +133,83 @@ public class LocalAlbumSource {
         return db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
     }
 
-    public List<PhotoAlbum> getAllLocalAlbums() {
-        Set<String> imagePaths = new HashSet<>();
-        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
-        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+    public Cursor getAllLocalAlbums() {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID,
+                PhotoAlbumsTable.TITLE,
+                PhotoAlbumsTable.FILE_PATH,
+                PhotoAlbumsTable.THUMB_FILE_PATH,
+                PhotoAlbumsTable.SIZE});
+        MatrixCursor.RowBuilder builder;
+        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] PROJECTION_BUCKET = {
+                MediaStore.Images.ImageColumns.BUCKET_ID,
+                MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME,
                 MediaStore.Images.ImageColumns.DATE_TAKEN,
-                MediaStore.MediaColumns.DATA};
+                MediaStore.Images.ImageColumns.DATA};
+        // We want to order the albums by reverse chronological order. We abuse the
+        // "WHERE" parameter to insert a "GROUP BY" clause into the SQL statement.
+        // The template for "WHERE" parameter is like:
+        //    SELECT ... FROM ... WHERE (%s)
+        // and we make it look like:
+        //    SELECT ... FROM ... WHERE (1) GROUP BY 1,(2)
+        // The "(1)" means true. The "1,(2)" means the first two columns specified
+        // after SELECT. Note that because there is a ")" in the template, we use
+        // "(2" to match it.
         String BUCKET_GROUP_BY = "1) GROUP BY 1,(2";
         String BUCKET_ORDER_BY = "MAX(datetaken) DESC";
-        Cursor cursor = context.getContentResolver().query(uri, PROJECTION_BUCKET, BUCKET_GROUP_BY, null, BUCKET_ORDER_BY);
-        if (cursor != null) {
-            int dataIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-            while (cursor.moveToNext()) {
-                String string = cursor.getString(dataIndex);
-                imagePaths.add(string);
-            }
-            cursor.close();
 
-            for (String imagePath : imagePaths) {
-                String albumPath = imagePath.substring(0, imagePath.lastIndexOf("/"));
-                String title = albumPath.substring(albumPath.lastIndexOf("/") + 1);
+        Cursor cursor = context.getContentResolver().query(
+                images, PROJECTION_BUCKET, BUCKET_GROUP_BY, null, BUCKET_ORDER_BY);
 
-                boolean isInTheList = false;
-                for (PhotoAlbum photoAlbumListed: photoAlbumList)
-                    if (photoAlbumListed.filePath.equals(albumPath)) {
-                        isInTheList = true;
-                        break;
-                    }
-                if (!isInTheList) {
-                    PhotoAlbum photoAlbum = new PhotoAlbum(title, albumPath);
-                    File dir = new File(albumPath);
-                    File [] photosInDir = dir.listFiles();
-//                    File [] photosInDir = dir.listFiles(new ImageFileFilter());
-                    photoAlbum.size = photosInDir.length;
-                    if (photoAlbum.size > 0) photoAlbumList.add(photoAlbum);
+        try {
+            Log.i("ListingImages", " query count=" + cursor.getCount());
+        } catch (NullPointerException e) {/*NOP*/}
+
+        if (cursor.moveToFirst()) {
+            String bucketID, bucketName, date, thumbPath;
+            int bucketIDColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID);
+            int bucketNameColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+            int dateColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
+            int dataColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+
+            do {
+                // Get the field values
+                bucketID = cursor.getString(bucketIDColumn);
+                bucketName = cursor.getString(bucketNameColumn);
+                date = cursor.getString(dateColumn);
+                thumbPath = cursor.getString(dataColumn);
+                String filePath = thumbPath.substring(0, thumbPath.lastIndexOf("/"));
+                //TODO: убрать костыль ниже, выяснив, почему в cursor попадают пустые альбомы
+                int photosCount = new File(filePath).listFiles(new ImageFileFilter()).length;
+                if (photosCount > 0) {
+                    builder = matrixCursor.newRow();
+                    builder.add(bucketID)
+                            .add(bucketName)
+                            .add(filePath)
+                            .add(thumbPath)
+                            .add(photosCount);
                 }
-            }
+                // Do something with the values.
+                Log.i("ListingImages", " bucket=" + bucketID
+                        + "  bucketName=" + bucketName
+                        + "  date_taken=" + date
+                        + "  _data=" + thumbPath);
+            } while (cursor.moveToNext());
+            cursor.close();
         }
-        return photoAlbumList;
+        return matrixCursor;
+    }
+
+    public List<PhotoAlbum> getAllLocalAlbumsList() {
+        List<PhotoAlbum> albumsList = new ArrayList<>();
+        Cursor cursor = getAllLocalAlbums();
+        if (cursor.moveToFirst()) {
+            do {
+                albumsList.add(new PhotoAlbum(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return albumsList;
     }
 
     public List<String> getAllImagesPathes() {//находит и возвращает все фотографии на девайсе
