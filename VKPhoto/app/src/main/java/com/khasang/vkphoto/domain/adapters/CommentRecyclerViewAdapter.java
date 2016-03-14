@@ -51,7 +51,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<VkCommentsV
             holder.name.setText(profile.first_name + " " + profile.last_name);
             Picasso.with(holder.itemView.getContext()).load(profile.photo_100).into(holder.userImage);
         }
-            holder.text.setText(userReplayed(comment.text));
+        holder.text.setText(userReplayed(comment.text));
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         String dateString = formatter.format(new Date(comment.date * 1000L));

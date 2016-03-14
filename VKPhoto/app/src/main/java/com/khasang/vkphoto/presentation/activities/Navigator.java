@@ -38,8 +38,6 @@ public class Navigator {
 
     public static void navigateToVKCommentsFragment(Context context, int photoId) {
         getFragmentManager(context).beginTransaction().replace(R.id.fragment_container, VKCommentsFragment.newInstance(photoId), VKCommentsFragment.TAG).addToBackStack(VKCommentsFragment.TAG).commit();
-
-        //navigateToFragmentWithBackStack(context, VKCommentsFragment.newInstance(photoId), VKCommentsFragment.TAG);
     }
 
     public static void navigateToLocalAlbumFragment(Context context, PhotoAlbum photoAlbum) {

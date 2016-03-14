@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.presentation.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -61,6 +62,12 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         multiSelector = new MultiSelector();
         adapter = new VKPhotoAdapter(photoList, multiSelector, vKAlbumPresenter);
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Navigator.changeViewPagerVisibility(getActivity(),true);
     }
 
     @Nullable
