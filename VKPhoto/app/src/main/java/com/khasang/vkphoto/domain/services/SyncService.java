@@ -24,7 +24,7 @@ public interface SyncService {
 
     void getPhotosByAlbumId(int albumId);
 
-    void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum);
+    void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum);
 
     void deleteVkPhotoById(int photoId);
 
@@ -56,5 +56,8 @@ public interface SyncService {
      */
     PhotoAlbum createAlbum();
 
+    void getLocalPhotosByAlbumId(int albumId);
+
+    void deleteSelectedLocalPhotos(List<Photo> deletePhotoList);
 }
       

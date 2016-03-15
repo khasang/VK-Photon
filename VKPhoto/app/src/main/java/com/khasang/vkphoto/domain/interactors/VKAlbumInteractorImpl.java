@@ -48,7 +48,7 @@ public class VKAlbumInteractorImpl implements VKAlbumInteractor {
     }
 
     @Override
-    public void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum) {
+    public void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum) {
         if (checkSyncService()) syncService.addPhotos(listUploadedFiles, photoAlbum);
     }
 

@@ -6,7 +6,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
@@ -153,7 +152,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void addPhotos(final List<String> listUploadedFiles, final PhotoAlbum photoAlbum) {
+    public void addPhotos(final List<Photo> listUploadedFiles, final PhotoAlbum photoAlbum) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
@@ -246,6 +245,26 @@ public class SyncServiceImpl extends Service implements SyncService {
     @Override
     public PhotoAlbum createAlbum() {
         return null;
+    }
+
+    @Override
+    public void getLocalPhotosByAlbumId(final int albumId) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                localDataSource.getPhotoSource().getLocalPhotosByAlbumId(albumId);
+            }
+        });
+    }
+
+    @Override
+    public void deleteSelectedLocalPhotos(final List<Photo> deletePhotoList) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
+            }
+        });
     }
 
     @Override

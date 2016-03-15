@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetLocalPhotosEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -130,6 +131,7 @@ public class LocalPhotoSource {
             } while (cursor.moveToNext());
             cursor.close();
         }
+        EventBus.getDefault().postSticky(new GetLocalPhotosEvent(result));
         return result;
     }
 }

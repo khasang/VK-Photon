@@ -23,6 +23,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
@@ -47,6 +48,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     private PhotoAlbumAdapter adapter;
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
+    private int albumId;
 
     public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -61,15 +63,13 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
-        localAlbumPresenter = new LocalAlbumPresenterImpl(this, getContext());
+        localAlbumPresenter = new LocalAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
 
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (photoAlbum != null) Logger.d("photoalbum " + photoAlbum.title);
         else Logger.d("wtf where is album?");
-        if (photoList.isEmpty()) {
-            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum);
-        }
+        albumId = photoAlbum.id;
         adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
     }
 
@@ -152,8 +152,9 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         super.onStart();
         Logger.d("LocalAlbumFragment onStart");
         localAlbumPresenter.onStart();
-//        if (photoList.isEmpty())
-//            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum, getContext());
+        if (photoList.isEmpty()) {
+            localAlbumPresenter.getPhotosByAlbumId(albumId);
+        }
     }
 
     @Override

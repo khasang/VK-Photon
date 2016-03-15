@@ -10,7 +10,7 @@ import java.util.List;
  * Created by TAU on 05.03.2016.
  */
 public interface LocalPhotosInteractor {
-    List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum);
+    void getPhotosByAlbumId(int albumId);
     void addLocalPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum);
     void deleteSelectedLocalPhotos(MultiSelector multiSelector, List<Photo> photoList);
 }

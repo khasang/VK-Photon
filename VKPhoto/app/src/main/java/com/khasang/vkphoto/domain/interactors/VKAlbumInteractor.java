@@ -13,6 +13,6 @@ import java.util.List;
 public interface VKAlbumInteractor {
     void getPhotosByAlbumId(int albumId);
 
-    void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum);
+    void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum);
     void deleteSelectedVkPhotos(MultiSelector multiSelector, List<Photo> photoList);
 }
