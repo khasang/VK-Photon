@@ -47,9 +47,9 @@ public class VKPhotoSource {
      * @param photoAlbum
      * @param localAlbumSource
      */
-    public void savePhotos(final List<String> listUploadedFiles, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
+    public void savePhotos(final List<Photo> listUploadedFiles, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
         if (listUploadedFiles.size() > 0) {
-            File file = new File(listUploadedFiles.get(listUploadedFiles.size() - 1));
+            File file = new File(listUploadedFiles.get(listUploadedFiles.size() - 1).filePath);
             if (file.exists()) {
                 RequestMaker.uploadPhoto(file, photoAlbum, new VKRequest.VKRequestListener() {
                     @Override

@@ -22,7 +22,11 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+<<<<<<< HEAD
 import com.khasang.vkphoto.presentation.activities.Navigator;
+=======
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+>>>>>>> feature/list-to-event
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
@@ -47,6 +51,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     private PhotoAlbumAdapter adapter;
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
+    private int albumId;
 
     public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -60,16 +65,18 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+<<<<<<< HEAD
         setHasOptionsMenu(true);
         localAlbumPresenter = new LocalAlbumPresenterImpl(this, getContext());
+=======
+        localAlbumPresenter = new LocalAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
+>>>>>>> feature/list-to-event
         multiSelector = new MultiSelector();
 
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (photoAlbum != null) Logger.d("photoalbum " + photoAlbum.title);
         else Logger.d("wtf where is album?");
-        if (photoList.isEmpty()) {
-            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum);
-        }
+        albumId = photoAlbum.id;
         adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
     }
 
@@ -152,8 +159,9 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         super.onStart();
         Logger.d("LocalAlbumFragment onStart");
         localAlbumPresenter.onStart();
-//        if (photoList.isEmpty())
-//            photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum, getContext());
+        if (photoList.isEmpty()) {
+            localAlbumPresenter.getPhotosByAlbumId(albumId);
+        }
     }
 
     @Override

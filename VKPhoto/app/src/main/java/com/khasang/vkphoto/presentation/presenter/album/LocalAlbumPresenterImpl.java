@@ -9,10 +9,12 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetLocalPhotosEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.AlbumView;
@@ -32,15 +34,13 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     private LocalPhotosInteractor localPhotosInteractor;
 //    private ActionMode actionMode;
 
+<<<<<<< HEAD
     public LocalAlbumPresenterImpl(AlbumView vkAlbumView, Context context) {
+=======
+    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
+>>>>>>> feature/list-to-event
         this.albumView = vkAlbumView;
-        localPhotosInteractor = new LocalPhotosInteractorImpl(context);
-    }
-
-
-    @Override
-    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
-        return localPhotosInteractor.getPhotosByAlbum(photoAlbum);
+        localPhotosInteractor = new LocalPhotosInteractorImpl(syncServiceProvider);
     }
 
     @Override
@@ -68,11 +68,27 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     }
 
     @Override
+<<<<<<< HEAD
     public void addPhotos(List<String> photosList, PhotoAlbum photoAlbum) {
+=======
+    public void checkActionModeFinish(MultiSelector multiSelector) {
+        if (multiSelector.getSelectedPositions().size() == 0) {
+            if (actionMode != null) actionMode.finish();
+        }
+    }
+
+    @Override
+    public void addPhotos(List<Photo> photosList, PhotoAlbum photoAlbum) {
+
+>>>>>>> feature/list-to-event
     }
 
     @Override
     public void getPhotosByAlbumId(int albumId) {
+<<<<<<< HEAD
+=======
+        localPhotosInteractor.getPhotosByAlbumId(albumId);
+>>>>>>> feature/list-to-event
     }
 
     @Override
@@ -104,7 +120,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
-        albumView.displayVkPhotos(getVKPhotosEvent.photosList);
+    public void onGetLocalPhotosEvent(GetLocalPhotosEvent getLocalPhotosEvent) {
+        albumView.displayVkPhotos(getLocalPhotosEvent.photosList);
     }
 }
