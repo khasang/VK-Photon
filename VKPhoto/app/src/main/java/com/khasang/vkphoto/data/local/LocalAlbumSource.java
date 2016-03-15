@@ -133,7 +133,8 @@ public class LocalAlbumSource {
     }
 
     public Cursor getAllLocalAlbums() {
-        MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID,
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{
+                BaseColumns._ID,
                 PhotoAlbumsTable.TITLE,
                 PhotoAlbumsTable.FILE_PATH,
                 PhotoAlbumsTable.THUMB_FILE_PATH,
@@ -161,38 +162,27 @@ public class LocalAlbumSource {
                 images, PROJECTION_BUCKET, BUCKET_GROUP_BY, null, BUCKET_ORDER_BY);
 
         try {
-            Log.i("ListingImages", " query count=" + cursor.getCount());
+            Logger.d("ListingPhotoAlbums" + " query count=" + cursor.getCount());
         } catch (NullPointerException e) {/*NOP*/}
 
         if (cursor.moveToFirst()) {
-            String bucketID, bucketName, date, thumbPath;
-            int bucketIDColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID);
-            int bucketNameColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-            int dateColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
-            int dataColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+            String id, title, thumbPath;
+            int idColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID);
+            int titleColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+            int thumbPathColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
 
             do {
-                // Get the field values
-                bucketID = cursor.getString(bucketIDColumn);
-                bucketName = cursor.getString(bucketNameColumn);
-                date = cursor.getString(dateColumn);
-                thumbPath = cursor.getString(dataColumn);
+                id = cursor.getString(idColumn);
+                title = cursor.getString(titleColumn);
+                thumbPath = cursor.getString(thumbPathColumn);
                 String filePath = thumbPath.substring(0, thumbPath.lastIndexOf("/"));
-                //TODO: убрать костыль ниже, выяснив, почему в cursor попадают пустые альбомы
                 int photosCount = new File(filePath).listFiles(new ImageFileFilter()).length;
-                if (photosCount > 0) {
                     builder = matrixCursor.newRow();
-                    builder.add(bucketID)
-                            .add(bucketName)
+                    builder.add(id)
+                            .add(title)
                             .add(filePath)
                             .add(thumbPath)
                             .add(photosCount);
-                }
-                // Do something with the values.
-                Log.i("ListingImages", " bucket=" + bucketID
-                        + "  bucketName=" + bucketName
-                        + "  date_taken=" + date
-                        + "  _data=" + thumbPath);
             } while (cursor.moveToNext());
             cursor.close();
         }
@@ -247,6 +237,5 @@ public class LocalAlbumSource {
         } finally {
             db.endTransaction();
         }
-
     }
 }
