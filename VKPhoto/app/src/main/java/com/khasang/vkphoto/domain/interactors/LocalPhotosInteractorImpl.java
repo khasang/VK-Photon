@@ -64,7 +64,7 @@ public class LocalPhotosInteractorImpl implements LocalPhotosInteractor {
     boolean checkSyncService() {
         if (syncService == null) {
             if (!setSyncService()) {
-                EventBus.getDefault().postSticky(new ErrorEvent(Constants.SYNC_SERVICE_ERROR));
+                EventBus.getDefault().postSticky(new ErrorEvent(Constants.SYNC_FAILED));
                 return false;
             }
         }

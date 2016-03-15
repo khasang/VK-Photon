@@ -248,23 +248,21 @@ public class SyncServiceImpl extends Service implements SyncService {
         return null;
     }
 
-<<<<<<< HEAD
-=======
     @Override
     public void getLocalPhotosByAlbumId(final int albumId) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-//                String albumPath = localDataSource.getAlbumSource().getAlbumById(albumId).filePath;
-                String albumPath = null;
-                Logger.d(String.valueOf(albumId));
-                List<PhotoAlbum> allLocalAlbums = localDataSource.getAlbumSource().getAllLocalAlbums();
-                for (PhotoAlbum photoalbum : allLocalAlbums) {
-                    Logger.d(String.valueOf(photoalbum.getId()));
-                    if (photoalbum.getId() == albumId) {
-                        albumPath = photoalbum.filePath;
-                    }
-                }
+                String albumPath = localDataSource.getAlbumSource().getAlbumById(albumId).filePath;
+//                String albumPath = null;
+//                Logger.d(String.valueOf(albumId));
+//                List<PhotoAlbum> allLocalAlbums = localDataSource.getAlbumSource().getAllLocalAlbums();
+//                for (PhotoAlbum photoalbum : allLocalAlbums) {
+//                    Logger.d(String.valueOf(photoalbum.getId()));
+//                    if (photoalbum.getId() == albumId) {
+//                        albumPath = photoalbum.filePath;
+//                    }
+//                }
                 localDataSource.getPhotoSource().getPhotosByAlbumPath(albumPath);
             }
         });
@@ -280,13 +278,6 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
-    public class MyBinder extends Binder {
-        public SyncService getService() {
-            return SyncServiceImpl.this;
-        }
-    }
-
->>>>>>> feature/list-to-event
     @Override
     public void onDestroy() {
         eventBus.unregister(this);

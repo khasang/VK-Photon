@@ -22,11 +22,8 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
-<<<<<<< HEAD
 import com.khasang.vkphoto.presentation.activities.Navigator;
-=======
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
->>>>>>> feature/list-to-event
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
@@ -65,12 +62,8 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-<<<<<<< HEAD
         setHasOptionsMenu(true);
-        localAlbumPresenter = new LocalAlbumPresenterImpl(this, getContext());
-=======
         localAlbumPresenter = new LocalAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
->>>>>>> feature/list-to-event
         multiSelector = new MultiSelector();
 
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);

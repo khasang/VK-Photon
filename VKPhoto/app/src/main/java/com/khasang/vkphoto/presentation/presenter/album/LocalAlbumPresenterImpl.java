@@ -34,11 +34,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     private LocalPhotosInteractor localPhotosInteractor;
 //    private ActionMode actionMode;
 
-<<<<<<< HEAD
-    public LocalAlbumPresenterImpl(AlbumView vkAlbumView, Context context) {
-=======
-    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
->>>>>>> feature/list-to-event
+    public LocalAlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
         this.albumView = vkAlbumView;
         localPhotosInteractor = new LocalPhotosInteractorImpl(syncServiceProvider);
     }
@@ -68,9 +64,6 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     }
 
     @Override
-<<<<<<< HEAD
-    public void addPhotos(List<String> photosList, PhotoAlbum photoAlbum) {
-=======
     public void checkActionModeFinish(MultiSelector multiSelector) {
         if (multiSelector.getSelectedPositions().size() == 0) {
             if (actionMode != null) actionMode.finish();
@@ -79,16 +72,11 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
 
     @Override
     public void addPhotos(List<Photo> photosList, PhotoAlbum photoAlbum) {
-
->>>>>>> feature/list-to-event
     }
 
     @Override
     public void getPhotosByAlbumId(int albumId) {
-<<<<<<< HEAD
-=======
         localPhotosInteractor.getPhotosByAlbumId(albumId);
->>>>>>> feature/list-to-event
     }
 
     @Override
