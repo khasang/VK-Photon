@@ -22,7 +22,7 @@ public class LocalPhotosInteractorImpl implements LocalPhotosInteractor {
 
     @Override
     public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
-        return localPhotoSource.getPhotosByAlbumPath(photoAlbum.filePath);
+        return localPhotoSource.getLocalPhotosByAlbumId(photoAlbum.id);
     }
 
     @Override

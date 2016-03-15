@@ -4,7 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.provider.BaseColumns;
+import android.provider.MediaStore;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
@@ -13,7 +15,6 @@ import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.FileManager;
-import com.khasang.vkphoto.util.ImageFileFilter;
 import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,8 +25,10 @@ import java.util.List;
 
 public class LocalPhotoSource {
     private MySQliteHelper dbHelper;
+    private Context context;
 
     public LocalPhotoSource(Context context) {
+        this.context = context.getApplicationContext();
         this.dbHelper = MySQliteHelper.getInstance(context.getApplicationContext());
     }
 
@@ -88,7 +91,7 @@ public class LocalPhotoSource {
         Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, BaseColumns._ID + " = ?", new String[]{String.valueOf(id)}, null, null, null);
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
-            photo = new Photo(cursor);
+            photo = new Photo(cursor, true);
         }
         cursor.close();
         return photo;
@@ -100,34 +103,33 @@ public class LocalPhotoSource {
         Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, PhotosTable.ALBUM_ID + " = ?", new String[]{String.valueOf(albumId)}, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            photos.add(new Photo(cursor));
+            photos.add(new Photo(cursor, true));
             cursor.moveToNext();
         }
         cursor.close();
         return photos;
     }
 
-    public List<Photo> getPhotosByAlbumPath(String dirPath) {
+    public List<Photo> getLocalPhotosByAlbumId(int albumId) {
         List<Photo> result = new ArrayList<>();
-        File dir = new File(dirPath);
-        ImageFileFilter filter = new ImageFileFilter();
-        String[] fileNamesInDir = dir.list();
-        if (fileNamesInDir == null) return result;
-        char separatorChar = System.getProperty("file.separator", "/").charAt(0);
-        for (int i = fileNamesInDir.length - 1; i >= 0; i--) {
-            String fileName = fileNamesInDir[i];
-            String fullPathToPhoto = dirPath + separatorChar + fileName;
-            Photo photo = new Photo(fullPathToPhoto);
-            if (filter.accept(photo)) result.add(photo);
+        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] PROJECTION_BUCKET = {
+                BaseColumns._ID,
+                MediaStore.Images.ImageColumns.DATE_TAKEN,
+                MediaStore.Images.ImageColumns.BUCKET_ID,
+                MediaStore.Images.ImageColumns.DATA};
+        Cursor cursor = context.getContentResolver().query(
+                images, PROJECTION_BUCKET,
+                MediaStore.Images.ImageColumns.BUCKET_ID + " = ?",
+                new String[]{String.valueOf(albumId)}, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Photo photo = new Photo(cursor, true);
+                photo.printPhoto();
+                result.add(photo);
+            } while (cursor.moveToNext());
+            cursor.close();
         }
         return result;
-    }
-
-    public void getAllPhotos() {
-
-    }
-
-    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
-        return photoAlbum.id != 0 ? getPhotosByAlbumId(photoAlbum.id) : getPhotosByAlbumPath(photoAlbum.filePath);
     }
 }
