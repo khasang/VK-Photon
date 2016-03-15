@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +27,7 @@ import com.khasang.vkphoto.data.LocalAlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumsCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenter;
 import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenterImpl;
@@ -37,6 +40,8 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     private MultiSelector multiSelector;
     private LocalAlbumsPresenter localAlbumsPresenter;
     private TextView tvCountOfAlbums;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean refreshing;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,7 +61,11 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
             if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {
                 localAlbumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) getActivity());
             }
+            if (refreshing) {
+                displayRefresh(true);
+            }
         }
+        initSwipeRefreshLayout(view);
         return view;
     }
 
@@ -93,8 +102,23 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     }
 
 
+    private void initSwipeRefreshLayout(View view) {
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        Resources resources = getResources();
+        swipeRefreshLayout.setColorSchemeColors(resources.getColor(R.color.colorPrimary),
+                resources.getColor(R.color.colorAccentLight),
+                resources.getColor(R.color.colorAccent),
+                resources.getColor(R.color.colorAccentDark));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                displayAlbums();
+            }
+        });
+    }
+
     private void initRecyclerView(View view) {
-        RecyclerView albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
+        RecyclerView albumsRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         } else {
@@ -103,6 +127,7 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         }
         initAdapter(null);
         albumsRecyclerView.setAdapter(adapter);
+        albumsRecyclerView.addOnScrollListener(new RecyclerViewOnScrollListener(((FabProvider) getActivity()).getFloatingActionButton()));
     }
 
     //lifecycle methods
@@ -142,8 +167,15 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     }
 
     @Override
-    public void displayRefresh(boolean refreshing) {
-
+    public void displayRefresh(final boolean refreshing) {
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                Logger.d("startRefreshing");
+                LocalAlbumsFragment.this.refreshing = refreshing;
+                swipeRefreshLayout.setRefreshing(refreshing);
+            }
+        });
     }
 
     @Override
@@ -187,6 +219,7 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         }
         int itemCount = adapter.getItemCount();
         tvCountOfAlbums.setText(getResources().getQuantityString(R.plurals.count_of_albums, itemCount, itemCount));
+        displayRefresh(false);
     }
 
     @Override

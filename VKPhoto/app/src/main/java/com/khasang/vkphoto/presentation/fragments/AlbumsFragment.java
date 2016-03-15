@@ -29,6 +29,7 @@ import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumsCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenter;
 import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenterImpl;
@@ -46,6 +47,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     private MultiSelector multiSelector;
     private TextView tvCountOfAlbums;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean refreshing;
 
     public AlbumsFragment() {
     }
@@ -69,7 +71,11 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
             if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {
                 vKAlbumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) getActivity());
             }
+            if (refreshing) {
+                displayRefresh(true);
+            }
         }
+
         return view;
     }
 
@@ -99,6 +105,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
             @Override
             public void run() {
                 Logger.d("startRefreshing");
+                AlbumsFragment.this.refreshing = refreshing;
                 swipeRefreshLayout.setRefreshing(refreshing);
             }
         });
@@ -134,7 +141,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     @Override
     public void displayAlbums() {
         Logger.d("displayAlbums");
-        swipeRefreshLayout.setRefreshing(false);
+        displayRefresh(false);
         getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
     }
 
@@ -231,7 +238,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     }
 
     private void initRecyclerView(View view) {
-        RecyclerView albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
+        RecyclerView albumsRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         } else {
@@ -240,7 +247,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
         }
         initAdapter(null);
         albumsRecyclerView.setAdapter(adapter);
+        albumsRecyclerView.addOnScrollListener(new RecyclerViewOnScrollListener(((FabProvider) getActivity()).getFloatingActionButton()));
     }
-
 }
 

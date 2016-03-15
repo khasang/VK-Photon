@@ -28,7 +28,6 @@ import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.AlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
-import com.khasang.vkphoto.ui.activities.SettingsActivity;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             public void onPageSelected(int position) {
                 Navigator.setTabPosition(position);
                 EventBus.getDefault().post(new CloseActionModeEvent());
+                fab.show();
             }
 
             @Override

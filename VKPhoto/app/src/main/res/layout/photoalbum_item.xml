@@ -2,8 +2,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
-    android:layout_marginLeft="12dp"
-    android:layout_marginRight="12dp"
     android:layout_marginTop="10dp"
     android:orientation="vertical">
 
@@ -23,8 +21,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin5"
-            android:layout_marginLeft="@dimen/margin10"
-            android:layout_marginStart="@dimen/margin10"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/margin10"
             android:text="@string/title_of_album"
             android:textSize="18sp"
@@ -36,8 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/album_title"
             android:layout_marginBottom="@dimen/margin5"
-            android:layout_marginLeft="@dimen/margin10"
-            android:layout_marginStart="@dimen/margin10"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:text="@string/count_of_photos_in_album"
             android:textSize="14sp" />
 

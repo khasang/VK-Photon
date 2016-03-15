@@ -67,7 +67,6 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
             photoList = localAlbumPresenter.getPhotosByAlbum(photoAlbum);
         }
         adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
-        fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
 
     @Nullable
@@ -80,13 +79,22 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
             }
         }
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.photo_container);
+        initFab();
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
         tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photoList.size()));
+
         return view;
+    }
+
+    private void initFab() {
+        fab = ((FabProvider) getActivity()).getFloatingActionButton();
+        if (!fab.isShown()) {
+            fab.show();
+        }
     }
 
     //на самом деле это не метод для удаления фото, а только для отображения этих изменений в адаптере

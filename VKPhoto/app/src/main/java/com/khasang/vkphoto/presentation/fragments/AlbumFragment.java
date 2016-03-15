@@ -63,7 +63,6 @@ public class AlbumFragment extends Fragment implements AlbumView {
         vkAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
         adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter);
-        fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
 
     @Nullable
@@ -75,6 +74,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
                 vkAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
             }
         }
+        initFab();
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (photoAlbum != null) {
             Logger.d("photoalbum " + photoAlbum.title);
@@ -82,12 +82,19 @@ public class AlbumFragment extends Fragment implements AlbumView {
             Logger.d("wtf where is album?");
         }
         albumId = photoAlbum.id;
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.photo_container);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
         tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
         return view;
+    }
+
+    private void initFab() {
+        fab = ((FabProvider) getActivity()).getFloatingActionButton();
+        if (!fab.isShown()) {
+            fab.show();
+        }
     }
 
     private void setOnClickListenerFab(View view) {
