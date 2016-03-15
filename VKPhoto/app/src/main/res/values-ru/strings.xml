@@ -31,8 +31,7 @@
     <string name="hello_blank_fragment"></string>
     <string name="sync_delete_album_question">Удалить альбом?</string>
     <string name="sync_delete_albums_question">Удалить альбомы?</string>
-
-
+    <string name="userReply">ответил</string>
     <!-- Strings related to Settings -->
 
     <!-- General settings -->

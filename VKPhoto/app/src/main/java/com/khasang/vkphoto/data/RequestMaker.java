@@ -78,9 +78,15 @@ public class RequestMaker {
     }
 
     public static void getPhotoById(VKRequest.VKRequestListener vkRequestListener, int photoId) {
-        VKRequest request = new VKRequest("photos.getAlbums", VKParameters.from("photos", VKAccessToken.currentToken().userId + "_" + String.valueOf(photoId)));
+        VKRequest request = new VKRequest("photos.getById", VKParameters.from("photos", VKAccessToken.currentToken().userId + "_" + String.valueOf(photoId),"extended",1));
         request.executeWithListener(vkRequestListener);
     }
+
+    public static void getUserInfoById(VKRequest.VKRequestListener vkRequestListener, int userId) {
+        VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.USER_ID, userId, VKApiConst.FIELDS, "photo_50,photo_200,city,verified"));
+        request.executeWithListener(vkRequestListener);
+    }
+
     //начало работы с коментариями
     public static void getAllComments(VKRequest.VKRequestListener vkRequestListener){
         VKRequest request = new VKRequest("photos.getAllComments", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "need_likes", 1));
@@ -93,7 +99,7 @@ public class RequestMaker {
     }
 
     public static void getCommentsByPhotoId(VKRequest.VKRequestListener vkRequestListener, int photo_id){
-        VKRequest request = new VKRequest("photos.getComments", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "photo_id", photo_id, "need_likes", 1));
+        VKRequest request = new VKRequest("photos.getComments", VKParameters.from(VKApiConst.OWNER_ID,VKAccessToken.currentToken().userId,"count",100, "photo_id", photo_id, "need_likes", 1,"extended",1));
         request.executeWithListener(vkRequestListener);
     }
 

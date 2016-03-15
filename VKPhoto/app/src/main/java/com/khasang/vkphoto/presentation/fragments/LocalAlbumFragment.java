@@ -185,49 +185,44 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     }
 
 
-    public void deleteSelectedPhoto(MultiSelector multiSelector) {
-
-    }
 
 
-    @Override
     public void showError(int errorCode) {
         String error = ErrorUtils.getErrorMessage(errorCode, getContext());
         if (error != null) {
             ToastUtils.showError(error, getContext());
         }
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                Navigator.navigateBack(getActivity());
-                return true;
+        @Override
+        public boolean onOptionsItemSelected (MenuItem item){
+            switch (item.getItemId()) {
+                // Respond to the action bar's Up/Home button
+                case android.R.id.home:
+                    Navigator.navigateBack(getActivity());
+                    return true;
+            }
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
-    }
 
-    @Override
-    public void confirmDelete(final MultiSelector multiSelector) {
-        new MaterialDialog.Builder(getContext())
-                .content(multiSelector.getSelectedPositions().size() > 1 ?
-                        R.string.sync_delete_photos_question : R.string.sync_delete_photo_question)
-                .positiveText(R.string.delete)
-                .negativeText(R.string.cancel)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        localAlbumPresenter.deleteSelectedPhotos(multiSelector);
-                    }
-                })
-                .show();
-    }
+        @Override
+        public void confirmDelete ( final MultiSelector multiSelector){
+            new MaterialDialog.Builder(getContext())
+                    .content(multiSelector.getSelectedPositions().size() > 1 ?
+                            R.string.sync_delete_photos_question : R.string.sync_delete_photo_question)
+                    .positiveText(R.string.delete)
+                    .negativeText(R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            localAlbumPresenter.deleteSelectedPhotos(multiSelector);
+                        }
+                    })
+                    .show();
+        }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE, multiSelector.isSelectable());
+        @Override
+        public void onSaveInstanceState (Bundle outState){
+            super.onSaveInstanceState(outState);
+            outState.putBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE, multiSelector.isSelectable());
+        }
     }
-}

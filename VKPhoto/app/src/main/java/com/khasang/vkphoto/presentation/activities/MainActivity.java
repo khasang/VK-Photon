@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -136,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 bound = true;
                 if (VKAccessToken.currentToken() != null && viewPager.getVisibility() == View.VISIBLE && savedInstanceState == null) {
                     Logger.d("ViewPagerVisibile" + viewPager.getVisibility());
-                    EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
                 }
             }
 

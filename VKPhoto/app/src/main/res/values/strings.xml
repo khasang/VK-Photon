@@ -103,4 +103,5 @@
     <string name="album_not_created_error">Create of album failed</string>
     <string name="photo_not_saved_error">Error downloading photo</string>
 
+    <string name="userReply">replied to</string>
 </resources>

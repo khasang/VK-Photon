@@ -1,13 +1,17 @@
 package com.khasang.vkphoto.data.vk;
 
 import com.khasang.vkphoto.data.RequestMaker;
+import com.khasang.vkphoto.domain.events.GetVKCommentsEvent;
 import com.khasang.vkphoto.presentation.model.Comment;
+import com.khasang.vkphoto.presentation.model.VkProfile;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.model.VKApiComment;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
 import java.util.List;
@@ -91,6 +95,8 @@ public class VKCommentSource {
                 super.onComplete(response);
                 try {
                     List<Comment> comments = JsonUtils.getItems(response.json, Comment.class);
+                    List<VkProfile> profiles = JsonUtils.getItemsForVkProfile(response.json, VkProfile.class);
+                    EventBus.getDefault().post(new GetVKCommentsEvent(comments,profiles));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
