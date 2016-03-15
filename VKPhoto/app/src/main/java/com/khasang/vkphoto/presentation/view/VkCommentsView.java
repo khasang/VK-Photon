@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by admin on 07.03.2016.
  */
-public interface VkCommentsView extends VkView{
+public interface VkCommentsView extends View{
 
     void displayVkComments(List<Comment> comments, List<VkProfile> profiles);
 

@@ -1,8 +1,6 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,17 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.data.vk.VKCommentSource;
 import com.khasang.vkphoto.domain.adapters.CommentRecyclerViewAdapter;
-import com.khasang.vkphoto.domain.events.GetVKCommentsEvent;
 import com.khasang.vkphoto.presentation.model.Comment;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.VkProfile;
@@ -30,9 +24,6 @@ import com.khasang.vkphoto.presentation.presenter.VkCommentsPresenterImpl;
 import com.khasang.vkphoto.presentation.view.VkCommentsView;
 import com.khasang.vkphoto.util.Logger;
 import com.squareup.picasso.Picasso;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
@@ -120,8 +111,9 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView{
         commentCount.setText(String.valueOf(photo.comments));
     }
 
+
     @Override
-    public void showError(String s) {
+    public void showError(int errorCode) {
 
     }
 
