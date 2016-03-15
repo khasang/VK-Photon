@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
@@ -14,6 +15,7 @@ import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalDataSource;
+import com.khasang.vkphoto.presentation.activities.MainActivity;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.AlbumsPresenter;
 import com.khasang.vkphoto.util.Constants;
@@ -37,6 +39,10 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     public PhotoAlbumViewHolder(View itemView, ExecutorService executor, MultiSelector multiSelector, AlbumsPresenter albumsPresenter) {
         super(itemView, multiSelector);
         albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
+        albumThumbImageView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                MainActivity.ALBUM_THUMB_HEIGHT
+        ));
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
         albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
         albumSelectedCheckBox = (CheckBox) itemView.findViewById(R.id.cb_selected);
