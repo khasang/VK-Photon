@@ -18,7 +18,9 @@ import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.view.VkAlbumsView;
+import com.khasang.vkphoto.presentation.view.AlbumsView;
+import com.khasang.vkphoto.util.ErrorUtils;
+import com.khasang.vkphoto.util.NetWorkUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -28,10 +30,10 @@ import java.io.File;
 import java.util.concurrent.ExecutorService;
 
 public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbumsPresenter {
-    private VkAlbumsView vkAlbumsView;
+    private AlbumsView vkAlbumsView;
     private VkAlbumsInteractor vkAlbumsInteractor;
 
-    public VKAlbumsPresenterImpl(VkAlbumsView vkAlbumsView, SyncServiceProvider syncServiceProvider) {
+    public VKAlbumsPresenterImpl(AlbumsView vkAlbumsView, SyncServiceProvider syncServiceProvider) {
         this.vkAlbumsView = vkAlbumsView;
         vkAlbumsInteractor = new VkAlbumsInteractorImpl(syncServiceProvider);
     }
@@ -42,7 +44,11 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
 
     @Override
     public void getAllVKAlbums() {
-        vkAlbumsInteractor.getAllAlbums();
+        if (NetWorkUtils.isNetworkOnline(vkAlbumsView.getContext())) {
+            vkAlbumsInteractor.getAllAlbums();
+        } else {
+            EventBus.getDefault().postSticky(new ErrorEvent(ErrorUtils.NO_INTERNET_CONNECTION_ERROR));
+        }
     }
 
     @Override
@@ -52,7 +58,7 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
 
     @Override
     public void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum) {
-        Navigator.navigateToVKAlbumFragment(context, photoAlbum);
+        Navigator.navigateToVKAlbumFragment(vkAlbumsView.getContext(), photoAlbum);
     }
 
     @Override
@@ -67,11 +73,13 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent errorEvent) {
-        vkAlbumsView.showError(errorEvent.errorMessage);
+        vkAlbumsView.showError(errorEvent.errorCode);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncAndTokenReadyEvent(SyncAndTokenReadyEvent syncAndTokenReadyEvent) {
+        EventBus.getDefault().removeStickyEvent(SyncAndTokenReadyEvent.class);
+        vkAlbumsView.displayRefresh(true);
         getAllVKAlbums();
     }
 

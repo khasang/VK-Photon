@@ -5,7 +5,7 @@
     <string name="count_of_albums">%d альбомов </string>
     <string name="count_of_photos_in_album">Количество фотографий в альбоме: %d</string>
     <string name="sync_album">Синхронизировать альбом</string>
-    <string name="sync_service_error">Служба синхронизации запускается</string>
+    <string name="service_connecting_error">Запуск службы…</string>
     <string name="title_of_album">Название альбома</string>
     <string name="add_album_description">Описание</string>
     <string name="st_btn_ok">Да</string>
@@ -99,6 +99,8 @@
     <string name="pref_ringtone_silent">Без звука</string>
 
     <string name="pref_title_vibrate">Вибрация</string>
+    <string name="no_internet_connection_error">Нет соединения с интернетом</string>
+    <string name="album_not_created_error">Ошибка при создании альбома</string>
+    <string name="photo_not_saved_error">Ошибка при скачивании фотографии</string>
 
-    <string name="icon_heart" translatable="false">&#xf004;</string>
 </resources>

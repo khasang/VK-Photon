@@ -14,7 +14,7 @@ import com.khasang.vkphoto.domain.interactors.VKAlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.view.VkAlbumView;
+import com.khasang.vkphoto.presentation.view.AlbumView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,11 +24,11 @@ import java.util.List;
 
 
 public class VKAlbumPresenterImpl implements VKAlbumPresenter {
-    private VkAlbumView vkAlbumView;
+    private AlbumView vkAlbumView;
     private VKAlbumInteractor VKAlbumInteractor;
     private ActionMode actionMode;
 
-    public VKAlbumPresenterImpl(VkAlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
+    public VKAlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
         this.vkAlbumView = vkAlbumView;
         VKAlbumInteractor = new VKAlbumInteractorImpl(syncServiceProvider);
     }
@@ -67,7 +67,7 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent errorEvent) {
-        vkAlbumView.showError(errorEvent.errorMessage);
+        vkAlbumView.showError(errorEvent.errorCode);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

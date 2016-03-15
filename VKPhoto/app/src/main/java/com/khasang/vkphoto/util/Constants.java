@@ -12,7 +12,6 @@ public class Constants {
     public static final int NULL = -1;
 
     //Errors
-    public static final String SYNC_SERVICE_ERROR = "Sync Service error";
 
 }
 

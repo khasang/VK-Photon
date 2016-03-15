@@ -79,7 +79,7 @@ public class VKCommentSource {
             @Override
             public void onError(VKError error) {
                 super.onError(error);
-                //Logger.d(error.errorMessage);
+                //Logger.d(error.errorCode);
             }
         }, comment_id);
     }

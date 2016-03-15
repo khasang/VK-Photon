@@ -2,10 +2,11 @@ package com.khasang.vkphoto.data.vk;
 
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
-import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
+import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.VKError;
@@ -28,16 +29,11 @@ public class VKPhotoSource {
      */
     public void savePhotoToAlbum(final File file, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
         if (file.exists()) {
-            RequestMaker.uploadPhoto(file, photoAlbum, new VKRequest.VKRequestListener() {
+            RequestMaker.uploadPhoto(file, photoAlbum, new MyVkRequestListener() {
                 @Override
                 public void onComplete(VKResponse response) {
                     super.onComplete(response);
                     Logger.d("savePhotoToAlbum: " + response.responseString);
-                }
-
-                @Override
-                public void onError(VKError error) {
-                    super.onError(error);
                 }
             });
         }
@@ -63,6 +59,7 @@ public class VKPhotoSource {
                         if (listUploadedFiles.size() >= 0)
                             savePhotos(listUploadedFiles, photoAlbum, localAlbumSource);
                     }
+
                     @Override
                     public void onError(VKError error) {
                         super.onError(error);
@@ -78,17 +75,10 @@ public class VKPhotoSource {
     }
 
     public void deletePhoto(int photoId) {
-        RequestMaker.deleteVkPhotoById(new VKRequest.VKRequestListener() {
-            @Override
+        RequestMaker.deleteVkPhotoById(new MyVkRequestListener() {
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 Logger.d("Delete VKPhoto successfully");
-            }
-
-            @Override
-            public void onError(VKError error) {
-                super.onError(error);
-                sendError(error.toString());
             }
         }, photoId);
     }
@@ -103,7 +93,7 @@ public class VKPhotoSource {
 
 
     public void getPhotosByAlbumId(int albumId) {
-        RequestMaker.getVkPhotosByAlbumId(new VKRequest.VKRequestListener() {
+        RequestMaker.getVkPhotosByAlbumId(new MyVkRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
@@ -113,21 +103,9 @@ public class VKPhotoSource {
                     Logger.d("Got VKPhoto successfully");
                     EventBus.getDefault().postSticky(new GetVKPhotosEvent(photoList));
                 } catch (Exception e) {
-                    sendError(e.toString());
+                    sendError(ErrorUtils.JSON_PARSE_FAILED);
                 }
             }
-
-            @Override
-            public void onError(VKError error) {
-                super.onError(error);
-                sendError(error.toString());
-            }
-
         }, albumId);
-    }
-
-
-    void sendError(String s) {
-        EventBus.getDefault().postSticky(new ErrorEvent(s));
     }
 }

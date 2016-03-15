@@ -13,6 +13,7 @@ import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenterImpl;
+import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKResponse;
@@ -137,7 +138,7 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
                     Future<File> fileFuture = executor.submit(new DownloadPhotoCallable(localPhotoSource, photo, photoAlbum));
                     files[0] = fileFuture.get();
                 } catch (Exception e) {
-                    sendError(e.toString());
+                    sendError(ErrorUtils.JSON_PARSE_FAILED);
                 }
             }
         }, photoAlbum);

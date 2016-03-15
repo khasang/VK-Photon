@@ -11,6 +11,7 @@ import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.ImageFileFilter;
 import com.khasang.vkphoto.util.Logger;
@@ -31,7 +32,7 @@ public class LocalPhotoSource {
     public File savePhotoToAlbum(Photo photo, PhotoAlbum photoAlbum) {
         File imageFile = FileManager.saveImage(photo.getUrlToMaxPhoto(), photoAlbum, photo.id);
         if (imageFile == null) {
-            EventBus.getDefault().postSticky(new ErrorEvent("Photo " + photo.id + " wasn't saved"));
+            EventBus.getDefault().postSticky(new ErrorEvent(ErrorUtils.PHOTO_NOT_SAVED_ERROR));
         } else {
             photo.filePath = imageFile.getAbsolutePath();
             if (getPhotoById(photo.id) == null) {

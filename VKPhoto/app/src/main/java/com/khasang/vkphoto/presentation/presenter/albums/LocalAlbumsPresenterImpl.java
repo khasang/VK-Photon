@@ -14,7 +14,7 @@ import com.khasang.vkphoto.domain.interactors.LocalAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.view.VkAlbumsView;
+import com.khasang.vkphoto.presentation.view.AlbumsView;
 import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements LocalAlbumsPresenter {
-    private VkAlbumsView albumsView;
+    private AlbumsView albumsView;
     private LocalAlbumsInteractorImpl albumsInteractor;
 
-    public LocalAlbumsPresenterImpl(VkAlbumsView albumsView, Context context) {
+    public LocalAlbumsPresenterImpl(AlbumsView albumsView, Context context) {
         this.albumsView = albumsView;
         albumsInteractor = new LocalAlbumsInteractorImpl(context);
     }
@@ -88,7 +88,7 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent errorEvent) {
-//        vkAlbumsView.showError(errorEvent.errorMessage);
+//        vkAlbumsView.showError(errorEvent.errorCode);
     }
 
 

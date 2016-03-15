@@ -26,8 +26,8 @@ import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
+import com.khasang.vkphoto.presentation.fragments.AlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
-import com.khasang.vkphoto.presentation.fragments.VKAlbumsFragment;
 import com.khasang.vkphoto.ui.activities.SettingsActivity;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.VKAccessToken;
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initServiceConnection();
+        initServiceConnection(savedInstanceState);
         loginVk();
         initViews();
         initViewPager();
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new VKAlbumsFragment(), "VK Albums");
+        adapter.addFragment(new AlbumsFragment(), "VK Albums");
         adapter.addFragment(new LocalAlbumsFragment(), "Gallery Albums");
         viewPager.setAdapter(adapter);
     }
@@ -109,14 +109,14 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         fab = (FloatingActionButton) findViewById(R.id.fab);
     }
 
-    private void initServiceConnection() {
+    private void initServiceConnection(final Bundle savedInstanceState) {
         intent = new Intent(getApplicationContext(), SyncServiceImpl.class);
         sConn = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Logger.d("MainActivity onServiceConnected");
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
-                if (VKAccessToken.currentToken() != null && viewPager.getVisibility() == View.VISIBLE) {
+                if (VKAccessToken.currentToken() != null && viewPager.getVisibility() == View.VISIBLE && savedInstanceState == null) {
                     Logger.d("ViewPagerVisibile" + viewPager.getVisibility());
                     EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
                 }

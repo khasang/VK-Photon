@@ -15,7 +15,7 @@ import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.view.VkAlbumView;
+import com.khasang.vkphoto.presentation.view.AlbumView;
 import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -28,11 +28,11 @@ import java.util.List;
  * Created by TAU on 05.03.2016.
  */
 public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
-    private VkAlbumView albumView;
+    private AlbumView albumView;
     private LocalPhotosInteractor localPhotosInteractor;
     private ActionMode actionMode;
 
-    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView, Context context) {
+    public LocalAlbumPresenterImpl(AlbumView vkAlbumView, Context context) {
         this.albumView = vkAlbumView;
         localPhotosInteractor = new LocalPhotosInteractorImpl(context);
     }
@@ -106,7 +106,7 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent errorEvent) {
-        albumView.showError(errorEvent.errorMessage);
+//        albumView.showError(errorEvent.errorCode);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

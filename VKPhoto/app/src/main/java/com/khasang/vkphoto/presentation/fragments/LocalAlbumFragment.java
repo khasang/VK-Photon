@@ -24,7 +24,8 @@ import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenterImpl;
-import com.khasang.vkphoto.presentation.view.VkAlbumView;
+import com.khasang.vkphoto.presentation.view.AlbumView;
+import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LocalAlbumFragment extends Fragment implements VkAlbumView {
+public class LocalAlbumFragment extends Fragment implements AlbumView {
     public static final String TAG = LocalAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
@@ -143,7 +144,7 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
     }
 
 
-    //VkAlbumView implementations
+    //AlbumView implementations
     @Override
     public void displayVkPhotos(List<Photo> photos) {
         photoList = photos;
@@ -161,9 +162,13 @@ public class LocalAlbumFragment extends Fragment implements VkAlbumView {
 
     }
 
+
     @Override
-    public void showError(String s) {
-        ToastUtils.showError(s, getContext());
+    public void showError(int errorCode) {
+        String error = ErrorUtils.getErrorMessage(errorCode, getContext());
+        if (error != null) {
+            ToastUtils.showError(error, getContext());
+        }
     }
 
     @Override

@@ -17,6 +17,7 @@ import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.ImageFileFilter;
 import com.khasang.vkphoto.util.Logger;
@@ -26,9 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class LocalAlbumSource {
     private Context context;
@@ -43,7 +42,7 @@ public class LocalAlbumSource {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String path = FileManager.createAlbumDirectory(apiPhotoAlbum.id + "", context);
         if (path == null) {
-            EventBus.getDefault().postSticky(new ErrorEvent(apiPhotoAlbum.title + " couldn't be created!"));
+            EventBus.getDefault().postSticky(new ErrorEvent(ErrorUtils.ALBUM_NOT_CREATED_ERROR));
         } else {
             PhotoAlbum photoAlbum = new PhotoAlbum(apiPhotoAlbum);
             photoAlbum.filePath = path;
@@ -89,7 +88,7 @@ public class LocalAlbumSource {
     //метод не уничтожает папку. только все ФОТО в ней
     //после его использования необходимо заново выполнить поиск всего, что программа считает альбомом
     public void deleteLocalAlbums(List<PhotoAlbum> photoAlbumList) {
-        for (PhotoAlbum photoAlbum: photoAlbumList) {
+        for (PhotoAlbum photoAlbum : photoAlbumList) {
             Logger.d("now deleting file: " + photoAlbum.filePath);
             File dir = new File(photoAlbum.filePath);
             String[] children = dir.list();

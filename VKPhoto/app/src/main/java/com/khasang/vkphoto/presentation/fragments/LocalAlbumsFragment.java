@@ -28,11 +28,10 @@ import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenter;
 import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenterImpl;
-import com.khasang.vkphoto.presentation.view.VkAlbumsView;
+import com.khasang.vkphoto.presentation.view.AlbumsView;
 import com.khasang.vkphoto.util.Logger;
-import com.khasang.vkphoto.util.ToastUtils;
 
-public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
+public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
     private PhotoAlbumsCursorAdapter adapter;
     private MultiSelector multiSelector;
@@ -45,12 +44,12 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
         setRetainInstance(true);
         localAlbumsPresenter = new LocalAlbumsPresenterImpl(this, getContext());
         multiSelector = new MultiSelector();
-        getActivity().getSupportLoaderManager().initLoader(1, null, this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_albums, container, false);
+        getActivity().getSupportLoaderManager().initLoader(1, null, this);
         tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
         initRecyclerView(view);
         if (savedInstanceState != null) {
@@ -130,7 +129,7 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
     }
 
 
-    //VkAlbumsView implementations
+    //AlbumsView implementations
     @Override
     public void displayVkSaveAlbum(PhotoAlbum photoAlbum) {
         //TODO: implement metod
@@ -143,15 +142,21 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
     }
 
     @Override
+    public void displayRefresh(boolean refreshing) {
+
+    }
+
+    @Override
     public Cursor getAdapterCursor() {
         return adapter.getCursor();
     }
 
 
-    //VkView implementations
+    //View implementations
+
     @Override
-    public void showError(String s) {
-        ToastUtils.showError(s, getContext());
+    public void showError(int errorCode) {
+        Logger.d("LocalAlbumsFragment error " + errorCode);
     }
 
     @Override

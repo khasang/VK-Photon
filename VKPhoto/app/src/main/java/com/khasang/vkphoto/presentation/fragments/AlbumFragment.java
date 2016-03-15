@@ -27,7 +27,7 @@ import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenter;
 import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenterImpl;
-import com.khasang.vkphoto.presentation.view.VkAlbumView;
+import com.khasang.vkphoto.presentation.view.AlbumView;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
@@ -35,8 +35,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class VKAlbumFragment extends Fragment implements VkAlbumView {
-    public static final String TAG = VKAlbumFragment.class.getSimpleName();
+public class AlbumFragment extends Fragment implements AlbumView {
+    public static final String TAG = AlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
     private PhotoAlbum photoAlbum;
@@ -48,10 +48,10 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
 
-    public static VKAlbumFragment newInstance(PhotoAlbum photoAlbum) {
+    public static AlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
         args.putParcelable(PHOTOALBUM, photoAlbum);
-        VKAlbumFragment fragment = new VKAlbumFragment();
+        AlbumFragment fragment = new AlbumFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,6 +65,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter);
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -107,16 +108,16 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         });
     }
 
-     @Override
-     public boolean onOptionsItemSelected(MenuItem item) {
-         switch (item.getItemId()) {
-             // Respond to the action bar's Up/Home button
-             case android.R.id.home:
-                 Navigator.navigateBack(getActivity());
-                 return true;
-         }
-         return super.onOptionsItemSelected(item);
-     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                Navigator.navigateBack(getActivity());
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onStart() {
@@ -131,7 +132,7 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
     @Override
     public void onResume() {
         super.onResume();
-        Logger.d("VKAlbumFragment onResume()");
+        Logger.d("AlbumFragment onResume()");
         setOnClickListenerFab(getView());
     }
 
@@ -163,9 +164,10 @@ public class VKAlbumFragment extends Fragment implements VkAlbumView {
         adapter.notifyDataSetChanged();
     }
 
+
     @Override
-    public void showError(String s) {
-        ToastUtils.showError(s, getContext());
+    public void showError(int errorCode) {
+        Logger.d(TAG + " error " + errorCode);
     }
 
     @Override

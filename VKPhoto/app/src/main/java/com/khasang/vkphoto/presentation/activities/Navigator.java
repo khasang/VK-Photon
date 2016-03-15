@@ -9,8 +9,8 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.presentation.fragments.AlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
-import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 public class Navigator {
@@ -29,7 +29,7 @@ public class Navigator {
     }
 
     public static void navigateToVKAlbumFragment(Context context, PhotoAlbum photoAlbum) {
-        navigateToFragmentWithBackStack(context, VKAlbumFragment.newInstance(photoAlbum), VKAlbumFragment.TAG);
+        navigateToFragmentWithBackStack(context, AlbumFragment.newInstance(photoAlbum), AlbumFragment.TAG);
     }
 
     public static void navigateToLocalAlbumFragment(Context context, PhotoAlbum photoAlbum) {
