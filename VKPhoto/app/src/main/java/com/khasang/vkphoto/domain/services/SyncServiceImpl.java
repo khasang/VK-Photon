@@ -253,16 +253,14 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                String albumPath = localDataSource.getAlbumSource().getAlbumById(albumId).filePath;
-//                String albumPath = null;
-//                Logger.d(String.valueOf(albumId));
-//                List<PhotoAlbum> allLocalAlbums = localDataSource.getAlbumSource().getAllLocalAlbums();
-//                for (PhotoAlbum photoalbum : allLocalAlbums) {
-//                    Logger.d(String.valueOf(photoalbum.getId()));
-//                    if (photoalbum.getId() == albumId) {
-//                        albumPath = photoalbum.filePath;
-//                    }
-//                }
+                String albumPath = null;
+                List<PhotoAlbum> allLocalAlbums = localDataSource.getAlbumSource().getAllLocalAlbumsList();
+                for (PhotoAlbum photoalbum : allLocalAlbums) {
+                    Logger.d(String.valueOf(photoalbum.getId()));
+                    if (photoalbum.getId() == albumId) {
+                        albumPath = photoalbum.filePath;
+                    }
+                }
                 localDataSource.getPhotoSource().getPhotosByAlbumPath(albumPath);
             }
         });

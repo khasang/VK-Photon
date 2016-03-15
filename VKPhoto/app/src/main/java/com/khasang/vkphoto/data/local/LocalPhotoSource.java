@@ -106,7 +106,6 @@ public class LocalPhotoSource {
             cursor.moveToNext();
         }
         cursor.close();
-        EventBus.getDefault().postSticky(new GetLocalPhotosEvent(photos));
         return photos;
     }
 
