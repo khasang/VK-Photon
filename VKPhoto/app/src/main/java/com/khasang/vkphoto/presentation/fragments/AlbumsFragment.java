@@ -30,14 +30,18 @@ import com.khasang.vkphoto.domain.adapters.PhotoAlbumsCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
+import com.khasang.vkphoto.presentation.custom_classes.GridSpacingItemDecoration;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenter;
 import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.presentation.view.AlbumsView;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKPrivacy;
+
+import static com.khasang.vkphoto.util.Constants.ALBUMS_SPAN_COUNT;
 
 public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = AlbumsFragment.class.getSimpleName();
@@ -243,7 +247,8 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
             albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         } else {
             albumsRecyclerView.setHasFixedSize(true);
-            albumsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false));
+            albumsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), ALBUMS_SPAN_COUNT, LinearLayoutManager.VERTICAL, false));
+            albumsRecyclerView.addItemDecoration(new GridSpacingItemDecoration(ALBUMS_SPAN_COUNT, Constants.RECYCLERVIEW_SPACING, false));
         }
         initAdapter(null);
         albumsRecyclerView.setAdapter(adapter);

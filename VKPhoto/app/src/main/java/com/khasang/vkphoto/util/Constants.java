@@ -11,6 +11,8 @@ public class Constants {
 
     public static final int NULL = -1;
 
+    public static final int ALBUMS_SPAN_COUNT = 2;
+    public static final int RECYCLERVIEW_SPACING = 10;
     //Errors
 
 }
