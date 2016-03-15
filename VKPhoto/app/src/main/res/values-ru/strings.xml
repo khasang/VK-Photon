@@ -12,6 +12,7 @@
     <string name="st_btn_cancel">Нет</string>
     <string name="sync_delete_album">Удалить альбом</string>
     <string name="sync_photo">Синхронизировать фото</string>
+    <string name="edit_photo_title">Редактировать фото</string>
     <string name="sync_delete_photos">Удалить фотографии</string>
     <string name="sync_delete_photo_question">Удалить фотографию?</string>
     <string name="sync_delete_photos_question">Удалить фотографии?</string>
