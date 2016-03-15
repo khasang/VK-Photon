@@ -3,6 +3,7 @@ package com.khasang.vkphoto.presentation.activities;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +14,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FloatingActionButton fab;
+    public static int ALBUM_THUMB_HEIGHT = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,20 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (savedInstanceState != null) {
             Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
         }
+        calculateAlbumThumbHeight();
+    }
+
+    private void calculateAlbumThumbHeight(){
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int screenWidth = metrics.widthPixels;
+        int thumbWidth;
+        int paddingsLR = 60 * 2;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            thumbWidth = (screenWidth - paddingsLR - 50) / 2;
+        else
+            thumbWidth = screenWidth - paddingsLR;
+        ALBUM_THUMB_HEIGHT = Math.round(thumbWidth / 16 * 9);
     }
 
     private void initViewPager() {
