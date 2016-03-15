@@ -27,10 +27,10 @@ import java.util.List;
 /**
  * Created by TAU on 05.03.2016.
  */
-public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
+public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements LocalAlbumPresenter {
     private AlbumView albumView;
     private LocalPhotosInteractor localPhotosInteractor;
-    private ActionMode actionMode;
+//    private ActionMode actionMode;
 
     public LocalAlbumPresenterImpl(AlbumView vkAlbumView, Context context) {
         this.albumView = vkAlbumView;
@@ -46,12 +46,15 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     @Override
     public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
-        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_album, ((FabProvider) activity).getFloatingActionButton()) {
+        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
+                R.menu.menu_action_mode_local_album, ((FabProvider) activity).getFloatingActionButton()) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_sync_photo:
                         Logger.d("user wants to sync local photos");
+                        return true;
+                    case R.id.action_edit_photo:
                         return true;
                     case R.id.action_delete_photo:
                         albumView.confirmDelete(multiSelector);
@@ -65,20 +68,11 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     }
 
     @Override
-    public void checkActionModeFinish(MultiSelector multiSelector) {
-        if (multiSelector.getSelectedPositions().size() == 0) {
-            if (actionMode != null) actionMode.finish();
-        }
-    }
-
-    @Override
     public void addPhotos(List<String> photosList, PhotoAlbum photoAlbum) {
-
     }
 
     @Override
     public void getPhotosByAlbumId(int albumId) {
-
     }
 
     @Override

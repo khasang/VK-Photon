@@ -94,7 +94,8 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
 
     @Override
     public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
-        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_albums, ((FabProvider) activity).getFloatingActionButton()) {
+        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
+                R.menu.menu_action_mode_vk_albums, ((FabProvider) activity).getFloatingActionButton()) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {

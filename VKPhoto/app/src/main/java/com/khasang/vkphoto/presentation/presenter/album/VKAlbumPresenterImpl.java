@@ -23,10 +23,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 
-public class VKAlbumPresenterImpl implements VKAlbumPresenter {
+public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumPresenter {
     private AlbumView vkAlbumView;
     private VKAlbumInteractor VKAlbumInteractor;
-    private ActionMode actionMode;
+//    private ActionMode actionMode;
 
     public VKAlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
         this.vkAlbumView = vkAlbumView;
@@ -78,11 +78,14 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
     @Override
     public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
-        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_album, ((FabProvider) activity).getFloatingActionButton()) {
+        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
+                R.menu.menu_action_mode_vk_album, ((FabProvider) activity).getFloatingActionButton()) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_sync_photo:
+                        return true;
+                    case R.id.action_edit_photo:
                         return true;
                     case R.id.action_delete_photo:
                         vkAlbumView.confirmDelete(multiSelector);
@@ -93,14 +96,5 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
                 return false;
             }
         });
-    }
-
-    @Override
-    public void checkActionModeFinish(MultiSelector multiSelector) {
-        if (multiSelector.getSelectedPositions().size() == 0) {
-            if (actionMode != null) {
-                actionMode.finish();
-            }
-        }
     }
 }

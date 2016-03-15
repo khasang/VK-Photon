@@ -13,6 +13,7 @@
     <string name="count_of_photos">Count of photos: %d</string>
     <string name="sync_photo">Synchronize photo</string>
     <string name="sync_delete_photos">Delete photos</string>
+    <string name="edit_photo_title">Edit photo</string>
     <string name="sync_delete_photo_question">Delete photo?</string>
     <string name="sync_delete_photos_question">Delete photos?</string>
     <string name="create_album">Create album</string>

@@ -1,11 +1,11 @@
-package com.khasang.vkphoto.presentation.presenter.albums;
+package com.khasang.vkphoto.presentation.presenter.album;
 
 import android.support.v7.view.ActionMode;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import org.greenrobot.eventbus.EventBus;
 
-public abstract class AlbumsPresenterBase implements AlbumsPresenter {
+public abstract class AlbumPresenterBase implements AlbumPresenter {
     protected ActionMode actionMode;
 
     @Override
@@ -25,9 +25,9 @@ public abstract class AlbumsPresenterBase implements AlbumsPresenter {
                 actionMode.finish();
             }
         } else if (size == 1) {
-            actionMode.getMenu().findItem(R.id.action_edit_album).setVisible(true);
+            actionMode.getMenu().findItem(R.id.action_edit_photo).setVisible(true);
         } else {
-            actionMode.getMenu().findItem(R.id.action_edit_album).setVisible(false);
+            actionMode.getMenu().findItem(R.id.action_edit_photo).setVisible(false);
         }
     }
 
