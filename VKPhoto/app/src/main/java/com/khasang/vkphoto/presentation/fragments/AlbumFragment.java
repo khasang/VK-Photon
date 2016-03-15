@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,6 +61,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
         vkAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
         adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter);
@@ -69,25 +71,41 @@ public class AlbumFragment extends Fragment implements AlbumView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album, container, false);
+        tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
+        restoreState(savedInstanceState);
+        initFab();
+        albumId = photoAlbum.id;
+        initReyclerView(view);
+        initActionBarHome();
+        return view;
+    }
+
+    private void initActionBarHome() {
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    private void initReyclerView(View view) {
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
                 vkAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
             }
         }
-        initFab();
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (photoAlbum != null) {
             Logger.d("photoalbum " + photoAlbum.title);
         } else {
             Logger.d("wtf where is album?");
         }
-        albumId = photoAlbum.id;
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(adapter);
-        tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
-        return view;
     }
 
     private void initFab() {

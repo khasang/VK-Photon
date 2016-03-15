@@ -5,11 +5,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -20,6 +22,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
@@ -57,6 +60,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
         localAlbumPresenter = new LocalAlbumPresenterImpl(this, getContext());
         multiSelector = new MultiSelector();
 
@@ -73,21 +77,35 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album, container, false);
+        tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
+        restoreState(savedInstanceState);
+        initFab();
+        initRecyclerView(view);
+        initActionBarHome();
+        return view;
+    }
+
+    private void initActionBarHome() {
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
                 localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
             }
         }
+    }
 
-        initFab();
+    private void initRecyclerView(View view) {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
-        tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photoList.size()));
-
-        return view;
     }
 
     private void initFab() {
@@ -104,9 +122,10 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         Logger.d("user wants to removePhotosFromView");
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
         Collections.sort(selectedPositions, Collections.reverseOrder());
-        for (Integer position : selectedPositions)
+        for (Integer position : selectedPositions) {
             photoList.remove((int) position);
-        adapter.notifyDataSetChanged();
+            adapter.notifyItemRemoved(position);
+        }
     }
 
     private void setOnClickListenerFab(View view) {
@@ -157,7 +176,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     public void displayVkPhotos(List<Photo> photos) {
         photoList = photos;
         adapter.setPhotoList(photos);
-        tvCountOfPhotos.setText(getResources().getString(R.string.count_of_photos, photos.size()));
+        tvCountOfPhotos.setText(getString(R.string.count_of_photos, photos.size()));
     }
 
     @Override
@@ -177,6 +196,17 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         if (error != null) {
             ToastUtils.showError(error, getContext());
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                Navigator.navigateBack(getActivity());
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

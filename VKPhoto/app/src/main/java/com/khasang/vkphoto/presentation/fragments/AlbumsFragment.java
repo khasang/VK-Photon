@@ -104,7 +104,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
         swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                Logger.d("startRefreshing");
+                Logger.d("Refreshing " + refreshing);
                 AlbumsFragment.this.refreshing = refreshing;
                 swipeRefreshLayout.setRefreshing(refreshing);
             }

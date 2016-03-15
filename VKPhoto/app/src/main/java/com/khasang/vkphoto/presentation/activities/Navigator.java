@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.khasang.vkphoto.R;
@@ -55,6 +57,10 @@ public class Navigator {
                 changeViewPagerVisibility((Activity) context, true);
                 fragment = fragmentManager.getFragments()
                         .get(tabPosition);
+                ActionBar supportActionBar = ((AppCompatActivity) context).getSupportActionBar();
+                if (supportActionBar != null) {
+                    supportActionBar.setDisplayHomeAsUpEnabled(false);
+                }
             } else {
                 FragmentManager.BackStackEntry backEntry = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1);
                 String str = backEntry.getName();
