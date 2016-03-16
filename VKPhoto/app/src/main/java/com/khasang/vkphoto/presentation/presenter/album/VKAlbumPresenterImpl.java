@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.presentation.presenter.album;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.view.MenuItem;
@@ -14,6 +15,8 @@ import com.khasang.vkphoto.domain.interactors.VKAlbumInteractor;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.activities.Navigator;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.AlbumView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -47,6 +50,11 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     @Override
     public void getLocalAlbumsCursor() {
         VKAlbumInteractor.getLocalAlbumsCursor();
+    }
+
+    @Override
+    public void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum) {
+        Navigator.navigateToLocalAlbumFragment(context, photoAlbum);
     }
 
     @Override

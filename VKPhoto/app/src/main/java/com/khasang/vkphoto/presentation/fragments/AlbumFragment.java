@@ -136,25 +136,28 @@ public class AlbumFragment extends Fragment implements AlbumView {
         });
     }
 
-    void createBitmap(String stPath) {
+    BitmapFactory.Options createBitmap(String stPath) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-//        BitmapFactory.decodeResource(getResources(), R., options);
+        BitmapFactory.decodeFile(stPath, options);
         int imageHeight = options.outHeight;
         int imageWidth = options.outWidth;
         String imageType = options.outMimeType;
+        return options;
     }
 
     @Override
-    public void displayAllLocalAlbums(final List<PhotoAlbum> albumList){
+    public void displayAllLocalAlbums(final List<PhotoAlbum> albumsList){
         final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(getContext());
         int defWidth = 200;
         int defHeight = 200;
+//        Drawable d = BitmapDrawable(getResources(), BitmapFactory.decodeFile(albumsList.get(0).thumbFilePath));
 //        for (int ind = 0; ind < 10; ind++) {
-        for (int ind = 0; ind < albumList.size(); ind++) {
+        for (int ind = 0; ind < albumsList.size(); ind++) {
             adapter.add(new MaterialSimpleListItem.Builder(getContext())
-                    .content(albumList.get(ind).title)
-                    .icon(Drawable.createFromPath(albumList.get(ind).thumbFilePath))
+                    .content(albumsList.get(ind).title)
+                    .icon(Drawable.createFromPath(albumsList.get(ind).thumbFilePath))
+//                    .icon(d)
                     .build());
         }
         new MaterialDialog.Builder(getContext())
@@ -163,9 +166,8 @@ public class AlbumFragment extends Fragment implements AlbumView {
                     @Override
                     public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
                         MaterialSimpleListItem item = adapter.getItem(which);
-//                        int idPhotoAlbum = listAllLocalAlbums.get(which).id;
                         dialog.dismiss();
-//                        vKAlbumPresenter.goToPhotoAlbum(getContext(), listAllLocalAlbums.get(which));
+                        vkAlbumPresenter.goToPhotoAlbum(getContext(), albumsList.get(which));
                     }
                 })
                 .show();
