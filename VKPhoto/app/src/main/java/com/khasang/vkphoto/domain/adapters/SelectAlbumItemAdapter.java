@@ -72,9 +72,5 @@ public class SelectAlbumItemAdapter extends BaseAdapter implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-//        Integer index = (Integer) v.getTag();
-//        if (mToast != null) mToast.cancel();
-//        mToast = Toast.makeText(mContext, "Clicked button " + index, Toast.LENGTH_SHORT);
-//        mToast.show();
     }
 }

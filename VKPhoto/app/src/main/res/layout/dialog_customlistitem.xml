@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/md_dialog_frame_margin"
         android:layout_marginEnd="@dimen/md_dialog_frame_margin"
-        android:text="@string/custom_listitem_button"
+        android:text="@string/select_album"
         android:layout_toRightOf="@+id/imageViewDialog"
         android:layout_toEndOf="@+id/imageViewDialog"
         android:layout_alignParentRight="true"

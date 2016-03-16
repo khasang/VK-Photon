@@ -71,11 +71,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         else Logger.d("wtf where is album?");
         albumId = photoAlbum.id;
         adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
-//        String st = ;
-        if (getTag().equals("Test")) {
-//            adapter.notifyDataSetChanged();
-//            photoAlbum = getArguments().getParcelable(PHOTOALBUM);
-        }
+
     }
 
     @Nullable
@@ -100,7 +96,11 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
-                localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
+                if (getTag().equals("AddPhotos")) {
+                    localAlbumPresenter.savePhotos(multiSelector, photoAlbum, (AppCompatActivity) getActivity());
+                } else {
+                    localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
+                }
             }
         }
     }
@@ -137,15 +137,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final OpenFileDialog fileDialog = new OpenFileDialog(getContext(), getActivity());
-                fileDialog.show();
-                fileDialog.setOpenDialogListener(new OpenFileDialog.OpenDialogListener() {
-                    @Override
-                    public void OnSelectedFile(ArrayList<String> listSelectedFiles) {
-//                        vKPhotosPresenter.addPhotos(listSelectedFiles, photoAlbum);
-                    }
-                });
-                ToastUtils.showShortMessage("Here will be action Add Photos", getActivity());
+
 //                vKAlbumPresenter.addPhotos();
             }
         });

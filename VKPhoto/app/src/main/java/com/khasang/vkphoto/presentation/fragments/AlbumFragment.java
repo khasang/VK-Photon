@@ -1,6 +1,5 @@
 package com.khasang.vkphoto.presentation.fragments;
 
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,8 +20,8 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.domain.adapters.SelectAlbumItemAdapter;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
+import com.khasang.vkphoto.domain.adapters.SelectAlbumItemAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
@@ -125,41 +124,8 @@ public class AlbumFragment extends Fragment implements AlbumView {
         });
     }
 
-    BitmapFactory.Options createBitmap(String stPath) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(stPath, options);
-        int imageHeight = options.outHeight;
-        int imageWidth = options.outWidth;
-        String imageType = options.outMimeType;
-        return options;
-    }
-
     @Override
     public void displayAllLocalAlbums(final List<PhotoAlbum> albumsList){
-//        final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(getContext());
-//        int defWidth = 200;
-//        int defHeight = 200;
-////        Drawable d = BitmapDrawable(getResources(), BitmapFactory.decodeFile(albumsList.get(0).thumbFilePath));
-//        for (int ind = 0; ind < 5; ind++) {
-////        for (int ind = 0; ind < albumsList.size(); ind++) {
-//            adapter.add(new MaterialSimpleListItem.Builder(getContext())
-//                    .content(albumsList.get(ind).title)
-//                    .icon(Drawable.createFromPath(albumsList.get(ind).thumbFilePath))
-////                    .icon(d)
-//                    .build());
-//        }
-//        new MaterialDialog.Builder(getContext())
-//                .title(R.string.select_album)
-//                .adapter(adapter, new MaterialDialog.ListCallback() {
-//                    @Override
-//                    public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-//                        MaterialSimpleListItem item = adapter.getItem(which);
-//                        dialog.dismiss();
-//                        vkAlbumPresenter.goToPhotoAlbum(getContext(), albumsList.get(which));
-//                    }
-//                })
-//                .show();
         new MaterialDialog.Builder(getContext())
                 .title(R.string.select_album)
                 .adapter(new SelectAlbumItemAdapter(getContext(), albumsList),

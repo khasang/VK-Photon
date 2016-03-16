@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.data.vk;
 
+import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
@@ -42,32 +43,29 @@ public class VKPhotoSource {
 
     /**
      * Добавляет список фотографий на сервер ВК и в альбом на устройсте
-     *
-     * @param listUploadedFiles
-     * @param photoAlbum
-     * @param localAlbumSource
-     */
-    public void savePhotos(final List<Photo> listUploadedFiles, final PhotoAlbum photoAlbum, final LocalAlbumSource localAlbumSource) {
-        if (listUploadedFiles.size() > 0) {
-            File file = new File(listUploadedFiles.get(listUploadedFiles.size() - 1).filePath);
-            if (file.exists()) {
-                RequestMaker.uploadPhoto(file, photoAlbum, new VKRequest.VKRequestListener() {
-                    @Override
-                    public void onComplete(VKResponse response) {
-                        super.onComplete(response);
-                        Logger.d("savePhotoToAlbum: " + response.responseString);
-                        listUploadedFiles.remove(listUploadedFiles.size() - 1);
-                        if (listUploadedFiles.size() >= 0)
-                            savePhotos(listUploadedFiles, photoAlbum, localAlbumSource);
-                    }
 
-                    @Override
-                    public void onError(VKError error) {
-                        super.onError(error);
-                    }
-                });
-            }
-        }
+     */
+    public void savePhotos(final MultiSelector multiSelector, final PhotoAlbum photoAlbum) {
+//        if (listUploadedFiles.size() > 0) {
+//            File file = new File(listUploadedFiles.get(listUploadedFiles.size() - 1).filePath);
+//            if (file.exists()) {
+//                RequestMaker.uploadPhoto(file, photoAlbum, new VKRequest.VKRequestListener() {
+//                    @Override
+//                    public void onComplete(VKResponse response) {
+//                        super.onComplete(response);
+//                        Logger.d("savePhotoToAlbum: " + response.responseString);
+//                        listUploadedFiles.remove(listUploadedFiles.size() - 1);
+//                        if (listUploadedFiles.size() >= 0)
+//                            savePhotos(listUploadedFiles, photoAlbum, localAlbumSource);
+//                    }
+//
+//                    @Override
+//                    public void onError(VKError error) {
+//                        super.onError(error);
+//                    }
+//                });
+//            }
+//        }
         getPhotosByAlbumId(photoAlbum.id);
     }
 

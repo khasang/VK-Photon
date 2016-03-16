@@ -41,6 +41,9 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Override
+    public void savePhotos(MultiSelector multiSelector, final PhotoAlbum photoAlbum, final AppCompatActivity activity) {}
+
+    @Override
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
         VKAlbumInteractor.deleteSelectedVkPhotos(multiSelector, vkAlbumView.getPhotoList());
         vkAlbumView.removePhotosFromView();

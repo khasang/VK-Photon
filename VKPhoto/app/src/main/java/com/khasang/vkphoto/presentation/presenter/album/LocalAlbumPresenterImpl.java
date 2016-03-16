@@ -13,6 +13,7 @@ import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.AlbumView;
 import com.khasang.vkphoto.util.Logger;
 
@@ -48,6 +49,28 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
                         return true;
                     case R.id.action_delete_photo:
                         albumView.confirmDelete(multiSelector);
+                        return true;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void savePhotos(final MultiSelector multiSelector, final PhotoAlbum photoAlbum, final AppCompatActivity activity) {
+        ((FabProvider) activity).getFloatingActionButton().hide();
+        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
+                R.menu.menu_action_mode_save_photos, ((FabProvider) activity).getFloatingActionButton()) {
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_select_all:
+                        Logger.d("user wants save all local photos");
+                        return true;
+                    case R.id.action_save_photos:
+                        localPhotosInteractor.savePhotos(multiSelector, photoAlbum);
                         return true;
                     default:
                         break;
