@@ -1,7 +1,6 @@
 package com.khasang.vkphoto.domain.interactors;
 
 
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.presentation.model.Photo;
 
@@ -13,6 +12,7 @@ import java.util.List;
 public interface VKAlbumInteractor {
     void getPhotosByAlbumId(int albumId);
 
-    void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum);
+    void getLocalAlbumsCursor();
+
     void deleteSelectedVkPhotos(MultiSelector multiSelector, List<Photo> photoList);
 }

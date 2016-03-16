@@ -1,5 +1,7 @@
 package com.khasang.vkphoto.presentation.fragments;
 
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +20,8 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.simplelist.MaterialSimpleListAdapter;
+import com.afollestad.materialdialogs.simplelist.MaterialSimpleListItem;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
@@ -30,7 +34,6 @@ import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenter;
 import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenterImpl;
 import com.khasang.vkphoto.presentation.view.AlbumView;
 import com.khasang.vkphoto.util.Logger;
-import com.khasang.vkphoto.util.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,18 +122,53 @@ public class AlbumFragment extends Fragment implements AlbumView {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final OpenFileDialog fileDialog = new OpenFileDialog(getContext(), getActivity());
-                fileDialog.show();
-                fileDialog.setOpenDialogListener(new OpenFileDialog.OpenDialogListener() {
-                    @Override
-                    public void OnSelectedFile(ArrayList<String> listSelectedFiles) {
-//                        vKPhotosPresenter.addPhotos(listSelectedFiles, photoAlbum);
-                    }
-                });
-                ToastUtils.showShortMessage("Here will be action Add Photos", getActivity());
-//                vkAlbumPresenter.addPhotos();
+//                final OpenFileDialog fileDialog = new OpenFileDialog(getContext(), getActivity());
+//                fileDialog.show();
+//                fileDialog.setOpenDialogListener(new OpenFileDialog.OpenDialogListener() {
+//                    @Override
+//                    public void OnSelectedFile(ArrayList<String> listSelectedFiles) {
+////                        vKPhotosPresenter.addPhotos(listSelectedFiles, photoAlbum);
+//                    }
+//                });
+//                ToastUtils.showShortMessage("Here will be action Add Photos", getActivity());
+                vkAlbumPresenter.getLocalAlbumsCursor();
             }
         });
+    }
+
+    void createBitmap(String stPath) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+//        BitmapFactory.decodeResource(getResources(), R., options);
+        int imageHeight = options.outHeight;
+        int imageWidth = options.outWidth;
+        String imageType = options.outMimeType;
+    }
+
+    @Override
+    public void displayAllLocalAlbums(final List<PhotoAlbum> albumList){
+        final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(getContext());
+        int defWidth = 200;
+        int defHeight = 200;
+//        for (int ind = 0; ind < 10; ind++) {
+        for (int ind = 0; ind < albumList.size(); ind++) {
+            adapter.add(new MaterialSimpleListItem.Builder(getContext())
+                    .content(albumList.get(ind).title)
+                    .icon(Drawable.createFromPath(albumList.get(ind).thumbFilePath))
+                    .build());
+        }
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.select_album)
+                .adapter(adapter, new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                        MaterialSimpleListItem item = adapter.getItem(which);
+//                        int idPhotoAlbum = listAllLocalAlbums.get(which).id;
+                        dialog.dismiss();
+//                        vKAlbumPresenter.goToPhotoAlbum(getContext(), listAllLocalAlbums.get(which));
+                    }
+                })
+                .show();
     }
 
     @Override

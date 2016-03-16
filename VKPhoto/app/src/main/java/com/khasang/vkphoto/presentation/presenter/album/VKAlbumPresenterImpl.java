@@ -8,20 +8,17 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractor;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
-import com.khasang.vkphoto.presentation.model.Photo;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.AlbumView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.List;
 
 
 public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumPresenter {
@@ -48,8 +45,8 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Override
-    public void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum) {
-        VKAlbumInteractor.addPhotos(listUploadedFiles, photoAlbum);
+    public void getLocalAlbumsCursor() {
+        VKAlbumInteractor.getLocalAlbumsCursor();
     }
 
     @Override
@@ -74,6 +71,11 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
         vkAlbumView.displayVkPhotos(getVKPhotosEvent.photosList);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetVKAlbumsEvent(GetVKAlbumsEvent getVKAlbumsEvent) {
+        vkAlbumView.displayAllLocalAlbums(getVKAlbumsEvent.albumsList);
     }
 
     @Override

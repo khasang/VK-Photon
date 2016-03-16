@@ -20,6 +20,7 @@
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="title">Title</string>
+    <string name="select_album">Select album</string>
     <plurals name="count_of_albums">
         <item quantity="one">%d albums</item>
         <item quantity="other">%d albums</item>

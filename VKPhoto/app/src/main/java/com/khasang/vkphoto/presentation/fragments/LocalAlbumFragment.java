@@ -181,6 +181,9 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     }
 
     @Override
+    public void displayAllLocalAlbums(List<PhotoAlbum> albumsList) {}
+
+    @Override
     public List<Photo> getPhotoList() {
         return photoList;
     }

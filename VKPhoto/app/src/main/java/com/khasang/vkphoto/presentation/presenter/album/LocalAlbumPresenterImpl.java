@@ -13,16 +13,12 @@ import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
-import com.khasang.vkphoto.presentation.model.Photo;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.AlbumView;
 import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.List;
 
 /**
  * Created by TAU on 05.03.2016.
@@ -69,8 +65,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     }
 
     @Override
-    public void addPhotos(List<Photo> photosList, PhotoAlbum photoAlbum) {
-    }
+    public void getLocalAlbumsCursor() {}
 
     @Override
     public void getPhotosByAlbumId(int albumId) {

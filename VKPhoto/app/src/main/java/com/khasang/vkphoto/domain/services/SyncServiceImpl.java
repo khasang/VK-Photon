@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
+import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
@@ -103,6 +104,21 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
+    public void getLocalAlbumsCursor() {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                List<PhotoAlbum> albumsList = localDataSource.getAlbumSource().getAllLocalAlbumsList();
+                if (albumsList.isEmpty()) {
+                    EventBus.getDefault().postSticky(new ErrorEvent(77));
+                } else {
+                    EventBus.getDefault().postSticky(new GetVKAlbumsEvent(albumsList));
+                }
+            }
+        });
+    }
+
+    @Override
     public void getAllAlbums() {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
@@ -147,16 +163,6 @@ public class SyncServiceImpl extends Service implements SyncService {
             @Override
             public void run() throws Exception {
                 vKDataSource.getPhotoSource().getPhotosByAlbumId(albumId);
-            }
-        });
-    }
-
-    @Override
-    public void addPhotos(final List<Photo> listUploadedFiles, final PhotoAlbum photoAlbum) {
-        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
-            @Override
-            public void run() throws Exception {
-                vKDataSource.getPhotoSource().savePhotos(listUploadedFiles, photoAlbum, localDataSource.getAlbumSource());
             }
         });
     }
