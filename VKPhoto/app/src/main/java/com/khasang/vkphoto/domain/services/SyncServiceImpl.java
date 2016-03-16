@@ -129,6 +129,18 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
+    @Override
+    public void getAllLocalAlbums(){
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                Logger.d("SyncSerice getAllLocalAlbums");
+                Logger.d("no body");
+//                localDataSource.getAlbumSource().getAllAlbums();
+            }
+        });
+    }
+
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onGetVKAlbumsEvent(GetVKAlbumsEvent getVKAlbumsEvent) {
         Logger.d("SyncSerice onGetVKAlbumsEvent");
@@ -269,6 +281,20 @@ public class SyncServiceImpl extends Service implements SyncService {
             @Override
             public void run() throws Exception {
                 localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
+            }
+        });
+    }
+
+    @Override
+    public void deleteSelectedLocalPhotoAlbums(final List<PhotoAlbum> deleteAlbumsList) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                for (PhotoAlbum photoAlbum : deleteAlbumsList){
+                    Logger.d("now deleting photoAlbum: " + photoAlbum.filePath);
+                    List<Photo> deletePhotoList = localDataSource.getPhotoSource().getLocalPhotosByAlbumId(photoAlbum.id);
+                    localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
+                }
             }
         });
     }

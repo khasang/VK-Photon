@@ -123,7 +123,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     //на самом деле это не метод для удаления фото, а только для отображения этих изменений в адаптере
     //физическое удаление происходит в интерэкторе
     @Override
-    public void removePhotosFromView(MultiSelector multiSelector) {
+    public void removePhotosFromView() {
         Logger.d("user wants to removePhotosFromView");
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
         Collections.sort(selectedPositions, Collections.reverseOrder());
@@ -180,7 +180,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     //AlbumView implementations
     @Override
     public void displayVkPhotos(List<Photo> photos) {
-        photoList = photos;
+//        photoList = photos;
         adapter.setPhotoList(photos);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photos.size()));
     }
