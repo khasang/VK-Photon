@@ -49,6 +49,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
     private int albumId;
+    private boolean modeSelectForSave;
 
     public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -70,7 +71,12 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         if (photoAlbum != null) Logger.d("photoalbum " + photoAlbum.title);
         else Logger.d("wtf where is album?");
         albumId = photoAlbum.id;
-        adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
+        if (getTag().equals("AddPhotos")) {
+            modeSelectForSave = true;
+        } else {
+            modeSelectForSave = false;
+        }
+        adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter, modeSelectForSave, photoAlbum);
 
     }
 
@@ -96,11 +102,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
-                if (getTag().equals("AddPhotos")) {
-                    localAlbumPresenter.savePhotos(multiSelector, photoAlbum, (AppCompatActivity) getActivity());
-                } else {
-                    localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
-                }
+                localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
             }
         }
     }

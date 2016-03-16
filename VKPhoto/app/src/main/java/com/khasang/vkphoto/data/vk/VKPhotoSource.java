@@ -46,6 +46,7 @@ public class VKPhotoSource {
 
      */
     public void savePhotos(final MultiSelector multiSelector, final PhotoAlbum photoAlbum) {
+//        multiSelector.
 //        if (listUploadedFiles.size() > 0) {
 //            File file = new File(listUploadedFiles.get(listUploadedFiles.size() - 1).filePath);
 //            if (file.exists()) {
