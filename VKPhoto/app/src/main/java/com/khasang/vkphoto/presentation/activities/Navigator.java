@@ -43,6 +43,10 @@ public class Navigator {
         navigateToFragmentWithBackStack(context, LocalAlbumFragment.newInstance(photoAlbum), "Test");
     }
 
+    public static void navigateToLocalAlbumFragmentWithReplace(Context context, PhotoAlbum photoAlbum) {
+        navigateToFragmentWithBackStackWithReplace(context, LocalAlbumFragment.newInstance(photoAlbum), LocalAlbumFragment.TAG);
+    }
+
     private static void navigateToFragment(Context context, Fragment fragment, String tag) {
         getFragmentManager(context).beginTransaction().add(R.id.fragment_container, fragment, tag).commit();
     }
@@ -50,6 +54,11 @@ public class Navigator {
     private static void navigateToFragmentWithBackStack(Context context, Fragment fragment, String tag) {
         changeViewPagerVisibility(((Activity) context), false);
         getFragmentManager(context).beginTransaction().add(R.id.fragment_container, fragment, tag).addToBackStack(tag).commit();
+    }
+
+    private static void navigateToFragmentWithBackStackWithReplace(Context context, Fragment fragment, String tag) {
+        changeViewPagerVisibility(((Activity) context), false);
+        getFragmentManager(context).beginTransaction().replace(R.id.fragment_container, fragment, tag).addToBackStack(tag).commit();
     }
 
     public static void navigateBack(Context context) {

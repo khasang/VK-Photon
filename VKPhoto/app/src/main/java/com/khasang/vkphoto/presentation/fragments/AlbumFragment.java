@@ -122,15 +122,6 @@ public class AlbumFragment extends Fragment implements AlbumView {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                final OpenFileDialog fileDialog = new OpenFileDialog(getContext(), getActivity());
-//                fileDialog.show();
-//                fileDialog.setOpenDialogListener(new OpenFileDialog.OpenDialogListener() {
-//                    @Override
-//                    public void OnSelectedFile(ArrayList<String> listSelectedFiles) {
-////                        vKPhotosPresenter.addPhotos(listSelectedFiles, photoAlbum);
-//                    }
-//                });
-//                ToastUtils.showShortMessage("Here will be action Add Photos", getActivity());
                 vkAlbumPresenter.getLocalAlbumsCursor();
             }
         });
@@ -152,8 +143,8 @@ public class AlbumFragment extends Fragment implements AlbumView {
         int defWidth = 200;
         int defHeight = 200;
 //        Drawable d = BitmapDrawable(getResources(), BitmapFactory.decodeFile(albumsList.get(0).thumbFilePath));
-//        for (int ind = 0; ind < 10; ind++) {
-        for (int ind = 0; ind < albumsList.size(); ind++) {
+        for (int ind = 0; ind < 5; ind++) {
+//        for (int ind = 0; ind < albumsList.size(); ind++) {
             adapter.add(new MaterialSimpleListItem.Builder(getContext())
                     .content(albumsList.get(ind).title)
                     .icon(Drawable.createFromPath(albumsList.get(ind).thumbFilePath))
