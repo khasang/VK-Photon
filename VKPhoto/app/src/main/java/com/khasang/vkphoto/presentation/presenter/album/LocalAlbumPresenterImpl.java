@@ -80,7 +80,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     @Override
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
         localPhotosInteractor.deleteSelectedLocalPhotos(multiSelector, albumView.getPhotoList());
-        albumView.removePhotosFromView(multiSelector);
+        albumView.removePhotosFromView();
         actionMode.finish();
     }
 

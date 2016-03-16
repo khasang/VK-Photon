@@ -143,6 +143,11 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     }
 
     @Override
+    public void removeAlbumsFromView(){
+
+    }
+
+    @Override
     public void displayAlbums() {
         Logger.d("displayAlbums");
         displayRefresh(false);

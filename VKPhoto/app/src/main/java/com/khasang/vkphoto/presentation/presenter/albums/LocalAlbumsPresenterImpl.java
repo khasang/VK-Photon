@@ -12,6 +12,7 @@ import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.interactors.LocalAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.AlbumsView;
@@ -28,9 +29,9 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     private AlbumsView albumsView;
     private LocalAlbumsInteractorImpl albumsInteractor;
 
-    public LocalAlbumsPresenterImpl(AlbumsView albumsView, Context context) {
+    public LocalAlbumsPresenterImpl(AlbumsView albumsView, SyncServiceProvider syncServiceProvider) {
         this.albumsView = albumsView;
-        albumsInteractor = new LocalAlbumsInteractorImpl(context);
+        albumsInteractor = new LocalAlbumsInteractorImpl(syncServiceProvider);
     }
 
     @Override
@@ -57,8 +58,8 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
 
     @Override
     public void deleteSelectedAlbums(MultiSelector multiSelector) {
-        albumsInteractor.deleteSelectedLocalAlbums(multiSelector, albumsView.getAdapterCursor());
-        albumsView.displayAlbums();
+        albumsInteractor.deleteLocalAlbums(multiSelector, albumsView.getAdapterCursor());
+        albumsView.removeAlbumsFromView();
         actionMode.finish();
     }
 

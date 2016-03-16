@@ -181,7 +181,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
     }
 
     @Override
-    public void removePhotosFromView(MultiSelector multiSelector) {
+    public void removePhotosFromView() {
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
         Collections.sort(selectedPositions, Collections.reverseOrder());
         for (Integer position : selectedPositions)
