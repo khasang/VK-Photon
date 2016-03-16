@@ -68,6 +68,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
             this.checkBox = (CheckBox) itemView.findViewById(R.id.cb_photo_selected);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
+            checkBox.setOnClickListener(this);
         }
 
         @Override

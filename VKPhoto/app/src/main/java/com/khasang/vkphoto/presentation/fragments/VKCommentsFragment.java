@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,7 +26,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class VKCommentsFragment extends Fragment implements VkCommentsView{
+public class VKCommentsFragment extends Fragment implements VkCommentsView {
 
     private static final String PHOTO_ID = "photoId";
     public static final String TAG = VKCommentsFragment.class.getSimpleName();
@@ -37,6 +36,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView{
     private VkCommentsPresenter presenter;
     private ImageView userImage;
     private TextView photolikes, commentCount;
+
     public static VKCommentsFragment newInstance(int photoId) {
         Bundle args = new Bundle();
         args.putInt(PHOTO_ID, photoId);
@@ -62,13 +62,13 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView{
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         commentCount = (TextView) view.findViewById(R.id.commentsCount);
         photolikes = (TextView) view.findViewById(R.id.photoLikes);
-        ((ImageButton)view.findViewById(R.id.commetnsButton)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.commetnsButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(recyclerView.getVisibility()==RecyclerView.GONE) {
+                if (recyclerView.getVisibility() == RecyclerView.GONE) {
                     presenter.getCommentsByPhotoId(photoId);
                     recyclerView.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     recyclerView.setVisibility(View.GONE);
                 }
             }
