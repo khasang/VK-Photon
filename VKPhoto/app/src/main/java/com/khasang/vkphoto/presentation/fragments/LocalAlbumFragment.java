@@ -71,9 +71,9 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         else Logger.d("wtf where is album?");
         albumId = photoAlbum.id;
         adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
-        String st = getTag();
-        if (st.equals("Test")) {
-            adapter.notifyDataSetChanged();
+//        String st = ;
+        if (getTag().equals("Test")) {
+//            adapter.notifyDataSetChanged();
 //            photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         }
     }

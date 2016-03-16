@@ -1,7 +1,6 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,13 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.simplelist.MaterialSimpleListAdapter;
-import com.afollestad.materialdialogs.simplelist.MaterialSimpleListItem;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.adapters.ButtonItemAdapter;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
@@ -139,28 +138,40 @@ public class AlbumFragment extends Fragment implements AlbumView {
 
     @Override
     public void displayAllLocalAlbums(final List<PhotoAlbum> albumsList){
-        final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(getContext());
-        int defWidth = 200;
-        int defHeight = 200;
-//        Drawable d = BitmapDrawable(getResources(), BitmapFactory.decodeFile(albumsList.get(0).thumbFilePath));
-        for (int ind = 0; ind < 5; ind++) {
-//        for (int ind = 0; ind < albumsList.size(); ind++) {
-            adapter.add(new MaterialSimpleListItem.Builder(getContext())
-                    .content(albumsList.get(ind).title)
-                    .icon(Drawable.createFromPath(albumsList.get(ind).thumbFilePath))
-//                    .icon(d)
-                    .build());
-        }
+//        final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(getContext());
+//        int defWidth = 200;
+//        int defHeight = 200;
+////        Drawable d = BitmapDrawable(getResources(), BitmapFactory.decodeFile(albumsList.get(0).thumbFilePath));
+//        for (int ind = 0; ind < 5; ind++) {
+////        for (int ind = 0; ind < albumsList.size(); ind++) {
+//            adapter.add(new MaterialSimpleListItem.Builder(getContext())
+//                    .content(albumsList.get(ind).title)
+//                    .icon(Drawable.createFromPath(albumsList.get(ind).thumbFilePath))
+////                    .icon(d)
+//                    .build());
+//        }
+//        new MaterialDialog.Builder(getContext())
+//                .title(R.string.select_album)
+//                .adapter(adapter, new MaterialDialog.ListCallback() {
+//                    @Override
+//                    public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+//                        MaterialSimpleListItem item = adapter.getItem(which);
+//                        dialog.dismiss();
+//                        vkAlbumPresenter.goToPhotoAlbum(getContext(), albumsList.get(which));
+//                    }
+//                })
+//                .show();
+        List<PhotoAlbum> list = new ArrayList<PhotoAlbum>();
+        list.add(albumsList.get(11));
         new MaterialDialog.Builder(getContext())
                 .title(R.string.select_album)
-                .adapter(adapter, new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                        MaterialSimpleListItem item = adapter.getItem(which);
-                        dialog.dismiss();
-                        vkAlbumPresenter.goToPhotoAlbum(getContext(), albumsList.get(which));
-                    }
-                })
+                .adapter(new ButtonItemAdapter(getContext(), list),
+                        new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                Toast.makeText(getContext(), "Clicked item " + which, Toast.LENGTH_SHORT).show();
+                            }
+                        })
                 .show();
     }
 

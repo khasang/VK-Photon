@@ -21,6 +21,13 @@
     <string name="cancel">Cancel</string>
     <string name="title">Title</string>
     <string name="select_album">Select album</string>
+    <string name="custom_listitem_button">A button!</string>
+    <string-array name="socialNetworks">
+        <item>Twitter</item>
+        <item>Google+</item>
+        <item>Instagram</item>
+        <item>Facebook</item>
+    </string-array>
     <plurals name="count_of_albums">
         <item quantity="one">%d albums</item>
         <item quantity="other">%d albums</item>

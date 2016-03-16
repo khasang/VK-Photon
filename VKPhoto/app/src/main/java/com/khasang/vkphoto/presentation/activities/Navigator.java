@@ -40,11 +40,11 @@ public class Navigator {
     }
 
     public static void navigateToLocalAlbumFragment(Context context, PhotoAlbum photoAlbum) {
-        navigateToFragmentWithBackStack(context, LocalAlbumFragment.newInstance(photoAlbum), "Test");
+        navigateToFragmentWithBackStack(context, LocalAlbumFragment.newInstance(photoAlbum), LocalAlbumFragment.TAG);
     }
 
     public static void navigateToLocalAlbumFragmentWithReplace(Context context, PhotoAlbum photoAlbum) {
-        navigateToFragmentWithBackStackWithReplace(context, LocalAlbumFragment.newInstance(photoAlbum), LocalAlbumFragment.TAG);
+        navigateToFragmentWithBackStackWithReplace(context, LocalAlbumFragment.newInstance(photoAlbum), "Test");
     }
 
     private static void navigateToFragment(Context context, Fragment fragment, String tag) {
