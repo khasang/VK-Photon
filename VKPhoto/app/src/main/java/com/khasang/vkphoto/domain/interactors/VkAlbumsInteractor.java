@@ -6,16 +6,16 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenterImpl;
+import com.khasang.vkphoto.presentation.presenter.albums.AlbumsPresenterImpl;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 
 /**
  * Интерфейс исполнителя запросов к службе синхронизации.
- * Создается внутри VKAlbumsPresenterImpl
+ * Создается внутри AlbumsPresenterImpl
  *
- * @see VKAlbumsPresenterImpl
+ * @see AlbumsPresenterImpl
  * @see SyncServiceImpl
  */
 //Todo расширить интерфейс необходимыми методами

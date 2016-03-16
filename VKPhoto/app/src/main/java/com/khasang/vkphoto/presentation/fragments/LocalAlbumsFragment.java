@@ -159,6 +159,11 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     }
 
 
+    @Override
+    public void confirmSync(MultiSelector multiSelector) {
+        //upload to VK
+    }
+
     //AlbumsView implementations
     @Override
     public void displayVkSaveAlbum(PhotoAlbum photoAlbum) {
