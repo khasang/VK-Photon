@@ -113,6 +113,18 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
+    @Override
+    public void getAllLocalAlbums(){
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                Logger.d("SyncSerice getAllLocalAlbums");
+                Logger.d("no body");
+//                localDataSource.getAlbumSource().getAllAlbums();
+            }
+        });
+    }
+
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onGetVKAlbumsEvent(GetVKAlbumsEvent getVKAlbumsEvent) {
         Logger.d("SyncSerice onGetVKAlbumsEvent");

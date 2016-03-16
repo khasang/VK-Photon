@@ -3,7 +3,9 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,9 +26,11 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.LocalAlbumsCursorLoader;
+import com.khasang.vkphoto.data.database.tables.PhotoAlbumsTable;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumsCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
 import com.khasang.vkphoto.presentation.custom_classes.GridSpacingItemDecoration;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -35,7 +39,8 @@ import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenterImp
 import com.khasang.vkphoto.presentation.view.AlbumsView;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
-
+import java.util.Collections;
+import java.util.List;
 import static com.khasang.vkphoto.util.Constants.ALBUMS_SPAN_COUNT;
 
 public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
@@ -51,7 +56,7 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        localAlbumsPresenter = new LocalAlbumsPresenterImpl(this, getContext());
+        localAlbumsPresenter = new LocalAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
     }
 
@@ -164,6 +169,54 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     public void displayVkSaveAlbum(PhotoAlbum photoAlbum) {
         //TODO: implement metod
         Logger.d("displayVkSaveAlbum");
+    }
+
+    public void removeAlbumsFromView() {
+        Logger.d("user wants to removeAlbumsFromView");
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Collections.sort(selectedPositions, Collections.reverseOrder());
+        Cursor oldCursor = adapter.getCursor();
+
+        MatrixCursor modifiedCursor = new MatrixCursor(new String[]{
+                BaseColumns._ID,
+                PhotoAlbumsTable.TITLE,
+                PhotoAlbumsTable.FILE_PATH,
+                PhotoAlbumsTable.THUMB_FILE_PATH,
+                PhotoAlbumsTable.SIZE});
+        MatrixCursor.RowBuilder builder;
+
+        if (oldCursor.moveToFirst()) {
+            int i = 0;
+            String id, title, filePath, thumbPath, photosCount;
+            int idColumn = oldCursor.getColumnIndex(BaseColumns._ID);
+            int titleColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.TITLE);
+            int filePathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.FILE_PATH);
+            int thumbPathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.THUMB_FILE_PATH);
+            int photosCountColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.SIZE);
+
+            do {
+                id = oldCursor.getString(idColumn);
+                title = oldCursor.getString(titleColumn);
+                filePath = oldCursor.getString(filePathColumn);
+                thumbPath = oldCursor.getString(thumbPathColumn);
+                photosCount = oldCursor.getString(photosCountColumn);
+                if (!selectedPositions.contains(i)) {
+                    builder = modifiedCursor.newRow();
+                    builder.add(id)
+                            .add(title)
+                            .add(filePath)
+                            .add(thumbPath)
+                            .add(photosCount);
+                }
+                i++;
+            } while (oldCursor.moveToNext());
+            oldCursor.close();
+        }
+
+        adapter.changeCursor(modifiedCursor);
+        for (Integer position : selectedPositions) {
+            adapter.notifyItemRemoved(position);
+        }
     }
 
     @Override

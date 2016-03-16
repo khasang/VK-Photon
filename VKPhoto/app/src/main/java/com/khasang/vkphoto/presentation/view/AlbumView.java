@@ -10,5 +10,5 @@ public interface AlbumView extends View {
 
     List<Photo> getPhotoList();
 
-    void removePhotosFromView(MultiSelector multiSelector);
+    void removePhotosFromView();
 }

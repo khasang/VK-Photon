@@ -22,6 +22,8 @@ public interface SyncService {
 
     void getAllAlbums();
 
+    void getAllLocalAlbums();
+
     void getPhotosByAlbumId(int albumId);
 
     void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum);

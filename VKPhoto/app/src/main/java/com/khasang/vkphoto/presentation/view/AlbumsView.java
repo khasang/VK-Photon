@@ -7,6 +7,8 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 public interface AlbumsView extends View {
     void displayVkSaveAlbum(PhotoAlbum photoAlbum);
 
+    void removeAlbumsFromView();
+
     void displayAlbums();
 
     void displayRefresh(boolean refreshing);
