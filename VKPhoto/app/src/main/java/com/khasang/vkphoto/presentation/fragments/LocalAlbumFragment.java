@@ -175,7 +175,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     //AlbumView implementations
     @Override
     public void displayVkPhotos(List<Photo> photos) {
-        photoList = photos;
+//        photoList = photos;
         adapter.setPhotoList(photos);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photos.size()));
     }

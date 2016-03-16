@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
+import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Logger;
 
@@ -16,9 +17,11 @@ import java.util.List;
  */
 public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
     LocalAlbumSource localAlbumSource;
+    LocalPhotoSource localPhotoSource;
 
     public LocalAlbumsInteractorImpl(Context context) {
         localAlbumSource = new LocalAlbumSource(context);
+        localPhotoSource = new LocalPhotoSource(context);
     }
 
     @Override
@@ -40,7 +43,7 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
     }
 
     @Override
-    public void deleteSelectedLocalAlbums(MultiSelector multiSelector, Cursor cursor) {
+    public void deleteLocalAlbums(MultiSelector multiSelector, Cursor cursor) {
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
         List<PhotoAlbum> deleteList = new ArrayList<>();
         if (cursor != null) {
@@ -49,7 +52,7 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
                 PhotoAlbum deleteAlbum = new PhotoAlbum(cursor);
                 deleteList.add(deleteAlbum);
             }
-            localAlbumSource.deleteLocalAlbums(deleteList);
+            localAlbumSource.deleteLocalAlbums(deleteList, localPhotoSource);
         }
     }
 }

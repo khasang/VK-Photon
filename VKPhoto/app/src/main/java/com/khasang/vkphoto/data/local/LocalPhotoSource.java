@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.data.local;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -79,10 +80,12 @@ public class LocalPhotoSource {
 
     public void deleteLocalPhotos(List<Photo> photoList) {
         for (Photo photo : photoList) {
-            Logger.d("now deleting file: " + photo.filePath);
-            File file = new File(photo.filePath);
-            if (!file.delete())
+            Logger.d("now deleting photo: " + photo.filePath);
+            ContentResolver cr = context.getContentResolver();
+            Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            if (cr.delete(images, BaseColumns._ID + " = ?", new String[]{String.valueOf(photo.id)}) == -1){
                 Logger.d("error while deleting file: " + photo.filePath);
+            }
         }
     }
 

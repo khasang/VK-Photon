@@ -59,5 +59,7 @@ public interface SyncService {
     void getLocalPhotosByAlbumId(int albumId);
 
     void deleteSelectedLocalPhotos(List<Photo> deletePhotoList);
+
+    void deleteSelectedLocalPhotoAlbums(List<PhotoAlbum> deleteAlbumsList);
 }
       
