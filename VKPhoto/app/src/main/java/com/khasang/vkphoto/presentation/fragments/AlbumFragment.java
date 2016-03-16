@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -161,15 +160,14 @@ public class AlbumFragment extends Fragment implements AlbumView {
 //                    }
 //                })
 //                .show();
-        List<PhotoAlbum> list = new ArrayList<PhotoAlbum>();
-        list.add(albumsList.get(11));
         new MaterialDialog.Builder(getContext())
                 .title(R.string.select_album)
-                .adapter(new ButtonItemAdapter(getContext(), list),
+                .adapter(new ButtonItemAdapter(getContext(), albumsList),
                         new MaterialDialog.ListCallback() {
                             @Override
                             public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                Toast.makeText(getContext(), "Clicked item " + which, Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                                vkAlbumPresenter.goToPhotoAlbum(getContext(), albumsList.get(which));
                             }
                         })
                 .show();

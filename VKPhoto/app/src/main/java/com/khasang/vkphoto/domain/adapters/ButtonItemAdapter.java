@@ -2,8 +2,6 @@ package com.khasang.vkphoto.domain.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -12,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
@@ -57,12 +56,18 @@ public class ButtonItemAdapter extends BaseAdapter implements View.OnClickListen
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null)
             convertView = View.inflate(mContext, R.layout.dialog_customlistitem, null);
-        ((TextView) convertView.findViewById(R.id.title)).setText(arrayList.get(position).title + " (" + position + ")");
-        Bitmap myBitmap = BitmapFactory.decodeFile(arrayList.get(position).thumbFilePath);
-
+        ((TextView) convertView.findViewById(R.id.title)).setText(arrayList.get(position).title);
         ImageView myImage = (ImageView) convertView.findViewById(R.id.imageViewDialog);
 
-        myImage.setImageBitmap(myBitmap);
+        Glide.with(myImage.getContext())
+                .load(arrayList.get(position).thumbFilePath)
+                .override(100, 100)
+//                .centerCrop()
+                .fitCenter()
+                .crossFade()
+                .error(R.drawable.vk_share_send_button_background)
+                .into(myImage);
+
         Button button = (Button) convertView.findViewById(R.id.button);
         button.setTag(position);
         button.setOnClickListener(this);
