@@ -104,7 +104,7 @@ public class LocalPhotoSource {
         Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, PhotosTable.ALBUM_ID + " = ?", new String[]{String.valueOf(albumId)}, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            photos.add(new Photo(cursor, true));
+            photos.add(new Photo(cursor, false));
             cursor.moveToNext();
         }
         cursor.close();
