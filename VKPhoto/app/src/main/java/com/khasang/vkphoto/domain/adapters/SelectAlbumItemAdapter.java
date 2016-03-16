@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
@@ -17,16 +16,13 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Puzya on 16-Mar-16.
- */
-public class ButtonItemAdapter extends BaseAdapter implements View.OnClickListener {
+/** Created by bugtsa on 16-Mar-16. */
+public class SelectAlbumItemAdapter extends BaseAdapter implements View.OnClickListener {
 
-    private Toast mToast;
     private final Context mContext;
     private List<PhotoAlbum> arrayList = new ArrayList<>();
 
-    public ButtonItemAdapter(Context context, List<PhotoAlbum> arrayList) {
+    public SelectAlbumItemAdapter(Context context, List<PhotoAlbum> arrayList) {
         this.mContext = context;
         this.arrayList = arrayList;
     }
@@ -54,15 +50,15 @@ public class ButtonItemAdapter extends BaseAdapter implements View.OnClickListen
     @SuppressLint("ViewHolder")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null)
+        if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.dialog_customlistitem, null);
+        }
         ((TextView) convertView.findViewById(R.id.title)).setText(arrayList.get(position).title);
         ImageView myImage = (ImageView) convertView.findViewById(R.id.imageViewDialog);
 
         Glide.with(myImage.getContext())
                 .load(arrayList.get(position).thumbFilePath)
                 .override(100, 100)
-//                .centerCrop()
                 .fitCenter()
                 .crossFade()
                 .error(R.drawable.vk_share_send_button_background)
@@ -76,9 +72,9 @@ public class ButtonItemAdapter extends BaseAdapter implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        Integer index = (Integer) v.getTag();
-        if (mToast != null) mToast.cancel();
-        mToast = Toast.makeText(mContext, "Clicked button " + index, Toast.LENGTH_SHORT);
-        mToast.show();
+//        Integer index = (Integer) v.getTag();
+//        if (mToast != null) mToast.cancel();
+//        mToast = Toast.makeText(mContext, "Clicked button " + index, Toast.LENGTH_SHORT);
+//        mToast.show();
     }
 }

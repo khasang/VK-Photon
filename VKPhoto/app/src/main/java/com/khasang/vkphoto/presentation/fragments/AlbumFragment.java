@@ -21,7 +21,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.domain.adapters.ButtonItemAdapter;
+import com.khasang.vkphoto.domain.adapters.SelectAlbumItemAdapter;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
@@ -162,7 +162,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
 //                .show();
         new MaterialDialog.Builder(getContext())
                 .title(R.string.select_album)
-                .adapter(new ButtonItemAdapter(getContext(), albumsList),
+                .adapter(new SelectAlbumItemAdapter(getContext(), albumsList),
                         new MaterialDialog.ListCallback() {
                             @Override
                             public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
