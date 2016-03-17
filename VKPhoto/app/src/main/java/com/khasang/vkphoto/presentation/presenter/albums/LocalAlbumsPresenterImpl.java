@@ -10,6 +10,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.LocalALbumEvent;
 import com.khasang.vkphoto.domain.interactors.LocalAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
@@ -66,7 +67,6 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     @Override
     public void checkActionModeFinish(MultiSelector multiSelector) {
         super.checkActionModeFinish(multiSelector);
-
     }
 
     @Override
@@ -98,6 +98,10 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
 //        vkAlbumsView.showError(errorEvent.errorCode);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLocalAlbumEvent(LocalALbumEvent errorEvent) {
+        albumsView.displayAlbums();
+    }
 
     @Override
     public List<PhotoAlbum> getAllLocalAlbums() {

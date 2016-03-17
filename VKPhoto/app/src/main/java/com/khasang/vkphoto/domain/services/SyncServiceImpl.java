@@ -10,7 +10,8 @@ import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
-import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.domain.events.LocalALbumEvent;
+import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -148,7 +149,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                 localAlbumSource.updateAlbum(photoAlbum);
             }
             if (localAlbumsList.size() == 0) {
-                EventBus.getDefault().postSticky(new LocalAlbumEvent());
+                EventBus.getDefault().postSticky(new VKAlbumEvent());
             }
         }
     }
@@ -288,7 +289,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                     Logger.d("now deleting photoAlbum: " + photoAlbum.filePath);
                     List<Photo> deletePhotoList = localDataSource.getPhotoSource().getLocalPhotosByAlbumId(photoAlbum.id);
                     localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
-                    eventBus.post(new LocalAlbumEvent());
+                    eventBus.post(new LocalALbumEvent());
                 }
             }
         });

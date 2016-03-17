@@ -3,7 +3,7 @@ package com.khasang.vkphoto.data.vk;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
-import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -40,7 +40,7 @@ public class VKAlbumSource {
                     photoAlbum = JsonUtils.getPhotoAlbum(response.json);
                     Logger.d("Create Album successfully");
                     localAlbumSource.updateAlbum(photoAlbum);
-                    EventBus.getDefault().postSticky(new LocalAlbumEvent());
+                    EventBus.getDefault().postSticky(new VKAlbumEvent());
                 } catch (Exception e) {
                     sendError(ErrorUtils.JSON_PARSE_FAILED);
                 }
