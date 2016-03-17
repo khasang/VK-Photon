@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.presentation.presenter.album;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.view.MenuItem;
@@ -8,11 +9,14 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetFragmentContextEvent;
 import com.khasang.vkphoto.domain.events.GetLocalPhotosEvent;
+import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.view.AlbumView;
 import com.khasang.vkphoto.util.Logger;
 
@@ -101,6 +105,16 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
         actionMode.finish();
     }
 
+    @Override
+    public void gotoBack(Context context) {
+        Navigator.navigateBack(context);
+        actionMode.finish();
+    }
+
+    @Override
+    public void runSetContextEvent(Context context){
+        EventBus.getDefault().post(new GetFragmentContextEvent(context));
+    }
 
     //Presenter implementations
     @Override
@@ -125,5 +139,10 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGetLocalPhotosEvent(GetLocalPhotosEvent getLocalPhotosEvent) {
         albumView.displayVkPhotos(getLocalPhotosEvent.photosList);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGotoBackToLocalAlbumFragment(GotoBackFragmentEvent gotoBackToLocalAlbumFragment) {
+        gotoBack(gotoBackToLocalAlbumFragment.context);
     }
 }

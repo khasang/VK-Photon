@@ -1,10 +1,13 @@
 package com.khasang.vkphoto.data.vk;
 
+import android.content.Context;
+
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
+import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -44,27 +47,31 @@ public class VKPhotoSource {
      * Добавляет список фотографий на сервер ВК и в альбом на устройсте
 
      */
-    public void savePhotos(final MultiSelector multiSelector, final List<Photo> photoList, final long idPhotoAlbum) {
-        if (photoList.size() > 0) {
-            File file = new File(photoList.get(photoList.size() - 1).filePath);
-            if (file.exists()) {
-                RequestMaker.uploadPhoto(file, idPhotoAlbum, new VKRequest.VKRequestListener() {
-                    @Override
-                    public void onComplete(VKResponse response) {
-                        super.onComplete(response);
-                        Logger.d("savePhotoToAlbum: " + response.responseString);
-                        photoList.remove(photoList.size() - 1);
-                        if (photoList.size() >= 0)
-                            savePhotos(multiSelector, photoList, idPhotoAlbum);
-                    }
+    public void savePhotos(final MultiSelector multiSelector, final List<Photo> photoList, final long idPhotoAlbum, final Context context) {
+//        if (multiSelector.getSelectedPositions().size() > 0) {
+//            File file = new File(photoList.get(photoList.size() - 1).filePath);
+//            if (file.exists()) {
+//                RequestMaker.uploadPhoto(file, idPhotoAlbum, new VKRequest.VKRequestListener() {
+//                    @Override
+//                    public void onComplete(VKResponse response) {
+//                        super.onComplete(response);
+//                        Logger.d("savePhotoToAlbum: " + response.responseString);
+//                        photoList.remove(photoList.size() - 1);
+//                        if (photoList.size() >= 0)
+//                            savePhotos(multiSelector, photoList, idPhotoAlbum, context);
+//                    }
+//
+//                    @Override
+//                    public void onError(VKError error) {
+//                        super.onError(error);
+//                    }
+//                });
+//            }
+//        }
+        multiSelector.clearSelections();
+//        multiSelector.getSelectedPositions().clear();
 
-                    @Override
-                    public void onError(VKError error) {
-                        super.onError(error);
-                    }
-                });
-            }
-        }
+        EventBus.getDefault().post(new GotoBackFragmentEvent(context));
 //        getPhotosByAlbumId(idPhotoAlbum);
     }
 

@@ -22,8 +22,8 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
-import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
@@ -51,7 +51,6 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     private MultiSelector multiSelector;
     private int albumId;
     private long idVKPhotoAlbum;
-    private boolean modeSelectForSave;
 
     public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -85,6 +84,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         albumId = photoAlbum.id;
         if (idVKPhotoAlbum != 0) {
             adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter, idVKPhotoAlbum);
+            localAlbumPresenter.runSetContextEvent(getContext());
         } else {
             adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
         }

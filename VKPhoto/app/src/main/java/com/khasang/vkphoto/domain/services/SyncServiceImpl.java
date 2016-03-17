@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.domain.services;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -11,6 +12,7 @@ import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetFragmentContextEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
@@ -42,6 +44,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     private LocalDataSource localDataSource;
     private VKDataSource vKDataSource;
     private List<Future<Boolean>> futureList = new ArrayList<>();
+    private Context context;
 
     @Override
     public void onCreate() {
@@ -109,9 +112,14 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                vKDataSource.getPhotoSource().savePhotos(multiSelector, photoList, idPhotoAlbum);
+                vKDataSource.getPhotoSource().savePhotos(multiSelector, photoList, idPhotoAlbum, context);
             }
         });
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onGetFragmentContextEvent(GetFragmentContextEvent getFragmentContextEvent) {
+        this.context = getFragmentContextEvent.context;
     }
 
     @Override
