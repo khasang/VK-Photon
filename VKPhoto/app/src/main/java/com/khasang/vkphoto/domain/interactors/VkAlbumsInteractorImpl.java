@@ -12,7 +12,7 @@ import com.khasang.vkphoto.domain.tasks.DownloadPhotoCallable;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenterImpl;
+import com.khasang.vkphoto.presentation.presenter.albums.AlbumsPresenterImpl;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.vk.sdk.VKAccessToken;
@@ -29,10 +29,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Реализация интерфейса исполнителя запросов к службе синхронизации.
- * Создается внутри VKAlbumsPresenterImpl
+ * Создается внутри AlbumsPresenterImpl
  *
  * @see VkAlbumsInteractor
- * @see VKAlbumsPresenterImpl
+ * @see AlbumsPresenterImpl
  * @see SyncServiceImpl
  */
 public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {

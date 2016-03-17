@@ -9,13 +9,13 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotoAlbumsTable;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.FileManager;
@@ -87,18 +87,11 @@ public class LocalAlbumSource {
 
     //метод не уничтожает папку. только все ФОТО в ней
     //после его использования необходимо заново выполнить поиск всего, что программа считает альбомом
-    public void deleteLocalAlbums(List<PhotoAlbum> photoAlbumList) {
+    public void deleteLocalAlbums(List<PhotoAlbum> photoAlbumList, LocalPhotoSource localPhotoSource) {
         for (PhotoAlbum photoAlbum : photoAlbumList) {
-            Logger.d("now deleting file: " + photoAlbum.filePath);
-            File dir = new File(photoAlbum.filePath);
-            String[] children = dir.list();
-            ImageFileFilter filter = new ImageFileFilter();
-            for (String child : children) {
-                File file = new File(dir, child);
-                if (filter.accept(file))
-                    if (!file.delete())
-                        Logger.d("error while deleting file: " + photoAlbum.filePath);
-            }
+            Logger.d("now deleting photoAlbum: " + photoAlbum.filePath);
+            List<Photo> deleteList = localPhotoSource.getLocalPhotosByAlbumId(photoAlbum.id);
+            localPhotoSource.deleteLocalPhotos(deleteList);
         }
     }
 

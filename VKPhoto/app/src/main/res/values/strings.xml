@@ -24,6 +24,11 @@
         <item quantity="one">%d albums</item>
         <item quantity="other">%d albums</item>
     </plurals>
+
+    <plurals name="synchronize_album_question">
+        <item quantity="one">Synchronize %d album?</item>
+        <item quantity="other">Synchronize %d albums?</item>
+    </plurals>
     <item name="position_key" type="id" />
     <string name="count_of_albums">%d albums</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -105,4 +110,5 @@
     <string name="photo_not_saved_error">Error downloading photo</string>
 
     <string name="userReply">replied to</string>
+    <string name="synchronize">Synchronize</string>
 </resources>

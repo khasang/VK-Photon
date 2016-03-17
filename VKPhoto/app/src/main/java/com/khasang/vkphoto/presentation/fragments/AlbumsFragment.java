@@ -32,8 +32,8 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
 import com.khasang.vkphoto.presentation.custom_classes.GridSpacingItemDecoration;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.presentation.presenter.albums.AlbumsPresenterImpl;
 import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenter;
-import com.khasang.vkphoto.presentation.presenter.albums.VKAlbumsPresenterImpl;
 import com.khasang.vkphoto.presentation.view.AlbumsView;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -61,7 +61,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         multiSelector = new MultiSelector();
-        vKAlbumsPresenter = new VKAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
+        vKAlbumsPresenter = new AlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
     }
 
     @Override
@@ -143,6 +143,11 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     }
 
     @Override
+    public void removeAlbumsFromView(){
+
+    }
+
+    @Override
     public void displayAlbums() {
         Logger.d("displayAlbums");
         displayRefresh(false);
@@ -181,6 +186,21 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
                 .show();
     }
 
+    @Override
+    public void confirmSync(final MultiSelector multiSelector) {
+        int size = multiSelector.getSelectedPositions().size();
+        new MaterialDialog.Builder(getContext())
+                .content(getResources().getQuantityString(R.plurals.synchronize_album_question, size, size))
+                .positiveText(R.string.synchronize)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        vKAlbumsPresenter.syncAlbums(multiSelector);
+                    }
+                })
+                .show();
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

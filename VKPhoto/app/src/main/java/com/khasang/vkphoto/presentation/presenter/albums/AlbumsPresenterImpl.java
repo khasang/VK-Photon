@@ -29,11 +29,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 
-public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbumsPresenter {
+public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbumsPresenter {
     private AlbumsView vkAlbumsView;
     private VkAlbumsInteractor vkAlbumsInteractor;
 
-    public VKAlbumsPresenterImpl(AlbumsView vkAlbumsView, SyncServiceProvider syncServiceProvider) {
+    public AlbumsPresenterImpl(AlbumsView vkAlbumsView, SyncServiceProvider syncServiceProvider) {
         this.vkAlbumsView = vkAlbumsView;
         vkAlbumsInteractor = new VkAlbumsInteractorImpl(syncServiceProvider);
     }
@@ -100,7 +100,7 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_sync_album:
-                        syncAlbums(multiSelector);
+                        vkAlbumsView.confirmSync(multiSelector);
                         return true;
                     case R.id.action_edit_album:
                         return true;
