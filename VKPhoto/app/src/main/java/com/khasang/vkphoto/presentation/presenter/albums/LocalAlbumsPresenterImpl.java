@@ -64,6 +64,12 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     }
 
     @Override
+    public void checkActionModeFinish(MultiSelector multiSelector) {
+        super.checkActionModeFinish(multiSelector);
+
+    }
+
+    @Override
     public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
         this.actionMode = activity.startSupportActionMode(
                 new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_local_albums,

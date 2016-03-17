@@ -16,7 +16,6 @@ import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.VKCommentsFragment;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.util.Logger;
 
 public class Navigator {
     private static String tabTag = "";
@@ -71,12 +70,6 @@ public class Navigator {
                 FragmentManager.BackStackEntry backEntry = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1);
                 String str = backEntry.getName();
                 fragment = fragmentManager.findFragmentByTag(str);
-            }
-            for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
-                String tag = fragmentManager.getFragments().get(i).getTag();
-                if (tag != null) {
-                    Logger.d(tag);
-                }
             }
             fragment.onResume();
         } else {
