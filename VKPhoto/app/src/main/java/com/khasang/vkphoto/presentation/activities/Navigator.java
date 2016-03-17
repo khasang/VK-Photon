@@ -43,8 +43,8 @@ public class Navigator {
         navigateToFragmentWithBackStack(context, LocalAlbumFragment.newInstance(photoAlbum), LocalAlbumFragment.TAG);
     }
 
-    public static void navigateToLocalAlbumFragmentWithReplace(Context context, PhotoAlbum photoAlbum) {
-        navigateToFragmentWithBackStackWithReplace(context, LocalAlbumFragment.newInstance(photoAlbum), "AddPhotos");
+    public static void navigateToLocalAlbumFragmentWithReplace(Context context, PhotoAlbum selectedLocalPhotoAlbum, long idVKPhotoAlbum) {
+        navigateToFragmentWithBackStackWithReplace(context, LocalAlbumFragment.newInstance(selectedLocalPhotoAlbum, idVKPhotoAlbum), "AddPhotos");
     }
 
     private static void navigateToFragment(Context context, Fragment fragment, String tag) {

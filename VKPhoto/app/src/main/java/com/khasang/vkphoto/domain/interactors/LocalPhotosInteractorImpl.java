@@ -5,7 +5,6 @@ import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.presentation.model.Photo;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
 
@@ -34,10 +33,10 @@ public class LocalPhotosInteractorImpl implements LocalPhotosInteractor {
     }
 
     @Override
-    public void savePhotos(final MultiSelector multiSelector, final PhotoAlbum photoAlbum) {
+    public void savePhotos(final MultiSelector multiSelector, final long idVKPhotoAlbum) {
         Logger.d("user wants to addLocalPhotos");
         Logger.d("no body");
-        if (checkSyncService()) syncService.savePhotos(multiSelector, photoAlbum);
+        if (checkSyncService()) syncService.savePhotos(multiSelector, idVKPhotoAlbum);
     }
 
     @Override

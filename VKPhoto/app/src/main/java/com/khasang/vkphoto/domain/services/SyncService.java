@@ -29,7 +29,7 @@ public interface SyncService {
 
     void getLocalAlbumsCursor();
 
-    void savePhotos(final MultiSelector multiSelector, final PhotoAlbum photoAlbum);
+    void savePhotos(final MultiSelector multiSelector, final long idPhotoAlbum);
 
     void deleteVkPhotoById(int photoId);
 

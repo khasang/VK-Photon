@@ -14,7 +14,6 @@ import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.model.Photo;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.AlbumPresenter;
 import com.khasang.vkphoto.util.Logger;
 
@@ -24,21 +23,25 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
     private MultiSelector multiSelector;
     private List<Photo> photoList;
     private AlbumPresenter albumPresenter;
-    private boolean modeSelectForSave;
-    private PhotoAlbum photoAlbum;
+    private long idVKPhotoAlbum;
 
-    public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter, boolean modeSelectForSave, PhotoAlbum photoAlbum) {
+    public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter) {
         this.multiSelector = multiSelector;
         this.photoList = photoList;
         this.albumPresenter = albumPresenter;
-        this.modeSelectForSave = modeSelectForSave;
-        this.photoAlbum = photoAlbum;
+    }
+
+    public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter, long idVKPhotoAlbum) {
+        this.multiSelector = multiSelector;
+        this.photoList = photoList;
+        this.albumPresenter = albumPresenter;
+        this.idVKPhotoAlbum = idVKPhotoAlbum;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_photo, parent, false);
-        return new ViewHolder(view, multiSelector, albumPresenter, modeSelectForSave, photoAlbum);
+        return new ViewHolder(view, multiSelector, albumPresenter, idVKPhotoAlbum);
     }
 
     @Override
@@ -63,16 +66,14 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         private MultiSelector multiSelector;
         private boolean selectable;
         private AlbumPresenter localAlbumPresenter;
-        private boolean modeSelectForSave;
-        private PhotoAlbum photoAlbum;
+        private long idVKPhotoAlbum;
         private Photo photo;
 
-        public ViewHolder(View itemView, MultiSelector multiSelector, AlbumPresenter localAlbumPresenter, boolean modeSelectForSave, PhotoAlbum photoAlbum) {
+        public ViewHolder(View itemView, MultiSelector multiSelector, AlbumPresenter localAlbumPresenter, long idVKPhotoAlbum) {
             super(itemView, multiSelector);
             this.multiSelector = multiSelector;
             this.localAlbumPresenter = localAlbumPresenter;
-            this.modeSelectForSave = modeSelectForSave;
-            this.photoAlbum = photoAlbum;
+            this.idVKPhotoAlbum = idVKPhotoAlbum;
             this.imageView = (ImageView) itemView.findViewById(R.id.iv_photo);
             this.checkBox = (CheckBox) itemView.findViewById(R.id.cb_photo_selected);
             itemView.setOnClickListener(this);
@@ -142,10 +143,10 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
             if (!multiSelector.isSelectable()) { // (3)
                 multiSelector.setSelectable(true); // (4)
                 multiSelector.setSelected(this, true); // (5)
-                if (!modeSelectForSave) {
+                if (idVKPhotoAlbum == 0) {
                     localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) imageView.getContext());
                 } else {
-                    localAlbumPresenter.savePhotos(multiSelector, photoAlbum, (AppCompatActivity) imageView.getContext());
+                    localAlbumPresenter.savePhotos(multiSelector, idVKPhotoAlbum, (AppCompatActivity) imageView.getContext());
                 }
                 return true;
             }

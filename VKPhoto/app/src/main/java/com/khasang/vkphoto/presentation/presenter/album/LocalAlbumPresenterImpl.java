@@ -13,7 +13,6 @@ import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.AlbumView;
 import com.khasang.vkphoto.util.Logger;
 
@@ -59,7 +58,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     }
 
     @Override
-    public void savePhotos(final MultiSelector multiSelector, final PhotoAlbum photoAlbum, final AppCompatActivity activity) {
+    public void savePhotos(final MultiSelector multiSelector, final long idVKPhotoAlbum, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
                 R.menu.menu_action_mode_save_photos, ((FabProvider) activity).getFloatingActionButton()) {
@@ -70,7 +69,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
                         Logger.d("user wants save all local photos");
                         return true;
                     case R.id.action_save_photos:
-                        localPhotosInteractor.savePhotos(multiSelector, photoAlbum);
+                        localPhotosInteractor.savePhotos(multiSelector, idVKPhotoAlbum);
                         return true;
                     default:
                         break;

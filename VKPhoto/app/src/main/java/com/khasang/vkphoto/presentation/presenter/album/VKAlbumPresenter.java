@@ -6,5 +6,5 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 public interface VKAlbumPresenter extends AlbumPresenter {
 
-    void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum);
+    void goToPhotoAlbum(Context context, PhotoAlbum selectedLocalPhotoAlbum, long idVKPhotoAlbum);
 }

@@ -48,7 +48,6 @@ public class AlbumFragment extends Fragment implements AlbumView {
     private PhotoAlbumAdapter adapter;
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
-    private boolean modeSelectForSave = false;
 
     public static AlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -65,7 +64,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
         setHasOptionsMenu(true);
         vkAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
-        adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter, modeSelectForSave, photoAlbum);
+        adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter);
     }
 
     @Nullable
@@ -134,7 +133,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
                             @Override
                             public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
                                 dialog.dismiss();
-                                vkAlbumPresenter.goToPhotoAlbum(getContext(), albumsList.get(which), photoAlbum);
+                                vkAlbumPresenter.goToPhotoAlbum(getContext(), albumsList.get(which), photoAlbum.id);
                             }
                         })
                 .show();

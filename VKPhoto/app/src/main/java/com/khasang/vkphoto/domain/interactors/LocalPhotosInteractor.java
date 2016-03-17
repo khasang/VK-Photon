@@ -2,7 +2,6 @@ package com.khasang.vkphoto.domain.interactors;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.presentation.model.Photo;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
 public interface LocalPhotosInteractor {
     void getPhotosByAlbumId(int albumId);
 
-    void savePhotos(final MultiSelector multiSelector, final PhotoAlbum photoAlbum);
+    void savePhotos(final MultiSelector multiSelector, final long idVKPhotoAlbum);
 
     void deleteSelectedLocalPhotos(MultiSelector multiSelector, List<Photo> photoList);
 }

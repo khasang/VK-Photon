@@ -3,7 +3,6 @@ package com.khasang.vkphoto.presentation.presenter.album;
 import android.support.v7.app.AppCompatActivity;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.Presenter;
 
 public interface AlbumPresenter extends Presenter {
@@ -17,5 +16,5 @@ public interface AlbumPresenter extends Presenter {
 
     void getLocalAlbumsCursor();
 
-    void savePhotos(MultiSelector multiSelector, final PhotoAlbum photoAlbum, final AppCompatActivity activity);
+    void savePhotos(MultiSelector multiSelector, final long idPhotoAlbum, final AppCompatActivity activity);
 }

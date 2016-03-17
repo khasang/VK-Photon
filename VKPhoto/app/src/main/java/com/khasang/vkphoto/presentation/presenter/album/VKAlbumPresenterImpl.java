@@ -41,7 +41,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Override
-    public void savePhotos(MultiSelector multiSelector, final PhotoAlbum photoAlbum, final AppCompatActivity activity) {}
+    public void savePhotos(MultiSelector multiSelector, final long idPhotoAlbum, final AppCompatActivity activity) {}
 
     @Override
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
@@ -56,8 +56,8 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Override
-    public void goToPhotoAlbum(Context context, PhotoAlbum selectedPhotoAlbum, PhotoAlbum photoAlbum) {
-        Navigator.navigateToLocalAlbumFragmentWithReplace(context, selectedPhotoAlbum, photoAlbum);
+    public void goToPhotoAlbum(Context context, PhotoAlbum selectedLocalPhotoAlbum, long idVKPhotoAlbum) {
+        Navigator.navigateToLocalAlbumFragmentWithReplace(context, selectedLocalPhotoAlbum, idVKPhotoAlbum);
     }
 
     @Override

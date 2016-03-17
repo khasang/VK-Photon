@@ -40,6 +40,7 @@ import java.util.List;
 public class LocalAlbumFragment extends Fragment implements AlbumView {
     public static final String TAG = LocalAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
+    public static final String IDVKPHOTOALBUM = "idVKPhotoAlbum";
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
     private PhotoAlbum photoAlbum;
     private TextView tvCountOfPhotos;
@@ -49,11 +50,21 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
     private int albumId;
+    private long idVKPhotoAlbum;
     private boolean modeSelectForSave;
 
     public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
         args.putParcelable(PHOTOALBUM, photoAlbum);
+        LocalAlbumFragment fragment = new LocalAlbumFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum, long idVKPhotoAlbum) {
+        Bundle args = new Bundle();
+        args.putParcelable(PHOTOALBUM, photoAlbum);
+        args.putLong(IDVKPHOTOALBUM, idVKPhotoAlbum);
         LocalAlbumFragment fragment = new LocalAlbumFragment();
         fragment.setArguments(args);
         return fragment;
@@ -68,16 +79,15 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         multiSelector = new MultiSelector();
 
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
+        idVKPhotoAlbum = getArguments().getLong(IDVKPHOTOALBUM);
         if (photoAlbum != null) Logger.d("photoalbum " + photoAlbum.title);
         else Logger.d("wtf where is album?");
         albumId = photoAlbum.id;
-        if (getTag().equals("AddPhotos")) {
-            modeSelectForSave = true;
+        if (idVKPhotoAlbum != 0) {
+            adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter, idVKPhotoAlbum);
         } else {
-            modeSelectForSave = false;
+            adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
         }
-        adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter, modeSelectForSave, photoAlbum);
-
     }
 
     @Nullable
