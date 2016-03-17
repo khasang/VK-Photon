@@ -36,6 +36,9 @@ import com.khasang.vkphoto.presentation.view.AlbumsView;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
 
+import java.util.Collections;
+import java.util.List;
+
 import static com.khasang.vkphoto.util.Constants.ALBUMS_SPAN_COUNT;
 
 public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
@@ -169,6 +172,17 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     @Override
     public void displayAlbums() {
         getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
+    }
+
+    public void displayDeletedAlbums() {
+        //
+        Logger.d("user wants to removePhotosFromView");
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Collections.sort(selectedPositions, Collections.reverseOrder());
+        for (Integer position : selectedPositions) {
+            adapter.notifyItemRemoved(position);
+        }
+        displayAlbums();
     }
 
     @Override

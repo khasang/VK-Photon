@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private ViewPager viewPager;
     private FloatingActionButton fab;
     public static int ALBUM_THUMB_HEIGHT = 0;
+    private ViewPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
             @Override
             public void onPageSelected(int position) {
-                Navigator.setTabPosition(position);
+                Navigator.setTabTag(adapter.getItem(position).getTag());
                 EventBus.getDefault().post(new CloseActionModeEvent());
                 fab.show();
             }
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new AlbumsFragment(), "VK Albums");
         adapter.addFragment(new LocalAlbumsFragment(), "Gallery Albums");
         viewPager.setAdapter(adapter);
