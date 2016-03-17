@@ -73,7 +73,7 @@ public class FileManager {
         return false;
     }
 
-    private static File getBaseDirectory(SharedPreferences sharedPreferences) {
+    public static File getBaseDirectory(SharedPreferences sharedPreferences) {
         String basePath = sharedPreferences.getString(BASE_DIRECTORY, "");
         if (basePath.equals("")) {
             return null;

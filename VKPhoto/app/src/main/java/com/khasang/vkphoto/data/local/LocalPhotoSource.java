@@ -23,6 +23,7 @@ import com.khasang.vkphoto.util.Logger;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,11 @@ public class LocalPhotoSource {
             photo.filePath = imageFile.getAbsolutePath();
             if (getPhotoById(photo.id) == null) {
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
+                try {
+                    MediaStore.Images.Media.insertImage(context.getContentResolver(), photo.filePath, photo.getName(), photo.text);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 db.insert(PhotosTable.TABLE_NAME, null, PhotosTable.getContentValues(photo));
             } else {
                 Logger.d("Photo " + photo.id + " exists");
