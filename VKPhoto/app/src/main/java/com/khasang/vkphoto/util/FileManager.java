@@ -105,7 +105,7 @@ public class FileManager {
             InputStream input = new BufferedInputStream(url.openStream());
             OutputStream output = new FileOutputStream(filePath, false);
             byte data[] = new byte[1024];
-            while ((count = input.read(data)) != -1) {
+            while ((count = input.read(data)) != -1 && !Thread.currentThread().isInterrupted()) {
                 //      total += count;
 //                publishProgress((int) (total * 100 / lenghtOfFile));
                 output.write(data, 0, count);
