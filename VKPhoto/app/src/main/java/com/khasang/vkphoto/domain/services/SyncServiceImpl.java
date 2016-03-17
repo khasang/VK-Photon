@@ -114,7 +114,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void getAllLocalAlbums(){
+    public void getAllLocalAlbums() {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
@@ -284,10 +284,11 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                for (PhotoAlbum photoAlbum : deleteAlbumsList){
+                for (PhotoAlbum photoAlbum : deleteAlbumsList) {
                     Logger.d("now deleting photoAlbum: " + photoAlbum.filePath);
                     List<Photo> deletePhotoList = localDataSource.getPhotoSource().getLocalPhotosByAlbumId(photoAlbum.id);
                     localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
+                    eventBus.post(new LocalAlbumEvent());
                 }
             }
         });

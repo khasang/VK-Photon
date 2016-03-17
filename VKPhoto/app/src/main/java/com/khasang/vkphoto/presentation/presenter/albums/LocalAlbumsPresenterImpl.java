@@ -59,7 +59,7 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     @Override
     public void deleteSelectedAlbums(MultiSelector multiSelector) {
         albumsInteractor.deleteLocalAlbums(multiSelector, albumsView.getAdapterCursor());
-        albumsView.removeAlbumsFromView();
+//        albumsView.removeAlbumsFromView();
         actionMode.finish();
     }
 
