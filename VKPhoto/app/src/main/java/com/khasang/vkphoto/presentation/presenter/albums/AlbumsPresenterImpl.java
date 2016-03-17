@@ -20,6 +20,7 @@ import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.AlbumsView;
 import com.khasang.vkphoto.util.ErrorUtils;
+import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.NetWorkUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -68,6 +69,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void OnVKAlbumEvent(VKAlbumEvent VKAlbumEvent) {
+        Logger.d("got vkAlbumEvent");
         vkAlbumsView.displayAlbums();
     }
 

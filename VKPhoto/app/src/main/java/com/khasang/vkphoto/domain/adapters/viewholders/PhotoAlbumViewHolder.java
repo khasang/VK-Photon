@@ -26,6 +26,7 @@ import com.khasang.vkphoto.presentation.presenter.albums.AlbumsPresenter;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.JsonUtils;
+import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.VKResponse;
 
 import java.io.File;
@@ -74,6 +75,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         this.photoAlbum = photoAlbum;
         albumTitleTextView.setText(photoAlbum.title);
         albumPhotoCountTextView.setText(albumPhotoCountTextView.getContext().getString(R.string.count_of_photos_in_album, photoAlbum.size));
+        Logger.d("bind photoAlbum" + photoAlbum.id);
         loadThumb();
     }
 

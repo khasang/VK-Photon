@@ -137,7 +137,7 @@ public class SyncServiceImpl extends Service implements SyncService {
             if (localAlbumsList.contains(photoAlbum)) { //update existing albums
                 localAlbumSource.updateAlbum(photoAlbum);
             } else { //сreate new albums
-                localAlbumSource.saveAlbum(photoAlbum);
+                localAlbumSource.saveAlbum(photoAlbum, false);
             }
         }
 
@@ -148,10 +148,8 @@ public class SyncServiceImpl extends Service implements SyncService {
                 photoAlbum.syncStatus = Constants.SYNC_DELETED;
                 localAlbumSource.updateAlbum(photoAlbum);
             }
-            if (localAlbumsList.size() == 0) {
-                EventBus.getDefault().postSticky(new VKAlbumEvent());
-            }
         }
+        EventBus.getDefault().postSticky(new VKAlbumEvent());
     }
 
     @Override

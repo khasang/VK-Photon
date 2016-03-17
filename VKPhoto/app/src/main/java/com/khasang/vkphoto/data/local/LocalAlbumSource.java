@@ -38,7 +38,7 @@ public class LocalAlbumSource {
         this.dbHelper = MySQliteHelper.getInstance(context);
     }
 
-    public void saveAlbum(VKApiPhotoAlbum apiPhotoAlbum) {
+    public void saveAlbum(VKApiPhotoAlbum apiPhotoAlbum, boolean sendEvent) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String path = FileManager.createAlbumDirectory(apiPhotoAlbum.id + "", context);
         if (path == null) {
@@ -47,7 +47,9 @@ public class LocalAlbumSource {
             PhotoAlbum photoAlbum = new PhotoAlbum(apiPhotoAlbum);
             photoAlbum.filePath = path;
             db.insert(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.getContentValues(photoAlbum));
-            EventBus.getDefault().postSticky(new VKAlbumEvent());
+            if (sendEvent) {
+                EventBus.getDefault().postSticky(new VKAlbumEvent());
+            }
         }
     }
 
@@ -55,7 +57,7 @@ public class LocalAlbumSource {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         PhotoAlbum oldAlbum = getAlbumById(photoAlbum.id);
         if (oldAlbum == null) {
-            saveAlbum(photoAlbum);
+            saveAlbum(photoAlbum, false);
         } else {
             Logger.d("update " + photoAlbum.id + " photoAlbum");
             ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum);
@@ -170,12 +172,12 @@ public class LocalAlbumSource {
                 thumbPath = cursor.getString(thumbPathColumn);
                 String filePath = thumbPath.substring(0, thumbPath.lastIndexOf("/"));
                 int photosCount = new File(filePath).listFiles(new ImageFileFilter()).length;
-                    builder = matrixCursor.newRow();
-                    builder.add(id)
-                            .add(title)
-                            .add(filePath)
-                            .add(thumbPath)
-                            .add(photosCount);
+                builder = matrixCursor.newRow();
+                builder.add(id)
+                        .add(title)
+                        .add(filePath)
+                        .add(thumbPath)
+                        .add(photosCount);
             } while (cursor.moveToNext());
             cursor.close();
         }
