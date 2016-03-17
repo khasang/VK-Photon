@@ -105,11 +105,11 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void savePhotos(final MultiSelector multiSelector, final long idPhotoAlbum) {
+    public void savePhotos(final MultiSelector multiSelector, final List<Photo> photoList, final long idPhotoAlbum) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                vKDataSource.getPhotoSource().savePhotos(multiSelector, idPhotoAlbum);
+                vKDataSource.getPhotoSource().savePhotos(multiSelector, photoList, idPhotoAlbum);
             }
         });
     }

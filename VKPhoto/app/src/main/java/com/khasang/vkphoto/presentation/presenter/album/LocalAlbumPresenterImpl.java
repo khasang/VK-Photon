@@ -69,7 +69,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
                         Logger.d("user wants save all local photos");
                         return true;
                     case R.id.action_save_photos:
-                        localPhotosInteractor.savePhotos(multiSelector, idVKPhotoAlbum);
+                        localPhotosInteractor.savePhotos(multiSelector, albumView.getPhotoList(), idVKPhotoAlbum);
                         return true;
                     default:
                         break;
