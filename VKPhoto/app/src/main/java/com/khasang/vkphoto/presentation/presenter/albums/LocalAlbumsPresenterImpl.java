@@ -70,6 +70,14 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     }
 
     @Override
+    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
+        MenuItem itemActionEditAlbum = actionMode.getMenu().findItem(R.id.action_edit_album);
+        MenuItem itemUpLoadAlbum = actionMode.getMenu().findItem(R.id.action_upload_album);
+        super.hideActionModeItem(multiSelector, itemActionEditAlbum);
+        super.hideActionModeItem(multiSelector, itemUpLoadAlbum);
+    }
+
+    @Override
     public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
         this.actionMode = activity.startSupportActionMode(
                 new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_local_albums,
@@ -79,6 +87,8 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
                         switch (item.getItemId()) {
                             case R.id.action_sync_album:
                                 syncAlbums(multiSelector);
+                                return true;
+                            case R.id.action_upload_album:
                                 return true;
                             case R.id.action_edit_album:
                                 return true;

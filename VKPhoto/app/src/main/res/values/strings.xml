@@ -5,6 +5,10 @@
     <string name="count_of_photos_in_album">Photos in album: %d</string>
     <string name="service_connecting_error">Service is connecting</string>
     <string name="sync_album">Synchronize album</string>
+    <string name="download_album">Download album</string>
+    <string name="download_photo">Download photo</string>
+    <string name="upload_album">Upload album</string>
+    <string name="upload_photo">Upload photo</string>
     <string name="add_album_description">Description</string>
     <string name="st_btn_ok">OK</string>
     <string name="st_btn_cancel">Cancel</string>

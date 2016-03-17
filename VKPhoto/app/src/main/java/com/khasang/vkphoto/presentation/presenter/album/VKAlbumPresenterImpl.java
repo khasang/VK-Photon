@@ -77,6 +77,19 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Override
+    public void checkActionModeFinish(MultiSelector multiSelector) {
+        super.checkActionModeFinish(multiSelector);
+    }
+
+    @Override
+    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
+        MenuItem itemActionEditPhoto = actionMode.getMenu().findItem(R.id.action_edit_photo);
+        MenuItem itemDownLoadPhoto = actionMode.getMenu().findItem(R.id.action_download_photo);
+        super.hideActionModeItem(multiSelector, itemActionEditPhoto);
+        super.hideActionModeItem(multiSelector, itemDownLoadPhoto);
+    }
+
+    @Override
     public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
@@ -85,6 +98,8 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_sync_photo:
+                        return true;
+                    case R.id.action_download_photo:
                         return true;
                     case R.id.action_edit_photo:
                         return true;

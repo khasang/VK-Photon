@@ -48,6 +48,8 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
                     case R.id.action_sync_photo:
                         Logger.d("user wants to sync local photos");
                         return true;
+                    case R.id.action_upload_photo:
+                        return true;
                     case R.id.action_edit_photo:
                         return true;
                     case R.id.action_delete_photo:
@@ -66,6 +68,14 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
         if (multiSelector.getSelectedPositions().size() == 0) {
             if (actionMode != null) actionMode.finish();
         }
+    }
+
+    @Override
+    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
+        MenuItem itemActionEditPhoto = actionMode.getMenu().findItem(R.id.action_edit_photo);
+        MenuItem itemUpLoadPhoto = actionMode.getMenu().findItem(R.id.action_upload_photo);
+        super.hideActionModeItem(multiSelector, itemActionEditPhoto);
+        super.hideActionModeItem(multiSelector, itemUpLoadPhoto);
     }
 
     @Override
