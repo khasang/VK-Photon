@@ -3,9 +3,7 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,7 +24,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.LocalAlbumsCursorLoader;
-import com.khasang.vkphoto.data.database.tables.PhotoAlbumsTable;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumsCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
@@ -39,6 +36,7 @@ import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenterImp
 import com.khasang.vkphoto.presentation.view.AlbumsView;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -46,6 +44,7 @@ import static com.khasang.vkphoto.util.Constants.ALBUMS_SPAN_COUNT;
 
 public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
+    private static final String TAG = LocalAlbumsFragment.class.getSimpleName();
     private PhotoAlbumsCursorAdapter adapter;
     private MultiSelector multiSelector;
     private LocalAlbumsPresenter localAlbumsPresenter;
@@ -63,6 +62,8 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Logger.d(this.toString());
+        Logger.d("" + getTag());
         View view = inflater.inflate(R.layout.fragment_albums, container, false);
         getActivity().getSupportLoaderManager().initLoader(1, null, this);
         tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
@@ -177,54 +178,56 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         Logger.d("displayVkSaveAlbum");
     }
 
-    public void removeAlbumsFromView() {
-        Logger.d("user wants to removeAlbumsFromView");
-        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-        Collections.sort(selectedPositions, Collections.reverseOrder());
-        Cursor oldCursor = adapter.getCursor();
 
-        MatrixCursor modifiedCursor = new MatrixCursor(new String[]{
-                BaseColumns._ID,
-                PhotoAlbumsTable.TITLE,
-                PhotoAlbumsTable.FILE_PATH,
-                PhotoAlbumsTable.THUMB_FILE_PATH,
-                PhotoAlbumsTable.SIZE});
-        MatrixCursor.RowBuilder builder;
+    /*
+        public void removeAlbumsFromView() {
+            Logger.d("user wants to removeAlbumsFromView");
+            List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+            Collections.sort(selectedPositions, Collections.reverseOrder());
+            Cursor oldCursor = adapter.getCursor();
 
-        if (oldCursor.moveToFirst()) {
-            int i = 0;
-            String id, title, filePath, thumbPath, photosCount;
-            int idColumn = oldCursor.getColumnIndex(BaseColumns._ID);
-            int titleColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.TITLE);
-            int filePathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.FILE_PATH);
-            int thumbPathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.THUMB_FILE_PATH);
-            int photosCountColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.SIZE);
+            MatrixCursor modifiedCursor = new MatrixCursor(new String[]{
+                    BaseColumns._ID,
+                    PhotoAlbumsTable.TITLE,
+                    PhotoAlbumsTable.FILE_PATH,
+                    PhotoAlbumsTable.THUMB_FILE_PATH,
+                    PhotoAlbumsTable.SIZE});
+            MatrixCursor.RowBuilder builder;
 
-            do {
-                id = oldCursor.getString(idColumn);
-                title = oldCursor.getString(titleColumn);
-                filePath = oldCursor.getString(filePathColumn);
-                thumbPath = oldCursor.getString(thumbPathColumn);
-                photosCount = oldCursor.getString(photosCountColumn);
-                if (!selectedPositions.contains(i)) {
-                    builder = modifiedCursor.newRow();
-                    builder.add(id)
-                            .add(title)
-                            .add(filePath)
-                            .add(thumbPath)
-                            .add(photosCount);
-                }
-                i++;
-            } while (oldCursor.moveToNext());
-            oldCursor.close();
+            if (oldCursor.moveToFirst()) {
+                int i = 0;
+                String id, title, filePath, thumbPath, photosCount;
+                int idColumn = oldCursor.getColumnIndex(BaseColumns._ID);
+                int titleColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.TITLE);
+                int filePathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.FILE_PATH);
+                int thumbPathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.THUMB_FILE_PATH);
+                int photosCountColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.SIZE);
+
+                do {
+                    id = oldCursor.getString(idColumn);
+                    title = oldCursor.getString(titleColumn);
+                    filePath = oldCursor.getString(filePathColumn);
+                    thumbPath = oldCursor.getString(thumbPathColumn);
+                    photosCount = oldCursor.getString(photosCountColumn);
+                    if (!selectedPositions.contains(i)) {
+                        builder = modifiedCursor.newRow();
+                        builder.add(id)
+                                .add(title)
+                                .add(filePath)
+                                .add(thumbPath)
+                                .add(photosCount);
+                    }
+                    i++;
+                } while (oldCursor.moveToNext());
+                oldCursor.close();
+            }
+
+            adapter.changeCursor(modifiedCursor);
+            for (Integer position : selectedPositions) {
+                adapter.notifyItemRemoved(position);
+            }
         }
-
-        adapter.changeCursor(modifiedCursor);
-        for (Integer position : selectedPositions) {
-            adapter.notifyItemRemoved(position);
-        }
-    }
-
+    */
     @Override
     public void displayAlbums() {
         getActivity().getSupportLoaderManager().getLoader(1).forceLoad();

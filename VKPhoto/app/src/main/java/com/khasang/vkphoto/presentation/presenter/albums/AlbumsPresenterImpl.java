@@ -10,8 +10,8 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
+import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
@@ -67,7 +67,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void OnLocalAlbumEvent(LocalAlbumEvent localAlbumEvent) {
+    public void OnVKAlbumEvent(VKAlbumEvent VKAlbumEvent) {
         vkAlbumsView.displayAlbums();
     }
 

@@ -14,7 +14,7 @@ import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotoAlbumsTable;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -47,7 +47,7 @@ public class LocalAlbumSource {
             PhotoAlbum photoAlbum = new PhotoAlbum(apiPhotoAlbum);
             photoAlbum.filePath = path;
             db.insert(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.getContentValues(photoAlbum));
-            EventBus.getDefault().postSticky(new LocalAlbumEvent());
+            EventBus.getDefault().postSticky(new VKAlbumEvent());
         }
     }
 
@@ -62,7 +62,7 @@ public class LocalAlbumSource {
             if (contentValues.size() > 0) {
                 db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
                         new String[]{String.valueOf(photoAlbum.id)});
-                EventBus.getDefault().postSticky(new LocalAlbumEvent());
+                EventBus.getDefault().postSticky(new VKAlbumEvent());
             }
         }
     }
@@ -78,7 +78,7 @@ public class LocalAlbumSource {
                 db.delete(PhotoAlbumsTable.TABLE_NAME, BaseColumns._ID + " = ?", whereArgs);
                 FileManager.deleteAlbumDirectory(photoAlbum.filePath);
                 db.setTransactionSuccessful();
-                EventBus.getDefault().postSticky(new LocalAlbumEvent());
+                EventBus.getDefault().postSticky(new VKAlbumEvent());
             } finally {
                 db.endTransaction();
             }
@@ -226,7 +226,7 @@ public class LocalAlbumSource {
             db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
                     whereArgs);
             db.setTransactionSuccessful();
-            EventBus.getDefault().postSticky(new LocalAlbumEvent());
+            EventBus.getDefault().postSticky(new VKAlbumEvent());
         } finally {
             db.endTransaction();
         }

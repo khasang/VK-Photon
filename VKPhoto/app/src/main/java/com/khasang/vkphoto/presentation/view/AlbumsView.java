@@ -10,8 +10,6 @@ public interface AlbumsView extends View {
 
     void displayVkSaveAlbum(PhotoAlbum photoAlbum);
 
-    void removeAlbumsFromView();
-
     void displayAlbums();
 
     void displayRefresh(boolean refreshing);

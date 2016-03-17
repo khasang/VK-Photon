@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import com.khasang.vkphoto.domain.adapters.PhotoAlbumsCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.custom_classes.GridSpacingItemDecoration;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.AlbumsPresenterImpl;
@@ -52,7 +54,6 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     private TextView tvCountOfAlbums;
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean refreshing;
-
     public AlbumsFragment() {
     }
 
@@ -66,6 +67,8 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Logger.d(this.toString());
+        Logger.d("" + getTag());
         View view = inflater.inflate(R.layout.fragment_albums, container, false);
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
         tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
@@ -125,6 +128,9 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     @Override
     public void onResume() {
         super.onResume();
+        if (TextUtils.isEmpty(Navigator.getTabTag())) {
+            Navigator.setTabTag(getTag());
+        }
         Logger.d("AlbumsFragment onResume()");
         setOnClickListenerFab();
     }
@@ -140,11 +146,6 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     @Override
     public void displayVkSaveAlbum(PhotoAlbum photoAlbum) {
         Logger.d("displayVkSaveAlbum");
-    }
-
-    @Override
-    public void removeAlbumsFromView(){
-
     }
 
     @Override

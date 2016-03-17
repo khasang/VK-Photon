@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.domain.adapters;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -13,6 +14,8 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.presenter.album.AlbumPresenter;
 import com.khasang.vkphoto.util.Logger;
@@ -132,6 +135,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
                 localAlbumPresenter.checkActionModeFinish(multiSelector);
             } else {
 //                        albumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
+                    Navigator.navigateToVKCommentsFragment(v.getContext(), photo);
             }
             if (photo.filePath != null) {
                 Logger.d(photo.filePath);
