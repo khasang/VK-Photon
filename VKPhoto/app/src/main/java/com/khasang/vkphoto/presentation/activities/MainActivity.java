@@ -1,9 +1,12 @@
 package com.khasang.vkphoto.presentation.activities;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkPermission();
         setContentView(R.layout.activity_main);
         initServiceConnection(savedInstanceState);
         loginVk();
@@ -72,17 +76,32 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         measureScreen();
     }
 
+    private void checkPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Explain to the user why we need to read the contacts
+            }
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 29025);
+            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE (29025) is an app-defined int constant
+        }
+    }
+
     private void measureScreen() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int screenWidth = metrics.widthPixels;
+        float density = metrics.density;
+        Logger.d("measureScreen. density=" + density);
         int thumbWidth;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-            thumbWidth = (screenWidth - 50) / 2;
+            thumbWidth = (int) (screenWidth - 50 * density) / 2;
         else
             thumbWidth = screenWidth;
         ALBUM_THUMB_HEIGHT = Math.round(thumbWidth / 16 * 9);
-        PHOTOS_COLUMNS = (int) screenWidth / 180;
+        PHOTOS_COLUMNS = (int) (screenWidth / (90 * density));
+        Logger.d("measureScreen. PHOTOS_COLUMNS=" + PHOTOS_COLUMNS);
     }
 
     private void initViewPager() {

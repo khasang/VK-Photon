@@ -159,12 +159,17 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Glide.with(albumThumbImageView.getContext())
-                        .load(file)
-                        .centerCrop()
-                        .crossFade()
-                        .error(R.drawable.vk_share_send_button_background)
-                        .into(albumThumbImageView);
+
+                try {
+                    Glide.with(albumThumbImageView.getContext())
+                            .load(file)
+                            .centerCrop()
+                            .crossFade()
+                            .error(R.drawable.vk_share_send_button_background)
+                            .into(albumThumbImageView);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
