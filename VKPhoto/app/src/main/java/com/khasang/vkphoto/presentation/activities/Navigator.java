@@ -14,6 +14,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.fragments.AlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.VKCommentsFragment;
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 public class Navigator {
@@ -35,8 +36,8 @@ public class Navigator {
         navigateToFragmentWithBackStack(context, AlbumFragment.newInstance(photoAlbum), AlbumFragment.TAG);
     }
 
-    public static void navigateToVKCommentsFragment(Context context, int photoId) {
-        getFragmentManager(context).beginTransaction().replace(R.id.fragment_container, VKCommentsFragment.newInstance(photoId), VKCommentsFragment.TAG).addToBackStack(VKCommentsFragment.TAG).commit();
+    public static void navigateToVKCommentsFragment(Context context, Photo photo) {
+        getFragmentManager(context).beginTransaction().replace(R.id.fragment_container, VKCommentsFragment.newInstance(photo), VKCommentsFragment.TAG).addToBackStack(VKCommentsFragment.TAG).commit();
     }
 
     public static void navigateToLocalAlbumFragment(Context context, PhotoAlbum photoAlbum) {

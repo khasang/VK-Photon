@@ -87,7 +87,7 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
             vkAlbumPresenter.checkActionModeFinish(multiSelector);
         } else {
             Logger.d("onClick");
-            Navigator.navigateToVKCommentsFragment(v.getContext(), photo.id);
+
         }
     }
 
