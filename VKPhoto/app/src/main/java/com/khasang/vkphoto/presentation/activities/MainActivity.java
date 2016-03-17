@@ -45,6 +45,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider {
     public static final String TAG = MainActivity.class.getSimpleName();
     public static int ALBUM_THUMB_HEIGHT = 0;
+    public static int PHOTOS_COLUMNS = 0;
     private static String VIEWPAGER_VISIBLE = "viewpager_visible";
     private static Fragment localAlbumsFragment, albumsFragment;
     private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
@@ -68,20 +69,20 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (savedInstanceState != null) {
             Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
         }
-        calculateAlbumThumbHeight();
+        measureScreen();
     }
 
-    private void calculateAlbumThumbHeight() {
+    private void measureScreen() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int screenWidth = metrics.widthPixels;
         int thumbWidth;
-        int paddingsLR = 60 * 2;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-            thumbWidth = (screenWidth - paddingsLR - 50) / 2;
+            thumbWidth = (screenWidth - 50) / 2;
         else
-            thumbWidth = screenWidth - paddingsLR;
+            thumbWidth = screenWidth;
         ALBUM_THUMB_HEIGHT = Math.round(thumbWidth / 16 * 9);
+        PHOTOS_COLUMNS = (int) screenWidth / 180;
     }
 
     private void initViewPager() {
