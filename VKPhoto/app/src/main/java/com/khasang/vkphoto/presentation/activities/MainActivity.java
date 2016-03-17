@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     public static final String TAG = MainActivity.class.getSimpleName();
     public static int ALBUM_THUMB_HEIGHT = 0;
     private static String VIEWPAGER_VISIBLE = "viewpager_visible";
+    private static Fragment localAlbumsFragment, albumsFragment;
     private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
     private ServiceConnection sConn;
     private boolean bound = false;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private void initViewPager() {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -94,9 +95,12 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
             @Override
             public void onPageSelected(int position) {
-                Navigator.setTabTag(adapter.getItem(position).getTag());
+                Fragment item = adapter.getItem(position);
+                String tag = item.getTag();
+                Navigator.setTabTag(tag);
                 EventBus.getDefault().post(new CloseActionModeEvent());
                 fab.show();
+                Logger.d("onPageSelected" + tag);
             }
 
             @Override
@@ -115,13 +119,14 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        AlbumsFragment fragment = new AlbumsFragment();
-        adapter.addFragment(fragment, "VK Albums");
-        if (Navigator.getTabTag().equals("")) {
-            Navigator.setTabTag(fragment.getTag());
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        adapter = new ViewPagerAdapter(supportFragmentManager);
+        if (localAlbumsFragment == null) {
+            albumsFragment = new AlbumsFragment();
+            localAlbumsFragment = new LocalAlbumsFragment();
         }
-        adapter.addFragment(new LocalAlbumsFragment(), "Gallery Albums");
+        adapter.addFragment(albumsFragment, "VK Albums");
+        adapter.addFragment(localAlbumsFragment, "Gallery Albums");
         viewPager.setAdapter(adapter);
     }
 
