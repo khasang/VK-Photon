@@ -93,6 +93,10 @@ public class Navigator {
         }
     }
 
+    public static String getTabTag() {
+        return tabTag;
+    }
+
     public static void setTabTag(String tabTag) {
         Navigator.tabTag = tabTag;
     }

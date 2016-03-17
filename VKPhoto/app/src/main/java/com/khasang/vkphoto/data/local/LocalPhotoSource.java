@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
@@ -31,7 +32,7 @@ public class LocalPhotoSource {
 
     public LocalPhotoSource(Context context) {
         this.context = context.getApplicationContext();
-        this.dbHelper = MySQliteHelper.getInstance(context.getApplicationContext());
+        this.dbHelper = MySQliteHelper.getInstance(this.context);
     }
 
     public File savePhotoToAlbum(Photo photo, PhotoAlbum photoAlbum) {
@@ -79,13 +80,23 @@ public class LocalPhotoSource {
     }
 
     public void deleteLocalPhotos(List<Photo> photoList) {
-        for (Photo photo : photoList) {
-            Logger.d("now deleting photo: " + photo.filePath);
-            ContentResolver cr = context.getContentResolver();
-            Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            if (cr.delete(images, BaseColumns._ID + " = ?", new String[]{String.valueOf(photo.id)}) == -1){
-                Logger.d("error while deleting file: " + photo.filePath);
-            }
+//        for (Photo photo : photoList) {
+//            Logger.d("now deleting photo: " + photo.filePath);
+//            ContentResolver cr = context.getContentResolver();
+//            Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//            if (cr.delete(images, BaseColumns._ID + " = ?", new String[]{String.valueOf(photo.id)}) == -1){
+//                Logger.d("error while deleting file: " + photo.filePath);
+//            }
+//        }
+        String[] ids = new String[photoList.size()];
+        for (int i = 0; i < ids.length; i++) {
+            ids[i] = String.valueOf(photoList.get(i).id);
+        }
+        String joinedIds = TextUtils.join(", ", ids);
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        if (contentResolver.delete(images, BaseColumns._ID + " in (" + joinedIds + ")", null) == -1) {
+            Logger.d("error while deleting photoAlbum ");
         }
     }
 

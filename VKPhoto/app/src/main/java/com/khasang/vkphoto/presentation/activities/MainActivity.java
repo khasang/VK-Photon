@@ -44,6 +44,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider {
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static int ALBUM_THUMB_HEIGHT = 0;
     private static String VIEWPAGER_VISIBLE = "viewpager_visible";
     private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
     private ServiceConnection sConn;
@@ -53,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FloatingActionButton fab;
-    public static int ALBUM_THUMB_HEIGHT = 0;
     private ViewPagerAdapter adapter;
 
     @Override
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         calculateAlbumThumbHeight();
     }
 
-    private void calculateAlbumThumbHeight(){
+    private void calculateAlbumThumbHeight() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int screenWidth = metrics.widthPixels;
@@ -116,7 +116,11 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
     private void setupViewPager(ViewPager viewPager) {
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new AlbumsFragment(), "VK Albums");
+        AlbumsFragment fragment = new AlbumsFragment();
+        adapter.addFragment(fragment, "VK Albums");
+        if (Navigator.getTabTag().equals("")) {
+            Navigator.setTabTag(fragment.getTag());
+        }
         adapter.addFragment(new LocalAlbumsFragment(), "Gallery Albums");
         viewPager.setAdapter(adapter);
     }
