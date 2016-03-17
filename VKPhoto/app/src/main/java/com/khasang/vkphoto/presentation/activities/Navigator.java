@@ -17,7 +17,7 @@ import com.khasang.vkphoto.presentation.fragments.VKCommentsFragment;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 public class Navigator {
-    private static int tabPosition = 0;
+    private static String tabTag = "";
 
     private static FragmentManager getFragmentManager(Context context) {
         return ((FragmentActivity) context).getSupportFragmentManager();
@@ -69,8 +69,7 @@ public class Navigator {
             fragmentManager.popBackStack();
             if (backStackEntryCount == 1) {
                 changeViewPagerVisibility((Activity) context, true);
-                fragment = fragmentManager.getFragments()
-                        .get(tabPosition);
+                fragment = fragmentManager.findFragmentByTag(tabTag);
                 ActionBar supportActionBar = ((AppCompatActivity) context).getSupportActionBar();
                 if (supportActionBar != null) {
                     supportActionBar.setDisplayHomeAsUpEnabled(false);
@@ -103,7 +102,7 @@ public class Navigator {
         }
     }
 
-    public static void setTabPosition(int tabPosition) {
-        Navigator.tabPosition = tabPosition;
+    public static void setTabTag(String tabTag) {
+        Navigator.tabTag = tabTag;
     }
 }
