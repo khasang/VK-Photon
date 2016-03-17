@@ -49,7 +49,7 @@ public class RequestMaker {
     }
 
     public static void getVkPhotosByAlbumId(VKRequest.VKRequestListener vkRequestListener, int albumId) {
-        final VKRequest request = getVkRequest("photos.get", VKParameters.from(VKApiConst.ALBUM_ID, albumId));
+        final VKRequest request = getVkRequest("photos.get", VKParameters.from(VKApiConst.ALBUM_ID, albumId,VKApiConst.EXTENDED,1));
         request.executeWithListener(vkRequestListener);
     }
 
