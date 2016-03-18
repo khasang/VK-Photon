@@ -41,7 +41,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bindPhotoAlbum(photoList.get(position));
+        holder.bindPhotoAlbum(photoList.get(position), position);
     }
 
     @Override
@@ -55,13 +55,14 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         notifyDataSetChanged();
     }
 
-    public static class ViewHolder extends MultiSelectorBindingHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class ViewHolder extends MultiSelectorBindingHolder implements View.OnClickListener, View.OnLongClickListener {
         final private ImageView imageView;
         final private CheckBox checkBox;
         private MultiSelector multiSelector;
         private boolean selectable;
         private AlbumPresenter localAlbumPresenter;
         private Photo photo;
+        private int position;
 
         public ViewHolder(View itemView, MultiSelector multiSelector, AlbumPresenter localAlbumPresenter) {
             super(itemView, multiSelector);
@@ -99,8 +100,9 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
             checkBox.setChecked(b);
         }
 
-        public void bindPhotoAlbum(Photo photo) {
+        public void bindPhotoAlbum(Photo photo, int position) {
             this.photo = photo;
+            this.position = position;
             if (!TextUtils.isEmpty(photo.filePath)) {
                 Glide.with(imageView.getContext())
                         .load("file://" + photo.filePath)
@@ -125,7 +127,8 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
                 localAlbumPresenter.checkActionModeFinish(multiSelector);
             } else {
 //                        albumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
-                    Navigator.navigateToVKCommentsFragment(v.getContext(), photo);
+                    //Navigator.navigateToVKCommentsFragment(v.getContext(), photo);
+                Navigator.navigateToPhotoViewPagerFragment(v.getContext(),photoList, this.position);
             }
             if (photo.filePath != null) {
                 Logger.d(photo.filePath);

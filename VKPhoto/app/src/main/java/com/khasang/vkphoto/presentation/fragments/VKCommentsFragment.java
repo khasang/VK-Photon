@@ -42,10 +42,14 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     private TextView photolikes, commentCount;
     private LinearLayout hlayout;
 
+    public VKCommentsFragment(Photo photo){
+        this.photo = photo;
+    }
+
     public static VKCommentsFragment newInstance(Photo photo) {
         Bundle args = new Bundle();
         args.putParcelable(PHOTO_ID, photo);
-        VKCommentsFragment fragment = new VKCommentsFragment();
+        VKCommentsFragment fragment = new VKCommentsFragment(null);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,7 +58,9 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new VkCommentsPresenterImpl(this);
-        photo = getArguments().getParcelable(PHOTO_ID);
+        if (getArguments() != null) {
+            photo = getArguments().getParcelable(PHOTO_ID);
+        }
         ((FabProvider) getContext()).getFloatingActionButton().hide();
 
     }
@@ -107,17 +113,33 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         super.onDetach();
     }
 
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Logger.d(TAG + " onStop");
+        presenter.onStop();
+        hlayout.setVisibility(View.GONE);
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Logger.d(TAG + " onPause");
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         presenter.onStart();
+        Logger.d(TAG + " onStart");
     }
 
     @Override
-    public void onStop() {
-        super.onResume();
-        presenter.onStop();
-        hlayout.setVisibility(View.GONE);
+    public void onDestroy() {
+        super.onDestroy();
+        Logger.d(TAG + " onDestroy");
     }
 
     @Override
