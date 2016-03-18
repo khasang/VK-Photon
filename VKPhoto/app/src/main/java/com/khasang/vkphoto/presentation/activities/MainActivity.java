@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.events.CloseActionModeEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
@@ -63,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (savedInstanceState != null) {
             Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
         }
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Providing Up Navigation
     }
 
     private void initViewPager() {
@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             @Override
             public void onPageSelected(int position) {
                 Navigator.setTabPosition(position);
+                EventBus.getDefault().post(new CloseActionModeEvent());
             }
 
             @Override
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
                 if (VKAccessToken.currentToken() != null && viewPager.getVisibility() == View.VISIBLE) {
+                    Logger.d("ViewPagerVisibile" + viewPager.getVisibility());
                     EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
                 }
             }

@@ -10,6 +10,7 @@ import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
+import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -21,7 +22,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.greenrobot.eventbus.util.AsyncExecutor;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -135,6 +135,9 @@ public class SyncServiceImpl extends Service implements SyncService {
                 photoAlbum.syncStatus = Constants.SYNC_DELETED;
                 localAlbumSource.updateAlbum(photoAlbum);
             }
+            if (localAlbumsList.size() == 0) {
+                EventBus.getDefault().postSticky(new LocalAlbumEvent());
+            }
         }
     }
 
@@ -196,6 +199,40 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
+    public void deleteAlbumFromDbById(final int photoAlbumId) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
+                List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllAlbums();
+                for (PhotoAlbum localAlbum : localAlbumsList) {
+                    if (localAlbum.getId() == photoAlbumId) {
+                        localAlbumSource.deleteAlbum(localAlbum);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void deleteSelectedVkPhotoAlbums(final List<PhotoAlbum> photoAlbumList) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                for (PhotoAlbum photoAlbum : photoAlbumList) {
+                    deleteAlbumFromDbById(photoAlbum.getId());
+                    deleteVKAlbumById(photoAlbum.getId());
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(340);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
     public boolean changeAlbumPrivacy(int i) {
         return false;
     }
@@ -210,15 +247,15 @@ public class SyncServiceImpl extends Service implements SyncService {
         return null;
     }
 
-    public class MyBinder extends Binder {
-        public SyncService getService() {
-            return SyncServiceImpl.this;
-        }
-    }
-
     @Override
     public void onDestroy() {
         eventBus.unregister(this);
         super.onDestroy();
+    }
+
+    public class MyBinder extends Binder {
+        public SyncService getService() {
+            return SyncServiceImpl.this;
+        }
     }
 }

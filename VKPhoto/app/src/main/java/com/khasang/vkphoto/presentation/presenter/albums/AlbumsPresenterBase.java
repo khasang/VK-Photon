@@ -3,6 +3,7 @@ package com.khasang.vkphoto.presentation.presenter.albums;
 import android.support.v7.view.ActionMode;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
+import com.khasang.vkphoto.R;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -20,10 +21,15 @@ public abstract class AlbumsPresenterBase implements AlbumsPresenter {
     }
 
     public void checkActionModeFinish(MultiSelector multiSelector) {
-        if (multiSelector.getSelectedPositions().size() == 0) {
+        int size = multiSelector.getSelectedPositions().size();
+        if (size == 0) {
             if (actionMode != null) {
                 actionMode.finish();
             }
+        } else if (size == 1) {
+            actionMode.getMenu().findItem(R.id.action_edit_album).setVisible(true);
+        } else {
+            actionMode.getMenu().findItem(R.id.action_edit_album).setVisible(false);
         }
     }
 

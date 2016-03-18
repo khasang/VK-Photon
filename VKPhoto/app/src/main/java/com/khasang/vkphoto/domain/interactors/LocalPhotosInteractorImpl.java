@@ -33,7 +33,7 @@ public class LocalPhotosInteractorImpl implements LocalPhotosInteractor {
 
     @Override
     public void deleteSelectedLocalPhotos(MultiSelector multiSelector, List<Photo> photoList) {
-        Logger.d("user wants to deleteSelectedLocalPhotos");
+        Logger.d("user wants to deleteSelectedPhotos");
 
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
         List<Photo> deletePhotoList = new ArrayList<>();

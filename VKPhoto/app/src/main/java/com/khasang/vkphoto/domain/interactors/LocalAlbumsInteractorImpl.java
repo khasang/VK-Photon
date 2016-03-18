@@ -2,12 +2,13 @@ package com.khasang.vkphoto.domain.interactors;
 
 import android.content.Context;
 import android.database.Cursor;
+
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Logger;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
     @Override
     public List<PhotoAlbum> getAllLocalAlbums() {
         Logger.d("user wants to getAllLocalAlbums");
-        return localAlbumSource.getAllLocalAlbums();
+        return localAlbumSource.getAllLocalAlbumsList();
     }
 
     @Override

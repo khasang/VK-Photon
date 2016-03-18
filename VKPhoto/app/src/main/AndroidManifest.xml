@@ -28,14 +28,14 @@
         <activity
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
-            android:theme="@style/VK.Transparent"
-            android:parentActivityName=".presentation.activities.MainActivity"/>
+            android:parentActivityName=".presentation.activities.MainActivity"
+            android:theme="@style/VK.Transparent" />
 
         <service android:name=".domain.services.SyncServiceImpl" />
+
         <activity
             android:name="com.khasang.vkphoto.ui.activities.SettingsActivity"
-            android:theme="@style/MySettingsTheme"/>
-        <activity android:name="com.khasang.vkphoto.ui.activities.AppCompatPreferenceActivity"/>
+            android:theme="@style/MySettingsTheme" />
     </application>
 
 </manifest>

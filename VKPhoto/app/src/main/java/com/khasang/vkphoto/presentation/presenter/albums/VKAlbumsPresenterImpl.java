@@ -10,7 +10,6 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.GetVkSaveAlbumEvent;
 import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
@@ -21,6 +20,7 @@ import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.VkAlbumsView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -30,7 +30,6 @@ import java.util.concurrent.ExecutorService;
 public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbumsPresenter {
     private VkAlbumsView vkAlbumsView;
     private VkAlbumsInteractor vkAlbumsInteractor;
-    private ActionMode actionMode;
 
     public VKAlbumsPresenterImpl(VkAlbumsView vkAlbumsView, SyncServiceProvider syncServiceProvider) {
         this.vkAlbumsView = vkAlbumsView;
@@ -62,11 +61,6 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetVkSaveAlbumEvent(GetVkSaveAlbumEvent getVkSaveAlbumEvent) {
-        vkAlbumsView.displayVkSaveAlbum(getVkSaveAlbumEvent.photoAlbum);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void OnLocalAlbumEvent(LocalAlbumEvent localAlbumEvent) {
         vkAlbumsView.displayAlbums();
     }
@@ -82,6 +76,15 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        SyncAndTokenReadyEvent stickyEvent = EventBus.getDefault().removeStickyEvent(SyncAndTokenReadyEvent.class);
+        if (stickyEvent != null) {
+            onSyncAndTokenReadyEvent(stickyEvent);
+        }
+    }
+
+    @Override
     public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_albums, ((FabProvider) activity).getFloatingActionButton()) {
             @Override
@@ -94,7 +97,6 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
                         return true;
                     case R.id.action_delete_album:
                         vkAlbumsView.confirmDelete(multiSelector);
-//                            vkAlbumsPresenter.deleteVkAlbums(multiSelector);
                         return true;
                     default:
                         break;
@@ -104,22 +106,14 @@ public class VKAlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbu
         });
     }
 
-    @Override
-    public void checkActionModeFinish(MultiSelector multiSelector) {
-        if (multiSelector.getSelectedPositions().size() == 0) {
-            if (actionMode != null) {
-                actionMode.finish();
-            }
-        }
-    }
-
     public File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
         return photoAlbum.thumb_id > 0 ? vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor) : null;
     }
 
     @Override
-    public void deleteAlbums(MultiSelector multiSelector) {
+    public void deleteSelectedAlbums(MultiSelector multiSelector) {
         vkAlbumsInteractor.deleteVkAlbum(multiSelector, vkAlbumsView.getAdapterCursor());
+        actionMode.finish();
     }
 }
       

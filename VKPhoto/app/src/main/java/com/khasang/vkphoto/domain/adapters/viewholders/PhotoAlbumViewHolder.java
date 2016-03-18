@@ -11,12 +11,12 @@ import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
+import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.AlbumsPresenter;
 import com.khasang.vkphoto.util.Constants;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
@@ -106,7 +106,12 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Picasso.with(albumThumbImageView.getContext()).load(file).fit().centerCrop().error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
+                Glide.with(albumThumbImageView.getContext())
+                        .load(file)
+                        .centerCrop()
+                        .crossFade()
+                        .error(R.drawable.vk_share_send_button_background)
+                        .into(albumThumbImageView);
             }
         });
     }
@@ -115,7 +120,12 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Picasso.with(albumThumbImageView.getContext()).load(resource).fit().centerCrop().error(R.drawable.vk_share_send_button_background).into(albumThumbImageView);
+                Glide.with(albumThumbImageView.getContext())
+                        .load(resource)
+                        .centerCrop()
+                        .crossFade()
+                        .error(R.drawable.vk_share_send_button_background)
+                        .into(albumThumbImageView);
             }
         });
     }

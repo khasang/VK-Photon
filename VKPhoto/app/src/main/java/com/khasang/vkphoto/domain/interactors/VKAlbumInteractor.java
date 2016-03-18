@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Anton on 21.02.2016.
  */
-public interface VkPhotosInteractor {
+public interface VKAlbumInteractor {
     void getPhotosByAlbumId(int albumId);
 
     void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum);

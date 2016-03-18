@@ -72,7 +72,17 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     }
 
     @Override
-    public void deleteSelectedLocalPhotos(MultiSelector multiSelector) {
+    public void addPhotos(List<String> photosList, PhotoAlbum photoAlbum) {
+
+    }
+
+    @Override
+    public void getPhotosByAlbumId(int albumId) {
+
+    }
+
+    @Override
+    public void deleteSelectedPhotos(MultiSelector multiSelector) {
         localPhotosInteractor.deleteSelectedLocalPhotos(multiSelector, albumView.getPhotoList());
         albumView.removePhotosFromView(multiSelector);
         actionMode.finish();

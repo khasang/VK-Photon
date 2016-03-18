@@ -14,6 +14,7 @@ import com.khasang.vkphoto.util.Logger;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+@Deprecated
 public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickListener, View.OnClickListener {
     final private ImageView imageView;
     final private CheckBox photoSelectedCheckBox;
@@ -81,7 +82,7 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
             Logger.d(String.valueOf(this.hashCode()));
 //            multiSelector.bindHolder(this, adapterPosition, -1);
             multiSelector.tapSelection(this);
-            vkAlbumPresenter.checkActionModeFinish(multiSelector, v.getContext());
+            vkAlbumPresenter.checkActionModeFinish(multiSelector);
         } else {
             Logger.d("onClick");
         }

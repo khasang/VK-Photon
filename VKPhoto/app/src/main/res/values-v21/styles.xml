@@ -30,5 +30,12 @@
         <item name="android:imeActionId">6</item>
     </style>
 
+    <style name="MySettingsTheme">
+        <item name="android:windowBackground">@color/vk_white</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/pref_text_size</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+    </style>
+
     <string name="search_hint">Search</string>
 </resources>

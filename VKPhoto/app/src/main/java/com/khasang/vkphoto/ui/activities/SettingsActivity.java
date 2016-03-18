@@ -2,12 +2,9 @@ package com.khasang.vkphoto.ui.activities;
 
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -16,22 +13,20 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
-import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.presentation.model.MaterialListPreference;
+import com.khasang.vkphoto.util.Logger;
 
 import java.util.List;
 
 public class SettingsActivity extends PreferenceActivity {
+
+
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
@@ -107,8 +102,8 @@ public class SettingsActivity extends PreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
-
-            updateListPrefSummary();
+            updatePrefListAccessControl();
+            updatePrefListLanguages();
         }
 
         @Override
@@ -126,7 +121,7 @@ public class SettingsActivity extends PreferenceActivity {
         }
 
         // Apply for ListPreference with key="access_control_list"
-        private void updateListPrefSummary() {
+        private void updatePrefListAccessControl() {
             ListPreference preference = (ListPreference) findPreference("access_control_list");
             CharSequence entry = (preference).getEntry();
             preference.setSummary(getString(R.string.access_control_current_settings) + " " + entry);
@@ -135,8 +130,18 @@ public class SettingsActivity extends PreferenceActivity {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals("access_control_list")) {
-                updateListPrefSummary();
+                updatePrefListAccessControl();
+            }else if(key.equals("cb_language")){
+                updatePrefListLanguages();
             }
+        }
+
+        // Apply for ListPreference with key="cb_language"
+        private void updatePrefListLanguages() {
+            MaterialListPreference preference = (MaterialListPreference) findPreference("cb_language");
+            Logger.d(preference.getValue());
+//            CharSequence entry = (preference).getEntry();
+//            preference.setSummary(getString(R.string.pref_list_languages_titles) + " " + entry);
         }
     }
 
@@ -145,8 +150,7 @@ public class SettingsActivity extends PreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_data_sync);
-
+            addPreferencesFromResource(R.xml.pref_sync);
             updateListPrefSummary();
         }
 
