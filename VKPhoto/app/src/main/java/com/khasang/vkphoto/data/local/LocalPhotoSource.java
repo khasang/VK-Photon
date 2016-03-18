@@ -121,7 +121,8 @@ public class LocalPhotoSource {
     public List<Photo> getPhotosByAlbumId(int albumId) {
         List<Photo> photos = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, PhotosTable.ALBUM_ID + " = ?", new String[]{String.valueOf(albumId)}, null, null, null);
+        Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, PhotosTable.ALBUM_ID + " = ?", new String[]{String.valueOf(albumId)}, null, null,
+                PhotosTable.DATE + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             photos.add(new Photo(cursor, false));
@@ -142,7 +143,7 @@ public class LocalPhotoSource {
         Cursor cursor = context.getContentResolver().query(
                 images, PROJECTION_BUCKET,
                 MediaStore.Images.ImageColumns.BUCKET_ID + " = ?",
-                new String[]{String.valueOf(albumId)}, null);
+                new String[]{String.valueOf(albumId)}, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
         if (cursor.moveToFirst()) {
             do {
                 Photo photo = new Photo(cursor, true);
