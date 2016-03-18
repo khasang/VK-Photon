@@ -64,19 +64,21 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                localDataSource.getAlbumSource().setSyncStatus(photoAlbumList, Constants.SYNC_STARTED);
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                for (PhotoAlbum photoAlbum : photoAlbumList) {
-                    Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource);
-                    futureList.add(executor.submit(booleanCallable));
+                if (photoAlbumList.size() > 0) {
+                    localDataSource.getAlbumSource().setSyncStatus(photoAlbumList, Constants.SYNC_STARTED);
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    for (PhotoAlbum photoAlbum : photoAlbumList) {
+                        Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource);
+                        futureList.add(executor.submit(booleanCallable));
+                    }
+                    execute();
+                    if (futureList.isEmpty()) {
+                        Logger.d("full sync success");
+                    } else {
+                        Logger.d("full sync fail");
+                    }
+                    executor.shutdown();
                 }
-                execute();
-                if (futureList.isEmpty()) {
-                    Logger.d("full sync success");
-                } else {
-                    Logger.d("full sync fail");
-                }
-                executor.shutdown();
             }
 
             private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
@@ -289,6 +291,16 @@ public class SyncServiceImpl extends Service implements SyncService {
                     localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
                     eventBus.post(new LocalALbumEvent());
                 }
+            }
+        });
+    }
+
+    @Override
+    public void startSync() {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                syncAlbums(localDataSource.getAlbumSource().getAlbumsToSync());
             }
         });
     }

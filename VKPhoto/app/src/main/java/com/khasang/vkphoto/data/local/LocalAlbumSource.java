@@ -17,6 +17,7 @@ import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.ImageFileFilter;
@@ -60,7 +61,7 @@ public class LocalAlbumSource {
             saveAlbum(photoAlbum, false);
         } else {
             Logger.d("update " + photoAlbum.id + " photoAlbum");
-            ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum);
+            ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum, false);
             if (contentValues.size() > 0) {
                 db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
                         new String[]{String.valueOf(photoAlbum.id)});
@@ -232,5 +233,19 @@ public class LocalAlbumSource {
         } finally {
             db.endTransaction();
         }
+    }
+
+    public List<PhotoAlbum> getAlbumsToSync() {
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String statuses = Constants.SYNC_FAILED + ", " + Constants.SYNC_STARTED + ", " + Constants.SYNC_SUCCESS;
+        Cursor cursor = db.query(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.SYNC_STATUS + " in (" + statuses + ")", null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                photoAlbumList.add(new PhotoAlbum(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return photoAlbumList;
     }
 }

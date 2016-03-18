@@ -159,7 +159,6 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         handler.post(new Runnable() {
             @Override
             public void run() {
-
                 try {
                     Glide.with(albumThumbImageView.getContext())
                             .load(file)
