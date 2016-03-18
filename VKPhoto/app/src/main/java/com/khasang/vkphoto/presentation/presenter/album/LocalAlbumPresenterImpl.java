@@ -62,13 +62,6 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     }
 
     @Override
-    public void checkActionModeFinish(MultiSelector multiSelector) {
-        if (multiSelector.getSelectedPositions().size() == 0) {
-            if (actionMode != null) actionMode.finish();
-        }
-    }
-
-    @Override
     public void addPhotos(List<Photo> photosList, PhotoAlbum photoAlbum) {
     }
 

@@ -39,7 +39,7 @@ public class VKAlbumSource {
                 try {
                     photoAlbum = JsonUtils.getPhotoAlbum(response.json);
                     Logger.d("Create Album successfully");
-                    localAlbumSource.updateAlbum(photoAlbum);
+                    localAlbumSource.updateAlbum(photoAlbum, false);
                     EventBus.getDefault().postSticky(new VKAlbumEvent());
                 } catch (Exception e) {
                     sendError(ErrorUtils.JSON_PARSE_FAILED);

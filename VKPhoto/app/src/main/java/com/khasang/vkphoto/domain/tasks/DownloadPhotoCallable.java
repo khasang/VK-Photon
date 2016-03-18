@@ -24,7 +24,7 @@ public class DownloadPhotoCallable implements Callable<File> {
     public File call() throws Exception {
         Logger.d("start save photo " + photo.id);
         File file;
-        for (int i = 0; i < ATTEMPT_COUNT; i++) {
+        for (int i = 0; i < ATTEMPT_COUNT && !Thread.currentThread().isInterrupted(); i++) {
             if ((file = localPhotoSource.savePhotoToAlbum(photo, photoAlbum)).exists()) {
                 return file;
             }

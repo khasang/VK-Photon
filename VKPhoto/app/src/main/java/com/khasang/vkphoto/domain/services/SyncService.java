@@ -65,5 +65,7 @@ public interface SyncService {
     void deleteSelectedLocalPhotoAlbums(List<PhotoAlbum> deleteAlbumsList);
 
     void startSync();
+
+    void cancelAlbumsSync(List<PhotoAlbum> selectedAlbums);
 }
       

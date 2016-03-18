@@ -26,6 +26,7 @@ import java.util.concurrent.Future;
 
 public class SyncAlbumCallable implements Callable<Boolean> {
     public static final int ATTEMPTS_COUNT = 3;
+    List<Photo> vkPhotoList;
     private LocalDataSource localDataSource;
     private PhotoAlbum photoAlbum;
     private boolean success = false;
@@ -45,38 +46,46 @@ public class SyncAlbumCallable implements Callable<Boolean> {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                final List<Photo> vkPhotoList;
                 try {
                     vkPhotoList = JsonUtils.getItems(response.json, Photo.class);
                     Logger.d("Got VKPhoto for photoAlbum " + photoAlbum.title);
-                    ExecutorService executor = Executors.newFixedThreadPool(3);
-                    removeDownloadedPhotos(vkPhotoList, localPhotoSource);
-                    List<Future<File>> futureList = new ArrayList<>();
-                    fillFutureList(vkPhotoList, executor, futureList, localPhotoSource);
-                    for (int i = 0; i < ATTEMPTS_COUNT; i++) {
-                        if (downloadPhotos(futureList)) {
-                            success = true;
-                            photoAlbum.syncStatus = Constants.SYNC_SUCCESS;
-                            break;
-                        }
-                    }
-                    executor.shutdown();
-                    localDataSource.getAlbumSource().updateAlbum(photoAlbum);
                 } catch (Exception e) {
                     Logger.d(e.toString());
                     sendError(ErrorUtils.JSON_PARSE_FAILED);
                 }
             }
         });
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        removeDownloadedPhotos(vkPhotoList, localPhotoSource);
+        List<Future<File>> futureList = new ArrayList<>();
+        fillFutureList(vkPhotoList, executor, futureList, localPhotoSource);
+        for (int i = 0; i < ATTEMPTS_COUNT; i++) {
+            if (downloadPhotos(futureList)) {
+                success = true;
+                Logger.d("success download");
+                photoAlbum.syncStatus = Constants.SYNC_SUCCESS;
+                break;
+            }
+        }
+        executor.shutdown();
+        localDataSource.getAlbumSource().updateAlbum(photoAlbum, true);
         return success;
     }
 
     private boolean downloadPhotos(List<Future<File>> futureList) throws InterruptedException, java.util.concurrent.ExecutionException {
         Iterator<Future<File>> iterator = futureList.iterator();
-        while (iterator.hasNext()) {
+        while (iterator.hasNext() && !Thread.currentThread().isInterrupted()) {
             Future<File> next = iterator.next();
             if (next.get().exists()) {
                 iterator.remove();
+            }
+        }
+        if (Thread.currentThread().isInterrupted()) {
+            Logger.d("download canceled");
+            iterator = futureList.iterator();
+            while (iterator.hasNext()) {
+                Future<File> next = iterator.next();
+                next.cancel(true);
             }
         }
         return futureList.isEmpty();

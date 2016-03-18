@@ -144,7 +144,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
             thumb = localDataSource.getPhotoSource().getLocalPhotoFile(photoAlbum.thumb_id);
             if (thumb != null) {
                 photoAlbum.thumbFilePath = thumb.getAbsolutePath();
-                localDataSource.getAlbumSource().updateAlbum(photoAlbum);
+                localDataSource.getAlbumSource().updateAlbum(photoAlbum, true);
                 loadPhoto(thumb);
                 success = true;
             }

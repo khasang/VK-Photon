@@ -1,8 +1,10 @@
 package com.khasang.vkphoto.presentation.presenter.albums;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
@@ -19,6 +21,7 @@ import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.AlbumsView;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.NetWorkUtils;
@@ -28,6 +31,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbumsPresenter {
@@ -41,6 +46,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
 
     public void syncAlbums(MultiSelector multiSelector) {
         vkAlbumsInteractor.syncAlbums(multiSelector, vkAlbumsView.getAdapterCursor());
+        actionMode.finish();
     }
 
     @Override
@@ -99,6 +105,12 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
                 R.menu.menu_action_mode_vk_albums, ((FabProvider) activity).getFloatingActionButton()) {
             @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                checkShowCancelSync(multiSelector, menu);
+                return super.onPrepareActionMode(actionMode, menu);
+            }
+
+            @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_sync_album:
@@ -109,12 +121,43 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
                     case R.id.action_delete_album:
                         vkAlbumsView.confirmDelete(multiSelector);
                         return true;
+                    case R.id.action_cancel_sync_album:
+                        vkAlbumsInteractor.cancelAlbumsSync(getSelectedAlbums(multiSelector.getSelectedPositions(), vkAlbumsView.getAdapterCursor()));
+                        return true;
                     default:
                         break;
                 }
                 return false;
             }
         });
+    }
+
+    @Override
+    public void checkActionModeFinish(MultiSelector multiSelector) {
+        super.checkActionModeFinish(multiSelector);
+        checkShowCancelSync(multiSelector, actionMode.getMenu());
+    }
+
+    private void checkShowCancelSync(MultiSelector multiSelector, Menu menu) {
+        List<Integer> indexes = multiSelector.getSelectedPositions();
+        Cursor cursor = vkAlbumsView.getAdapterCursor();
+        List<PhotoAlbum> photoAlbumList = getSelectedAlbums(indexes, cursor);
+        for (PhotoAlbum photoAlbum : photoAlbumList) {
+            Logger.d("" + photoAlbum + photoAlbum.syncStatus);
+            if (photoAlbum.syncStatus == Constants.SYNC_STARTED) {
+                menu.findItem(R.id.action_cancel_sync_album).setVisible(true);
+                return;
+            }
+        }
+    }
+
+    private List<PhotoAlbum> getSelectedAlbums(List<Integer> indexes, Cursor cursor) {
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        for (int i = 0; i < indexes.size(); i++) {
+            cursor.moveToPosition(indexes.get(i));
+            photoAlbumList.add(new PhotoAlbum(cursor));
+        }
+        return photoAlbumList;
     }
 
     public File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {

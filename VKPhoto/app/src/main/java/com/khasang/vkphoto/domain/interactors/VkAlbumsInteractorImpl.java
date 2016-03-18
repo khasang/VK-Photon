@@ -112,6 +112,13 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
         }
     }
 
+    @Override
+    public void cancelAlbumsSync(List<PhotoAlbum> selectedAlbums) {
+        if (checkSyncService()) {
+            syncService.cancelAlbumsSync(selectedAlbums);
+        }
+    }
+
     boolean checkSyncService() {
         for (int i = 0; i < 4; i++) {
             try {

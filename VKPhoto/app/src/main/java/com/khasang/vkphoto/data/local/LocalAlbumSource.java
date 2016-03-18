@@ -54,14 +54,14 @@ public class LocalAlbumSource {
         }
     }
 
-    public void updateAlbum(PhotoAlbum photoAlbum) {
+    public void updateAlbum(PhotoAlbum photoAlbum, boolean isLocal) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         PhotoAlbum oldAlbum = getAlbumById(photoAlbum.id);
         if (oldAlbum == null) {
             saveAlbum(photoAlbum, false);
         } else {
             Logger.d("update " + photoAlbum.id + " photoAlbum");
-            ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum, false);
+            ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum, isLocal);
             if (contentValues.size() > 0) {
                 db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
                         new String[]{String.valueOf(photoAlbum.id)});
