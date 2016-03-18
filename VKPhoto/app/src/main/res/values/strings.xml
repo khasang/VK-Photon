@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_of_album">Title</string>
     <string name="count_of_photos_in_album">Photos in album: %d</string>
-    <string name="sync_service_error">Synchronization service is loading</string>
+    <string name="service_connecting_error">Service is connecting</string>
     <string name="sync_album">Synchronize album</string>
     <string name="add_album_description">Description</string>
     <string name="st_btn_ok">OK</string>
@@ -13,6 +13,7 @@
     <string name="count_of_photos">Count of photos: %d</string>
     <string name="sync_photo">Synchronize photo</string>
     <string name="sync_delete_photos">Delete photos</string>
+    <string name="edit_photo_title">Edit photo</string>
     <string name="sync_delete_photo_question">Delete photo?</string>
     <string name="sync_delete_photos_question">Delete photos?</string>
     <string name="create_album">Create album</string>
@@ -22,6 +23,11 @@
     <plurals name="count_of_albums">
         <item quantity="one">%d albums</item>
         <item quantity="other">%d albums</item>
+    </plurals>
+
+    <plurals name="synchronize_album_question">
+        <item quantity="one">Synchronize %d album?</item>
+        <item quantity="other">Synchronize %d albums?</item>
     </plurals>
     <item name="position_key" type="id" />
     <string name="count_of_albums">%d albums</string>
@@ -121,5 +127,12 @@
     <string name="russian">Russian</string>
     <string name="english">English</string>
     <!--<string name="pref_description_sync_settings">Sync settings</string>-->
+=======
+    <string name="no_internet_connection_error">No internet connection</string>
+    <string name="album_not_created_error">Create of album failed</string>
+    <string name="photo_not_saved_error">Error downloading photo</string>
+>>>>>>> develop
 
+    <string name="userReply">replied to</string>
+    <string name="synchronize">Synchronize</string>
 </resources>

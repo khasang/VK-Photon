@@ -1,46 +1,50 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.bignerdranch.android.multiselector.MultiSelector;
+import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.domain.adapters.CommentRecyclerViewAdapter;
+import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.presentation.model.Comment;
+import com.khasang.vkphoto.presentation.model.Photo;
+import com.khasang.vkphoto.presentation.model.VkProfile;
+import com.khasang.vkphoto.presentation.presenter.VkCommentsPresenter;
+import com.khasang.vkphoto.presentation.presenter.VkCommentsPresenterImpl;
+import com.khasang.vkphoto.presentation.view.VkCommentsView;
+import com.khasang.vkphoto.util.Logger;
 
-public class VKCommentsFragment extends Fragment {
+import java.util.List;
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class VKCommentsFragment extends Fragment implements VkCommentsView {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String PHOTO_ID = "photo";
+    public static final String TAG = VKCommentsFragment.class.getSimpleName();
+    private Photo photo;
+    private RecyclerView recyclerView;
+    private CommentRecyclerViewAdapter adapter;
+    private VkCommentsPresenter presenter;
+    private ImageView userImage;
+    private TextView photolikes, commentCount;
+    private LinearLayout hlayout;
 
-    private OnFragmentInteractionListener mListener;
-
-    public VKCommentsFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment commentsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static VKCommentsFragment newInstance(String param1, String param2) {
-        VKCommentsFragment fragment = new VKCommentsFragment();
+    public static VKCommentsFragment newInstance(Photo photo) {
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(PHOTO_ID, photo);
+        VKCommentsFragment fragment = new VKCommentsFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,56 +52,101 @@ public class VKCommentsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        presenter = new VkCommentsPresenterImpl(this);
+        photo = getArguments().getParcelable(PHOTO_ID);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_comments, container, false);
+        View view = inflater.inflate(R.layout.fragment_comments, container, false);
+        userImage = (ImageView) view.findViewById(R.id.userImage);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        commentCount = (TextView) view.findViewById(R.id.commentsCount);
+        photolikes = (TextView) view.findViewById(R.id.photoLikes);
+        hlayout = ((LinearLayout) view.findViewById(R.id.hLayout));
+        view.findViewById(R.id.commetnsButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (recyclerView.getVisibility() == RecyclerView.GONE) {
+                    presenter.getCommentsByPhotoId(photo.id);
+                    recyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                }
+            }
+        });
+        loadPhoto();
+        ((FabProvider) getContext()).getFloatingActionButton().hide();
+        return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+    private void loadPhoto() {
+        if (!TextUtils.isEmpty(photo.filePath)) {
+            Logger.d(VKCommentsFragment.class.getSimpleName()+": image load form local album");
+            Glide.with(userImage.getContext())
+                    .load("file://" + photo.filePath)
+                    .error(R.drawable.vk_share_send_button_background)
+                    .into(userImage);
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            Logger.d(VKCommentsFragment.class.getSimpleName() + ": image load form server");
+            Glide.with(userImage.getContext())
+                    .load(photo.getUrlToMaxPhoto())
+                    .error(R.drawable.vk_share_send_button_background)
+                    .into(userImage);
+            hlayout.setVisibility(View.VISIBLE);
+            photolikes.setText(String.valueOf(photo.likes));
+            commentCount.setText(String.valueOf(photo.comments));
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    @Override
+    public void onStart() {
+        super.onStart();
+        presenter.onStart();
     }
+
+    @Override
+    public void onStop() {
+        super.onResume();
+        presenter.onStop();
+        hlayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void displayVkComments(List<Comment> comments, List<VkProfile> profiles) {
+        adapter = new CommentRecyclerViewAdapter(comments, profiles);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(itemAnimator);
+    }
+
+    @Override
+    public void displayVkPhoto(Photo photo) {
+        Logger.d("load image " + photo.getUrlToMaxPhoto() + " into imageView");
+        Glide.with(getContext()).load(photo.getUrlToMaxPhoto()).into(userImage);
+        photolikes.setText(String.valueOf(photo.likes));
+        commentCount.setText(String.valueOf(photo.comments));
+    }
+
+
+    @Override
+    public void showError(int errorCode) {
+
+    }
+
+    @Override
+    public void confirmDelete(MultiSelector multiSelector) {
+
+    }
+
 }
 

@@ -5,17 +5,15 @@ import android.support.annotation.NonNull;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
-import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
+import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.JsonUtils;
 import com.khasang.vkphoto.util.Logger;
-import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,7 +41,7 @@ public class SyncAlbumCallable implements Callable<Boolean> {
         final LocalPhotoSource localPhotoSource = localDataSource.getPhotoSource();
         photoAlbum.syncStatus = Constants.SYNC_FAILED;
         VKRequest vkRequest = getVkRequest();
-        vkRequest.executeSyncWithListener(new VKRequest.VKRequestListener() {
+        vkRequest.executeSyncWithListener(new MyVkRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
@@ -65,14 +63,9 @@ public class SyncAlbumCallable implements Callable<Boolean> {
                     executor.shutdown();
                     localDataSource.getAlbumSource().updateAlbum(photoAlbum);
                 } catch (Exception e) {
-                    sendError(e.toString());
+                    Logger.d(e.toString());
+                    sendError(ErrorUtils.JSON_PARSE_FAILED);
                 }
-            }
-
-            @Override
-            public void onError(VKError error) {
-                super.onError(error);
-                sendError(error.toString());
             }
         });
         return success;
@@ -98,7 +91,7 @@ public class SyncAlbumCallable implements Callable<Boolean> {
     }
 
     private void removeDownloadedPhotos(List<Photo> vkPhotoList, LocalPhotoSource localPhotoSource) {
-        List<Photo> localPhotoList = localPhotoSource.getPhotosByAlbum(photoAlbum);
+        List<Photo> localPhotoList = localPhotoSource.getPhotosByAlbumId(photoAlbum.id);
         for (int i = 0; i < localPhotoList.size(); i++) {
             Photo photo = localPhotoList.get(i);
             if (new File(photo.filePath).exists()) {
@@ -114,9 +107,5 @@ public class SyncAlbumCallable implements Callable<Boolean> {
         return vkRequest;
     }
 
-    private void sendError(String s) {
-        localDataSource.getAlbumSource().updateAlbum(photoAlbum);
-        EventBus.getDefault().postSticky(new ErrorEvent(s));
-    }
 
 }

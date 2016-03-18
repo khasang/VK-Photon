@@ -10,7 +10,8 @@ import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
-import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.domain.events.LocalALbumEvent;
+import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -113,6 +114,18 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
+    @Override
+    public void getAllLocalAlbums() {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                Logger.d("SyncSerice getAllLocalAlbums");
+                Logger.d("no body");
+//                localDataSource.getAlbumSource().getAllAlbums();
+            }
+        });
+    }
+
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onGetVKAlbumsEvent(GetVKAlbumsEvent getVKAlbumsEvent) {
         Logger.d("SyncSerice onGetVKAlbumsEvent");
@@ -124,7 +137,7 @@ public class SyncServiceImpl extends Service implements SyncService {
             if (localAlbumsList.contains(photoAlbum)) { //update existing albums
                 localAlbumSource.updateAlbum(photoAlbum);
             } else { //сreate new albums
-                localAlbumSource.saveAlbum(photoAlbum);
+                localAlbumSource.saveAlbum(photoAlbum, false);
             }
         }
 
@@ -135,10 +148,8 @@ public class SyncServiceImpl extends Service implements SyncService {
                 photoAlbum.syncStatus = Constants.SYNC_DELETED;
                 localAlbumSource.updateAlbum(photoAlbum);
             }
-            if (localAlbumsList.size() == 0) {
-                EventBus.getDefault().postSticky(new LocalAlbumEvent());
-            }
         }
+        EventBus.getDefault().postSticky(new VKAlbumEvent());
     }
 
     @Override
@@ -152,7 +163,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void addPhotos(final List<String> listUploadedFiles, final PhotoAlbum photoAlbum) {
+    public void addPhotos(final List<Photo> listUploadedFiles, final PhotoAlbum photoAlbum) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
@@ -245,6 +256,41 @@ public class SyncServiceImpl extends Service implements SyncService {
     @Override
     public PhotoAlbum createAlbum() {
         return null;
+    }
+
+    @Override
+    public void getLocalPhotosByAlbumId(final int albumId) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                localDataSource.getPhotoSource().getLocalPhotosByAlbumId(albumId);
+            }
+        });
+    }
+
+    @Override
+    public void deleteSelectedLocalPhotos(final List<Photo> deletePhotoList) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
+            }
+        });
+    }
+
+    @Override
+    public void deleteSelectedLocalPhotoAlbums(final List<PhotoAlbum> deleteAlbumsList) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                for (PhotoAlbum photoAlbum : deleteAlbumsList) {
+                    Logger.d("now deleting photoAlbum: " + photoAlbum.filePath);
+                    List<Photo> deletePhotoList = localDataSource.getPhotoSource().getLocalPhotosByAlbumId(photoAlbum.id);
+                    localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
+                    eventBus.post(new LocalALbumEvent());
+                }
+            }
+        });
     }
 
     @Override

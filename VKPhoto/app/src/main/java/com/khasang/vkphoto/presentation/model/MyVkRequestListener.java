@@ -10,11 +10,11 @@ public class MyVkRequestListener extends VKRequest.VKRequestListener {
     @Override
     public void onError(VKError error) {
         super.onError(error);
-        sendError(error.toString());
+        sendError(error.errorCode);
     }
 
-    public void sendError(String s) {
-        EventBus.getDefault().postSticky(new ErrorEvent(s));
+    public void sendError(int errorCode) {
+        EventBus.getDefault().postSticky(new ErrorEvent(errorCode));
     }
 
 }

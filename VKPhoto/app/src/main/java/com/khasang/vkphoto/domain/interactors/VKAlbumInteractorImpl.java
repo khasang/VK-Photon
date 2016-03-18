@@ -4,12 +4,11 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.model.Photo;
-import com.khasang.vkphoto.util.Constants;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.util.ErrorUtils;
 
 import org.greenrobot.eventbus.EventBus;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,14 +48,14 @@ public class VKAlbumInteractorImpl implements VKAlbumInteractor {
     }
 
     @Override
-    public void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum) {
+    public void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum) {
         if (checkSyncService()) syncService.addPhotos(listUploadedFiles, photoAlbum);
     }
 
     boolean checkSyncService() {
         if (syncService == null) {
             if (!setSyncService()) {
-                EventBus.getDefault().postSticky(new ErrorEvent(Constants.SYNC_SERVICE_ERROR));
+                EventBus.getDefault().postSticky(new ErrorEvent(ErrorUtils.SERVICE_CONNECTING_ERROR));
                 return false;
             }
         }

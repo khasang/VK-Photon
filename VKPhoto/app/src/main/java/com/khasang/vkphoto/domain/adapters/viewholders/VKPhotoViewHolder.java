@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.domain.adapters.viewholders;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SelectableHolder;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenter;
 import com.khasang.vkphoto.util.Logger;
@@ -85,6 +87,7 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
             vkAlbumPresenter.checkActionModeFinish(multiSelector);
         } else {
             Logger.d("onClick");
+
         }
     }
 

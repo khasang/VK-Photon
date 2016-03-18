@@ -28,6 +28,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:design:23.2.0'
+    compile 'com.android.support:cardview-v7:23.2.0'
     compile project(':vksdk_library')
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'org.greenrobot:eventbus:3.0.0'

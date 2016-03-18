@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,41 +35,58 @@ import com.khasang.vkphoto.domain.adapters.PhotoAlbumsCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.presentation.model.MyActionExpandListener;
 import com.khasang.vkphoto.presentation.model.MyOnQuerrySearchListener;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
+import com.khasang.vkphoto.presentation.custom_classes.GridSpacingItemDecoration;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenter;
 import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenterImpl;
-import com.khasang.vkphoto.presentation.view.VkAlbumsView;
+import com.khasang.vkphoto.presentation.view.AlbumsView;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
-import com.khasang.vkphoto.util.ToastUtils;
 
-public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
+import java.util.Collections;
+import java.util.List;
+
+import static com.khasang.vkphoto.util.Constants.ALBUMS_SPAN_COUNT;
+
+public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
+    private static final String TAG = LocalAlbumsFragment.class.getSimpleName();
     private PhotoAlbumsCursorAdapter adapter;
     private MultiSelector multiSelector;
     private LocalAlbumsPresenter localAlbumsPresenter;
     private MyOnQuerrySearchListener myOnQuerrySearchListener = new MyOnQuerrySearchListener();
     private TextView tvCountOfAlbums;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean refreshing;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
-        localAlbumsPresenter = new LocalAlbumsPresenterImpl(this, getContext());
+        localAlbumsPresenter = new LocalAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
-        getActivity().getSupportLoaderManager().initLoader(1, null, this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Logger.d(this.toString());
+        Logger.d("" + getTag());
         View view = inflater.inflate(R.layout.fragment_albums, container, false);
+        getActivity().getSupportLoaderManager().initLoader(1, null, this);
         tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
         initRecyclerView(view);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {
                 localAlbumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) getActivity());
             }
+            if (refreshing) {
+                displayRefresh(true);
+            }
         }
+        initSwipeRefreshLayout(view);
         return view;
     }
 
@@ -104,16 +123,33 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
     }
 
 
+    private void initSwipeRefreshLayout(View view) {
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        Resources resources = getResources();
+        swipeRefreshLayout.setColorSchemeColors(resources.getColor(R.color.colorPrimary),
+                resources.getColor(R.color.colorAccentLight),
+                resources.getColor(R.color.colorAccent),
+                resources.getColor(R.color.colorAccentDark));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                displayAlbums();
+            }
+        });
+    }
+
     private void initRecyclerView(View view) {
-        RecyclerView albumsRecyclerView = (RecyclerView) view.findViewById(R.id.albums_recycler_view);
+        RecyclerView albumsRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             albumsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         } else {
             albumsRecyclerView.setHasFixedSize(true);
-            albumsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false));
+            albumsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), ALBUMS_SPAN_COUNT, LinearLayoutManager.VERTICAL, false));
+            albumsRecyclerView.addItemDecoration(new GridSpacingItemDecoration(ALBUMS_SPAN_COUNT, Constants.RECYCLERVIEW_SPACING, false));
         }
         initAdapter(null);
         albumsRecyclerView.setAdapter(adapter);
+        albumsRecyclerView.addOnScrollListener(new RecyclerViewOnScrollListener(((FabProvider) getActivity()).getFloatingActionButton()));
     }
 
     //lifecycle methods
@@ -140,16 +176,94 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
     }
 
 
-    //VkAlbumsView implementations
+    @Override
+    public void confirmSync(MultiSelector multiSelector) {
+        //upload to VK
+    }
+
+    //AlbumsView implementations
     @Override
     public void displayVkSaveAlbum(PhotoAlbum photoAlbum) {
         //TODO: implement metod
         Logger.d("displayVkSaveAlbum");
     }
 
+
+    /*
+        public void removeAlbumsFromView() {
+            Logger.d("user wants to removeAlbumsFromView");
+            List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+            Collections.sort(selectedPositions, Collections.reverseOrder());
+            Cursor oldCursor = adapter.getCursor();
+
+            MatrixCursor modifiedCursor = new MatrixCursor(new String[]{
+                    BaseColumns._ID,
+                    PhotoAlbumsTable.TITLE,
+                    PhotoAlbumsTable.FILE_PATH,
+                    PhotoAlbumsTable.THUMB_FILE_PATH,
+                    PhotoAlbumsTable.SIZE});
+            MatrixCursor.RowBuilder builder;
+
+            if (oldCursor.moveToFirst()) {
+                int i = 0;
+                String id, title, filePath, thumbPath, photosCount;
+                int idColumn = oldCursor.getColumnIndex(BaseColumns._ID);
+                int titleColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.TITLE);
+                int filePathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.FILE_PATH);
+                int thumbPathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.THUMB_FILE_PATH);
+                int photosCountColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.SIZE);
+
+                do {
+                    id = oldCursor.getString(idColumn);
+                    title = oldCursor.getString(titleColumn);
+                    filePath = oldCursor.getString(filePathColumn);
+                    thumbPath = oldCursor.getString(thumbPathColumn);
+                    photosCount = oldCursor.getString(photosCountColumn);
+                    if (!selectedPositions.contains(i)) {
+                        builder = modifiedCursor.newRow();
+                        builder.add(id)
+                                .add(title)
+                                .add(filePath)
+                                .add(thumbPath)
+                                .add(photosCount);
+                    }
+                    i++;
+                } while (oldCursor.moveToNext());
+                oldCursor.close();
+            }
+
+            adapter.changeCursor(modifiedCursor);
+            for (Integer position : selectedPositions) {
+                adapter.notifyItemRemoved(position);
+            }
+        }
+    */
     @Override
     public void displayAlbums() {
         getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
+    }
+
+    public void displayDeletedAlbums() {
+        //
+        Logger.d("user wants to removePhotosFromView");
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Collections.sort(selectedPositions, Collections.reverseOrder());
+        for (Integer position : selectedPositions) {
+            adapter.notifyItemRemoved(position);
+        }
+        displayAlbums();
+    }
+
+    @Override
+    public void displayRefresh(final boolean refreshing) {
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                Logger.d("startRefreshing");
+                LocalAlbumsFragment.this.refreshing = refreshing;
+                swipeRefreshLayout.setRefreshing(refreshing);
+            }
+        });
     }
 
     @Override
@@ -158,10 +272,11 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
     }
 
 
-    //VkView implementations
+    //View implementations
+
     @Override
-    public void showError(String s) {
-        ToastUtils.showError(s, getContext());
+    public void showError(int errorCode) {
+        Logger.d("LocalAlbumsFragment error " + errorCode);
     }
 
     @Override
@@ -192,6 +307,7 @@ public class LocalAlbumsFragment extends Fragment implements VkAlbumsView, Loade
         }
         int itemCount = adapter.getItemCount();
         tvCountOfAlbums.setText(getResources().getQuantityString(R.plurals.count_of_albums, itemCount, itemCount));
+        displayRefresh(false);
     }
 
     @Override

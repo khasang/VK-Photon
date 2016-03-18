@@ -1,6 +1,5 @@
 package com.khasang.vkphoto.presentation.presenter.album;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.view.MenuItem;
@@ -9,13 +8,14 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
+import com.khasang.vkphoto.domain.events.GetLocalPhotosEvent;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.view.VkAlbumView;
+import com.khasang.vkphoto.presentation.view.AlbumView;
 import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -27,31 +27,28 @@ import java.util.List;
 /**
  * Created by TAU on 05.03.2016.
  */
-public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
-    private VkAlbumView albumView;
+public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements LocalAlbumPresenter {
+    private AlbumView albumView;
     private LocalPhotosInteractor localPhotosInteractor;
-    private ActionMode actionMode;
+//    private ActionMode actionMode;
 
-    public LocalAlbumPresenterImpl(VkAlbumView vkAlbumView, Context context) {
+    public LocalAlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
         this.albumView = vkAlbumView;
-        localPhotosInteractor = new LocalPhotosInteractorImpl(context);
-    }
-
-
-    @Override
-    public List<Photo> getPhotosByAlbum(PhotoAlbum photoAlbum) {
-        return localPhotosInteractor.getPhotosByAlbum(photoAlbum);
+        localPhotosInteractor = new LocalPhotosInteractorImpl(syncServiceProvider);
     }
 
     @Override
     public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
-        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_album, ((FabProvider) activity).getFloatingActionButton()) {
+        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
+                R.menu.menu_action_mode_local_album, ((FabProvider) activity).getFloatingActionButton()) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_sync_photo:
                         Logger.d("user wants to sync local photos");
+                        return true;
+                    case R.id.action_edit_photo:
                         return true;
                     case R.id.action_delete_photo:
                         albumView.confirmDelete(multiSelector);
@@ -72,19 +69,18 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
     }
 
     @Override
-    public void addPhotos(List<String> photosList, PhotoAlbum photoAlbum) {
-
+    public void addPhotos(List<Photo> photosList, PhotoAlbum photoAlbum) {
     }
 
     @Override
     public void getPhotosByAlbumId(int albumId) {
-
+        localPhotosInteractor.getPhotosByAlbumId(albumId);
     }
 
     @Override
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
         localPhotosInteractor.deleteSelectedLocalPhotos(multiSelector, albumView.getPhotoList());
-        albumView.removePhotosFromView(multiSelector);
+        albumView.removePhotosFromView();
         actionMode.finish();
     }
 
@@ -106,11 +102,11 @@ public class LocalAlbumPresenterImpl implements LocalAlbumPresenter {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent errorEvent) {
-        albumView.showError(errorEvent.errorMessage);
+//        albumView.showError(errorEvent.errorCode);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
-        albumView.displayVkPhotos(getVKPhotosEvent.photosList);
+    public void onGetLocalPhotosEvent(GetLocalPhotosEvent getLocalPhotosEvent) {
+        albumView.displayVkPhotos(getLocalPhotosEvent.photosList);
     }
 }

@@ -13,8 +13,9 @@ import com.khasang.vkphoto.domain.interactors.VKAlbumInteractor;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.presentation.view.VkAlbumView;
+import com.khasang.vkphoto.presentation.view.AlbumView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -23,12 +24,12 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 
-public class VKAlbumPresenterImpl implements VKAlbumPresenter {
-    private VkAlbumView vkAlbumView;
+public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumPresenter {
+    private AlbumView vkAlbumView;
     private VKAlbumInteractor VKAlbumInteractor;
-    private ActionMode actionMode;
+//    private ActionMode actionMode;
 
-    public VKAlbumPresenterImpl(VkAlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
+    public VKAlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
         this.vkAlbumView = vkAlbumView;
         VKAlbumInteractor = new VKAlbumInteractorImpl(syncServiceProvider);
     }
@@ -42,12 +43,12 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
     @Override
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
         VKAlbumInteractor.deleteSelectedVkPhotos(multiSelector, vkAlbumView.getPhotoList());
-        vkAlbumView.removePhotosFromView(multiSelector);
+        vkAlbumView.removePhotosFromView();
         actionMode.finish();
     }
 
     @Override
-    public void addPhotos(List<String> listUploadedFiles, PhotoAlbum photoAlbum) {
+    public void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum) {
         VKAlbumInteractor.addPhotos(listUploadedFiles, photoAlbum);
     }
 
@@ -67,7 +68,7 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorEvent(ErrorEvent errorEvent) {
-        vkAlbumView.showError(errorEvent.errorMessage);
+        vkAlbumView.showError(errorEvent.errorCode);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -78,11 +79,14 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
     @Override
     public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
-        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_vk_album, ((FabProvider) activity).getFloatingActionButton()) {
+        this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
+                R.menu.menu_action_mode_vk_album, ((FabProvider) activity).getFloatingActionButton()) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_sync_photo:
+                        return true;
+                    case R.id.action_edit_photo:
                         return true;
                     case R.id.action_delete_photo:
                         vkAlbumView.confirmDelete(multiSelector);
@@ -93,14 +97,5 @@ public class VKAlbumPresenterImpl implements VKAlbumPresenter {
                 return false;
             }
         });
-    }
-
-    @Override
-    public void checkActionModeFinish(MultiSelector multiSelector) {
-        if (multiSelector.getSelectedPositions().size() == 0) {
-            if (actionMode != null) {
-                actionMode.finish();
-            }
-        }
     }
 }

@@ -30,12 +30,10 @@
             android:label="ServiceActivity"
             android:parentActivityName=".presentation.activities.MainActivity"
             android:theme="@style/VK.Transparent" />
-
         <service android:name=".domain.services.SyncServiceImpl" />
-
         <activity
-            android:name="com.khasang.vkphoto.ui.activities.SettingsActivity"
-            android:theme="@style/MySettingsTheme" />
+            android:name=".presentation.activities.SettingsActivity"
+            android:theme="@style/MySettingsTheme"/>
     </application>
 
 </manifest>

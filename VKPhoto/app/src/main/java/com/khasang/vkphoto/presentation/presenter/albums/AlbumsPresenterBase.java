@@ -1,10 +1,8 @@
 package com.khasang.vkphoto.presentation.presenter.albums;
 
 import android.support.v7.view.ActionMode;
-
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
-
 import org.greenrobot.eventbus.EventBus;
 
 public abstract class AlbumsPresenterBase implements AlbumsPresenter {

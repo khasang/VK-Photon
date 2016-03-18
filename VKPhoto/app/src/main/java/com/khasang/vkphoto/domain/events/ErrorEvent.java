@@ -1,9 +1,9 @@
 package com.khasang.vkphoto.domain.events;
 
 public class ErrorEvent {
-    public final String errorMessage;
+    public final int errorCode;
 
-    public ErrorEvent(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public ErrorEvent(int errorCode) {
+        this.errorCode = errorCode;
     }
 }

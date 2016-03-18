@@ -9,14 +9,15 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotoAlbumsTable;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.domain.events.VKAlbumEvent;
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.ImageFileFilter;
 import com.khasang.vkphoto.util.Logger;
@@ -26,9 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class LocalAlbumSource {
     private Context context;
@@ -39,16 +38,18 @@ public class LocalAlbumSource {
         this.dbHelper = MySQliteHelper.getInstance(context);
     }
 
-    public void saveAlbum(VKApiPhotoAlbum apiPhotoAlbum) {
+    public void saveAlbum(VKApiPhotoAlbum apiPhotoAlbum, boolean sendEvent) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String path = FileManager.createAlbumDirectory(apiPhotoAlbum.id + "", context);
         if (path == null) {
-            EventBus.getDefault().postSticky(new ErrorEvent(apiPhotoAlbum.title + " couldn't be created!"));
+            EventBus.getDefault().postSticky(new ErrorEvent(ErrorUtils.ALBUM_NOT_CREATED_ERROR));
         } else {
             PhotoAlbum photoAlbum = new PhotoAlbum(apiPhotoAlbum);
             photoAlbum.filePath = path;
             db.insert(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.getContentValues(photoAlbum));
-            EventBus.getDefault().postSticky(new LocalAlbumEvent());
+            if (sendEvent) {
+                EventBus.getDefault().postSticky(new VKAlbumEvent());
+            }
         }
     }
 
@@ -56,14 +57,14 @@ public class LocalAlbumSource {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         PhotoAlbum oldAlbum = getAlbumById(photoAlbum.id);
         if (oldAlbum == null) {
-            saveAlbum(photoAlbum);
+            saveAlbum(photoAlbum, false);
         } else {
             Logger.d("update " + photoAlbum.id + " photoAlbum");
             ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum);
             if (contentValues.size() > 0) {
                 db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
                         new String[]{String.valueOf(photoAlbum.id)});
-                EventBus.getDefault().postSticky(new LocalAlbumEvent());
+                EventBus.getDefault().postSticky(new VKAlbumEvent());
             }
         }
     }
@@ -79,7 +80,7 @@ public class LocalAlbumSource {
                 db.delete(PhotoAlbumsTable.TABLE_NAME, BaseColumns._ID + " = ?", whereArgs);
                 FileManager.deleteAlbumDirectory(photoAlbum.filePath);
                 db.setTransactionSuccessful();
-                EventBus.getDefault().postSticky(new LocalAlbumEvent());
+                EventBus.getDefault().postSticky(new VKAlbumEvent());
             } finally {
                 db.endTransaction();
             }
@@ -88,18 +89,11 @@ public class LocalAlbumSource {
 
     //метод не уничтожает папку. только все ФОТО в ней
     //после его использования необходимо заново выполнить поиск всего, что программа считает альбомом
-    public void deleteLocalAlbums(List<PhotoAlbum> photoAlbumList) {
-        for (PhotoAlbum photoAlbum: photoAlbumList) {
-            Logger.d("now deleting file: " + photoAlbum.filePath);
-            File dir = new File(photoAlbum.filePath);
-            String[] children = dir.list();
-            ImageFileFilter filter = new ImageFileFilter();
-            for (String child : children) {
-                File file = new File(dir, child);
-                if (filter.accept(file))
-                    if (!file.delete())
-                        Logger.d("error while deleting file: " + photoAlbum.filePath);
-            }
+    public void deleteLocalAlbums(List<PhotoAlbum> photoAlbumList, LocalPhotoSource localPhotoSource) {
+        for (PhotoAlbum photoAlbum : photoAlbumList) {
+            Logger.d("now deleting photoAlbum: " + photoAlbum.filePath);
+            List<Photo> deleteList = localPhotoSource.getLocalPhotosByAlbumId(photoAlbum.id);
+            localPhotoSource.deleteLocalPhotos(deleteList);
         }
     }
 
@@ -134,7 +128,8 @@ public class LocalAlbumSource {
     }
 
     public Cursor getAllLocalAlbums() {
-        MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID,
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{
+                BaseColumns._ID,
                 PhotoAlbumsTable.TITLE,
                 PhotoAlbumsTable.FILE_PATH,
                 PhotoAlbumsTable.THUMB_FILE_PATH,
@@ -162,38 +157,27 @@ public class LocalAlbumSource {
                 images, PROJECTION_BUCKET, BUCKET_GROUP_BY, null, BUCKET_ORDER_BY);
 
         try {
-            Log.i("ListingImages", " query count=" + cursor.getCount());
+            Logger.d("ListingPhotoAlbums" + " query count=" + cursor.getCount());
         } catch (NullPointerException e) {/*NOP*/}
 
         if (cursor.moveToFirst()) {
-            String bucketID, bucketName, date, thumbPath;
-            int bucketIDColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID);
-            int bucketNameColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-            int dateColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
-            int dataColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+            String id, title, thumbPath;
+            int idColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID);
+            int titleColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+            int thumbPathColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
 
             do {
-                // Get the field values
-                bucketID = cursor.getString(bucketIDColumn);
-                bucketName = cursor.getString(bucketNameColumn);
-                date = cursor.getString(dateColumn);
-                thumbPath = cursor.getString(dataColumn);
+                id = cursor.getString(idColumn);
+                title = cursor.getString(titleColumn);
+                thumbPath = cursor.getString(thumbPathColumn);
                 String filePath = thumbPath.substring(0, thumbPath.lastIndexOf("/"));
-                //TODO: убрать костыль ниже, выяснив, почему в cursor попадают пустые альбомы
                 int photosCount = new File(filePath).listFiles(new ImageFileFilter()).length;
-                if (photosCount > 0) {
-                    builder = matrixCursor.newRow();
-                    builder.add(bucketID)
-                            .add(bucketName)
-                            .add(filePath)
-                            .add(thumbPath)
-                            .add(photosCount);
-                }
-                // Do something with the values.
-                Log.i("ListingImages", " bucket=" + bucketID
-                        + "  bucketName=" + bucketName
-                        + "  date_taken=" + date
-                        + "  _data=" + thumbPath);
+                builder = matrixCursor.newRow();
+                builder.add(id)
+                        .add(title)
+                        .add(filePath)
+                        .add(thumbPath)
+                        .add(photosCount);
             } while (cursor.moveToNext());
             cursor.close();
         }
@@ -244,10 +228,9 @@ public class LocalAlbumSource {
             db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
                     whereArgs);
             db.setTransactionSuccessful();
-            EventBus.getDefault().postSticky(new LocalAlbumEvent());
+            EventBus.getDefault().postSticky(new VKAlbumEvent());
         } finally {
             db.endTransaction();
         }
-
     }
 }

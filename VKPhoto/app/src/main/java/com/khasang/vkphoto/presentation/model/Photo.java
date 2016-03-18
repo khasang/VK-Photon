@@ -3,20 +3,16 @@ package com.khasang.vkphoto.presentation.model;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.provider.BaseColumns;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
-import com.khasang.vkphoto.util.ImageFileFilter;
+import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.model.VKApiPhoto;
 import com.vk.sdk.api.model.VKPhotoSizes;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.khasang.vkphoto.data.database.tables.PhotosTable.ALBUM_ID;
 import static com.khasang.vkphoto.data.database.tables.PhotosTable.COMMENTS;
@@ -37,23 +33,27 @@ public class Photo extends VKApiPhoto {
         super(from);
     }
 
-    public Photo(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public Photo(Cursor cursor) {
-        this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-        this.album_id = cursor.getInt(cursor.getColumnIndex(ALBUM_ID));
-        this.owner_id = cursor.getInt(cursor.getColumnIndex(OWNER_ID));
-        this.width = cursor.getInt(cursor.getColumnIndex(WIDTH));
-        this.height = cursor.getInt(cursor.getColumnIndex(HEIGHT));
-        this.text = cursor.getString(cursor.getColumnIndex(TEXT));
-        this.date = cursor.getLong(cursor.getColumnIndex(DATE));
-        this.likes = cursor.getInt(cursor.getColumnIndex(LIKES));
-        this.can_comment = cursor.getInt(cursor.getColumnIndex(PhotosTable.CAN_COMMENT)) == 1;
-        this.comments = cursor.getInt(cursor.getColumnIndex(COMMENTS));
-        this.filePath = cursor.getString(cursor.getColumnIndex(FILE_PATH));
-        this.syncStatus = cursor.getInt(cursor.getColumnIndex(SYNC_STATUS));
+    public Photo(Cursor cursor, Boolean isAlbumLocal) {
+        if (isAlbumLocal){
+            this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
+            this.album_id = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID));
+            this.date = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATE_TAKEN));
+            this.filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        }
+        else {
+            this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
+            this.album_id = cursor.getInt(cursor.getColumnIndex(ALBUM_ID));
+            this.owner_id = cursor.getInt(cursor.getColumnIndex(OWNER_ID));
+            this.width = cursor.getInt(cursor.getColumnIndex(WIDTH));
+            this.height = cursor.getInt(cursor.getColumnIndex(HEIGHT));
+            this.text = cursor.getString(cursor.getColumnIndex(TEXT));
+            this.date = cursor.getLong(cursor.getColumnIndex(DATE));
+            this.likes = cursor.getInt(cursor.getColumnIndex(LIKES));
+            this.can_comment = cursor.getInt(cursor.getColumnIndex(PhotosTable.CAN_COMMENT)) == 1;
+            this.comments = cursor.getInt(cursor.getColumnIndex(COMMENTS));
+            this.filePath = cursor.getString(cursor.getColumnIndex(FILE_PATH));
+            this.syncStatus = cursor.getInt(cursor.getColumnIndex(SYNC_STATUS));
+        }
     }
 
     public Photo(Parcel in) {
@@ -131,6 +131,15 @@ public class Photo extends VKApiPhoto {
         String separator = String.valueOf(separatorChar);
         int separatorIndex = filePath.lastIndexOf(separator);
         return (separatorIndex < 0) ? filePath : filePath.substring(separatorIndex + 1, filePath.length());
+    }
+
+    public void printPhoto(){
+        String formattedDate = DateFormat.format("dd.MM.yyyy hh:mm:ss Z", this.date).toString();
+        Logger.d("Photo: "
+                + "  id="       + String.valueOf(id)
+                + "  album_id=" + String.valueOf(album_id)
+                + "  date="     + formattedDate
+                + "  filePath=" + filePath);
     }
 
     @Override

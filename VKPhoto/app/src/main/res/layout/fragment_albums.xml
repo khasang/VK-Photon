@@ -2,13 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".presentation.fragments.VKAlbumsFragment"
+    tools:context=".presentation.fragments.AlbumsFragment"
     tools:showIn="@layout/activity_main">
-
 
     <TextView
         android:id="@+id/tv_count_of_albums"
@@ -23,7 +18,7 @@
         android:layout_below="@+id/tv_count_of_albums">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/albums_recycler_view"
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbarThumbVertical="@drawable/scrollbar_thumb"

@@ -10,10 +10,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.presentation.fragments.AlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
-import com.khasang.vkphoto.presentation.fragments.VKAlbumFragment;
+import com.khasang.vkphoto.presentation.fragments.VKCommentsFragment;
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
 
@@ -21,6 +22,7 @@ public class Navigator {
 
     private static int mode = Constants.START;
     private static int tabPosition = 0;
+    private static String tabTag = "";
 
     private static FragmentManager getFragmentManager(Context context) {
         return ((FragmentActivity) context).getSupportFragmentManager();
@@ -35,7 +37,11 @@ public class Navigator {
     }
 
     public static void navigateToVKAlbumFragment(Context context, PhotoAlbum photoAlbum) {
-        navigateToFragmentWithBackStack(context, VKAlbumFragment.newInstance(photoAlbum), photoAlbum.title);
+        navigateToFragmentWithBackStack(context, AlbumFragment.newInstance(photoAlbum), AlbumFragment.TAG);
+    }
+
+    public static void navigateToVKCommentsFragment(Context context, Photo photo) {
+        getFragmentManager(context).beginTransaction().replace(R.id.fragment_container, VKCommentsFragment.newInstance(photo), VKCommentsFragment.TAG).addToBackStack(VKCommentsFragment.TAG).commit();
     }
 
     public static void navigateToLocalAlbumFragment(Context context, PhotoAlbum photoAlbum) {
@@ -69,8 +75,11 @@ public class Navigator {
             fragmentManager.popBackStack();
             if (backStackEntryCount == 1) {
                 changeViewPagerVisibility((Activity) context, true);
-                fragment = fragmentManager.getFragments()
-                        .get(tabPosition);
+                fragment = fragmentManager.findFragmentByTag(tabTag);
+                ActionBar supportActionBar = ((AppCompatActivity) context).getSupportActionBar();
+                if (supportActionBar != null) {
+                    supportActionBar.setDisplayHomeAsUpEnabled(false);
+                }
             } else {
                 FragmentManager.BackStackEntry backEntry = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1);
                 String str = backEntry.getName();
@@ -99,8 +108,12 @@ public class Navigator {
         }
     }
 
-    public static void setTabPosition(int tabPosition) {
-        Navigator.tabPosition = tabPosition;
+    public static String getTabTag() {
+        return tabTag;
+    }
+
+    public static void setTabTag(String tabTag) {
+        Navigator.tabTag = tabTag;
     }
 
     public static void initToolbar(Toolbar toolbar) {

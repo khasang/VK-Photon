@@ -5,11 +5,15 @@ import android.database.Cursor;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
-import java.util.List;
+public interface AlbumsView extends View {
+    void confirmSync(final MultiSelector multiSelector);
 
-public interface VkAlbumsView extends VkView {
     void displayVkSaveAlbum(PhotoAlbum photoAlbum);
+
     void displayAlbums();
+
+    void displayRefresh(boolean refreshing);
+
     Cursor getAdapterCursor();
 }
       

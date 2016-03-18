@@ -1,4 +1,4 @@
-package com.khasang.vkphoto.ui.activities;
+package com.khasang.vkphoto.presentation.activities;
 
 
 import android.annotation.TargetApi;
@@ -96,6 +96,29 @@ public class SettingsActivity extends PreferenceActivity {
                         .getString(preference.getKey(), ""));
     }
 
+    @Override
+    public boolean onIsMultiPane() {
+        return isXLargeTablet(this);
+    }
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public void onBuildHeaders(List<Header> target) {
+        loadHeadersFromResource(R.xml.pref_headers, target);
+//        findViewById(android.R.id.list).setBackgroundColor(Color.BLUE);
+    }
+
+    /**
+     * This method stops fragment injection in malicious applications.
+     * Make sure to deny any unknown fragments here.
+     */
+    protected boolean isValidFragment(String fragmentName) {
+        return PreferenceFragment.class.getName().equals(fragmentName)
+                || GeneralPreferenceFragment.class.getName().equals(fragmentName)
+                || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
+                || NotificationPreferenceFragment.class.getName().equals(fragmentName);
+    }
+
     public static class GeneralPreferenceFragment extends PreferenceFragment
             implements SharedPreferences.OnSharedPreferenceChangeListener {
         @Override
@@ -190,28 +213,5 @@ public class SettingsActivity extends PreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_notification);
         }
-    }
-
-    @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this);
-    }
-
-    @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.pref_headers, target);
-//        findViewById(android.R.id.list).setBackgroundColor(Color.BLUE);
-    }
-
-    /**
-     * This method stops fragment injection in malicious applications.
-     * Make sure to deny any unknown fragments here.
-     */
-    protected boolean isValidFragment(String fragmentName) {
-        return PreferenceFragment.class.getName().equals(fragmentName)
-                || GeneralPreferenceFragment.class.getName().equals(fragmentName)
-                || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
-                || NotificationPreferenceFragment.class.getName().equals(fragmentName);
     }
 }

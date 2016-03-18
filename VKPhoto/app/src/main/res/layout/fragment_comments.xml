@@ -1,13 +1,63 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="layout.commentsFragment">
+    android:layout_width="match_parent"
+    android:fillViewport="true">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
+        android:id="@+id/vLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
 
-</FrameLayout>
+        <ImageView
+            android:id="@+id/userImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:src="@drawable/tom"/>
+
+        <LinearLayout
+            android:id="@+id/hLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignBottom="@+id/userImage"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/commetnsButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/bubble" />
+
+            <TextView
+                android:id="@+id/commentsCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="40sp"
+                android:layout_gravity="center" />
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/thumb" />
+
+            <TextView
+                android:id="@+id/photoLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="40sp"
+                android:layout_gravity="center" />
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:animateLayoutChanges="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerView"
+            android:visibility="gone"
+            android:layout_below="@+id/hLayout"/>
+    </RelativeLayout>
+
+</ScrollView>

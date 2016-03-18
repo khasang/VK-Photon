@@ -42,25 +42,14 @@ public class PhotoAlbum extends VKApiPhotoAlbum {
     public PhotoAlbum() {
     }
 
-    public PhotoAlbum(String title, String path) {
-        this.title = title;
-        this.filePath = path;
-    }
-
-    public PhotoAlbum(String title, String path, String thumbFilePath) {
-        this.title = title;
-        this.filePath = path;
-        this.thumbFilePath = thumbFilePath;
-    }
-
     public PhotoAlbum(JSONObject from) throws JSONException {
         super(from);
     }
 
     public PhotoAlbum(Cursor cursor) {
         this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-        this.filePath = cursor.getString(cursor.getColumnIndex(FILE_PATH));
         this.title = cursor.getString(cursor.getColumnIndex(TITLE));
+        this.filePath = cursor.getString(cursor.getColumnIndex(FILE_PATH));
         this.thumbFilePath = cursor.getString(cursor.getColumnIndex(THUMB_FILE_PATH));
         this.size = cursor.getInt(cursor.getColumnIndex(SIZE));
         try {
@@ -75,6 +64,7 @@ public class PhotoAlbum extends VKApiPhotoAlbum {
             this.syncStatus = cursor.getInt(cursor.getColumnIndex(SYNC_STATUS));
         } catch (Exception e) {
             Logger.d("check");
+            printPhotoAlbum();
         }
     }
 
@@ -128,6 +118,15 @@ public class PhotoAlbum extends VKApiPhotoAlbum {
         dest.writeString(this.filePath);
         dest.writeString(this.thumbFilePath);
         dest.writeInt(this.syncStatus);
+    }
+
+    public void printPhotoAlbum(){
+        Logger.d("PhotoAlbum: "
+                + "  id="               + String.valueOf(id)
+                + "  title="            + title
+                + "  filePath="         + filePath
+                + "  thumbFilePath="    + thumbFilePath
+                + "  size="             + String.valueOf(size));
     }
 
     @Override
