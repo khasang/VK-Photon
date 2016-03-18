@@ -60,7 +60,7 @@ public class SyncAlbumCallable implements Callable<Boolean> {
         List<Future<File>> futureList = new ArrayList<>();
         fillFutureList(vkPhotoList, executor, futureList, localPhotoSource);
         for (int i = 0; i < ATTEMPTS_COUNT; i++) {
-            if (downloadPhotos(futureList)) {
+            if (downloadPhotos(futureList) && !Thread.currentThread().isInterrupted()) {
                 success = true;
                 Logger.d("success download");
                 photoAlbum.syncStatus = Constants.SYNC_SUCCESS;
