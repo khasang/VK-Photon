@@ -41,7 +41,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Override
-    public void savePhotos(MultiSelector multiSelector, final long idPhotoAlbum, final AppCompatActivity activity) {}
+    public void uploadPhotos(MultiSelector multiSelector, final long idPhotoAlbum, final AppCompatActivity activity) {}
 
     @Override
     public void deleteSelectedPhotos(MultiSelector multiSelector) {

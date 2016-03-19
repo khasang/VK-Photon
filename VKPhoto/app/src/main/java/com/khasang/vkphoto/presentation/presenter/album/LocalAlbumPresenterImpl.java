@@ -67,7 +67,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     }
 
     @Override
-    public void savePhotos(final MultiSelector multiSelector, final long idVKPhotoAlbum, final AppCompatActivity activity) {
+    public void uploadPhotos(final MultiSelector multiSelector, final long idVKPhotoAlbum, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
                 R.menu.menu_action_mode_save_photos, ((FabProvider) activity).getFloatingActionButton()) {
@@ -80,11 +80,11 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
                     case R.id.action_save_photos:
                         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
                         Collections.sort(selectedPositions, Collections.reverseOrder());
-                        List<Photo> photoList = new ArrayList<Photo>();
+                        List<Photo> localPhotoList = new ArrayList<Photo>();
                         for (Integer position : selectedPositions) {
-                            photoList.add(albumView.getPhotoList().get(position));
+                            localPhotoList.add(albumView.getPhotoList().get(position));
                         }
-                        localPhotosInteractor.savePhotos(multiSelector, photoList, idVKPhotoAlbum);
+                        localPhotosInteractor.uploadPhotos(multiSelector, localPhotoList, idVKPhotoAlbum);
                         return true;
                     default:
                         break;

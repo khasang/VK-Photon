@@ -125,13 +125,13 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void savePhotos(final MultiSelector multiSelector, final List<Photo> photoList, final long idPhotoAlbum) {
+    public void uploadPhotos(final MultiSelector multiSelector, final List<Photo> localPhotoList, final long idPhotoAlbum) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                if (photoList.size() > 0) {
+                if (localPhotoList.size() > 0) {
                     ExecutorService executor = Executors.newSingleThreadExecutor();
-                    for (Photo photo : photoList) {
+                    for (Photo photo : localPhotoList) {
                         File file = new File(photo.filePath);
                         if (file.exists()) {
                             Callable booleanCallable = new SavePhotoCallable(file, idPhotoAlbum, vKDataSource);
@@ -206,8 +206,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                Logger.d("SyncSerice getAllLocalAlbums");
-                Logger.d("no body");
+                Logger.d("SyncService getAllLocalAlbums");
                 List<PhotoAlbum> albumsList = localDataSource.getAlbumSource().getAllLocalAlbumsList();
                 if (albumsList.isEmpty()) {
                     EventBus.getDefault().postSticky(new ErrorEvent(77));

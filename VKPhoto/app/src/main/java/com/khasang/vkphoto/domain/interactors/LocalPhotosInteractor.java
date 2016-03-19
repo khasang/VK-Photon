@@ -11,7 +11,7 @@ import java.util.List;
 public interface LocalPhotosInteractor {
     void getPhotosByAlbumId(int albumId);
 
-    void savePhotos(final MultiSelector multiSelector, List<Photo> photoList, final long idVKPhotoAlbum);
+    void uploadPhotos(final MultiSelector multiSelector, List<Photo> localPhotoList, final long idVKPhotoAlbum);
 
     void deleteSelectedLocalPhotos(MultiSelector multiSelector, List<Photo> photoList);
 }

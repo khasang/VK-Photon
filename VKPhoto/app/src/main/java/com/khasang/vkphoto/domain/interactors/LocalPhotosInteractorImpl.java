@@ -33,10 +33,9 @@ public class LocalPhotosInteractorImpl implements LocalPhotosInteractor {
     }
 
     @Override
-    public void savePhotos(final MultiSelector multiSelector, List<Photo> photoList, final long idVKPhotoAlbum) {
+    public void uploadPhotos(final MultiSelector multiSelector, List<Photo> localPhotoList, final long idVKPhotoAlbum) {
         Logger.d("user wants to addLocalPhotos");
-        Logger.d("no body");
-        if (checkSyncService()) syncService.savePhotos(multiSelector, photoList, idVKPhotoAlbum);
+        if (checkSyncService()) syncService.uploadPhotos(multiSelector, localPhotoList, idVKPhotoAlbum);
     }
 
     @Override
