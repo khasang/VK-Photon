@@ -14,6 +14,7 @@ import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetFragmentContextEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
+import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.domain.tasks.SavePhotoCallable;
@@ -144,10 +145,8 @@ public class SyncServiceImpl extends Service implements SyncService {
                     }
                     executor.shutdown();
                 }
-            }
-//            multiSelector.clearSelections();
-//        multiSelector.getSelectedPositions().clear();
 
+            }
             private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
                 try {
                     Iterator<Map.Entry<Integer, Future<Boolean>>> iterator = futureMap.entrySet().iterator();
@@ -165,6 +164,9 @@ public class SyncServiceImpl extends Service implements SyncService {
                 }
             }
         });
+        multiSelector.clearSelections();
+//        multiSelector.getSelectedPositions().clear();
+        eventBus.getDefault().post(new GotoBackFragmentEvent(context));
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)

@@ -17,13 +17,17 @@ import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.view.AlbumView;
 import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by TAU on 05.03.2016.
@@ -74,7 +78,13 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
                         Logger.d("user wants save all local photos");
                         return true;
                     case R.id.action_save_photos:
-                        localPhotosInteractor.savePhotos(multiSelector, albumView.getPhotoList(), idVKPhotoAlbum);
+                        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+                        Collections.sort(selectedPositions, Collections.reverseOrder());
+                        List<Photo> photoList = new ArrayList<Photo>();
+                        for (Integer position : selectedPositions) {
+                            photoList.add(albumView.getPhotoList().get(position));
+                        }
+                        localPhotosInteractor.savePhotos(multiSelector, photoList, idVKPhotoAlbum);
                         return true;
                     default:
                         break;
