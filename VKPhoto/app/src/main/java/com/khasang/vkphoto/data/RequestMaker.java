@@ -36,6 +36,10 @@ public class RequestMaker {
         vkRequest.executeWithListener(vkRequestListener);
     }
 
+    public static VKRequest uploadPhotoRequest(File file, long idVKPhotoAlbum) {
+        return VKApi.uploadAlbumPhotoRequest(file, idVKPhotoAlbum, 0);
+    }
+
     public static void getUploadServer(VKRequest.VKRequestListener vkRequestListener, int albumId) {
         final VKRequest request = getVkRequest("photos.getUploadServer", VKParameters.from(VKApiConst.ALBUM_ID, albumId));
         request.executeWithListener(vkRequestListener);

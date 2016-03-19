@@ -16,6 +16,7 @@ import com.khasang.vkphoto.domain.events.GetFragmentContextEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
+import com.khasang.vkphoto.domain.tasks.SavePhotoCallable;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -27,6 +28,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.greenrobot.eventbus.util.AsyncExecutor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -125,7 +127,42 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                vKDataSource.getPhotoSource().savePhotos(multiSelector, photoList, idPhotoAlbum, context);
+                if (photoList.size() > 0) {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    for (Photo photo : photoList) {
+                        File file = new File(photo.filePath);
+                        if (file.exists()) {
+                            Callable booleanCallable = new SavePhotoCallable(file, idPhotoAlbum, vKDataSource);
+                            futureMap.put(photo.id, executor.submit(booleanCallable));
+                        }
+                    }
+                    execute();
+                    if (futureMap.isEmpty()) {
+                        Logger.d("full sync success");
+                    } else {
+                        Logger.d("full sync fail");
+                    }
+                    executor.shutdown();
+                }
+            }
+//            multiSelector.clearSelections();
+//        multiSelector.getSelectedPositions().clear();
+
+            private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
+                try {
+                    Iterator<Map.Entry<Integer, Future<Boolean>>> iterator = futureMap.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Future<Boolean> booleanFutureTask = iterator.next().getValue();
+                        Logger.d(booleanFutureTask.toString() + "startSync");
+                        if (booleanFutureTask.get()) {
+                            iterator.remove();
+                        }
+                        Logger.d("exit get");
+                    }
+                } catch (ExecutionException e) {
+                    Logger.d("canceled execution error");
+                    execute();
+                }
             }
         });
     }
