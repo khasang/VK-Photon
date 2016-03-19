@@ -36,7 +36,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_photo, parent, false);
-        return new ViewHolder(view, multiSelector, albumPresenter);
+        return new ViewHolder(view, multiSelector, albumPresenter, photoList);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends MultiSelectorBindingHolder implements View.OnClickListener, View.OnLongClickListener {
+    public static class ViewHolder extends MultiSelectorBindingHolder implements View.OnClickListener, View.OnLongClickListener {
         final private ImageView imageView;
         final private CheckBox checkBox;
         private MultiSelector multiSelector;
@@ -63,8 +63,9 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         private AlbumPresenter localAlbumPresenter;
         private Photo photo;
         private int position;
+        private List<Photo> photoList;
 
-        public ViewHolder(View itemView, MultiSelector multiSelector, AlbumPresenter localAlbumPresenter) {
+        public ViewHolder(View itemView, MultiSelector multiSelector, AlbumPresenter localAlbumPresenter, List<Photo> photoList) {
             super(itemView, multiSelector);
             this.multiSelector = multiSelector;
             this.localAlbumPresenter = localAlbumPresenter;
@@ -73,6 +74,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
             checkBox.setOnClickListener(this);
+            this.photoList = photoList;
         }
 
         @Override

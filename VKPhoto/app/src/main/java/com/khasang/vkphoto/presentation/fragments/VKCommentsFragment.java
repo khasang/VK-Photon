@@ -42,14 +42,10 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     private TextView photolikes, commentCount;
     private LinearLayout hlayout;
 
-    public VKCommentsFragment(Photo photo){
-        this.photo = photo;
-    }
-
     public static VKCommentsFragment newInstance(Photo photo) {
         Bundle args = new Bundle();
         args.putParcelable(PHOTO_ID, photo);
-        VKCommentsFragment fragment = new VKCommentsFragment(null);
+        VKCommentsFragment fragment = new VKCommentsFragment();
         fragment.setArguments(args);
         return fragment;
     }
