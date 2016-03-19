@@ -13,7 +13,7 @@ import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetFragmentContextEvent;
-import com.khasang.vkphoto.domain.events.GetLocalAlbumstEvent;
+import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
@@ -135,18 +135,11 @@ public class SyncServiceImpl extends Service implements SyncService {
                         File file = new File(photo.filePath);
                         if (file.exists()) {
                             Callable booleanCallable = new SavePhotoCallable(file, idPhotoAlbum, vKDataSource);
-                            futureMap.put(photo.id, executor.submit(booleanCallable));
                         }
                     }
                     execute();
-                    if (futureMap.isEmpty()) {
-                        Logger.d("full sync success");
-                    } else {
-                        Logger.d("full sync fail");
-                    }
                     executor.shutdown();
                 }
-
             }
             private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
                 try {
@@ -166,7 +159,6 @@ public class SyncServiceImpl extends Service implements SyncService {
             }
         });
         multiSelector.clearSelections();
-//        multiSelector.getSelectedPositions().clear();
         eventBus.getDefault().post(new GotoBackFragmentEvent(context));
     }
 
@@ -211,7 +203,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                 if (albumsList.isEmpty()) {
                     EventBus.getDefault().postSticky(new ErrorEvent(77));
                 } else {
-                    EventBus.getDefault().postSticky(new GetLocalAlbumstEvent(albumsList));
+                    EventBus.getDefault().postSticky(new GetLocalAlbumsEvent(albumsList));
                 }
             }
         });

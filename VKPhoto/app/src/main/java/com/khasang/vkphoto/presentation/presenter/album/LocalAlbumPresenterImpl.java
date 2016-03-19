@@ -35,6 +35,7 @@ import java.util.List;
 public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements LocalAlbumPresenter {
     private AlbumView albumView;
     private LocalPhotosInteractor localPhotosInteractor;
+    private boolean isSelectAll = false;
 //    private ActionMode actionMode;
 
     public LocalAlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
@@ -70,14 +71,23 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     public void uploadPhotos(final MultiSelector multiSelector, final long idVKPhotoAlbum, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
-                R.menu.menu_action_mode_save_photos, ((FabProvider) activity).getFloatingActionButton()) {
+                R.menu.menu_action_mode_upload_photos, ((FabProvider) activity).getFloatingActionButton()) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_select_all:
                         Logger.d("user wants save all local photos");
+                        if (isSelectAll) {
+                            multiSelector.clearSelections();
+                            isSelectAll = false;
+                        } else {
+                            for (int position = 0; position < albumView.getPhotoList().size(); position++) {
+                                multiSelector.setSelected(position, position, true);
+                            }
+                            isSelectAll = true;
+                        }
                         return true;
-                    case R.id.action_save_photos:
+                    case R.id.action_upload_photos:
                         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
                         Collections.sort(selectedPositions, Collections.reverseOrder());
                         List<Photo> localPhotoList = new ArrayList<Photo>();

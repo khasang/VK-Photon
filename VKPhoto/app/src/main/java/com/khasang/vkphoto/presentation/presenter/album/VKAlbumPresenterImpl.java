@@ -9,7 +9,7 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.GetLocalAlbumstEvent;
+import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractor;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractorImpl;
@@ -85,8 +85,8 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetVKAlbumsEvent(GetLocalAlbumstEvent getLocalAlbumstEvent) {
-        vkAlbumView.displayAllLocalAlbums(getLocalAlbumstEvent.albumsList);
+    public void onGetVKAlbumsEvent(GetLocalAlbumsEvent getLocalAlbumsEvent) {
+        vkAlbumView.displayAllLocalAlbums(getLocalAlbumsEvent.albumsList);
     }
 
     @Override
