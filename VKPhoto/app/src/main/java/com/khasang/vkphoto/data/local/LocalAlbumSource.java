@@ -17,6 +17,7 @@ import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.ImageFileFilter;
@@ -38,7 +39,7 @@ public class LocalAlbumSource {
         this.dbHelper = MySQliteHelper.getInstance(context);
     }
 
-    public void saveAlbum(VKApiPhotoAlbum apiPhotoAlbum) {
+    public void saveAlbum(VKApiPhotoAlbum apiPhotoAlbum, boolean sendEvent) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String path = FileManager.createAlbumDirectory(apiPhotoAlbum.id + "", context);
         if (path == null) {
@@ -47,18 +48,20 @@ public class LocalAlbumSource {
             PhotoAlbum photoAlbum = new PhotoAlbum(apiPhotoAlbum);
             photoAlbum.filePath = path;
             db.insert(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.getContentValues(photoAlbum));
-            EventBus.getDefault().postSticky(new VKAlbumEvent());
+            if (sendEvent) {
+                EventBus.getDefault().postSticky(new VKAlbumEvent());
+            }
         }
     }
 
-    public void updateAlbum(PhotoAlbum photoAlbum) {
+    public void updateAlbum(PhotoAlbum photoAlbum, boolean isLocal) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         PhotoAlbum oldAlbum = getAlbumById(photoAlbum.id);
         if (oldAlbum == null) {
-            saveAlbum(photoAlbum);
+            saveAlbum(photoAlbum, false);
         } else {
             Logger.d("update " + photoAlbum.id + " photoAlbum");
-            ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum);
+            ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum, isLocal);
             if (contentValues.size() > 0) {
                 db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
                         new String[]{String.valueOf(photoAlbum.id)});
@@ -170,12 +173,12 @@ public class LocalAlbumSource {
                 thumbPath = cursor.getString(thumbPathColumn);
                 String filePath = thumbPath.substring(0, thumbPath.lastIndexOf("/"));
                 int photosCount = new File(filePath).listFiles(new ImageFileFilter()).length;
-                    builder = matrixCursor.newRow();
-                    builder.add(id)
-                            .add(title)
-                            .add(filePath)
-                            .add(thumbPath)
-                            .add(photosCount);
+                builder = matrixCursor.newRow();
+                builder.add(id)
+                        .add(title)
+                        .add(filePath)
+                        .add(thumbPath)
+                        .add(photosCount);
             } while (cursor.moveToNext());
             cursor.close();
         }
@@ -230,5 +233,19 @@ public class LocalAlbumSource {
         } finally {
             db.endTransaction();
         }
+    }
+
+    public List<PhotoAlbum> getAlbumsToSync() {
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String statuses = Constants.SYNC_FAILED + ", " + Constants.SYNC_STARTED + ", " + Constants.SYNC_SUCCESS;
+        Cursor cursor = db.query(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.SYNC_STATUS + " in (" + statuses + ")", null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                photoAlbumList.add(new PhotoAlbum(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return photoAlbumList;
     }
 }

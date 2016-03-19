@@ -28,10 +28,12 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.greenrobot.eventbus.util.AsyncExecutor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -46,6 +48,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     private VKDataSource vKDataSource;
     private List<Future<Boolean>> futureList = new ArrayList<>();
     private Context context;
+    private Map<Integer, Future<Boolean>> futureMap = new HashMap<>();
 
     @Override
     public void onCreate() {
@@ -55,7 +58,6 @@ public class SyncServiceImpl extends Service implements SyncService {
         vKDataSource = new VKDataSource();
         eventBus = EventBus.getDefault();
         eventBus.register(this);
-        ArrayBlockingQueue<String> strings = new ArrayBlockingQueue<>(15);
     }
 
     @Nullable
@@ -69,33 +71,43 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                localDataSource.getAlbumSource().setSyncStatus(photoAlbumList, Constants.SYNC_STARTED);
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                for (PhotoAlbum photoAlbum : photoAlbumList) {
-                    Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource);
-                    futureList.add(executor.submit(booleanCallable));
+                if (photoAlbumList.size() > 0) {
+                    localDataSource.getAlbumSource().setSyncStatus(photoAlbumList, Constants.SYNC_STARTED);
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    for (PhotoAlbum photoAlbum : photoAlbumList) {
+                        Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource);
+                        futureMap.put(photoAlbum.id, executor.submit(booleanCallable));
+                    }
+                    execute();
+                    if (futureMap.isEmpty()) {
+                        Logger.d("full sync success");
+                    } else {
+                        Logger.d("full sync fail");
+                    }
+                    executor.shutdown();
                 }
-                execute();
-                if (futureList.isEmpty()) {
-                    Logger.d("full sync success");
-                } else {
-                    Logger.d("full sync fail");
-                }
-                executor.shutdown();
             }
 
             private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
-                Iterator<Future<Boolean>> iterator = futureList.iterator();
-                while (iterator.hasNext()) {
-                    Future<Boolean> booleanFutureTask = iterator.next();
-                    if (booleanFutureTask.get()) {
-                        iterator.remove();
+                try {
+                    Iterator<Map.Entry<Integer, Future<Boolean>>> iterator = futureMap.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Future<Boolean> booleanFutureTask = iterator.next().getValue();
+                        Logger.d(booleanFutureTask.toString() + "startSync");
+                        if (booleanFutureTask.get()) {
+                            iterator.remove();
+                        }
+                        Logger.d("exit get");
                     }
-                    Logger.d("exit get");
+                } catch (ExecutionException e) {
+                    Logger.d("canceled execution error");
+                    execute();
                 }
             }
+
         });
     }
+
 
     @Override
     public void addAlbum(final String title, final String description,
@@ -170,9 +182,9 @@ public class SyncServiceImpl extends Service implements SyncService {
         for (int i = 0, vKphotoAlbumListSize = vKphotoAlbumList.size(); i < vKphotoAlbumListSize; i++) {
             PhotoAlbum photoAlbum = vKphotoAlbumList.get(i);
             if (localAlbumsList.contains(photoAlbum)) { //update existing albums
-                localAlbumSource.updateAlbum(photoAlbum);
+                localAlbumSource.updateAlbum(photoAlbum, false);
             } else { //сreate new albums
-                localAlbumSource.saveAlbum(photoAlbum);
+                localAlbumSource.saveAlbum(photoAlbum, false);
             }
         }
 
@@ -181,12 +193,10 @@ public class SyncServiceImpl extends Service implements SyncService {
             for (int i = 0, localAlbumsListSize = localAlbumsList.size(); i < localAlbumsListSize; i++) {
                 PhotoAlbum photoAlbum = localAlbumsList.get(i);
                 photoAlbum.syncStatus = Constants.SYNC_DELETED;
-                localAlbumSource.updateAlbum(photoAlbum);
-            }
-            if (localAlbumsList.size() == 0) {
-                EventBus.getDefault().postSticky(new VKAlbumEvent());
+                localAlbumSource.updateAlbum(photoAlbum, true);
             }
         }
+        EventBus.getDefault().postSticky(new VKAlbumEvent());
     }
 
     @Override
@@ -315,6 +325,41 @@ public class SyncServiceImpl extends Service implements SyncService {
                     List<Photo> deletePhotoList = localDataSource.getPhotoSource().getLocalPhotosByAlbumId(photoAlbum.id);
                     localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
                     eventBus.post(new LocalALbumEvent());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void startSync() {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                syncAlbums(localDataSource.getAlbumSource().getAlbumsToSync());
+            }
+        });
+    }
+
+    @Override
+    public void cancelAlbumsSync(final List<PhotoAlbum> selectedAlbums) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                try {
+                    for (PhotoAlbum photoAlbum : selectedAlbums) {
+                        Future<Boolean> booleanFuture = futureMap.get(photoAlbum.id);
+                        if (booleanFuture != null) {
+                            booleanFuture.cancel(true);
+                            Logger.d(booleanFuture.toString() + " canceled");
+                            futureMap.remove(photoAlbum.id);
+                        }
+                    }
+                    for (PhotoAlbum photoAlbum : selectedAlbums) {
+                        photoAlbum.syncStatus = Constants.SYNC_NOT_STARTED;
+                        localDataSource.getAlbumSource().updateAlbum(photoAlbum, true);
+                    }
+                } catch (Exception e) {
+                    Logger.d(e.toString());
                 }
             }
         });

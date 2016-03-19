@@ -1,9 +1,12 @@
 package com.khasang.vkphoto.presentation.activities;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
@@ -45,6 +48,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider {
     public static final String TAG = MainActivity.class.getSimpleName();
     public static int ALBUM_THUMB_HEIGHT = 0;
+    public static int PHOTOS_COLUMNS = 0;
     private static String VIEWPAGER_VISIBLE = "viewpager_visible";
     private static Fragment localAlbumsFragment, albumsFragment;
     private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkPermission();
         setContentView(R.layout.activity_main);
         initServiceConnection(savedInstanceState);
         loginVk();
@@ -68,20 +73,35 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (savedInstanceState != null) {
             Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
         }
-        calculateAlbumThumbHeight();
+        measureScreen();
     }
 
-    private void calculateAlbumThumbHeight() {
+    private void checkPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Explain to the user why we need to read the contacts
+            }
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 29025);
+            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE (29025) is an app-defined int constant
+        }
+    }
+
+    private void measureScreen() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int screenWidth = metrics.widthPixels;
+        float density = metrics.density;
+        Logger.d("measureScreen. density=" + density);
         int thumbWidth;
-        int paddingsLR = 60 * 2;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-            thumbWidth = (screenWidth - paddingsLR - 50) / 2;
+            thumbWidth = (int) (screenWidth - 50 * density) / 2;
         else
-            thumbWidth = screenWidth - paddingsLR;
+            thumbWidth = screenWidth;
         ALBUM_THUMB_HEIGHT = Math.round(thumbWidth / 16 * 9);
+        PHOTOS_COLUMNS = (int) (screenWidth / (90 * density));
+        Logger.d("measureScreen. PHOTOS_COLUMNS=" + PHOTOS_COLUMNS);
     }
 
     private void initViewPager() {
@@ -144,6 +164,8 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
                 if (VKAccessToken.currentToken() != null && viewPager.getVisibility() == View.VISIBLE && savedInstanceState == null) {
+                    EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
+                    syncService.startSync();
                     Logger.d("ViewPagerVisibile" + viewPager.getVisibility());
                 }
             }

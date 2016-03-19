@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +54,6 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         super.onCreate(savedInstanceState);
         presenter = new VkCommentsPresenterImpl(this);
         photo = getArguments().getParcelable(PHOTO_ID);
-        ((FabProvider) getContext()).getFloatingActionButton().hide();
 
     }
 
@@ -80,6 +78,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
             }
         });
         loadPhoto();
+        ((FabProvider) getContext()).getFloatingActionButton().hide();
         return view;
     }
 
