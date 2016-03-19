@@ -13,9 +13,12 @@ import android.view.View;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.fragments.AlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
+import com.khasang.vkphoto.presentation.fragments.PhotoViewPagerFragment;
 import com.khasang.vkphoto.presentation.fragments.VKCommentsFragment;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+
+import java.util.List;
 
 public class Navigator {
     private static String tabTag = "";
@@ -34,6 +37,10 @@ public class Navigator {
 
     public static void navigateToVKAlbumFragment(Context context, PhotoAlbum photoAlbum) {
         navigateToFragmentWithBackStack(context, AlbumFragment.newInstance(photoAlbum), AlbumFragment.TAG);
+    }
+
+    public static void navigateToPhotoViewPagerFragment(Context context, List<Photo> photoList, int position) {
+        getFragmentManager(context).beginTransaction().replace(R.id.fragment_container, PhotoViewPagerFragment.newInstance(photoList, position), PhotoViewPagerFragment.TAG).addToBackStack(PhotoViewPagerFragment.TAG).commit();
     }
 
     public static void navigateToVKCommentsFragment(Context context, Photo photo) {
