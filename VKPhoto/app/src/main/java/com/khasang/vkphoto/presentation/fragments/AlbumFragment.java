@@ -48,6 +48,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
     private int albumId;
     private PhotoAlbumAdapter adapter;
     private FloatingActionButton fab;
+    private MaterialDialog progressDialog;
     private MultiSelector multiSelector;
 
     public static AlbumFragment newInstance(PhotoAlbum photoAlbum) {
@@ -122,12 +123,18 @@ public class AlbumFragment extends Fragment implements AlbumView {
             @Override
             public void onClick(View view) {
                 vkAlbumPresenter.getAllLocalAlbums();
+                progressDialog = new MaterialDialog.Builder(getContext())
+                        .title(R.string.progress_dialog)
+                        .content(R.string.please_wait)
+                        .progress(true, 0)
+                        .show();
             }
         });
     }
 
     @Override
     public void displayAllLocalAlbums(final List<PhotoAlbum> albumsList){
+        progressDialog.dismiss();
         new MaterialDialog.Builder(getContext())
                 .title(R.string.select_album)
                 .adapter(new SelectAlbumItemAdapter(getContext(), albumsList),

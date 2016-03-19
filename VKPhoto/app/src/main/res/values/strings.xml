@@ -20,6 +20,8 @@
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="title">Title</string>
+    <string name="progress_dialog">Progress Dialog</string>
+    <string name="please_wait">Please wait…</string>
     <string name="select_album">Select album</string>
     <plurals name="count_of_albums">
         <item quantity="one">%d albums</item>
