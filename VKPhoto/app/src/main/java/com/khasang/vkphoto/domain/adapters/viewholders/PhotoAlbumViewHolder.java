@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -43,6 +44,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     final private MultiSelector multiSelector;
     final private Map<Integer, Future<File>> downloadFutures;
     PhotoAlbum photoAlbum;
+    MenuItem menuItem;
     private AlbumsPresenter albumsPresenter;
     private boolean selectable;
     private Handler handler;
@@ -203,6 +205,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         if (multiSelector.isSelectable()) {
             multiSelector.tapSelection(this);
             albumsPresenter.checkActionModeFinish(multiSelector);
+            albumsPresenter.hideActionModeItem(multiSelector, menuItem);
         } else {
             albumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }

@@ -101,6 +101,12 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     }
 
     @Override
+    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
+        MenuItem itemActionEditAlbum = actionMode.getMenu().findItem(R.id.action_edit_album);
+        super.hideActionModeItem(multiSelector, itemActionEditAlbum);
+    }
+
+    @Override
     public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
                 R.menu.menu_action_mode_vk_albums, ((FabProvider) activity).getFloatingActionButton()) {
@@ -115,6 +121,8 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
                 switch (item.getItemId()) {
                     case R.id.action_sync_album:
                         vkAlbumsView.confirmSync(multiSelector);
+                        return true;
+                    case R.id.action_download_album:
                         return true;
                     case R.id.action_edit_album:
                         return true;

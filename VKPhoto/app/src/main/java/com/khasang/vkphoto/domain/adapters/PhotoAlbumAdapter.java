@@ -1,10 +1,10 @@
 package com.khasang.vkphoto.domain.adapters;
 
-import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -14,7 +14,6 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.presenter.album.AlbumPresenter;
@@ -26,6 +25,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
     private MultiSelector multiSelector;
     private List<Photo> photoList;
     private AlbumPresenter albumPresenter;
+    static MenuItem menuItem;
 
     public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter) {
         this.multiSelector = multiSelector;
@@ -123,6 +123,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
             if (multiSelector.isSelectable()) {
                 multiSelector.tapSelection(this);
                 localAlbumPresenter.checkActionModeFinish(multiSelector);
+                localAlbumPresenter.hideActionModeItem(multiSelector, menuItem);
             } else {
 //                        albumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
                     Navigator.navigateToVKCommentsFragment(v.getContext(), photo);

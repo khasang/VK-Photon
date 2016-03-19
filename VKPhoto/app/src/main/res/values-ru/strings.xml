@@ -5,6 +5,10 @@
     <string name="count_of_albums">%d альбомов </string>
     <string name="count_of_photos_in_album">Количество фотографий в альбоме: %d</string>
     <string name="sync_album">Синхронизировать альбом</string>
+    <string name="download_album">Загрузить альбом</string>
+    <string name="download_photo">Загрузить фотографию</string>
+    <string name="upload_album">Выгрузить альбом</string>
+    <string name="upload_photo">Выгрузить фотографию</string>
     <string name="service_connecting_error">Запуск службы…</string>
     <string name="title_of_album">Название альбома</string>
     <string name="add_album_description">Описание</string>

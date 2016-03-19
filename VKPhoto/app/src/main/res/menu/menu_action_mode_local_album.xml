@@ -9,6 +9,12 @@
         android:title="@string/sync_photo"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_upload_photo"
+        android:icon="@drawable/ic_file_upload_white_24dp"
+        android:orderInCategory="100"
+        android:title="@string/upload_photo"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_edit_photo"
         android:icon="@drawable/ic_mode_edit_white_24dp"
         android:orderInCategory="100"
