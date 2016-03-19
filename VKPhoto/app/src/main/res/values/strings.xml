@@ -35,6 +35,19 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sync_delete_album_question">Delete album?</string>
     <string name="sync_delete_albums_question">Delete albums?</string>
+    <plurals name="sync_delete_albums_question_title">
+        <item quantity="one">Delete album?</item>
+        <item quantity="other">Delete albums?</item>
+    </plurals>
+    <plurals name="sync_delete_album_question_content_1">
+        <item quantity="one">The album</item>
+        <item quantity="other">Albums</item>
+    </plurals>
+    <plurals name="sync_delete_album_question_content_2">
+        <item quantity="one">will be completely removed!\nAre you sure?</item>
+        <item quantity="other">will be completely removed!\nAre you sure?</item>
+    </plurals>
+>>>>>>> feature/delete-albums
     <string name="delete">Delete</string>
 
     <!-- Strings related to Settings -->

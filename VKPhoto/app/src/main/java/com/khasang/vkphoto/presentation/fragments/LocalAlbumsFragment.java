@@ -271,9 +271,11 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
 
     @Override
     public void confirmDelete(final MultiSelector multiSelector) {
+        StringBuilder content = new StringBuilder();
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_1, multiSelector.getSelectedPositions().size()));
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_2, multiSelector.getSelectedPositions().size()));
         new MaterialDialog.Builder(getContext())
-                .content(multiSelector.getSelectedPositions().size() > 1 ?
-                        R.string.sync_delete_albums_question : R.string.sync_delete_album_question)
+                .content(content)
                 .positiveText(R.string.delete)
                 .negativeText(R.string.cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
