@@ -121,7 +121,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                vkAlbumPresenter.getLocalAlbumsCursor();
+                vkAlbumPresenter.getAllLocalAlbums();
             }
         });
     }

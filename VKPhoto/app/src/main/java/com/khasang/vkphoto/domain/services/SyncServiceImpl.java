@@ -13,6 +13,7 @@ import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetFragmentContextEvent;
+import com.khasang.vkphoto.domain.events.GetLocalAlbumstEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
@@ -207,7 +208,12 @@ public class SyncServiceImpl extends Service implements SyncService {
             public void run() throws Exception {
                 Logger.d("SyncSerice getAllLocalAlbums");
                 Logger.d("no body");
-//                localDataSource.getAlbumSource().getAllAlbums();
+                List<PhotoAlbum> albumsList = localDataSource.getAlbumSource().getAllLocalAlbumsList();
+                if (albumsList.isEmpty()) {
+                    EventBus.getDefault().postSticky(new ErrorEvent(77));
+                } else {
+                    EventBus.getDefault().postSticky(new GetLocalAlbumstEvent(albumsList));
+                }
             }
         });
     }

@@ -102,9 +102,6 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     }
 
     @Override
-    public void getLocalAlbumsCursor() {}
-
-    @Override
     public void getPhotosByAlbumId(int albumId) {
         localPhotosInteractor.getPhotosByAlbumId(albumId);
     }

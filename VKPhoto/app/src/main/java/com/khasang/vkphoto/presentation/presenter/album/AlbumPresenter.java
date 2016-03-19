@@ -14,7 +14,5 @@ public interface AlbumPresenter extends Presenter {
 
     void checkActionModeFinish(MultiSelector multiSelector);
 
-    void getLocalAlbumsCursor();
-
     void savePhotos(MultiSelector multiSelector, final long idPhotoAlbum, final AppCompatActivity activity);
 }

@@ -12,7 +12,7 @@ import java.util.List;
 public interface VKAlbumInteractor {
     void getPhotosByAlbumId(int albumId);
 
-    void getLocalAlbumsCursor();
+    void getAllLocalAlbums();
 
     void deleteSelectedVkPhotos(MultiSelector multiSelector, List<Photo> photoList);
 }

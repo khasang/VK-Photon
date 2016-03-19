@@ -47,8 +47,8 @@ public class VKAlbumInteractorImpl implements VKAlbumInteractor {
     }
 
     @Override
-    public void getLocalAlbumsCursor() {
-        if (checkSyncService()) syncService.getLocalAlbumsCursor();
+    public void getAllLocalAlbums() {
+        if (checkSyncService()) syncService.getAllLocalAlbums();
     }
 
     boolean checkSyncService() {
