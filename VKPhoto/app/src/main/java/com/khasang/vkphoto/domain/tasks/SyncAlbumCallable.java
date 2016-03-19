@@ -75,6 +75,7 @@ public class SyncAlbumCallable implements Callable<Boolean> {
     private boolean downloadPhotos(List<Future<File>> futureList) throws InterruptedException, java.util.concurrent.ExecutionException {
         Iterator<Future<File>> iterator = futureList.iterator();
         while (iterator.hasNext() && !Thread.currentThread().isInterrupted()) {
+            Logger.d(Thread.currentThread().toString());
             Future<File> next = iterator.next();
             if (next.get().exists()) {
                 iterator.remove();

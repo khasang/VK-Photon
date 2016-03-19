@@ -41,7 +41,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     private AsyncExecutor asyncExecutor;
     private LocalDataSource localDataSource;
     private VKDataSource vKDataSource;
-    private Map<Integer, Future<Boolean>> futureMap = new HashMap<>();
+    private volatile Map<Integer, Future<Boolean>> futureMap = new HashMap<>();
 
     @Override
     public void onCreate() {
@@ -97,7 +97,6 @@ public class SyncServiceImpl extends Service implements SyncService {
                     execute();
                 }
             }
-
         });
     }
 
@@ -308,6 +307,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
+                Logger.d("startSync");
                 syncAlbums(localDataSource.getAlbumSource().getAlbumsToSync());
             }
         });

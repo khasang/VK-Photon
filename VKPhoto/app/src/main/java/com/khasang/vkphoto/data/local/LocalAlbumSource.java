@@ -159,7 +159,9 @@ public class LocalAlbumSource {
 
         try {
             Logger.d("ListingPhotoAlbums" + " query count=" + cursor.getCount());
-        } catch (NullPointerException e) {/*NOP*/}
+        } catch (NullPointerException e) {/*NOP*/
+            Logger.d("Null exception cursor");
+        }
 
         if (cursor.moveToFirst()) {
             String id, title, thumbPath;
@@ -172,13 +174,18 @@ public class LocalAlbumSource {
                 title = cursor.getString(titleColumn);
                 thumbPath = cursor.getString(thumbPathColumn);
                 String filePath = thumbPath.substring(0, thumbPath.lastIndexOf("/"));
-                int photosCount = new File(filePath).listFiles(new ImageFileFilter()).length;
+                File[] files = new File(filePath).listFiles(new ImageFileFilter());
                 builder = matrixCursor.newRow();
                 builder.add(id)
                         .add(title)
                         .add(filePath)
-                        .add(thumbPath)
-                        .add(photosCount);
+                        .add(thumbPath);
+                if (files != null) {
+                    int photosCount = files.length;
+                    builder.add(photosCount);
+                } else {
+                    builder.add(0);
+                }
             } while (cursor.moveToNext());
             cursor.close();
         }
