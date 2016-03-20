@@ -170,7 +170,6 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
         ((EditText) view.findViewById(R.id.et_album_description)).setText(description);
         new MaterialDialog.Builder(getContext())
                 .title(R.string.edit_album)
-//                .customView(R.layout.fragment_vk_add_album, true)
                 .customView(view, true)
                 .positiveText(R.string.st_btn_ok)
                 .negativeText(R.string.cancel)

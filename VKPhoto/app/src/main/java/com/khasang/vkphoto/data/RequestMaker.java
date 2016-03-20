@@ -119,7 +119,7 @@ public class RequestMaker {
     }
 
     public static void editAlbumById(VKRequest.VKRequestListener vkRequestListener, int albumId, String title, String description){
-        VKRequest request = new VKRequest("photos.editAlbumById", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, VKApiConst.ALBUM_ID, albumId, "title", title, "description", description));
+        VKRequest request = new VKRequest("photos.editAlbum", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, VKApiConst.ALBUM_ID, albumId, "title", title, "description", description));
         request.executeWithListener(vkRequestListener);
     }
 
