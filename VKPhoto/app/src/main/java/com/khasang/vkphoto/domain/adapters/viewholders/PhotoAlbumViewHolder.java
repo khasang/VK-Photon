@@ -8,7 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
@@ -43,6 +44,8 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     final private ExecutorService executor;
     final private MultiSelector multiSelector;
     final private Map<Integer, Future<File>> downloadFutures;
+    final private ProgressBar progressBar;
+    final private ImageView ivSyncStatus;
     PhotoAlbum photoAlbum;
     MenuItem menuItem;
     private AlbumsPresenter albumsPresenter;
@@ -53,13 +56,15 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     public PhotoAlbumViewHolder(View itemView, ExecutorService executor, MultiSelector multiSelector, AlbumsPresenter albumsPresenter, Map<Integer, Future<File>> downloadFutures) {
         super(itemView, multiSelector);
         albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
-        albumThumbImageView.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
+        albumThumbImageView.setLayoutParams(new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
                 MainActivity.ALBUM_THUMB_HEIGHT
         ));
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
         albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
         albumSelectedCheckBox = (CheckBox) itemView.findViewById(R.id.cb_selected);
+        ivSyncStatus = (ImageView) itemView.findViewById(R.id.iv_sync_status);
+        progressBar = (ProgressBar) itemView.findViewById(R.id.progress_bar);
         this.downloadFutures = downloadFutures;
         this.executor = executor;
         this.multiSelector = multiSelector;
@@ -78,7 +83,35 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         albumTitleTextView.setText(photoAlbum.title);
         albumPhotoCountTextView.setText(albumPhotoCountTextView.getContext().getString(R.string.count_of_photos_in_album, photoAlbum.size));
         Logger.d("bind photoAlbum" + photoAlbum.id);
+        changeSyncVisibility(photoAlbum);
         loadThumb();
+    }
+
+    private void changeSyncVisibility(PhotoAlbum photoAlbum) {
+        switch (photoAlbum.syncStatus) {
+            case Constants.SYNC_NOT_STARTED:
+                progressBar.setVisibility(View.INVISIBLE);
+                ivSyncStatus.setVisibility(View.INVISIBLE);
+                break;
+            case Constants.SYNC_STARTED:
+                progressBar.setVisibility(View.VISIBLE);
+                ivSyncStatus.setVisibility(View.INVISIBLE);
+                break;
+            case Constants.SYNC_SUCCESS:
+                progressBar.setVisibility(View.INVISIBLE);
+                ivSyncStatus.setVisibility(View.VISIBLE);
+                ivSyncStatus.setImageResource(R.drawable.ic_action_tick);
+                break;
+            case Constants.SYNC_FAILED:
+                progressBar.setVisibility(View.INVISIBLE);
+                ivSyncStatus.setVisibility(View.VISIBLE);
+                ivSyncStatus.setImageResource(R.drawable.ic_sync_problem);
+                break;
+        }
+        if (photoAlbum.syncStatus == Constants.SYNC_NOT_STARTED) {
+            ivSyncStatus.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void loadThumb() {
