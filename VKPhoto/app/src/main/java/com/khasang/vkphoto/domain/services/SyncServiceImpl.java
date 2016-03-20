@@ -115,6 +115,16 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
+    public void editAlbum(final int albumId, final String title, final String description) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                vKDataSource.getAlbumSource().editAlbumById(albumId, title, description);
+            }
+        });
+    }
+
+    @Override
     public void getAllAlbums() {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override

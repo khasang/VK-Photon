@@ -261,6 +261,11 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         return adapter.getCursor();
     }
 
+    @Override
+    public void editAlbum(int albumId, String title, String description) {
+
+    }
+
 
     //View implementations
 

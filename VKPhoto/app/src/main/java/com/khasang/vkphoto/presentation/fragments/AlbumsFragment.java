@@ -164,6 +164,29 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     }
 
     @Override
+    public void editAlbum(final int albumId, String title, String description) {
+        View view = View.inflate(getContext(), R.layout.fragment_vk_add_album, null);
+        ((EditText) view.findViewById(R.id.et_album_title)).setText(title);
+        ((EditText) view.findViewById(R.id.et_album_description)).setText(description);
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.edit_album)
+//                .customView(R.layout.fragment_vk_add_album, true)
+                .customView(view, true)
+                .positiveText(R.string.st_btn_ok)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        View dialogView = dialog.getView();
+                        vKAlbumsPresenter.editAlbumById(albumId,
+                                ((EditText) dialogView.findViewById(R.id.et_album_title)).getText().toString(),
+                                ((EditText) dialogView.findViewById(R.id.et_album_description)).getText().toString());
+                    }
+                })
+                .show();
+    }
+
+    @Override
     public void showError(int errorCode) {
         Logger.d(TAG + " error " + errorCode);
         switch (errorCode) {
