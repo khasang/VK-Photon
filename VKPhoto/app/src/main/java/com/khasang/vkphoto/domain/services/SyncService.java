@@ -20,9 +20,9 @@ public interface SyncService {
     void addAlbum(final String title, final String description,
                   final int privacy, final int commentPrivacy);
 
-    void getAllAlbums();
+    void getAllVKAlbums();
 
-    void getAllLocalAlbums();
+    void getAllSynchronizedAlbums();
 
     void getPhotosByAlbumId(int albumId);
 

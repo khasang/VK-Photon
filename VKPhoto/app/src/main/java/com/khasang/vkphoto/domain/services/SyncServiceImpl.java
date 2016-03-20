@@ -115,7 +115,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void getAllAlbums() {
+    public void getAllVKAlbums() {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
@@ -126,13 +126,12 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void getAllLocalAlbums() {
+    public void getAllSynchronizedAlbums() {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                Logger.d("SyncSerice getAllLocalAlbums");
-                Logger.d("no body");
-//                localDataSource.getAlbumSource().getAllAlbums();
+                Logger.d("SyncSerice getAllSynchronizedAlbums");
+                localDataSource.getAlbumSource().getAllSynchronizedAlbums();
             }
         });
     }
@@ -142,7 +141,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         Logger.d("SyncSerice onGetVKAlbumsEvent");
         List<PhotoAlbum> vKphotoAlbumList = getVKAlbumsEvent.albumsList;
         LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
-        List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllAlbums();
+        List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllSynchronizedAlbums();
         for (int i = 0, vKphotoAlbumListSize = vKphotoAlbumList.size(); i < vKphotoAlbumListSize; i++) {
             PhotoAlbum photoAlbum = vKphotoAlbumList.get(i);
             if (localAlbumsList.contains(photoAlbum)) { //update existing albums
@@ -226,7 +225,7 @@ public class SyncServiceImpl extends Service implements SyncService {
             @Override
             public void run() throws Exception {
                 LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
-                List<PhotoAlbum> localAlbumsList = localAlbumSource.getAllAlbums();
+                List<PhotoAlbum> localAlbumsList = localAlbumSource.getAllSynchronizedAlbums();
                 for (PhotoAlbum localAlbum : localAlbumsList) {
                     if (localAlbum.getId() == photoAlbumId) {
                         if (localAlbum.syncStatus == Constants.SYNC_STARTED) {

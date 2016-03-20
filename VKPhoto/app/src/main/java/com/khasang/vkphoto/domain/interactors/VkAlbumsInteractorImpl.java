@@ -18,8 +18,6 @@ import com.khasang.vkphoto.util.JsonUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKResponse;
 
-import org.greenrobot.eventbus.util.AsyncExecutor;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,20 +71,17 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
 
     /**
      * Отправить запрос в службу синхронизации на получение списка альбомов.
-     * Когда служба получит альбомы от ВК, вызовет колбэк метод у onGetAllAlbumsListener
+     * Когда служба получит альбомы от ВК, вызовет колбэк метод getVKAlbumsEvent
      *
      * @see SyncService
      * @see SyncServiceProvider
      */
     @Override
     public void getAllAlbums() {
-        AsyncExecutor asyncExecutor = AsyncExecutor.create();
-        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
-            @Override
-            public void run() throws Exception {
-                if (checkSyncService()) syncService.getAllAlbums();
-            }
-        });
+        if (checkSyncService()) {
+            syncService.getAllSynchronizedAlbums();
+            syncService.getAllVKAlbums();
+        }
     }
 
     @Override

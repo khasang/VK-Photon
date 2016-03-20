@@ -15,6 +15,6 @@ public class AlbumsCursorLoader extends android.support.v4.content.CursorLoader 
 
     @Override
     public Cursor loadInBackground() {
-        return localAlbumSource.getAllAlbumsCursor();
+        return localAlbumSource.getAllSynchronizedAlbumsCursor();
     }
 }

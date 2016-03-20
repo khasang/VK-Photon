@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int screenWidth = metrics.widthPixels;
         float density = metrics.density;
-        Logger.d("measureScreen. density=" + density);
         int thumbWidth;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
             thumbWidth = (int) (screenWidth - 50 * density) / 2;
@@ -101,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             thumbWidth = screenWidth;
         ALBUM_THUMB_HEIGHT = Math.round(thumbWidth / 16 * 9);
         PHOTOS_COLUMNS = (int) (screenWidth / (90 * density));
-        Logger.d("measureScreen. PHOTOS_COLUMNS=" + PHOTOS_COLUMNS);
     }
 
     private void initViewPager() {
