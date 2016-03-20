@@ -77,9 +77,8 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
      * @see SyncServiceProvider
      */
     @Override
-    public void getAllAlbums() {
+    public void getAllVKAlbums() {
         if (checkSyncService()) {
-            syncService.getAllSynchronizedAlbums();
             syncService.getAllVKAlbums();
         }
     }

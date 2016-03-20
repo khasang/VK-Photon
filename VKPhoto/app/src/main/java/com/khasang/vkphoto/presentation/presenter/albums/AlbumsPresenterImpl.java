@@ -52,7 +52,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     @Override
     public void getAllVKAlbums() {
         if (NetWorkUtils.isNetworkOnline(vkAlbumsView.getContext())) {
-            vkAlbumsInteractor.getAllAlbums();
+            vkAlbumsInteractor.getAllVKAlbums();
         } else {
             EventBus.getDefault().postSticky(new ErrorEvent(ErrorUtils.NO_INTERNET_CONNECTION_ERROR));
         }

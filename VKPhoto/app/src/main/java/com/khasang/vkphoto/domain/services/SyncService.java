@@ -22,8 +22,6 @@ public interface SyncService {
 
     void getAllVKAlbums();
 
-    void getAllSynchronizedAlbums();
-
     void getPhotosByAlbumId(int albumId);
 
     void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum);

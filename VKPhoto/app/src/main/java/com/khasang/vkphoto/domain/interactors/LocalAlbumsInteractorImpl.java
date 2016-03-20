@@ -37,9 +37,8 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
 
     @Override
     public List<PhotoAlbum> getAllLocalAlbums() {
-        Logger.d("user wants to getAllSynchronizedAlbums");
+        Logger.d("user wants to getAllLocalAlbums");
         Logger.d("no body");
-//        return syncService.getAllSynchronizedAlbums();
         return null;
     }
 

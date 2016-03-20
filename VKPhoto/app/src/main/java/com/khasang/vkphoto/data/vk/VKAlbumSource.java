@@ -67,7 +67,7 @@ public class VKAlbumSource {
 
     }
 
-    public void getAllAlbums() {
+    public void getAllVKAlbums() {
         RequestMaker.getAllVkAlbums(new MyVkRequestListener() {
             @Override
             public void onComplete(VKResponse response) {

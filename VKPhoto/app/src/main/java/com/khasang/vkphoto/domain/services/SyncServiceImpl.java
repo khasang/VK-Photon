@@ -120,21 +120,11 @@ public class SyncServiceImpl extends Service implements SyncService {
             @Override
             public void run() throws Exception {
                 Logger.d("SyncSerice getAllVKAlbums");
-                vKDataSource.getAlbumSource().getAllAlbums();
+                vKDataSource.getAlbumSource().getAllVKAlbums();
             }
         });
     }
 
-    @Override
-    public void getAllSynchronizedAlbums() {
-        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
-            @Override
-            public void run() throws Exception {
-                Logger.d("SyncSerice getAllSynchronizedAlbums");
-                localDataSource.getAlbumSource().getAllSynchronizedAlbums();
-            }
-        });
-    }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onGetVKAlbumsEvent(GetVKAlbumsEvent getVKAlbumsEvent) {
