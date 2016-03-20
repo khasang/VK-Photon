@@ -85,5 +85,15 @@ public class VKAlbumSource {
         });
     }
 
+    public void editAlbumById(int albumId, String title, String description) {
+        RequestMaker.editAlbumById(new MyVkRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Logger.d("Edit VKPhotoAlbum successfully");
+            }
+        }, albumId, title, description);
+    }
+
 
 }

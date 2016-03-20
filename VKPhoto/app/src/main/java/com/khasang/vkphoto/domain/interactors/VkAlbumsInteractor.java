@@ -33,4 +33,6 @@ public interface VkAlbumsInteractor {
     void deleteVkAlbum(MultiSelector multiSelector, Cursor cursor);
 
     void cancelAlbumsSync(List<PhotoAlbum> selectedAlbums);
+
+    void editAlbum(int albumId, String title, String description);
 }
