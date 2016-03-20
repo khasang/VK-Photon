@@ -21,6 +21,7 @@
     <string name="sync_delete_photo_question">Delete photo?</string>
     <string name="sync_delete_photos_question">Delete photos?</string>
     <string name="create_album">Create album</string>
+    <string name="edit_album">Edit album</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="title">Title</string>

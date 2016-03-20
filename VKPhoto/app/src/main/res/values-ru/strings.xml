@@ -35,6 +35,7 @@
     <string name="cancel">Отмена</string>
     <string name="create">Создать</string>
     <string name="create_album">Создать альбом</string>
+    <string name="edit_album">Редактировать альбом</string>
     <string name="privacy">Настройки приватности</string>
     <string name="title">Название</string>
     <string name="count_of_photos">Количество фотографий: %d</string>
