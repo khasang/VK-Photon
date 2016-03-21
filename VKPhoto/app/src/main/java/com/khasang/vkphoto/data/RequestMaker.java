@@ -58,7 +58,7 @@ public class RequestMaker {
     }
 
     public static void getAllVkAlbums(VKRequest.VKRequestListener vkRequestListener) {
-        final VKRequest request = getVkRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId));
+        final VKRequest request = getVkRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId,"need_system",1));
         request.executeWithListener(vkRequestListener);
     }
 
