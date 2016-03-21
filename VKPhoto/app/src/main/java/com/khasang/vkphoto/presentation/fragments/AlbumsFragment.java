@@ -18,7 +18,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -56,6 +59,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     private TextView tvCountOfAlbums;
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean refreshing;
+
     public AlbumsFragment() {
     }
 
@@ -180,6 +184,31 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
                         vKAlbumsPresenter.editAlbumById(albumId,
                                 ((EditText) dialogView.findViewById(R.id.et_album_title)).getText().toString(),
                                 ((EditText) dialogView.findViewById(R.id.et_album_description)).getText().toString());
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public void editPrivacy(final int albumId, int privacy) {
+        View view = View.inflate(getContext(), R.layout.fragment_vk_edit_privacy, null);
+        final Spinner spinner = (Spinner) view.findViewById(R.id.et_album_privacy);
+        ArrayAdapter<String> aa = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item,
+                getContext().getResources().getStringArray(R.array.privacy));
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(aa);
+        spinner.setSelection(privacy);
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.edit_privacy)
+                .customView(view, true)
+                .positiveText(R.string.st_btn_ok)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        vKAlbumsPresenter.editPrivacyAlbumById(albumId,
+                                spinner.getSelectedItemPosition());
                     }
                 })
                 .show();

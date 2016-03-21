@@ -78,6 +78,11 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
         vkAlbumsInteractor.editAlbum(albumId, title, description);
     }
 
+    @Override
+    public void editPrivacyAlbumById(int albumId, int privacy) {
+        Logger.d(String.valueOf(privacy));
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void OnVKAlbumEvent(VKAlbumEvent VKAlbumEvent) {
         Logger.d("got vkAlbumEvent");
@@ -138,12 +143,28 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
                     case R.id.action_cancel_sync_album:
                         vkAlbumsInteractor.cancelAlbumsSync(getSelectedAlbums(multiSelector.getSelectedPositions(), vkAlbumsView.getAdapterCursor()));
                         return true;
+                    case R.id.action_privacy:
+                        editPrivacySelectedAlbum(multiSelector);
+                        return true;
                     default:
                         break;
                 }
                 return false;
             }
         });
+    }
+
+    private void editPrivacySelectedAlbum(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Cursor cursor = vkAlbumsView.getAdapterCursor();
+        PhotoAlbum album;
+        if (cursor != null) {
+            Integer position = selectedPositions.get(0);
+            cursor.moveToPosition(position);
+            album = new PhotoAlbum(cursor);
+
+            vkAlbumsView.editPrivacy(album.getId(), album.privacy);
+        }
     }
 
     private void editSelectedAlbum(MultiSelector multiSelector) {
