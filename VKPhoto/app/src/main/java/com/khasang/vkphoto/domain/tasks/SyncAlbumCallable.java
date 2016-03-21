@@ -100,7 +100,7 @@ public class SyncAlbumCallable implements Callable<Boolean> {
     }
 
     private void removeDownloadedPhotos(List<Photo> vkPhotoList, LocalPhotoSource localPhotoSource) {
-        List<Photo> localPhotoList = localPhotoSource.getPhotosByAlbumId(photoAlbum.id);
+        List<Photo> localPhotoList = localPhotoSource.getSynchronizedPhotosByAlbumId(photoAlbum.id);
         for (int i = 0; i < localPhotoList.size(); i++) {
             Photo photo = localPhotoList.get(i);
             if (new File(photo.filePath).exists()) {

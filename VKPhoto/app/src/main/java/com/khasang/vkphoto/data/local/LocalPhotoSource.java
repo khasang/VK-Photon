@@ -14,6 +14,7 @@ import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetLocalPhotosEvent;
+import com.khasang.vkphoto.domain.events.GetSynchronizedPhotosEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -118,7 +119,7 @@ public class LocalPhotoSource {
         return photo;
     }
 
-    public List<Photo> getPhotosByAlbumId(int albumId) {
+    public List<Photo> getSynchronizedPhotosByAlbumId(int albumId) {
         List<Photo> photos = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, PhotosTable.ALBUM_ID + " = ?", new String[]{String.valueOf(albumId)}, null, null,
@@ -129,6 +130,7 @@ public class LocalPhotoSource {
             cursor.moveToNext();
         }
         cursor.close();
+        EventBus.getDefault().postSticky(new GetSynchronizedPhotosEvent(photos));
         return photos;
     }
 
