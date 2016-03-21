@@ -36,6 +36,7 @@
     <string name="create">Создать</string>
     <string name="create_album">Создать альбом</string>
     <string name="edit_album">Редактировать альбом</string>
+    <string name="edit_privacy">Изменить настройки приватности</string>
     <string name="privacy">Настройки приватности</string>
     <string name="title">Название</string>
     <string name="count_of_photos">Количество фотографий: %d</string>
@@ -135,5 +136,11 @@
     <string name="album_not_created_error">Ошибка при создании альбома</string>
     <string name="photo_not_saved_error">Ошибка при скачивании фотографии</string>
     <string name="synchronize">Синхронизировать</string>
-
+    <string name="tv_privacy">Кто может просматривать этот альбом?</string>
+    <string-array name="privacy">
+        <item>Все пользователи</item>
+        <item>Только друзья</item>
+        <item>Друзья и друзья друзей</item>
+        <item>Только я</item>
+    </string-array>
 </resources>

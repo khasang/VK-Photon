@@ -22,6 +22,7 @@
     <string name="sync_delete_photos_question">Delete photos?</string>
     <string name="create_album">Create album</string>
     <string name="edit_album">Edit album</string>
+    <string name="edit_privacy">Edit privacy</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="title">Title</string>
@@ -129,4 +130,11 @@
 
     <string name="userReply">replied to</string>
     <string name="synchronize">Synchronize</string>
+    <string name="tv_privacy">Who can see this album?</string>
+    <string-array name="privacy">
+        <item>Everybody</item>
+        <item>Friends only</item>
+        <item>Friends and friends of friends</item>
+        <item>Only me</item>
+    </string-array>
 </resources>
