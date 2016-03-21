@@ -19,11 +19,13 @@
     </style>
 
     <style name="MySettingsTheme" parent="Base.ThemeOverlay.AppCompat.Light">
-        <item name="android:textColorSecondary">@color/vk_share_gray_line</item>
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
         <item name="colorControlActivated">@color/colorAccent</item>
         <item name="colorControlNormal">@color/vk_white</item>
         <item name="android:windowBackground">@color/vk_white</item>
         <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:textColorPrimaryInverse">@color/colorPrimaryDark</item>
         <item name="android:textSize">@dimen/pref_text_size</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

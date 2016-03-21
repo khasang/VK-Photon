@@ -19,7 +19,8 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 
 import com.khasang.vkphoto.R;
-import com.khasang.vkphoto.presentation.model.MaterialListPreference;
+import com.khasang.vkphoto.presentation.model.MaterialLanguageListPreference;
+import com.khasang.vkphoto.presentation.model.MaterialSyncListPreference;
 import com.khasang.vkphoto.util.Logger;
 
 import java.util.List;
@@ -115,7 +116,7 @@ public class SettingsActivity extends PreferenceActivity {
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName)
-                || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
+                || SyncPreferenceFragment.class.getName().equals(fragmentName)
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName);
     }
 
@@ -125,7 +126,6 @@ public class SettingsActivity extends PreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
-            updatePrefListAccessControl();
             updatePrefListLanguages();
         }
 
@@ -143,38 +143,33 @@ public class SettingsActivity extends PreferenceActivity {
             getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         }
 
-        // Apply for ListPreference with key="access_control_list"
-        private void updatePrefListAccessControl() {
-            ListPreference preference = (ListPreference) findPreference("access_control_list");
-            CharSequence entry = (preference).getEntry();
-            preference.setSummary(getString(R.string.access_control_current_settings) + " " + entry);
-        }
-
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals("access_control_list")) {
-                updatePrefListAccessControl();
-            }else if(key.equals("cb_language")){
+            if (key.equals("cb_language")) {
                 updatePrefListLanguages();
             }
         }
 
         // Apply for ListPreference with key="cb_language"
         private void updatePrefListLanguages() {
-            MaterialListPreference preference = (MaterialListPreference) findPreference("cb_language");
-            Logger.d(preference.getValue());
-//            CharSequence entry = (preference).getEntry();
-//            preference.setSummary(getString(R.string.pref_list_languages_titles) + " " + entry);
+            MaterialLanguageListPreference preference = (MaterialLanguageListPreference) findPreference("cb_language");
+            if (preference.getValue() == null){
+                preference.setValueIndex(0);
+                Logger.d("Language is null");
+            } else{
+                preference.setValue(preference.getValue());
+            }
+            preference.setSummary(preference.getValue());
         }
     }
 
-    public static class DataSyncPreferenceFragment extends PreferenceFragment
+    public static class SyncPreferenceFragment extends PreferenceFragment
             implements SharedPreferences.OnSharedPreferenceChangeListener {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_sync);
-            updateListPrefSummary();
+            updatePrefListSyncFrequency();
         }
 
         @Override
@@ -192,26 +187,50 @@ public class SettingsActivity extends PreferenceActivity {
         }
 
         // Apply for ListPreference Summary with key="sync_frequency"
-        private void updateListPrefSummary() {
-            ListPreference preference = (ListPreference) findPreference("sync_frequency");
-            CharSequence entry = (preference).getEntry();
-            preference.setSummary(getString(R.string.access_control_current_settings) + " " + entry);
+        private void updatePrefListSyncFrequency() {
+            MaterialSyncListPreference preference = (MaterialSyncListPreference) findPreference("sync_frequency");
+            if (preference.getValue() == null){
+                preference.setValueIndex(0);
+                Logger.d("Sync frequency is null");
+            } else{
+                preference.setValue(preference.getValue());
+            }
+            preference.setSummary(preference.getValue());
         }
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals("sync_frequency")) {
-                updateListPrefSummary();
+                updatePrefListSyncFrequency();
             }
         }
 
     }
 
-    public static class NotificationPreferenceFragment extends PreferenceFragment {
+    public static class NotificationPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_notification);
+            addPreferencesFromResource(R.xml.pref_notifications);
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+
+            // Registers a listener whenever a key changes
+            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
         }
     }
 }

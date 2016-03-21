@@ -115,4 +115,11 @@
     <string name="microphone">Микрофон</string>
     <string name="remove">Удалить</string>
     <string name="pref_title_sync_settings">Настройки синхронизации</string>
+    <string name="comments_ntf">Уведомления о комментариях</string>
+    <string name="enable_fab"></string>
+    <string name="english">Английский</string>
+    <string name="language">Язык</string>
+    <string name="likes_ntf">Уведомления о лайках</string>
+    <string name="pref_dialog_title_language">Выберите язык</string>
+    <string name="pref_list_languages_titles">Текущие настройки</string>
 </resources>

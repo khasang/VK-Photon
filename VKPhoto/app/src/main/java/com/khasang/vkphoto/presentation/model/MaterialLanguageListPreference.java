@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -16,16 +17,16 @@ import com.khasang.vkphoto.util.Logger;
 /**
  * Created by Иричи on 16.03.2016.
  */
-public class MaterialListPreference extends ListPreference {
+public class MaterialLanguageListPreference extends ListPreference {
     private MaterialDialog.Builder mBuilder;
     private Context context;
 
-    public MaterialListPreference(Context context) {
+    public MaterialLanguageListPreference(Context context) {
         super(context);
         this.context = context;
     }
 
-    public MaterialListPreference(Context context, AttributeSet attrs) {
+    public MaterialLanguageListPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
     }
@@ -34,7 +35,18 @@ public class MaterialListPreference extends ListPreference {
     protected void showDialog(Bundle state) {
         mBuilder = new MaterialDialog.Builder(context);
         mBuilder.title(getTitle());
-        mBuilder.customView(R.layout.pref_dialog_language, true);
+        View view = LayoutInflater.from(context).inflate(R.layout.pref_dialog_language, null);
+        String value = getValue();
+        if (value != null) {
+            RadioButton radioButton;
+            if (value.equals(context.getString(R.string.russian))) {
+                radioButton = (RadioButton) view.findViewById(R.id.rb_russian);
+            } else {
+                radioButton = (RadioButton) view.findViewById(R.id.rb_english);
+            }
+            radioButton.setChecked(true);
+        }
+        mBuilder.customView(view, true);
         mBuilder.negativeText(R.string.cancel);
         mBuilder.onNegative(new MaterialDialog.SingleButtonCallback() {
             @Override
@@ -48,34 +60,13 @@ public class MaterialListPreference extends ListPreference {
             public void onClick(MaterialDialog dialog, DialogAction which) {
                 View view = dialog.getView();
                 int checkedRadioButtonId = ((RadioGroup) view.findViewById(R.id.rg_languages)).getCheckedRadioButtonId();
-                String value = ((RadioButton) view.findViewById(checkedRadioButtonId)).getText().toString();
+                RadioButton radioButton = (RadioButton) view.findViewById(checkedRadioButtonId);
+                String value = radioButton.getText().toString();
                 Logger.d(value);
+                setSummary(value);
                 setValue(value);
             }
         });
-//        mBuilder.items(getEntries());
-//        mBuilder.itemsCallback(new MaterialDialog.ListCallback() {
-//
-//            @Override
-//            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-//                onClick(null, DialogInterface.BUTTON_POSITIVE);
-//                dialog.dismiss();
-//
-//                if (which >= 0 && getEntryValues() != null) {
-//                    String value = getEntryValues()[which].toString();
-//                    if (callChangeListener(value))
-//                        setValue(value);
-//                }
-//            }
-//        });
-
-//        final View contentView = onCreateDialogView();
-//        if (contentView != null) {
-//            onBindDialogView(contentView);
-//            mBuilder.customView(contentView, false);
-//        } else
-//            mBuilder.content(getDialogMessage());
-
         mBuilder.show();
     }
 
