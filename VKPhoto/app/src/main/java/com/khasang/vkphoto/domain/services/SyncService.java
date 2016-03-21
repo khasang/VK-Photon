@@ -22,7 +22,7 @@ public interface SyncService {
 
     void getAllVKAlbums();
 
-    void getPhotosByAlbumId(int albumId);
+    void getVKPhotosByAlbumId(int albumId);
 
     void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum);
 

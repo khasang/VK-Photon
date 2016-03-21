@@ -153,10 +153,11 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void getPhotosByAlbumId(final int albumId) {
+    public void getVKPhotosByAlbumId(final int albumId) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
+                localDataSource.getPhotoSource().getSynchronizedPhotosByAlbumId(albumId);
                 vKDataSource.getPhotoSource().getPhotosByAlbumId(albumId);
             }
         });

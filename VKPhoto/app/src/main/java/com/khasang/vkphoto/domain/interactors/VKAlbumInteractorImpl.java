@@ -29,7 +29,9 @@ public class VKAlbumInteractorImpl implements VKAlbumInteractor {
 
     @Override
     public void getPhotosByAlbumId(int albumId) {
-        if (checkSyncService()) syncService.getPhotosByAlbumId(albumId);
+        if (checkSyncService()) {
+            syncService.getVKPhotosByAlbumId(albumId);
+        }
     }
 
     @Override
