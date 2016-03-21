@@ -49,17 +49,30 @@ public class VkCommentsPresenterImpl implements VkCommentsPresenter {
     }
 
     @Override
+    public void registerEventBus() {
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void unregisterEventBus() {
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    @Override
     public void initialize() {
 
     }
 
     @Override
     public void onStart() {
-        EventBus.getDefault().register(this);
+
     }
 
     @Override
     public void onStop() {
-        EventBus.getDefault().unregister(this);
     }
 }

@@ -8,9 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +56,9 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new VkCommentsPresenterImpl(this);
+        if(presenter==null){
+            presenter = new VkCommentsPresenterImpl(this);
+        }
         if (getArguments() != null) {
             photo = getArguments().getParcelable(PHOTO_ID);
         }
@@ -69,7 +69,6 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Logger.d(TAG + " onCreateView");
         View view = inflater.inflate(R.layout.fragment_comments, container, false);
         userImage = (ImageView) view.findViewById(R.id.userImage);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -85,7 +84,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
             @Override
             public void onClick(View v) {
                 if (recyclerView.getVisibility() == RecyclerView.GONE) {
-                    if (photo.comments>0) {
+                    if (photo.comments > 0) {
                         presenter.getCommentsByPhotoId(photo.id);
                     }
                 } else {
@@ -99,7 +98,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     }
 
     private void loadPhoto() {
-        if (!TextUtils.isEmpty(photo.filePath)) {
+        if (TextUtils.isEmpty(photo.photo_130)) {
             Logger.d(VKCommentsFragment.class.getSimpleName()+": image load form local album");
             Glide.with(userImage.getContext())
                     .load("file://" + photo.filePath)
@@ -122,7 +121,6 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         super.onDetach();
     }
 
-
     @Override
     public void onStop() {
         super.onStop();
@@ -130,6 +128,13 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         presenter.onStop();
         hlayout.setVisibility(View.GONE);
 
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Logger.d(TAG + " onResume");
     }
 
     @Override
@@ -160,7 +165,6 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
             adapter.setData(comments, profiles);
             userImage.getLayoutParams().height = ActionBar.LayoutParams.WRAP_CONTENT;
             recyclerView.setVisibility(View.VISIBLE);
-            focusOnView(scrollView, recyclerView);
     }
 
     @Override
@@ -178,20 +182,21 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     }
 
     @Override
-    public void confirmDelete(MultiSelector multiSelector) {
-
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+        if(presenter==null){
+            presenter = new VkCommentsPresenterImpl(this);
+        }
+        if(menuVisible){
+            presenter.registerEventBus();
+        }else {
+            presenter.unregisterEventBus();
+        }
     }
 
-    private final void focusOnView(final ScrollView scroll, final View view) {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                int vTop = view.getTop();
-                int vBottom = view.getBottom();
-                int vHeight = scroll.getHeight();
-                scroll.smoothScrollTo(((vTop + vBottom - vHeight) / 2), 0);
-            }
-        });
+    @Override
+    public void confirmDelete(MultiSelector multiSelector) {
+
     }
 }
 
