@@ -135,4 +135,17 @@
     <string name="photo_not_saved_error">Ошибка при скачивании фотографии</string>
     <string name="synchronize">Синхронизировать</string>
 
+    <string name="icon_heart" translatable="false">&#xf004;</string>
+    <string name="pref_title_display_settings">Настройки отображения</string>
+    <string name="pref_title_notification_settings">Настройки уведомлений</string>
+    <string name="microphone">Микрофон</string>
+    <string name="remove">Удалить</string>
+    <string name="pref_title_sync_settings">Настройки синхронизации</string>
+    <string name="comments_ntf">Уведомления о комментариях</string>
+    <string name="enable_fab"></string>
+    <string name="english">Английский</string>
+    <string name="language">Язык</string>
+    <string name="likes_ntf">Уведомления о лайках</string>
+    <string name="pref_dialog_title_language">Выберите язык</string>
+    <string name="pref_list_languages_titles">Текущие настройки</string>
 </resources>

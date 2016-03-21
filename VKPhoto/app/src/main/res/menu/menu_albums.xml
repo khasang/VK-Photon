@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".presentation.activities.MainActivity">
+    <item
+        android:id="@+id/action_micro"
+        android:icon="@drawable/ic_action_mic"
+        android:title="@string/microphone"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_action_search"
+        android:title="@android:string/search_go"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+</menu>

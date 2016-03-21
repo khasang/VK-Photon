@@ -1,0 +1,40 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:defaultValue="true"
+        android:key="sync_settings"
+        android:title="@string/pref_title_sync_settings" >
+
+        <CheckBoxPreference
+            android:key="sync_on_opening"
+            android:title="Sync on opening app"
+            android:defaultValue="true"/>
+
+        <SwitchPreference
+            android:key="sync_enabled"
+            android:title="@string/auto_sync"
+            android:defaultValue="true"/>
+
+        <com.khasang.vkphoto.presentation.model.MaterialSyncListPreference
+            android:dialogTitle="@string/pref_title_sync_frequency"
+            android:entries="@array/pref_sync_frequency_titles"
+            android:entryValues="@array/pref_sync_frequency_titles"
+            android:key="sync_frequency"
+            android:title="@string/pref_title_sync_frequency" />
+
+    </PreferenceCategory>
+
+    <!--<ListPreference-->
+        <!--android:defaultValue="180"-->
+        <!--android:entries="@array/pref_sync_frequency_titles"-->
+        <!--android:entryValues="@array/pref_sync_frequency_values"-->
+        <!--android:key="sync_frequency"-->
+        <!--android:negativeButtonText="@null"-->
+        <!--android:positiveButtonText="@null"-->
+        <!--android:title="@string/pref_title_sync_frequency" />-->
+
+    <!--<Preference android:title="@string/pref_title_system_sync_settings">-->
+        <!--<intent android:action="android.settings.SYNC_SETTINGS" />-->
+    <!--</Preference>-->
+
+</PreferenceScreen>
