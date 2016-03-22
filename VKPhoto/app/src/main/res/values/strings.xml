@@ -131,10 +131,8 @@
     <string name="userReply">replied to</string>
     <string name="synchronize">Synchronize</string>
     <string name="tv_privacy">Who can see this album?</string>
-    <string-array name="privacy">
-        <item>Everybody</item>
-        <item>Friends only</item>
-        <item>Friends and friends of friends</item>
-        <item>Only me</item>
-    </string-array>
+    <string name="rg_privacy_everybody">Everybody</string>
+    <string name="rg_privacy_friends_only">Friends only</string>
+    <string name="rg_privacy_friends_and_friends_of_friends">Friends and friends of friends</string>
+    <string name="rg_privacy_only_me">Only me</string>
 </resources>

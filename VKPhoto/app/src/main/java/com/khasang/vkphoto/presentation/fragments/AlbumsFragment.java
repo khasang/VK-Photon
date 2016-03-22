@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -45,8 +46,10 @@ import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKPrivacy;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.khasang.vkphoto.util.Constants.ALBUMS_SPAN_COUNT;
 
 
@@ -192,13 +195,21 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     @Override
     public void editPrivacy(final int albumId, int privacy) {
         View view = View.inflate(getContext(), R.layout.fragment_vk_edit_privacy, null);
-        final Spinner spinner = (Spinner) view.findViewById(R.id.et_album_privacy);
-        ArrayAdapter<String> aa = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_spinner_item,
-                getContext().getResources().getStringArray(R.array.privacy));
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(aa);
-        spinner.setSelection(privacy);
+        final RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.rg_privacy);
+        switch (privacy) {
+            case VKPrivacy.PRIVACY_ALL:
+                radioGroup.check(R.id.rb_album_privacy_everybody);
+                break;
+            case VKPrivacy.PRIVACY_FRIENDS:
+                radioGroup.check(R.id.rb_album_privacy_friends_only);
+                break;
+            case VKPrivacy.PRIVACY_FRIENDS_OF_FRIENDS:
+                radioGroup.check(R.id.rb_album_privacy_friends_and_friends_of_friends);
+                break;
+            case VKPrivacy.PRIVACY_NOBODY:
+                radioGroup.check(R.id.rb_album_privacy_only_me);
+                break;
+        }
         new MaterialDialog.Builder(getContext())
                 .title(R.string.edit_privacy)
                 .customView(view, true)
@@ -207,8 +218,23 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        vKAlbumsPresenter.editPrivacyAlbumById(albumId,
-                                spinner.getSelectedItemPosition());
+                        int newPrivacy = 0;
+                        switch (radioGroup.getCheckedRadioButtonId()) {
+                            case R.id.rb_album_privacy_everybody:
+                                newPrivacy = VKPrivacy.PRIVACY_ALL;
+                                break;
+                            case R.id.rb_album_privacy_friends_only:
+                                newPrivacy = VKPrivacy.PRIVACY_FRIENDS;
+                                break;
+                            case R.id.rb_album_privacy_friends_and_friends_of_friends:
+                                newPrivacy = VKPrivacy.PRIVACY_FRIENDS_OF_FRIENDS;
+                                break;
+                            case R.id.rb_album_privacy_only_me:
+                                newPrivacy = VKPrivacy.PRIVACY_NOBODY;
+                                break;
+                        }
+                        Logger.d(String.valueOf(newPrivacy));
+                        vKAlbumsPresenter.editPrivacyAlbumById(albumId, newPrivacy);
                     }
                 })
                 .show();

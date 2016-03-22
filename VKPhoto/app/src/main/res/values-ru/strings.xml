@@ -137,10 +137,8 @@
     <string name="photo_not_saved_error">Ошибка при скачивании фотографии</string>
     <string name="synchronize">Синхронизировать</string>
     <string name="tv_privacy">Кто может просматривать этот альбом?</string>
-    <string-array name="privacy">
-        <item>Все пользователи</item>
-        <item>Только друзья</item>
-        <item>Друзья и друзья друзей</item>
-        <item>Только я</item>
-    </string-array>
+    <string name="rg_privacy_everybody">Все пользователи</string>
+    <string name="rg_privacy_friends_only">Только друзья</string>
+    <string name="rg_privacy_friends_and_friends_of_friends">Друзья и друзья друзей</string>
+    <string name="rg_privacy_only_me">Только я</string>
 </resources>

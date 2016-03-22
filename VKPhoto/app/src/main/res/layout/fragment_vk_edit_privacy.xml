@@ -13,12 +13,37 @@
         android:layout_height="wrap_content"
         android:hint="@string/tv_privacy" />
 
-
-    <Spinner
-        android:id="@+id/et_album_privacy"
+    <RadioGroup
+        android:id="@+id/rg_privacy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_privacy_question" />
+        android:layout_below="@+id/tv_privacy_question">
+
+        <RadioButton
+            android:id="@+id/rb_album_privacy_everybody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rg_privacy_everybody"/>
+
+        <RadioButton
+            android:id="@+id/rb_album_privacy_friends_only"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rg_privacy_friends_only"/>
+
+        <RadioButton
+            android:id="@+id/rb_album_privacy_friends_and_friends_of_friends"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rg_privacy_friends_and_friends_of_friends"/>
+
+        <RadioButton
+            android:id="@+id/rb_album_privacy_only_me"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rg_privacy_only_me"/>
+
+    </RadioGroup>
 
 
 </RelativeLayout>
