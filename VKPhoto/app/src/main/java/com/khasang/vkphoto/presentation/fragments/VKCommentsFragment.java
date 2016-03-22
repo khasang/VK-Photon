@@ -1,7 +1,9 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 
+import android.app.ActionBar;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
@@ -40,6 +43,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     private ImageView userImage;
     private TextView photolikes, commentCount;
     private LinearLayout hlayout;
+    private ScrollView scrollView;
 
     public static VKCommentsFragment newInstance(Photo photo) {
         Bundle args = new Bundle();
@@ -57,24 +61,33 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
             photo = getArguments().getParcelable(PHOTO_ID);
         }
         ((FabProvider) getContext()).getFloatingActionButton().hide();
+        Logger.d(TAG + " onCreate");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Logger.d(TAG + " onCreateView");
         View view = inflater.inflate(R.layout.fragment_comments, container, false);
         userImage = (ImageView) view.findViewById(R.id.userImage);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         commentCount = (TextView) view.findViewById(R.id.commentsCount);
         photolikes = (TextView) view.findViewById(R.id.photoLikes);
         hlayout = ((LinearLayout) view.findViewById(R.id.hLayout));
+        scrollView = (ScrollView) view.findViewById(R.id.scrollView);
+
+        adapter = new CommentRecyclerViewAdapter();
+        recyclerView.setAdapter(adapter);
+
         view.findViewById(R.id.commetnsButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (recyclerView.getVisibility() == RecyclerView.GONE) {
-                    presenter.getCommentsByPhotoId(photo.id);
-                    recyclerView.setVisibility(View.VISIBLE);
+                    if (photo.comments>0) {
+                        presenter.getCommentsByPhotoId(photo.id);
+                    }
                 } else {
+                    userImage.getLayoutParams().height = ActionBar.LayoutParams.MATCH_PARENT;
                     recyclerView.setVisibility(View.GONE);
                 }
             }
@@ -139,12 +152,14 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
 
     @Override
     public void displayVkComments(List<Comment> comments, List<VkProfile> profiles) {
-        adapter = new CommentRecyclerViewAdapter(comments, profiles);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(itemAnimator);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+            RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setItemAnimator(itemAnimator);
+            adapter.setData(comments, profiles);
+            userImage.getLayoutParams().height = ActionBar.LayoutParams.WRAP_CONTENT;
+            recyclerView.setVisibility(View.VISIBLE);
+            focusOnView(scrollView, recyclerView);
     }
 
     @Override
@@ -166,5 +181,16 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
 
     }
 
+    private void focusOnView(final ScrollView scroll, final View view) {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                int vTop = view.getTop();
+                int vBottom = view.getBottom();
+                int vHeight = scroll.getHeight();
+                scroll.smoothScrollTo(((vTop + vBottom - vHeight) / 2), 0);
+            }
+        });
+    }
 }
 

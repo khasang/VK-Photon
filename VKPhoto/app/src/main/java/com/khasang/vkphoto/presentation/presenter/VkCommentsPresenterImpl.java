@@ -24,7 +24,6 @@ public class VkCommentsPresenterImpl implements VkCommentsPresenter {
     private VkCommentsView commentsView;
 
     public VkCommentsPresenterImpl(VkCommentsView commentsView) {
-        EventBus.getDefault().register(this);
         interactor = new VkCommentsInteractorImpl();
         this.commentsView = commentsView;
     }
@@ -56,11 +55,11 @@ public class VkCommentsPresenterImpl implements VkCommentsPresenter {
 
     @Override
     public void onStart() {
-
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
-
+        EventBus.getDefault().unregister(this);
     }
 }
