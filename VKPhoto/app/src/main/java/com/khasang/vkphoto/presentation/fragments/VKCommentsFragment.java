@@ -3,7 +3,6 @@ package com.khasang.vkphoto.presentation.fragments;
 
 import android.app.ActionBar;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -56,7 +55,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(presenter==null){
+        if (presenter == null) {
             presenter = new VkCommentsPresenterImpl(this);
         }
         if (getArguments() != null) {
@@ -100,7 +99,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
 
     private void loadPhoto() {
         if (TextUtils.isEmpty(photo.photo_130)) {
-            Logger.d(VKCommentsFragment.class.getSimpleName()+": image load form local album");
+            Logger.d(VKCommentsFragment.class.getSimpleName() + ": image load form local album");
             Glide.with(userImage.getContext())
                     .load("file://" + photo.filePath)
                     .error(R.drawable.vk_share_send_button_background)
@@ -159,13 +158,13 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
 
     @Override
     public void displayVkComments(List<Comment> comments, List<VkProfile> profiles) {
-            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-            RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setItemAnimator(itemAnimator);
-            adapter.setData(comments, profiles);
-            userImage.getLayoutParams().height = ActionBar.LayoutParams.WRAP_CONTENT;
-            recyclerView.setVisibility(View.VISIBLE);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(itemAnimator);
+        adapter.setData(comments, profiles);
+        userImage.getLayoutParams().height = ActionBar.LayoutParams.WRAP_CONTENT;
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -190,12 +189,12 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     @Override
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
-        if(presenter==null){
+        if (presenter == null) {
             presenter = new VkCommentsPresenterImpl(this);
         }
-        if(menuVisible){
+        if (menuVisible) {
             presenter.registerEventBus();
-        }else {
+        } else {
             presenter.unregisterEventBus();
         }
     }
