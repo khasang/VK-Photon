@@ -71,5 +71,7 @@ public interface SyncService {
     void editAlbum(int albumId, String title, String description);
 
     void editPrivacyAlbum(int albumId, int privacy);
+
+    void editLocalAlbum(int albumId, String title);
 }
       
