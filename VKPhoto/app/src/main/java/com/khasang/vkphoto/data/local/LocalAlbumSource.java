@@ -248,4 +248,18 @@ public class LocalAlbumSource {
         cursor.close();
         return photoAlbumList;
     }
+
+
+    public void editPrivacyAlbumById(int albumId, int privacy) {
+        PhotoAlbum album = getAlbumById(albumId);
+        album.privacy = privacy;
+        updateAlbum(album, true);
+    }
+
+    public void editAlbumById(int albumId, String title, String description) {
+        PhotoAlbum album = getAlbumById(albumId);
+        album.title = title;
+        album.description = description;
+        updateAlbum(album, true);
+    }
 }

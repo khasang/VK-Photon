@@ -80,7 +80,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
 
     @Override
     public void editPrivacyAlbumById(int albumId, int privacy) {
-        Logger.d(String.valueOf(privacy));
+        vkAlbumsInteractor.editPrivacyAlbum(albumId, privacy);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
