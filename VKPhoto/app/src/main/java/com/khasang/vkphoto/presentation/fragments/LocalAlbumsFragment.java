@@ -9,14 +9,20 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -27,6 +33,8 @@ import com.khasang.vkphoto.data.LocalAlbumsCursorLoader;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumsCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.presentation.model.MyActionExpandListener;
+import com.khasang.vkphoto.presentation.model.MyOnQuerrySearchListener;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
 import com.khasang.vkphoto.presentation.custom_classes.GridSpacingItemDecoration;
@@ -48,6 +56,7 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     private PhotoAlbumsCursorAdapter adapter;
     private MultiSelector multiSelector;
     private LocalAlbumsPresenter localAlbumsPresenter;
+    private MyOnQuerrySearchListener myOnQuerrySearchListener = new MyOnQuerrySearchListener();
     private TextView tvCountOfAlbums;
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean refreshing;
@@ -56,6 +65,7 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
         localAlbumsPresenter = new LocalAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
     }
@@ -308,8 +318,36 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         outState.putBoolean(ACTION_MODE_ACTIVE, multiSelector.isSelectable());
     }
 
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        private ImageView mAlbumThumb;
+        private TextView mAlbumTitle;
+        private TextView mPhotosCount;
+
+        public MyViewHolder(View itemView) {
+            super(itemView);
+            mAlbumThumb = (ImageView) itemView.findViewById(R.id.album_thumb);
+            mAlbumTitle = (TextView) itemView.findViewById(R.id.album_title);
+            mPhotosCount = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
+        }
+    }
+
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.changeCursor(null);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_albums, menu);
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        MenuItem microMenuItem = menu.findItem(R.id.action_micro);
+        SearchView mSearchView = (SearchView) searchMenuItem.getActionView();
+        mSearchView.setOnQueryTextListener(myOnQuerrySearchListener);
+        searchMenuItem
+                .setShowAsAction(MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW
+                        | MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+        MyActionExpandListener myActionExpandListener = new MyActionExpandListener(microMenuItem);
+        MenuItemCompat.setOnActionExpandListener(searchMenuItem, myActionExpandListener);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }

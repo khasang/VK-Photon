@@ -87,8 +87,14 @@
         <item>-1</item>
     </string-array>
 
+    <string name="pref_list_languages_titles">Current settings:</string>
+    <string-array name="pref_list_languages">
+        <item>Russian</item>
+        <item>English</item>
+    </string-array>
+
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_header_data_sync">Sync settings</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
@@ -97,6 +103,7 @@
         <item>1 hour</item>
         <item>3 hours</item>
         <item>6 hours</item>
+        <item>1 day</item>
         <item>Never</item>
     </string-array>
     <string-array name="pref_sync_frequency_values">
@@ -111,7 +118,7 @@
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
+    <string name="pref_header_notifications">Notifications settings</string>
 
     <string name="pref_new_message_notifications_title">New message notifications</string>
 
@@ -122,10 +129,38 @@
     <string name="pref_title_vibrate">Vibrate</string>
 
     <string name="icon_heart" translatable="false">&#xf004;</string>
+    <string name="microphone">Microphone</string>
+    <string name="remove">Remove</string>
+
+    <string name="pref_title_display_settings">Display settings</string>
+    <!--<string name="pref_description_display_settings">Display settings</string>-->
+
+    <string name="pref_title_notification_settings">Notification settings</string>
+    <!--<string name="pref_description_notification_settings">Notification settings</string>-->
+
+    <string name="pref_title_sync_settings">Sync settings</string>
+    <string name="enable_fab">Enable floating action button</string>
+    <string name="language">Language</string>
+    <string name="pref_dialog_title_language">Choose language</string>
+    <string name="russian">Russian</string>
+    <string name="english">English</string>
+    <!--<string name="pref_description_sync_settings">Sync settings</string>-->
     <string name="no_internet_connection_error">No internet connection</string>
     <string name="album_not_created_error">Create of album failed</string>
     <string name="photo_not_saved_error">Error downloading photo</string>
-
     <string name="userReply">replied to</string>
     <string name="synchronize">Synchronize</string>
+    <string name="comments_ntf">Comments notifications</string>
+    <string name="likes_ntf">Likes notifications</string>
+    <string name="sync_success_ntf">Sync success notifications</string>
+    <string name="vibro_with_ntf">Vibration with notifications</string>
+    <string name="auto_sync">Auto synchronization</string>
+    <string name="sync_frequency">Sync frequency</string>
+    <string name="min_15">15 minutes</string>
+    <string name="min_30">30 minutes</string>
+    <string name="hour">1 hour</string>
+    <string name="hours_3">3 hours</string>
+    <string name="hours_6">6 hours</string>
+    <string name="day">1 day</string>
+    <string name="never">Never</string>
 </resources>

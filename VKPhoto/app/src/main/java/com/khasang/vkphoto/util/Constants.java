@@ -15,6 +15,11 @@ public class Constants {
     public static final int RECYCLERVIEW_SPACING = 10;
     //Errors
 
+    public static final int START = 1;
+    public static final int SEARCH = 2;
+    public static final int ALBUM = 3;
+    public static final int PHOTO = 4;
+
 }
 
 
