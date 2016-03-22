@@ -49,8 +49,10 @@ import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKPrivacy;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.khasang.vkphoto.util.Constants.ALBUMS_SPAN_COUNT;
 
 

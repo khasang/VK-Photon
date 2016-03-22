@@ -16,6 +16,7 @@
     <string name="privacy">Privacy settings</string>
     <string name="count_of_photos">Count of photos: %d</string>
     <string name="sync_photo">Synchronize photo</string>
+    <string name="select_all">Select all</string>
     <string name="sync_delete_photos">Delete photos</string>
     <string name="edit_photo_title">Edit photo</string>
     <string name="sync_delete_photo_question">Delete photo?</string>

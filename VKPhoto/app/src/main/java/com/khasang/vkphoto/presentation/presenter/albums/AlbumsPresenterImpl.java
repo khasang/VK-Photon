@@ -122,9 +122,15 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
                     case R.id.action_sync_album:
                         vkAlbumsView.confirmSync(multiSelector);
                         return true;
-                    case R.id.action_download_album:
-                        return true;
+//                    case R.id.action_download_album:
+//                        return true;
                     case R.id.action_edit_album:
+                        return true;
+                    case R.id.action_select_all:
+                        for (int i = 0; i < vkAlbumsView.getAdapterCursor().getCount(); i++) {
+                            multiSelector.setSelected(i, 0, true);
+                            actionMode.getMenu().findItem(R.id.action_edit_album).setVisible(false);
+                        }
                         return true;
                     case R.id.action_delete_album:
                         vkAlbumsView.confirmDelete(multiSelector);
