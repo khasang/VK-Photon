@@ -132,16 +132,6 @@ public class Photo extends VKApiPhoto {
         return (separatorIndex < 0) ? filePath : filePath.substring(separatorIndex + 1, filePath.length());
     }
 
-    public String getNameInDB() {
-        char separatorChar = System.getProperty("file.separator", "/").charAt(0);
-        String separator = String.valueOf(separatorChar);
-//        /storage/emulated/0/Pictures/1458592023063.jpg
-//        /storage/emulated/0/DCIM/VK Photo/143561723/268051143.jpg
-//        /data/data/com.khasang.vkphoto/
-        int separatorIndex = filePath.lastIndexOf(separator);
-        return (separatorIndex < 0) ? filePath : filePath.substring(separatorIndex + 1, filePath.length());
-    }
-
     public void printPhoto(){
         String formattedDate = DateFormat.format("dd.MM.yyyy hh:mm:ss Z", this.date).toString();
         Logger.d("Photo: "
