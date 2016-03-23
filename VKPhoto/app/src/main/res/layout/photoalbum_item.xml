@@ -23,14 +23,14 @@
             <ProgressBar
                 android:id="@+id/progress_bar"
                 style="?android:attr/progressBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/album_thumb"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="-16dp"
+                android:layout_marginTop="-50dp"
                 android:visibility="invisible" />
 
             <ImageView
@@ -59,7 +59,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tv_count_of_albums"
+                android:id="@+id/tv_count_of_photos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/album_title"

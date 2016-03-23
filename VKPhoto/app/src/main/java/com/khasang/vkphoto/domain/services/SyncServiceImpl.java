@@ -232,8 +232,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
-    @Override
-    public void deleteVKAlbumById(final int albumId) {
+    private void deleteVKAlbumById(final int albumId) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
@@ -242,8 +241,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
-    @Override
-    public void deleteAlbumFromDbById(final int photoAlbumId) {
+    private void deleteAlbumFromDbById(final int photoAlbumId) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
@@ -310,6 +308,7 @@ public class SyncServiceImpl extends Service implements SyncService {
             @Override
             public void run() throws Exception {
                 localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
+                localDataSource.getPhotoSource().deletePhotoListFromDB(deletePhotoList);
             }
         });
     }
@@ -321,12 +320,22 @@ public class SyncServiceImpl extends Service implements SyncService {
             public void run() throws Exception {
                 for (PhotoAlbum photoAlbum : deleteAlbumsList) {
                     Logger.d("now deleting photoAlbum: " + photoAlbum.filePath);
+                    //сначала удалим альбомы из папки на девайсе (не папки нашего приложения)
                     List<Photo> deletePhotoList = localDataSource.getPhotoSource().getLocalPhotosByAlbumId(photoAlbum.id);
                     localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
                     eventBus.post(new LocalALbumEvent());
+                    //потом удалим записи из бд нашего приложения.
+                    //это нужно только для тех альбомов, которые появились на устройстве в результате синхронизации с ВК
+                    try {
+                        deleteAlbumFromDbById(photoAlbum.id);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Logger.d("error while deleting photoAlbum: " + photoAlbum.filePath);
+                    }
                 }
             }
         });
+        //и вообще мне очень не нравится, что мы всю реализацию пихаем в SyncServiceImpl. см к примеру deleteSelectedLocalPhotos
     }
 
     @Override

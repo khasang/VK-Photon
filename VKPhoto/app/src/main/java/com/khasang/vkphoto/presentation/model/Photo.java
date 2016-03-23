@@ -34,14 +34,13 @@ public class Photo extends VKApiPhoto {
     }
 
     public Photo(Cursor cursor, Boolean isAlbumLocal) {
+        this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
         if (isAlbumLocal){
-            this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
             this.album_id = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID));
             this.date = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATE_TAKEN));
             this.filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
         }
         else {
-            this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
             this.album_id = cursor.getInt(cursor.getColumnIndex(ALBUM_ID));
             this.owner_id = cursor.getInt(cursor.getColumnIndex(OWNER_ID));
             this.width = cursor.getInt(cursor.getColumnIndex(WIDTH));

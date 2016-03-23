@@ -103,7 +103,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
             List<Photo> receivedFromVKPhotos = getVKPhotosEvent.photosList;
             List<Photo> deleteListFromLocal = new ArrayList<>();
             int added = 0, removed = 0;
-
+            Logger.d("VKAlbumPresenterImpl synchronizedPhotos.size=" + synchronizedPhotos.size());
             //сначала добавляем в лист фото, которые еще не синхонизировались
             for (Photo vkPhoto : receivedFromVKPhotos) {
                 if (!synchronizedPhotos.contains(vkPhoto)) {
