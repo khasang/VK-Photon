@@ -1,5 +1,8 @@
 package com.khasang.vkphoto.presentation.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,14 +37,21 @@ import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class LocalAlbumFragment extends Fragment implements AlbumView {
     public static final String TAG = LocalAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
+    private static final int CAMERA_REQUEST = 1888;
     private PhotoAlbum photoAlbum;
     private TextView tvCountOfPhotos;
     private LocalAlbumPresenter localAlbumPresenter;
@@ -134,20 +144,43 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final OpenFileDialog fileDialog = new OpenFileDialog(getContext(), getActivity());
-                fileDialog.show();
-                fileDialog.setOpenDialogListener(new OpenFileDialog.OpenDialogListener() {
-                    @Override
-                    public void OnSelectedFile(ArrayList<String> listSelectedFiles) {
-//                        vKPhotosPresenter.addPhotos(listSelectedFiles, photoAlbum);
-                    }
-                });
-                ToastUtils.showShortMessage("Here will be action Add Photos", getActivity());
-//                vKAlbumPresenter.addPhotos();
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            storeImage(photo);
+        }
+    }
+
+    private void storeImage(Bitmap image) {
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName="MI_"+ timeStamp +".jpg";
+        mediaFile = new File(photoAlbum.filePath + File.separator + mImageName);
+        File pictureFile = mediaFile;
+        if (pictureFile == null) {
+            Logger.d("Error creating media file, check storage permissions: ");
+            return;
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Logger.d( "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Logger.d("Error accessing file: " + e.getMessage());
+        }
+        
+    }
     //lifecycle methods
     @Override
     public void onStart() {
