@@ -23,7 +23,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -49,8 +53,10 @@ import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.api.model.VKPrivacy;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.khasang.vkphoto.util.Constants.ALBUMS_SPAN_COUNT;
 
 
@@ -171,6 +177,76 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     @Override
     public Cursor getAdapterCursor() {
         return adapter.getCursor();
+    }
+
+    @Override
+    public void editAlbum(final int albumId, String title, String description) {
+        View view = View.inflate(getContext(), R.layout.fragment_vk_add_album, null);
+        ((EditText) view.findViewById(R.id.et_album_title)).setText(title);
+        ((EditText) view.findViewById(R.id.et_album_description)).setText(description);
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.edit_album)
+                .customView(view, true)
+                .positiveText(R.string.st_btn_ok)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        View dialogView = dialog.getView();
+                        vKAlbumsPresenter.editAlbumById(albumId,
+                                ((EditText) dialogView.findViewById(R.id.et_album_title)).getText().toString(),
+                                ((EditText) dialogView.findViewById(R.id.et_album_description)).getText().toString());
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public void editPrivacy(final int albumId, int privacy) {
+        View view = View.inflate(getContext(), R.layout.fragment_vk_edit_privacy, null);
+        final RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.rg_privacy);
+        switch (privacy) {
+            case VKPrivacy.PRIVACY_ALL:
+                radioGroup.check(R.id.rb_album_privacy_everybody);
+                break;
+            case VKPrivacy.PRIVACY_FRIENDS:
+                radioGroup.check(R.id.rb_album_privacy_friends_only);
+                break;
+            case VKPrivacy.PRIVACY_FRIENDS_OF_FRIENDS:
+                radioGroup.check(R.id.rb_album_privacy_friends_and_friends_of_friends);
+                break;
+            case VKPrivacy.PRIVACY_NOBODY:
+                radioGroup.check(R.id.rb_album_privacy_only_me);
+                break;
+        }
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.edit_privacy)
+                .customView(view, true)
+                .positiveText(R.string.st_btn_ok)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        int newPrivacy = 0;
+                        switch (radioGroup.getCheckedRadioButtonId()) {
+                            case R.id.rb_album_privacy_everybody:
+                                newPrivacy = VKPrivacy.PRIVACY_ALL;
+                                break;
+                            case R.id.rb_album_privacy_friends_only:
+                                newPrivacy = VKPrivacy.PRIVACY_FRIENDS;
+                                break;
+                            case R.id.rb_album_privacy_friends_and_friends_of_friends:
+                                newPrivacy = VKPrivacy.PRIVACY_FRIENDS_OF_FRIENDS;
+                                break;
+                            case R.id.rb_album_privacy_only_me:
+                                newPrivacy = VKPrivacy.PRIVACY_NOBODY;
+                                break;
+                        }
+                        Logger.d(String.valueOf(newPrivacy));
+                        vKAlbumsPresenter.editPrivacyAlbumById(albumId, newPrivacy);
+                    }
+                })
+                .show();
     }
 
     @Override

@@ -16,11 +16,14 @@
     <string name="privacy">Privacy settings</string>
     <string name="count_of_photos">Count of photos: %d</string>
     <string name="sync_photo">Synchronize photo</string>
+    <string name="select_all">Select all</string>
     <string name="sync_delete_photos">Delete photos</string>
     <string name="edit_photo_title">Edit photo</string>
     <string name="sync_delete_photo_question">Delete photo?</string>
     <string name="sync_delete_photos_question">Delete photos?</string>
     <string name="create_album">Create album</string>
+    <string name="edit_album">Edit album</string>
+    <string name="edit_privacy">Edit privacy</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="title">Title</string>
@@ -163,4 +166,9 @@
     <string name="hours_6">6 hours</string>
     <string name="day">1 day</string>
     <string name="never">Never</string>
+    <string name="tv_privacy">Who can see this album?</string>
+    <string name="rg_privacy_everybody">Everybody</string>
+    <string name="rg_privacy_friends_only">Friends only</string>
+    <string name="rg_privacy_friends_and_friends_of_friends">Friends and friends of friends</string>
+    <string name="rg_privacy_only_me">Only me</string>
 </resources>

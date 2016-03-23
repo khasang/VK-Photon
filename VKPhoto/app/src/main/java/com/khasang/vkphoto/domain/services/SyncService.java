@@ -65,5 +65,11 @@ public interface SyncService {
     void startSync();
 
     void cancelAlbumsSync(List<PhotoAlbum> selectedAlbums);
+
+    void editAlbum(int albumId, String title, String description);
+
+    void editPrivacyAlbum(int albumId, int privacy);
+
+    void editLocalAlbum(int albumId, String title);
 }
       
