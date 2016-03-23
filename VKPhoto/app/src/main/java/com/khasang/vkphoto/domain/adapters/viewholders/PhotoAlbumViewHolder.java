@@ -61,7 +61,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
                 MainActivity.ALBUM_THUMB_HEIGHT
         ));
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
-        albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
+        albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_photos);
         albumSelectedCheckBox = (CheckBox) itemView.findViewById(R.id.cb_selected);
         ivSyncStatus = (ImageView) itemView.findViewById(R.id.iv_sync_status);
         progressBar = (ProgressBar) itemView.findViewById(R.id.progress_bar);
@@ -82,7 +82,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         this.photoAlbum = photoAlbum;
         albumTitleTextView.setText(photoAlbum.title);
         albumPhotoCountTextView.setText(albumPhotoCountTextView.getContext().getString(R.string.count_of_photos_in_album, photoAlbum.size));
-        Logger.d("bind photoAlbum" + photoAlbum.id);
+        Logger.d("bindPhotoAlbum. ID=" + photoAlbum.id + ", name=" + photoAlbum.title + ", size=" + photoAlbum.size);
         changeSyncVisibility(photoAlbum);
         loadThumb();
     }

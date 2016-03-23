@@ -47,7 +47,8 @@ public class LocalAlbumSource {
         } else {
             PhotoAlbum photoAlbum = new PhotoAlbum(apiPhotoAlbum);
             photoAlbum.filePath = path;
-            db.insert(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.getContentValues(photoAlbum));
+            Logger.d("saveAlbum. inserted to DB=" +
+                    db.insert(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.getContentValues(photoAlbum)));
             if (sendEvent) {
                 EventBus.getDefault().postSticky(new VKAlbumEvent());
             }
@@ -114,18 +115,24 @@ public class LocalAlbumSource {
         Logger.d("LocalAlbumSource. getAllSynchronizedAlbums");
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
         Cursor cursor = getAllSynchronizedAlbumsCursor();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            photoAlbumList.add(new PhotoAlbum(cursor));
-            cursor.moveToNext();
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                PhotoAlbum photoAlbum = new PhotoAlbum(cursor);
+                Logger.d("LocalAlbumSource. getAllSynchronizedAlbums. ID=" + photoAlbum.id + ", name=" +
+                        photoAlbum.title + ", size=" + photoAlbum.size + ", filepath=" + photoAlbum.filePath);
+                photoAlbumList.add(photoAlbum);
+                cursor.moveToNext();
+            }
+            cursor.close();
         }
-        cursor.close();
         return photoAlbumList;
     }
 
     public Cursor getAllSynchronizedAlbumsCursor() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         return db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
+//        String[] selectionArgs = new String[]{Constants.SYNC_STARTED + ", " + Constants.SYNC_SUCCESS + ", " + Constants.SYNC_FAILED};
+//        return db.query(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.SYNC_STATUS + " IN (?)", selectionArgs, null, null, null);
     }
 
     public Cursor getAllLocalAlbums() {
