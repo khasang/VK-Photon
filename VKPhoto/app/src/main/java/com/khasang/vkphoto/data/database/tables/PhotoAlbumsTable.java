@@ -58,7 +58,7 @@ public class PhotoAlbumsTable {
         return contentValues;
     }
 
-    public static ContentValues getContentValuesUpdated(PhotoAlbum newAlbum, PhotoAlbum oldAlbum) {
+    public static ContentValues getContentValuesUpdated(PhotoAlbum newAlbum, PhotoAlbum oldAlbum, boolean isLocal) {
         ContentValues contentValues = new ContentValues();
         if (!oldAlbum.title.equals(newAlbum.title)) {
             contentValues.put(TITLE, newAlbum.title);
@@ -90,14 +90,16 @@ public class PhotoAlbumsTable {
         if (!oldAlbum.thumb_src.equals(newAlbum.thumb_src)) {
             contentValues.put(THUMB_SRC, newAlbum.thumb_src);
         }
-        if (!TextUtils.isEmpty(newAlbum.filePath) && !newAlbum.filePath.equals(oldAlbum.filePath)) {
-            contentValues.put(FILE_PATH, newAlbum.filePath);
-        }
-        if (!TextUtils.isEmpty(newAlbum.thumbFilePath) && !newAlbum.thumbFilePath.equals(oldAlbum.thumbFilePath)) {
-            contentValues.put(THUMB_FILE_PATH, newAlbum.thumbFilePath);
-        }
-        if (oldAlbum.syncStatus != newAlbum.syncStatus) {
-            contentValues.put(SYNC_STATUS, newAlbum.syncStatus);
+        if (isLocal) {
+            if (!TextUtils.isEmpty(newAlbum.filePath) && !newAlbum.filePath.equals(oldAlbum.filePath)) {
+                contentValues.put(FILE_PATH, newAlbum.filePath);
+            }
+            if (!TextUtils.isEmpty(newAlbum.thumbFilePath) && !newAlbum.thumbFilePath.equals(oldAlbum.thumbFilePath)) {
+                contentValues.put(THUMB_FILE_PATH, newAlbum.thumbFilePath);
+            }
+            if (oldAlbum.syncStatus != newAlbum.syncStatus) {
+                contentValues.put(SYNC_STATUS, newAlbum.syncStatus);
+            }
         }
         return contentValues;
     }

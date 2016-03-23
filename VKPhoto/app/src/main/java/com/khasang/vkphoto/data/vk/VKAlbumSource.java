@@ -2,8 +2,9 @@ package com.khasang.vkphoto.data.vk;
 
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
+import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
-import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -39,8 +40,8 @@ public class VKAlbumSource {
                 try {
                     photoAlbum = JsonUtils.getPhotoAlbum(response.json);
                     Logger.d("Create Album successfully");
-                    localAlbumSource.updateAlbum(photoAlbum);
-                    EventBus.getDefault().postSticky(new LocalAlbumEvent());
+                    localAlbumSource.updateAlbum(photoAlbum, false);
+                    EventBus.getDefault().postSticky(new VKAlbumEvent());
                 } catch (Exception e) {
                     sendError(ErrorUtils.JSON_PARSE_FAILED);
                 }
@@ -67,7 +68,7 @@ public class VKAlbumSource {
 
     }
 
-    public void getAllAlbums() {
+    public void getAllVKAlbums() {
         RequestMaker.getAllVkAlbums(new MyVkRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -85,5 +86,23 @@ public class VKAlbumSource {
         });
     }
 
+    public void editAlbumById(final int albumId, String title, String description) {
+        RequestMaker.editAlbumById(new MyVkRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Logger.d("Edit VKPhotoAlbum successfully");
+            }
+        }, albumId, title, description);
+    }
 
+    public void editPrivacyAlbumById(final int albumId, int privacy) {
+        RequestMaker.editPrivacyAlbumById(new MyVkRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Logger.d("Edit Privacy VKPhotoAlbum successfully");
+            }
+        }, albumId, privacy);
+    }
 }

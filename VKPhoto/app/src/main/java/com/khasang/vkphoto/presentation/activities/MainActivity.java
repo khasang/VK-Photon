@@ -1,9 +1,12 @@
 package com.khasang.vkphoto.presentation.activities;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -20,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.events.CloseActionModeEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
@@ -42,9 +45,12 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider {
+public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider, SearchView.OnQueryTextListener {
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static int ALBUM_THUMB_HEIGHT = 0;
+    public static int PHOTOS_COLUMNS = 0;
     private static String VIEWPAGER_VISIBLE = "viewpager_visible";
+    private static Fragment localAlbumsFragment, albumsFragment;
     private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
     private ServiceConnection sConn;
     private boolean bound = false;
@@ -53,11 +59,12 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FloatingActionButton fab;
-    public static int ALBUM_THUMB_HEIGHT = 0;
+    private ViewPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkPermission();
         setContentView(R.layout.activity_main);
         initServiceConnection(savedInstanceState);
         loginVk();
@@ -66,26 +73,39 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (savedInstanceState != null) {
             Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
         }
-        calculateAlbumThumbHeight();
+        measureScreen();
     }
 
-    private void calculateAlbumThumbHeight(){
+    private void checkPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Explain to the user why we need to read the contacts
+            }
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 29025);
+            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE (29025) is an app-defined int constant
+        }
+    }
+
+    private void measureScreen() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int screenWidth = metrics.widthPixels;
+        float density = metrics.density;
         int thumbWidth;
-        int paddingsLR = 60 * 2;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-            thumbWidth = (screenWidth - paddingsLR - 50) / 2;
+            thumbWidth = (int) (screenWidth - 50 * density) / 2;
         else
-            thumbWidth = screenWidth - paddingsLR;
+            thumbWidth = screenWidth;
         ALBUM_THUMB_HEIGHT = Math.round(thumbWidth / 16 * 9);
+        PHOTOS_COLUMNS = (int) (screenWidth / (90 * density));
     }
 
     private void initViewPager() {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -93,9 +113,12 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
             @Override
             public void onPageSelected(int position) {
-                Navigator.setTabPosition(position);
+                Fragment item = adapter.getItem(position);
+                String tag = item.getTag();
+                Navigator.setTabTag(tag);
                 EventBus.getDefault().post(new CloseActionModeEvent());
                 fab.show();
+                Logger.d("onPageSelected" + tag);
             }
 
             @Override
@@ -114,15 +137,21 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new AlbumsFragment(), "VK Albums");
-        adapter.addFragment(new LocalAlbumsFragment(), "Gallery Albums");
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        adapter = new ViewPagerAdapter(supportFragmentManager);
+        if (localAlbumsFragment == null) {
+            albumsFragment = new AlbumsFragment();
+            localAlbumsFragment = new LocalAlbumsFragment();
+        }
+        adapter.addFragment(albumsFragment, "VK Albums");
+        adapter.addFragment(localAlbumsFragment, "Gallery Albums");
         viewPager.setAdapter(adapter);
     }
 
     private void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Navigator.initToolbar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
     }
 
@@ -134,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
                 if (VKAccessToken.currentToken() != null && viewPager.getVisibility() == View.VISIBLE && savedInstanceState == null) {
+                    EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
+                    syncService.startSync();
                     Logger.d("ViewPagerVisibile" + viewPager.getVisibility());
                 }
             }
@@ -166,6 +197,16 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
+//    private void startMode(Mode mode) {
+//        if(mode == Mode.START){
+//            searchMenuItem.setVisible(true);
+//            microMenuItem.setVisible(false);
+//            toolbar.setTitle(getString(R.string.app_name));
+//        }else if(mode == Mode.ALBUM){
+////            toolbar.setTitle(getString());
+//        }
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -225,6 +266,17 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
         super.onSaveInstanceState(outState);
+    }
+
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

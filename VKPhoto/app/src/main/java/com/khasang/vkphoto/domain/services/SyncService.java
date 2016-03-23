@@ -20,11 +20,9 @@ public interface SyncService {
     void addAlbum(final String title, final String description,
                   final int privacy, final int commentPrivacy);
 
-    void getAllAlbums();
+    void getAllVKAlbums();
 
-    void getAllLocalAlbums();
-
-    void getPhotosByAlbumId(int albumId);
+    void getVKPhotosByAlbumId(int albumId);
 
     void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum);
 
@@ -63,5 +61,15 @@ public interface SyncService {
     void deleteSelectedLocalPhotos(List<Photo> deletePhotoList);
 
     void deleteSelectedLocalPhotoAlbums(List<PhotoAlbum> deleteAlbumsList);
+
+    void startSync();
+
+    void cancelAlbumsSync(List<PhotoAlbum> selectedAlbums);
+
+    void editAlbum(int albumId, String title, String description);
+
+    void editPrivacyAlbum(int albumId, int privacy);
+
+    void editLocalAlbum(int albumId, String title);
 }
       

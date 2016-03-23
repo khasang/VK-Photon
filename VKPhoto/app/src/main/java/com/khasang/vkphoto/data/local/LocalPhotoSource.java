@@ -8,11 +8,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 
 import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetLocalPhotosEvent;
+import com.khasang.vkphoto.domain.events.GetSynchronizedPhotosEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -22,6 +24,7 @@ import com.khasang.vkphoto.util.Logger;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class LocalPhotoSource {
 
     public LocalPhotoSource(Context context) {
         this.context = context.getApplicationContext();
-        this.dbHelper = MySQliteHelper.getInstance(context.getApplicationContext());
+        this.dbHelper = MySQliteHelper.getInstance(this.context);
     }
 
     public File savePhotoToAlbum(Photo photo, PhotoAlbum photoAlbum) {
@@ -42,6 +45,11 @@ public class LocalPhotoSource {
             photo.filePath = imageFile.getAbsolutePath();
             if (getPhotoById(photo.id) == null) {
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
+                try {
+                    MediaStore.Images.Media.insertImage(context.getContentResolver(), photo.filePath, photo.getName(), photo.text);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 db.insert(PhotosTable.TABLE_NAME, null, PhotosTable.getContentValues(photo));
             } else {
                 Logger.d("Photo " + photo.id + " exists");
@@ -79,13 +87,23 @@ public class LocalPhotoSource {
     }
 
     public void deleteLocalPhotos(List<Photo> photoList) {
-        for (Photo photo : photoList) {
-            Logger.d("now deleting photo: " + photo.filePath);
-            ContentResolver cr = context.getContentResolver();
-            Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            if (cr.delete(images, BaseColumns._ID + " = ?", new String[]{String.valueOf(photo.id)}) == -1){
-                Logger.d("error while deleting file: " + photo.filePath);
-            }
+//        for (Photo photo : photoList) {
+//            Logger.d("now deleting photo: " + photo.filePath);
+//            ContentResolver cr = context.getContentResolver();
+//            Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//            if (cr.delete(images, BaseColumns._ID + " = ?", new String[]{String.valueOf(photo.id)}) == -1){
+//                Logger.d("error while deleting file: " + photo.filePath);
+//            }
+//        }
+        String[] ids = new String[photoList.size()];
+        for (int i = 0; i < ids.length; i++) {
+            ids[i] = String.valueOf(photoList.get(i).id);
+        }
+        String joinedIds = TextUtils.join(", ", ids);
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        if (contentResolver.delete(images, BaseColumns._ID + " in (" + joinedIds + ")", null) == -1) {
+            Logger.d("error while deleting photoAlbum ");
         }
     }
 
@@ -101,16 +119,18 @@ public class LocalPhotoSource {
         return photo;
     }
 
-    public List<Photo> getPhotosByAlbumId(int albumId) {
+    public List<Photo> getSynchronizedPhotosByAlbumId(int albumId) {
         List<Photo> photos = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, PhotosTable.ALBUM_ID + " = ?", new String[]{String.valueOf(albumId)}, null, null, null);
+        Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, PhotosTable.ALBUM_ID + " = ?", new String[]{String.valueOf(albumId)}, null, null,
+                PhotosTable.DATE + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             photos.add(new Photo(cursor, false));
             cursor.moveToNext();
         }
         cursor.close();
+        EventBus.getDefault().postSticky(new GetSynchronizedPhotosEvent(photos));
         return photos;
     }
 
@@ -125,7 +145,7 @@ public class LocalPhotoSource {
         Cursor cursor = context.getContentResolver().query(
                 images, PROJECTION_BUCKET,
                 MediaStore.Images.ImageColumns.BUCKET_ID + " = ?",
-                new String[]{String.valueOf(albumId)}, null);
+                new String[]{String.valueOf(albumId)}, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
         if (cursor.moveToFirst()) {
             do {
                 Photo photo = new Photo(cursor, true);

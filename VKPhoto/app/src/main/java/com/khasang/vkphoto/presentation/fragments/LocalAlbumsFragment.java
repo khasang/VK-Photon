@@ -3,22 +3,27 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -26,10 +31,11 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.LocalAlbumsCursorLoader;
-import com.khasang.vkphoto.data.database.tables.PhotoAlbumsTable;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumsCursorAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.presentation.model.MyActionExpandListener;
+import com.khasang.vkphoto.presentation.model.MyOnQuerrySearchListener;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
 import com.khasang.vkphoto.presentation.custom_classes.GridSpacingItemDecoration;
@@ -39,15 +45,19 @@ import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenterImp
 import com.khasang.vkphoto.presentation.view.AlbumsView;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
+
 import java.util.Collections;
 import java.util.List;
+
 import static com.khasang.vkphoto.util.Constants.ALBUMS_SPAN_COUNT;
 
 public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
+    private static final String TAG = LocalAlbumsFragment.class.getSimpleName();
     private PhotoAlbumsCursorAdapter adapter;
     private MultiSelector multiSelector;
     private LocalAlbumsPresenter localAlbumsPresenter;
+    private MyOnQuerrySearchListener myOnQuerrySearchListener = new MyOnQuerrySearchListener();
     private TextView tvCountOfAlbums;
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean refreshing;
@@ -56,12 +66,15 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
         localAlbumsPresenter = new LocalAlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Logger.d(this.toString());
+        Logger.d("" + getTag());
         View view = inflater.inflate(R.layout.fragment_albums, container, false);
         getActivity().getSupportLoaderManager().initLoader(1, null, this);
         tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
@@ -176,57 +189,70 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         Logger.d("displayVkSaveAlbum");
     }
 
-    public void removeAlbumsFromView() {
-        Logger.d("user wants to removeAlbumsFromView");
-        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-        Collections.sort(selectedPositions, Collections.reverseOrder());
-        Cursor oldCursor = adapter.getCursor();
 
-        MatrixCursor modifiedCursor = new MatrixCursor(new String[]{
-                BaseColumns._ID,
-                PhotoAlbumsTable.TITLE,
-                PhotoAlbumsTable.FILE_PATH,
-                PhotoAlbumsTable.THUMB_FILE_PATH,
-                PhotoAlbumsTable.SIZE});
-        MatrixCursor.RowBuilder builder;
+    /*
+        public void removeAlbumsFromView() {
+            Logger.d("user wants to removeAlbumsFromView");
+            List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+            Collections.sort(selectedPositions, Collections.reverseOrder());
+            Cursor oldCursor = adapter.getCursor();
 
-        if (oldCursor.moveToFirst()) {
-            int i = 0;
-            String id, title, filePath, thumbPath, photosCount;
-            int idColumn = oldCursor.getColumnIndex(BaseColumns._ID);
-            int titleColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.TITLE);
-            int filePathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.FILE_PATH);
-            int thumbPathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.THUMB_FILE_PATH);
-            int photosCountColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.SIZE);
+            MatrixCursor modifiedCursor = new MatrixCursor(new String[]{
+                    BaseColumns._ID,
+                    PhotoAlbumsTable.TITLE,
+                    PhotoAlbumsTable.FILE_PATH,
+                    PhotoAlbumsTable.THUMB_FILE_PATH,
+                    PhotoAlbumsTable.SIZE});
+            MatrixCursor.RowBuilder builder;
 
-            do {
-                id = oldCursor.getString(idColumn);
-                title = oldCursor.getString(titleColumn);
-                filePath = oldCursor.getString(filePathColumn);
-                thumbPath = oldCursor.getString(thumbPathColumn);
-                photosCount = oldCursor.getString(photosCountColumn);
-                if (!selectedPositions.contains(i)) {
-                    builder = modifiedCursor.newRow();
-                    builder.add(id)
-                            .add(title)
-                            .add(filePath)
-                            .add(thumbPath)
-                            .add(photosCount);
-                }
-                i++;
-            } while (oldCursor.moveToNext());
-            oldCursor.close();
+            if (oldCursor.moveToFirst()) {
+                int i = 0;
+                String id, title, filePath, thumbPath, photosCount;
+                int idColumn = oldCursor.getColumnIndex(BaseColumns._ID);
+                int titleColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.TITLE);
+                int filePathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.FILE_PATH);
+                int thumbPathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.THUMB_FILE_PATH);
+                int photosCountColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.SIZE);
+
+                do {
+                    id = oldCursor.getString(idColumn);
+                    title = oldCursor.getString(titleColumn);
+                    filePath = oldCursor.getString(filePathColumn);
+                    thumbPath = oldCursor.getString(thumbPathColumn);
+                    photosCount = oldCursor.getString(photosCountColumn);
+                    if (!selectedPositions.contains(i)) {
+                        builder = modifiedCursor.newRow();
+                        builder.add(id)
+                                .add(title)
+                                .add(filePath)
+                                .add(thumbPath)
+                                .add(photosCount);
+                    }
+                    i++;
+                } while (oldCursor.moveToNext());
+                oldCursor.close();
+            }
+
+            adapter.changeCursor(modifiedCursor);
+            for (Integer position : selectedPositions) {
+                adapter.notifyItemRemoved(position);
+            }
         }
-
-        adapter.changeCursor(modifiedCursor);
-        for (Integer position : selectedPositions) {
-            adapter.notifyItemRemoved(position);
-        }
-    }
-
+    */
     @Override
     public void displayAlbums() {
         getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
+    }
+
+    public void displayDeletedAlbums() {
+        //
+        Logger.d("user wants to removePhotosFromView");
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Collections.sort(selectedPositions, Collections.reverseOrder());
+        for (Integer position : selectedPositions) {
+            adapter.notifyItemRemoved(position);
+        }
+        displayAlbums();
     }
 
     @Override
@@ -246,6 +272,31 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         return adapter.getCursor();
     }
 
+    @Override
+    public void editAlbum(final int albumId, String title, String description) {
+        View view = View.inflate(getContext(), R.layout.fragment_local_edit_album, null);
+        ((EditText) view.findViewById(R.id.et_local_album_title)).setText(title);
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.edit_album)
+                .customView(view, true)
+                .positiveText(R.string.st_btn_ok)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        View dialogView = dialog.getView();
+                        localAlbumsPresenter.editAlbumById(albumId,
+                                ((EditText) dialogView.findViewById(R.id.et_local_album_title)).getText().toString());
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public void editPrivacy(int albumId, int privacy) {
+
+    }
+
 
     //View implementations
 
@@ -256,9 +307,11 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
 
     @Override
     public void confirmDelete(final MultiSelector multiSelector) {
+        StringBuilder content = new StringBuilder();
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_1, multiSelector.getSelectedPositions().size()));
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_2, multiSelector.getSelectedPositions().size()));
         new MaterialDialog.Builder(getContext())
-                .content(multiSelector.getSelectedPositions().size() > 1 ?
-                        R.string.sync_delete_albums_question : R.string.sync_delete_album_question)
+                .content(content)
                 .positiveText(R.string.delete)
                 .negativeText(R.string.cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -291,8 +344,36 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         outState.putBoolean(ACTION_MODE_ACTIVE, multiSelector.isSelectable());
     }
 
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        private ImageView mAlbumThumb;
+        private TextView mAlbumTitle;
+        private TextView mPhotosCount;
+
+        public MyViewHolder(View itemView) {
+            super(itemView);
+            mAlbumThumb = (ImageView) itemView.findViewById(R.id.album_thumb);
+            mAlbumTitle = (TextView) itemView.findViewById(R.id.album_title);
+            mPhotosCount = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
+        }
+    }
+
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.changeCursor(null);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_albums, menu);
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        MenuItem microMenuItem = menu.findItem(R.id.action_micro);
+        SearchView mSearchView = (SearchView) searchMenuItem.getActionView();
+        mSearchView.setOnQueryTextListener(myOnQuerrySearchListener);
+        searchMenuItem
+                .setShowAsAction(MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW
+                        | MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+        MyActionExpandListener myActionExpandListener = new MyActionExpandListener(microMenuItem);
+        MenuItemCompat.setOnActionExpandListener(searchMenuItem, myActionExpandListener);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }

@@ -10,11 +10,13 @@ import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
-import com.khasang.vkphoto.domain.events.LocalAlbumEvent;
+import com.khasang.vkphoto.domain.events.LocalALbumEvent;
+import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
+import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -22,11 +24,12 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.greenrobot.eventbus.util.AsyncExecutor;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -39,7 +42,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     private AsyncExecutor asyncExecutor;
     private LocalDataSource localDataSource;
     private VKDataSource vKDataSource;
-    private List<Future<Boolean>> futureList = new ArrayList<>();
+    private Map<Integer, Future<Boolean>> futureMap = new HashMap<>();
 
     @Override
     public void onCreate() {
@@ -49,7 +52,6 @@ public class SyncServiceImpl extends Service implements SyncService {
         vKDataSource = new VKDataSource();
         eventBus = EventBus.getDefault();
         eventBus.register(this);
-        ArrayBlockingQueue<String> strings = new ArrayBlockingQueue<>(15);
     }
 
     @Nullable
@@ -63,33 +65,43 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                localDataSource.getAlbumSource().setSyncStatus(photoAlbumList, Constants.SYNC_STARTED);
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                for (PhotoAlbum photoAlbum : photoAlbumList) {
-                    Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource);
-                    futureList.add(executor.submit(booleanCallable));
+                if (photoAlbumList.size() > 0) {
+                    localDataSource.getAlbumSource().setSyncStatus(photoAlbumList, Constants.SYNC_STARTED);
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    for (PhotoAlbum photoAlbum : photoAlbumList) {
+                        Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource);
+                        futureMap.put(photoAlbum.id, executor.submit(booleanCallable));
+                    }
+                    execute();
+                    if (futureMap.isEmpty()) {
+                        Logger.d("full sync success");
+                    } else {
+                        Logger.d("full sync fail");
+                    }
+                    executor.shutdown();
                 }
-                execute();
-                if (futureList.isEmpty()) {
-                    Logger.d("full sync success");
-                } else {
-                    Logger.d("full sync fail");
-                }
-                executor.shutdown();
             }
 
             private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
-                Iterator<Future<Boolean>> iterator = futureList.iterator();
-                while (iterator.hasNext()) {
-                    Future<Boolean> booleanFutureTask = iterator.next();
-                    if (booleanFutureTask.get()) {
-                        iterator.remove();
+                try {
+                    Iterator<Map.Entry<Integer, Future<Boolean>>> iterator = futureMap.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Future<Boolean> booleanFutureTask = iterator.next().getValue();
+                        Logger.d(booleanFutureTask.toString() + "startSync");
+                        if (booleanFutureTask.get()) {
+                            iterator.remove();
+                        }
+                        Logger.d("exit get");
                     }
-                    Logger.d("exit get");
+                } catch (ExecutionException e) {
+                    Logger.d("canceled execution error");
+                    execute();
                 }
             }
+
         });
     }
+
 
     @Override
     public void addAlbum(final String title, final String description,
@@ -103,40 +115,61 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void getAllAlbums() {
+    public void editAlbum(final int albumId, final String title, final String description) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                Logger.d("SyncSerice getAllVKAlbums");
-                vKDataSource.getAlbumSource().getAllAlbums();
+                localDataSource.getAlbumSource().editAlbumById(albumId, title, description);
+                vKDataSource.getAlbumSource().editAlbumById(albumId, title, description);
             }
         });
     }
 
     @Override
-    public void getAllLocalAlbums(){
+    public void editPrivacyAlbum(final int albumId, final int privacy) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                Logger.d("SyncSerice getAllLocalAlbums");
-                Logger.d("no body");
-//                localDataSource.getAlbumSource().getAllAlbums();
+                localDataSource.getAlbumSource().editPrivacyAlbumById(albumId, privacy);
+                vKDataSource.getAlbumSource().editPrivacyAlbumById(albumId, privacy);
             }
         });
     }
+
+    @Override
+    public void editLocalAlbum(final int albumId, final String title) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+//                localDataSource.getAlbumSource().editAlbumById(albumId, title);
+            }
+        });
+    }
+
+    @Override
+    public void getAllVKAlbums() {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                Logger.d("SyncSerice getAllVKAlbums");
+                vKDataSource.getAlbumSource().getAllVKAlbums();
+            }
+        });
+    }
+
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onGetVKAlbumsEvent(GetVKAlbumsEvent getVKAlbumsEvent) {
         Logger.d("SyncSerice onGetVKAlbumsEvent");
         List<PhotoAlbum> vKphotoAlbumList = getVKAlbumsEvent.albumsList;
         LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
-        List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllAlbums();
+        List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllSynchronizedAlbums();
         for (int i = 0, vKphotoAlbumListSize = vKphotoAlbumList.size(); i < vKphotoAlbumListSize; i++) {
             PhotoAlbum photoAlbum = vKphotoAlbumList.get(i);
             if (localAlbumsList.contains(photoAlbum)) { //update existing albums
-                localAlbumSource.updateAlbum(photoAlbum);
+                localAlbumSource.updateAlbum(photoAlbum, false);
             } else { //сreate new albums
-                localAlbumSource.saveAlbum(photoAlbum);
+                localAlbumSource.saveAlbum(photoAlbum, false);
             }
         }
 
@@ -145,19 +178,18 @@ public class SyncServiceImpl extends Service implements SyncService {
             for (int i = 0, localAlbumsListSize = localAlbumsList.size(); i < localAlbumsListSize; i++) {
                 PhotoAlbum photoAlbum = localAlbumsList.get(i);
                 photoAlbum.syncStatus = Constants.SYNC_DELETED;
-                localAlbumSource.updateAlbum(photoAlbum);
-            }
-            if (localAlbumsList.size() == 0) {
-                EventBus.getDefault().postSticky(new LocalAlbumEvent());
+                localAlbumSource.updateAlbum(photoAlbum, true);
             }
         }
+        EventBus.getDefault().postSticky(new VKAlbumEvent());
     }
 
     @Override
-    public void getPhotosByAlbumId(final int albumId) {
+    public void getVKPhotosByAlbumId(final int albumId) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
+                localDataSource.getPhotoSource().getSynchronizedPhotosByAlbumId(albumId);
                 vKDataSource.getPhotoSource().getPhotosByAlbumId(albumId);
             }
         });
@@ -216,9 +248,12 @@ public class SyncServiceImpl extends Service implements SyncService {
             @Override
             public void run() throws Exception {
                 LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
-                List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllAlbums();
+                List<PhotoAlbum> localAlbumsList = localAlbumSource.getAllSynchronizedAlbums();
                 for (PhotoAlbum localAlbum : localAlbumsList) {
                     if (localAlbum.getId() == photoAlbumId) {
+                        if (localAlbum.syncStatus == Constants.SYNC_STARTED) {
+                            FileManager.deleteAlbumDirectory(localAlbum.filePath);
+                        }
                         localAlbumSource.deleteAlbum(localAlbum);
                     }
                 }
@@ -284,10 +319,46 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                for (PhotoAlbum photoAlbum : deleteAlbumsList){
+                for (PhotoAlbum photoAlbum : deleteAlbumsList) {
                     Logger.d("now deleting photoAlbum: " + photoAlbum.filePath);
                     List<Photo> deletePhotoList = localDataSource.getPhotoSource().getLocalPhotosByAlbumId(photoAlbum.id);
                     localDataSource.getPhotoSource().deleteLocalPhotos(deletePhotoList);
+                    eventBus.post(new LocalALbumEvent());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void startSync() {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                syncAlbums(localDataSource.getAlbumSource().getAlbumsToSync());
+            }
+        });
+    }
+
+    @Override
+    public void cancelAlbumsSync(final List<PhotoAlbum> selectedAlbums) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                try {
+                    for (PhotoAlbum photoAlbum : selectedAlbums) {
+                        Future<Boolean> booleanFuture = futureMap.get(photoAlbum.id);
+                        if (booleanFuture != null) {
+                            booleanFuture.cancel(true);
+                            Logger.d(booleanFuture.toString() + " canceled");
+                            futureMap.remove(photoAlbum.id);
+                        }
+                    }
+                    for (PhotoAlbum photoAlbum : selectedAlbums) {
+                        photoAlbum.syncStatus = Constants.SYNC_NOT_STARTED;
+                        localDataSource.getAlbumSource().updateAlbum(photoAlbum, true);
+                    }
+                } catch (Exception e) {
+                    Logger.d(e.toString());
                 }
             }
         });

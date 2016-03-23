@@ -39,7 +39,6 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
     public List<PhotoAlbum> getAllLocalAlbums() {
         Logger.d("user wants to getAllLocalAlbums");
         Logger.d("no body");
-//        return syncService.getAllLocalAlbums();
         return null;
     }
 
@@ -62,6 +61,13 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
             if (checkSyncService()) {
                 syncService.deleteSelectedLocalPhotoAlbums(deleteList);
             }
+        }
+    }
+
+    @Override
+    public void editAlbum(int albumId, String title) {
+        if (checkSyncService()) {
+            syncService.editLocalAlbum(albumId, title);
         }
     }
 

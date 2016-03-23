@@ -18,8 +18,6 @@ import com.khasang.vkphoto.util.JsonUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKResponse;
 
-import org.greenrobot.eventbus.util.AsyncExecutor;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,20 +71,16 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
 
     /**
      * Отправить запрос в службу синхронизации на получение списка альбомов.
-     * Когда служба получит альбомы от ВК, вызовет колбэк метод у onGetAllAlbumsListener
+     * Когда служба получит альбомы от ВК, вызовет колбэк метод getVKAlbumsEvent
      *
      * @see SyncService
      * @see SyncServiceProvider
      */
     @Override
-    public void getAllAlbums() {
-        AsyncExecutor asyncExecutor = AsyncExecutor.create();
-        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
-            @Override
-            public void run() throws Exception {
-                if (checkSyncService()) syncService.getAllAlbums();
-            }
-        });
+    public void getAllVKAlbums() {
+        if (checkSyncService()) {
+            syncService.getAllVKAlbums();
+        }
     }
 
     @Override
@@ -94,6 +88,20 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
                          final int privacy, final int commentPrivacy) {
         checkSyncService();
         syncService.addAlbum(title, description, privacy, commentPrivacy);
+    }
+
+    @Override
+    public void editAlbum(int albumId, String title, String description) {
+        if (checkSyncService()) {
+                syncService.editAlbum(albumId, title, description);
+        }
+    }
+
+    @Override
+    public void editPrivacyAlbum(int albumId, int privacy) {
+        if (checkSyncService()) {
+            syncService.editPrivacyAlbum(albumId, privacy);
+        }
     }
 
     @Override
@@ -109,6 +117,13 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
                 }
                 syncService.deleteSelectedVkPhotoAlbums(photoAlbumList);
             }
+        }
+    }
+
+    @Override
+    public void cancelAlbumsSync(List<PhotoAlbum> selectedAlbums) {
+        if (checkSyncService()) {
+            syncService.cancelAlbumsSync(selectedAlbums);
         }
     }
 

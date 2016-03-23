@@ -2,6 +2,7 @@ package com.khasang.vkphoto.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import java.io.File;
@@ -17,7 +18,8 @@ public class StorageUtils {
                 return file;
             }
         }
-        File mostFreeFile = context.getExternalFilesDir(null);
+        File mostFreeFile = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM);
         if (mostFreeFile != null) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(STORAGE_PATH, mostFreeFile.getAbsolutePath());

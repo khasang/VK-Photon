@@ -10,12 +10,14 @@ public interface AlbumsView extends View {
 
     void displayVkSaveAlbum(PhotoAlbum photoAlbum);
 
-    void removeAlbumsFromView();
-
     void displayAlbums();
 
     void displayRefresh(boolean refreshing);
 
     Cursor getAdapterCursor();
+
+    void editAlbum(int albumId, String title, String description);
+
+    void editPrivacy(int albumId, int privacy);
 }
       

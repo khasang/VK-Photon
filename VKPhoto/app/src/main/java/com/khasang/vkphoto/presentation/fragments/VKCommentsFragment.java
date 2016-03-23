@@ -93,6 +93,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
             }
         });
         loadPhoto();
+        ((FabProvider) getContext()).getFloatingActionButton().hide();
         return view;
     }
 
@@ -181,6 +182,11 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     }
 
     @Override
+    public void confirmDelete(MultiSelector multiSelector) {
+
+    }
+
+    @Override
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
         if (presenter == null) {
@@ -193,9 +199,16 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         }
     }
 
-    @Override
-    public void confirmDelete(MultiSelector multiSelector) {
-
+    private void focusOnView(final ScrollView scroll, final View view) {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                int vTop = view.getTop();
+                int vBottom = view.getBottom();
+                int vHeight = scroll.getHeight();
+                scroll.smoothScrollTo(((vTop + vBottom - vHeight) / 2), 0);
+            }
+        });
     }
 }
 
