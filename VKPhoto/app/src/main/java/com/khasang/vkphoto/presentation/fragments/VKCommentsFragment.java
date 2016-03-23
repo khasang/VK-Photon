@@ -198,17 +198,5 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
             presenter.unregisterEventBus();
         }
     }
-
-    private void focusOnView(final ScrollView scroll, final View view) {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                int vTop = view.getTop();
-                int vBottom = view.getBottom();
-                int vHeight = scroll.getHeight();
-                scroll.smoothScrollTo(((vTop + vBottom - vHeight) / 2), 0);
-            }
-        });
-    }
 }
 
