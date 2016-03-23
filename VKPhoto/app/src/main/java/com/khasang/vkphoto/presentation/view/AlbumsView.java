@@ -15,5 +15,9 @@ public interface AlbumsView extends View {
     void displayRefresh(boolean refreshing);
 
     Cursor getAdapterCursor();
+
+    void editAlbum(int albumId, String title, String description);
+
+    void editPrivacy(int albumId, int privacy);
 }
       

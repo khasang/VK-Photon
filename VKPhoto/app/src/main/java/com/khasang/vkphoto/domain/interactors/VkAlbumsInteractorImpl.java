@@ -91,6 +91,20 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     }
 
     @Override
+    public void editAlbum(int albumId, String title, String description) {
+        if (checkSyncService()) {
+                syncService.editAlbum(albumId, title, description);
+        }
+    }
+
+    @Override
+    public void editPrivacyAlbum(int albumId, int privacy) {
+        if (checkSyncService()) {
+            syncService.editPrivacyAlbum(albumId, privacy);
+        }
+    }
+
+    @Override
     public void deleteVkAlbum(MultiSelector multiSelector, Cursor cursor) {
         if (checkSyncService()) {
             List<Integer> selectedPositions = multiSelector.getSelectedPositions();

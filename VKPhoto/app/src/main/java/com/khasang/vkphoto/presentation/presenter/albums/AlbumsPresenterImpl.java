@@ -73,6 +73,18 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
         vkAlbumsInteractor.addAlbum(title, description, privacy, commentPrivacy);
     }
 
+    @Override
+    public void editAlbumById(int albumId, String title, String description) {
+        vkAlbumsInteractor.editAlbum(albumId, title, description);
+        actionMode.finish();
+    }
+
+    @Override
+    public void editPrivacyAlbumById(int albumId, int privacy) {
+        vkAlbumsInteractor.editPrivacyAlbum(albumId, privacy);
+        actionMode.finish();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void OnVKAlbumEvent(VKAlbumEvent VKAlbumEvent) {
         Logger.d("got vkAlbumEvent");
@@ -125,6 +137,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
 //                    case R.id.action_download_album:
 //                        return true;
                     case R.id.action_edit_album:
+                        editSelectedAlbum(multiSelector);
                         return true;
                     case R.id.action_select_all:
                         for (int i = 0; i < vkAlbumsView.getAdapterCursor().getCount(); i++) {
@@ -138,12 +151,40 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
                     case R.id.action_cancel_sync_album:
                         vkAlbumsInteractor.cancelAlbumsSync(getSelectedAlbums(multiSelector.getSelectedPositions(), vkAlbumsView.getAdapterCursor()));
                         return true;
+                    case R.id.action_privacy:
+                        editPrivacySelectedAlbum(multiSelector);
+                        return true;
                     default:
                         break;
                 }
                 return false;
             }
         });
+    }
+
+    private void editPrivacySelectedAlbum(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Cursor cursor = vkAlbumsView.getAdapterCursor();
+        PhotoAlbum album;
+        if (cursor != null) {
+            Integer position = selectedPositions.get(0);
+            cursor.moveToPosition(position);
+            album = new PhotoAlbum(cursor);
+
+            vkAlbumsView.editPrivacy(album.getId(), album.privacy);
+        }
+    }
+
+    private void editSelectedAlbum(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Cursor cursor = vkAlbumsView.getAdapterCursor();
+        PhotoAlbum album;
+        if (cursor != null) {
+            Integer position = selectedPositions.get(0);
+            cursor.moveToPosition(position);
+            album = new PhotoAlbum(cursor);
+            vkAlbumsView.editAlbum(album.getId(), album.title, album.description);
+        }
     }
 
     @Override

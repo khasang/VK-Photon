@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -269,6 +270,31 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     @Override
     public Cursor getAdapterCursor() {
         return adapter.getCursor();
+    }
+
+    @Override
+    public void editAlbum(final int albumId, String title, String description) {
+        View view = View.inflate(getContext(), R.layout.fragment_local_edit_album, null);
+        ((EditText) view.findViewById(R.id.et_local_album_title)).setText(title);
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.edit_album)
+                .customView(view, true)
+                .positiveText(R.string.st_btn_ok)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        View dialogView = dialog.getView();
+                        localAlbumsPresenter.editAlbumById(albumId,
+                                ((EditText) dialogView.findViewById(R.id.et_local_album_title)).getText().toString());
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public void editPrivacy(int albumId, int privacy) {
+
     }
 
 

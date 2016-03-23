@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.presentation.presenter.albums;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.view.MenuItem;
@@ -89,6 +90,7 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
 //                            case R.id.action_upload_album:
 //                                return true;
                             case R.id.action_edit_album:
+                                editSelectedAlbum(multiSelector);
                                 return true;
                             case R.id.action_select_all:
                                 for (int i = 0; i < albumsView.getAdapterCursor().getCount(); i++) {
@@ -105,6 +107,24 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
                         return false;
                     }
                 });
+    }
+
+    private void editSelectedAlbum(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Cursor cursor = albumsView.getAdapterCursor();
+        PhotoAlbum album;
+        if (cursor != null) {
+            Integer position = selectedPositions.get(0);
+            cursor.moveToPosition(position);
+            album = new PhotoAlbum(cursor);
+            albumsView.editAlbum(album.getId(), album.title, null);
+        }
+    }
+
+    @Override
+    public void editAlbumById(int albumId, String title) {
+        albumsInteractor.editAlbum(albumId, title);
+        actionMode.finish();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
