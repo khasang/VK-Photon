@@ -30,10 +30,6 @@ public interface SyncService {
 
     void deleteSelectedVkPhotos(List<Photo> photoList);
 
-    void deleteVKAlbumById(int albumId);
-
-    void deleteAlbumFromDbById(int photoAlbumId);
-
     void deleteSelectedVkPhotoAlbums(List<PhotoAlbum> photoAlbumList);
 
     /**

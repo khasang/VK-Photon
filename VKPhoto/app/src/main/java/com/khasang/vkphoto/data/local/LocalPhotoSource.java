@@ -87,14 +87,6 @@ public class LocalPhotoSource {
     }
 
     public void deleteLocalPhotos(List<Photo> photoList) {
-//        for (Photo photo : photoList) {
-//            Logger.d("now deleting photo: " + photo.filePath);
-//            ContentResolver cr = context.getContentResolver();
-//            Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-//            if (cr.delete(images, BaseColumns._ID + " = ?", new String[]{String.valueOf(photo.id)}) == -1){
-//                Logger.d("error while deleting file: " + photo.filePath);
-//            }
-//        }
         String[] ids = new String[photoList.size()];
         for (int i = 0; i < ids.length; i++) {
             ids[i] = String.valueOf(photoList.get(i).id);
@@ -104,6 +96,38 @@ public class LocalPhotoSource {
         Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         if (contentResolver.delete(images, BaseColumns._ID + " in (" + joinedIds + ")", null) == -1) {
             Logger.d("error while deleting photoAlbum ");
+        }
+    }
+
+    public void deletePhotoListFromDB(List<Photo> photoList) {
+        for (Photo photo : photoList) {
+            deletePhotoFromDB(photo);
+        }
+    }
+
+    private void deletePhotoFromDB(Photo photo) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            Logger.d("deletePhotoFromDB. photoFilePath=" + photo.filePath);
+
+            Cursor cursor = db.query(PhotosTable.TABLE_NAME, new String[]{PhotosTable.FILE_PATH}, null, null, null, null, null);
+            while(cursor.moveToNext()){
+                int filePathColumn = cursor.getColumnIndex(PhotosTable.FILE_PATH);
+                Logger.d("deletePhotoFromDB. DBfilePath=" + cursor.getString(filePathColumn));
+            }
+            cursor.close();
+
+            Logger.d("deletePhotoFromDB. deleted=" +
+                    db.delete(PhotosTable.TABLE_NAME, PhotosTable.FILE_PATH + " = ?", new String[]{String.valueOf(photo.filePath)}));
+            db.setTransactionSuccessful();
+        }
+        catch (Exception e) {
+            Logger.d("deletePhotoFromDB error: " + photo.getName());
+            e.printStackTrace();
+        }
+        finally {
+            db.endTransaction();
         }
     }
 
