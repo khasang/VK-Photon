@@ -86,9 +86,15 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
                             case R.id.action_sync_album:
                                 syncAlbums(multiSelector);
                                 return true;
-                            case R.id.action_upload_album:
-                                return true;
+//                            case R.id.action_upload_album:
+//                                return true;
                             case R.id.action_edit_album:
+                                return true;
+                            case R.id.action_select_all:
+                                for (int i = 0; i < albumsView.getAdapterCursor().getCount(); i++) {
+                                    multiSelector.setSelected(i, 0, true);
+                                    actionMode.getMenu().findItem(R.id.action_edit_album).setVisible(false);
+                                }
                                 return true;
                             case R.id.action_delete_album:
                                 albumsView.confirmDelete(multiSelector);
