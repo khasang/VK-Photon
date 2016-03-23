@@ -3,6 +3,7 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -156,6 +157,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             storeImage(photo);
+            localAlbumPresenter.getPhotosByAlbumId(albumId);
         }
     }
 
@@ -165,21 +167,20 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         String mImageName="MI_"+ timeStamp +".jpg";
         mediaFile = new File(photoAlbum.filePath + File.separator + mImageName);
         File pictureFile = mediaFile;
-        if (pictureFile == null) {
-            Logger.d("Error creating media file, check storage permissions: ");
-            return;
-        }
         try {
             FileOutputStream fos = new FileOutputStream(pictureFile);
             image.compress(Bitmap.CompressFormat.JPEG, 90, fos);
             fos.flush();
             fos.close();
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(pictureFile);
+            mediaScanIntent.setData(contentUri);
+            getContext().sendBroadcast(mediaScanIntent);
         } catch (FileNotFoundException e) {
             Logger.d( "File not found: " + e.getMessage());
         } catch (IOException e) {
             Logger.d("Error accessing file: " + e.getMessage());
         }
-        
     }
     //lifecycle methods
     @Override
