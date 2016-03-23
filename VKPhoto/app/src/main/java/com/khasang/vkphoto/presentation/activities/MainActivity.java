@@ -1,7 +1,10 @@
 package com.khasang.vkphoto.presentation.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -11,6 +14,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -24,6 +28,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.events.CloseActionModeEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
@@ -33,6 +39,7 @@ import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.AlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -87,6 +94,29 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE (29025) is an app-defined int constant
         }
     }
+
+//    private static void requestPermission(final Context context){
+//        if(ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+//            new AlertDialogWrapper.Builder(context)
+//                    .setTitle(R.string.title)
+//                    .setMessage(R.string.request_write_permission)
+//                    .setNegativeButton(R.string.st_btn_ok, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+////                            ActivityCompat.requestPermissions( ((Activity) context,
+////                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+////                                    Constants.REQUEST_WRITE_EXTERNAL_STORAGE);
+//                        }
+//                    }).show();
+//
+//        }else {
+//            // permission has not been granted yet. Request it directly.
+//            ActivityCompat.requestPermissions((Activity)context,
+//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                    Constants.REQUEST_WRITE_EXTERNAL_STORAGE);
+//        }
+//    }
 
     private void measureScreen() {
         DisplayMetrics metrics = new DisplayMetrics();

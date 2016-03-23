@@ -2,6 +2,7 @@
     <string name="app_name">VKPhoto</string>
     <string name="action_settings">Settings</string>
     <string name="title_of_album">Title</string>
+    <string name="request_write_permission">App request wtire external permission</string>
     <string name="count_of_photos_in_album">Photos in album: %d</string>
     <string name="service_connecting_error">Service is connecting</string>
     <string name="sync_album">Synchronize album</string>
@@ -54,7 +55,7 @@
         <item quantity="one">will be completely removed!\nAre you sure?</item>
         <item quantity="other">will be completely removed!\nAre you sure?</item>
     </plurals>
->>>>>>> feature/delete-albums
+
     <string name="delete">Delete</string>
 
     <!-- Strings related to Settings -->
