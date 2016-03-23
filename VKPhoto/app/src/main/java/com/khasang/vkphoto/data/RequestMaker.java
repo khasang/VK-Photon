@@ -58,7 +58,7 @@ public class RequestMaker {
     }
 
     public static void getAllVkAlbums(VKRequest.VKRequestListener vkRequestListener) {
-        final VKRequest request = getVkRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId));
+        final VKRequest request = getVkRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId,"need_system",1));
         request.executeWithListener(vkRequestListener);
     }
 
@@ -93,28 +93,38 @@ public class RequestMaker {
         request.executeWithListener(vkRequestListener);
     }
 
-    public static void getCommentsByAlbumId(VKRequest.VKRequestListener vkRequestListener, int album_id){
-        VKRequest request = new VKRequest("photos.getAllComments", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, VKApiConst.ALBUM_ID,album_id, "need_likes", 1));
+    public static void getCommentsByAlbumId(VKRequest.VKRequestListener vkRequestListener, int albumId){
+        VKRequest request = new VKRequest("photos.getAllComments", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, VKApiConst.ALBUM_ID,albumId, "need_likes", 1));
         request.executeWithListener(vkRequestListener);
     }
 
-    public static void getCommentsByPhotoId(VKRequest.VKRequestListener vkRequestListener, int photo_id){
-        VKRequest request = new VKRequest("photos.getComments", VKParameters.from(VKApiConst.OWNER_ID,VKAccessToken.currentToken().userId,"count",100, "photo_id", photo_id, "need_likes", 1,"extended",1));
+    public static void getCommentsByPhotoId(VKRequest.VKRequestListener vkRequestListener, int photoId){
+        VKRequest request = new VKRequest("photos.getComments", VKParameters.from(VKApiConst.OWNER_ID,VKAccessToken.currentToken().userId,"count",100, "photo_id", photoId, "need_likes", 1,"extended",1));
         request.executeWithListener(vkRequestListener);
     }
 
-    public static void deleteComment(VKRequest.VKRequestListener vkRequestListener, int comment_id){
-        VKRequest request = new VKRequest("photos.deleteComment", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "comment_id", comment_id));
+    public static void deleteComment(VKRequest.VKRequestListener vkRequestListener, int commentId){
+        VKRequest request = new VKRequest("photos.deleteComment", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "comment_id", commentId));
         request.executeWithListener(vkRequestListener);
     }
 
-    public static void updateComment(VKRequest.VKRequestListener vkRequestListener, int comment_id, String text){
-        VKRequest request = new VKRequest("photos.editComment", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "comment_id", comment_id, VKApiConst.MESSAGE, text));
+    public static void updateComment(VKRequest.VKRequestListener vkRequestListener, int commentId, String text){
+        VKRequest request = new VKRequest("photos.editComment", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "comment_id", commentId, VKApiConst.MESSAGE, text));
         request.executeWithListener(vkRequestListener);
     }
 
-    public static void createComment(VKRequest.VKRequestListener vkRequestListener, int photo_id, String message){
-        VKRequest request = new VKRequest("photos.createComment", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "photo_id", photo_id, VKApiConst.MESSAGE, message));
+    public static void createComment(VKRequest.VKRequestListener vkRequestListener, int photoId, String message){
+        VKRequest request = new VKRequest("photos.createComment", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, "photo_id", photoId, VKApiConst.MESSAGE, message));
+        request.executeWithListener(vkRequestListener);
+    }
+
+    public static void editAlbumById(VKRequest.VKRequestListener vkRequestListener, int albumId, String title, String description){
+        VKRequest request = new VKRequest("photos.editAlbum", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, VKApiConst.ALBUM_ID, albumId, "title", title, "description", description));
+        request.executeWithListener(vkRequestListener);
+    }
+
+    public static void editPrivacyAlbumById(VKRequest.VKRequestListener vkRequestListener, int albumId, int privacy){
+        VKRequest request = new VKRequest("photos.editAlbum", VKParameters.from(VKApiConst.OWNER_ID, VKAccessToken.currentToken().userId, VKApiConst.ALBUM_ID, albumId, "privacy", privacy));
         request.executeWithListener(vkRequestListener);
     }
 

@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
  * Created by admin on 06.03.2016.
  */
 public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<VkCommentsViewHolder> {
+    public CommentRecyclerViewAdapter() {
+    }
 
     private List<Comment> comments;
     private List<VkProfile> profiles;
@@ -86,8 +88,9 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<VkCommentsV
         return comments.size();
     }
 
-    public void setCommentsList(List<Comment> commentsList) {
+    public void setData(List<Comment> commentsList,List<VkProfile> profiles) {
         this.comments = commentsList;
+        this.profiles = profiles;
         notifyDataSetChanged();
     }
 }

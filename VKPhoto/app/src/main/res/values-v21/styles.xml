@@ -1,4 +1,5 @@
 <resources>
+
     <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
@@ -6,4 +7,37 @@
         <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
     </style>
+
+    <style name="MyMaterialTheme.Base" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/vk_grey_color</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="colorControlNormal">@color/vk_white</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="android:textColorSecondary">@color/vk_share_gray_line</item>
+        <item name="android:searchViewStyle">@style/AppSearchViewStyle</item>
+    </style>
+
+    <style name="AppSearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="queryBackground">@android:color/transparent</item>
+        <item name="searchIcon">@drawable/ic_action_search</item>
+        <item name="closeIcon">@drawable/ic_action_cancel</item>
+        <item name="queryHint">@string/search_hint</item>
+        <item name="android:imeActionId">6</item>
+    </style>
+
+    <style name="MySettingsTheme" parent="Base.Theme.AppCompat.Light">
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">@dimen/pref_text_size</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorControlNormal">@color/vk_white</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+    <string name="search_hint">Search</string>
 </resources>

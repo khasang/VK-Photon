@@ -1,7 +1,9 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 
+import android.app.ActionBar;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
@@ -40,6 +43,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     private ImageView userImage;
     private TextView photolikes, commentCount;
     private LinearLayout hlayout;
+    private ScrollView scrollView;
 
     public static VKCommentsFragment newInstance(Photo photo) {
         Bundle args = new Bundle();
@@ -52,11 +56,14 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new VkCommentsPresenterImpl(this);
+        if(presenter==null){
+            presenter = new VkCommentsPresenterImpl(this);
+        }
         if (getArguments() != null) {
             photo = getArguments().getParcelable(PHOTO_ID);
         }
         ((FabProvider) getContext()).getFloatingActionButton().hide();
+        Logger.d(TAG + " onCreate");
     }
 
     @Override
@@ -68,13 +75,20 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         commentCount = (TextView) view.findViewById(R.id.commentsCount);
         photolikes = (TextView) view.findViewById(R.id.photoLikes);
         hlayout = ((LinearLayout) view.findViewById(R.id.hLayout));
+        scrollView = (ScrollView) view.findViewById(R.id.scrollView);
+
+        adapter = new CommentRecyclerViewAdapter();
+        recyclerView.setAdapter(adapter);
+
         view.findViewById(R.id.commetnsButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (recyclerView.getVisibility() == RecyclerView.GONE) {
-                    presenter.getCommentsByPhotoId(photo.id);
-                    recyclerView.setVisibility(View.VISIBLE);
+                    if (photo.comments > 0) {
+                        presenter.getCommentsByPhotoId(photo.id);
+                    }
                 } else {
+                    userImage.getLayoutParams().height = ActionBar.LayoutParams.MATCH_PARENT;
                     recyclerView.setVisibility(View.GONE);
                 }
             }
@@ -85,7 +99,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     }
 
     private void loadPhoto() {
-        if (!TextUtils.isEmpty(photo.filePath)) {
+        if (TextUtils.isEmpty(photo.photo_130)) {
             Logger.d(VKCommentsFragment.class.getSimpleName()+": image load form local album");
             Glide.with(userImage.getContext())
                     .load("file://" + photo.filePath)
@@ -108,7 +122,6 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         super.onDetach();
     }
 
-
     @Override
     public void onStop() {
         super.onStop();
@@ -116,6 +129,13 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         presenter.onStop();
         hlayout.setVisibility(View.GONE);
 
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Logger.d(TAG + " onResume");
     }
 
     @Override
@@ -139,12 +159,13 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
 
     @Override
     public void displayVkComments(List<Comment> comments, List<VkProfile> profiles) {
-        adapter = new CommentRecyclerViewAdapter(comments, profiles);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(itemAnimator);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+            RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setItemAnimator(itemAnimator);
+            adapter.setData(comments, profiles);
+            userImage.getLayoutParams().height = ActionBar.LayoutParams.WRAP_CONTENT;
+            recyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -166,5 +187,29 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
 
     }
 
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+        if(presenter==null){
+            presenter = new VkCommentsPresenterImpl(this);
+        }
+        if(menuVisible){
+            presenter.registerEventBus();
+        }else {
+            presenter.unregisterEventBus();
+        }
+    }
+
+    private void focusOnView(final ScrollView scroll, final View view) {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                int vTop = view.getTop();
+                int vBottom = view.getBottom();
+                int vHeight = scroll.getHeight();
+                scroll.smoothScrollTo(((vTop + vBottom - vHeight) / 2), 0);
+            }
+        });
+    }
 }
 

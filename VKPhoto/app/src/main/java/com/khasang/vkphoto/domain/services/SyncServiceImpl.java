@@ -115,6 +115,38 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
+    public void editAlbum(final int albumId, final String title, final String description) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                localDataSource.getAlbumSource().editAlbumById(albumId, title, description);
+                vKDataSource.getAlbumSource().editAlbumById(albumId, title, description);
+            }
+        });
+    }
+
+    @Override
+    public void editPrivacyAlbum(final int albumId, final int privacy) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                localDataSource.getAlbumSource().editPrivacyAlbumById(albumId, privacy);
+                vKDataSource.getAlbumSource().editPrivacyAlbumById(albumId, privacy);
+            }
+        });
+    }
+
+    @Override
+    public void editLocalAlbum(final int albumId, final String title) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+//                localDataSource.getAlbumSource().editAlbumById(albumId, title);
+            }
+        });
+    }
+
+    @Override
     public void getAllVKAlbums() {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override

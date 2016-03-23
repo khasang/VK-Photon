@@ -64,6 +64,13 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
         }
     }
 
+    @Override
+    public void editAlbum(int albumId, String title) {
+        if (checkSyncService()) {
+            syncService.editLocalAlbum(albumId, title);
+        }
+    }
+
     boolean checkSyncService() {
         if (syncService == null) {
             if (!setSyncService()) {
