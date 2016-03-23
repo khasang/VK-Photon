@@ -23,11 +23,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -89,7 +86,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
         Logger.d("" + getTag());
         View view = inflater.inflate(R.layout.fragment_albums, container, false);
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
-        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
+        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_photos);
         initSwipeRefreshLayout(view);
         initRecyclerView(view);
         if (savedInstanceState != null) {

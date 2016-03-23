@@ -77,7 +77,7 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         Logger.d("" + getTag());
         View view = inflater.inflate(R.layout.fragment_albums, container, false);
         getActivity().getSupportLoaderManager().initLoader(1, null, this);
-        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
+        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_photos);
         initRecyclerView(view);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {
@@ -330,6 +330,13 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data.moveToFirst()) {
+            do {
+                PhotoAlbum photoAlbum = new PhotoAlbum(data);
+                Logger.d("LocalAlbumsFragment. onLoadFinished. ID=" + photoAlbum.id + ", name=" + photoAlbum.title + ", size=" + photoAlbum.size);
+            } while (data.moveToNext());
+            data.close();
+        }
         if (!initAdapter(data)) {
             adapter.changeCursor(data);
         }
@@ -344,6 +351,7 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         outState.putBoolean(ACTION_MODE_ACTIVE, multiSelector.isSelectable());
     }
 
+    /*
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private ImageView mAlbumThumb;
         private TextView mAlbumTitle;
@@ -353,9 +361,10 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
             super(itemView);
             mAlbumThumb = (ImageView) itemView.findViewById(R.id.album_thumb);
             mAlbumTitle = (TextView) itemView.findViewById(R.id.album_title);
-            mPhotosCount = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
+            mPhotosCount = (TextView) itemView.findViewById(R.id.tv_count_of_photos);
         }
     }
+    */
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
