@@ -19,10 +19,6 @@ public class Constants {
     public static final int SEARCH = 2;
     public static final int ALBUM = 3;
     public static final int PHOTO = 4;
-
-
-    public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
-
 }
 
 

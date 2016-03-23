@@ -12,7 +12,9 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -41,6 +43,7 @@ import com.khasang.vkphoto.presentation.fragments.AlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
+import com.khasang.vkphoto.util.PermissionUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -52,11 +55,15 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider, SearchView.OnQueryTextListener {
+public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider, SearchView.OnQueryTextListener,
+        ActivityCompat.OnRequestPermissionsResultCallback {
     public static final String TAG = MainActivity.class.getSimpleName();
     public static int ALBUM_THUMB_HEIGHT = 0;
     public static int PHOTOS_COLUMNS = 0;
     private static String VIEWPAGER_VISIBLE = "viewpager_visible";
+    public static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_EXTERNAL_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private static Fragment localAlbumsFragment, albumsFragment;
     private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
     private ServiceConnection sConn;
@@ -67,33 +74,178 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private ViewPager viewPager;
     private FloatingActionButton fab;
     private ViewPagerAdapter adapter;
+    private View mLayout;
+
+
+    public void showContacts(View v) {
+        Log.i(TAG, "Show contacts button pressed. Checking permissions.");
+
+        // Verify that all required contact permissions have been granted.
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Contacts permissions have not been granted.
+            Log.i(TAG, "Contact permissions has NOT been granted. Requesting permissions.");
+            requestContactsPermissions();
+
+        } else {
+
+            // Contact permissions have been granted. Show the contacts fragment.
+            Log.i(TAG,
+                    "Contact permissions have already been granted. Displaying contact details.");
+//            showContactDetails();
+        }
+    }
+
+    private void requestContactsPermissions() {
+        // BEGIN_INCLUDE(contacts_permission_request)
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                || ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+            // Provide an additional rationale to the user if the permission was not granted
+            // and the user would benefit from additional context for the use of the permission.
+            // For example, if the request has been denied previously.
+            Log.i(TAG,
+                    "Displaying contacts permission rationale to provide additional context.");
+
+            // Display a SnackBar with an explanation and a button to trigger the request.
+            Snackbar.make(mLayout, R.string.permission_contacts_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.st_btn_ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat
+                                    .requestPermissions(MainActivity.this, PERMISSIONS_EXTERNAL_STORAGE,
+                                            REQUEST_EXTERNAL_STORAGE);
+                        }
+                    })
+                    .show();
+        } else {
+            // Contact permissions have not been granted yet. Request them directly.
+            ActivityCompat.requestPermissions(this, PERMISSIONS_EXTERNAL_STORAGE, REQUEST_EXTERNAL_STORAGE);
+        }
+        // END_INCLUDE(contacts_permission_request)
+    }
+
+//    private void showContactDetails() {
+//        getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.sample_content_fragment, ContactsFragment.newInstance())
+//                .addToBackStack("contacts")
+//                .commit();
+//    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+//        if (requestCode == REQUEST_CAMERA) {
+//            // BEGIN_INCLUDE(permission_result)
+//            // Received permission result for camera permission.
+//            Log.i(TAG, "Received response for Camera permission request.");
+//
+//            // Check if the only required permission has been granted
+//            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // Camera permission has been granted, preview can be displayed
+//                Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
+//                Snackbar.make(mLayout, R.string.permision_available_camera,
+//                        Snackbar.LENGTH_SHORT).show();
+//            } else {
+//                Log.i(TAG, "CAMERA permission was NOT granted.");
+//                Snackbar.make(mLayout, R.string.permissions_not_granted,
+//                        Snackbar.LENGTH_SHORT).show();
+//
+//            }
+//            // END_INCLUDE(permission_result)
+//
+//        } else
+        if (requestCode == REQUEST_EXTERNAL_STORAGE) {
+            Log.i(TAG, "Received response for contact permissions request.");
+
+            // We have requested multiple permissions for contacts, so all of them need to be
+            // checked.
+            if (PermissionUtils.verifyPermissions(grantResults)) {
+                // All required permissions have been granted, display contacts fragment.
+                Snackbar.make(mLayout, R.string.permision_available_contacts,
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+            } else {
+                Log.i(TAG, "Contacts permissions were NOT granted.");
+                Snackbar.make(mLayout, R.string.permissions_not_granted,
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+            }
+
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkPermission();
-        setContentView(R.layout.activity_main);
-        initServiceConnection(savedInstanceState);
-        loginVk();
-        initViews();
-        initViewPager();
-        if (savedInstanceState != null) {
-            Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
+//        if (checkPermission())
+//        verifyStoragePermissions();
+        {
+            setContentView(R.layout.activity_main);
+            mLayout = findViewById(R.id.sample_main_layout);
+            initServiceConnection(savedInstanceState);
+            loginVk();
+            initViews();
+            initViewPager();
+            if (savedInstanceState != null) {
+                Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
+            }
+            measureScreen();
         }
-        measureScreen();
     }
 
-    private void checkPermission(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Explain to the user why we need to read the contacts
-            }
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 29025);
-            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE (29025) is an app-defined int constant
-        }
-    }
+//    private boolean checkPermission() {
+//        boolean isPermissionApply = true;
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+//                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+////            // Should we show an explanation?
+//            if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+////                // Explain to the user why we need to read the contacts
+////                new AlertDialogWrapper.Builder(getApplicationContext())
+////                        .setTitle(R.string.title)
+////                        .setMessage(R.string.request_write_permission)
+////                        .setNegativeButton(R.string.st_btn_ok, new DialogInterface.OnClickListener() {
+////                            @Override
+////                            public void onClick(DialogInterface dialog, int which) {
+////                                dialog.dismiss();
+////
+//////                            ActivityCompat.requestPermissions( ((Activity) context,
+//////                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//////                                    Constants.REQUEST_WRITE_EXTERNAL_STORAGE);
+////                            }
+////                        }).show();
+//                isPermissionApply = true;
+//            } else {
+////                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+////                    Constants.REQUEST_WRITE_EXTERNAL_STORAGE);
+////                isPermissionApply = false;
+//            }
+////            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 29025);
+//            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE (29025) is an app-defined int constant
+//        }
+//        return isPermissionApply;
+//    }
+
+//    public void verifyStoragePermissions() {
+//        // Check if we have write permission
+//        int permission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//
+//        if (permission != PackageManager.PERMISSION_GRANTED) {
+//            // We don't have permission so prompt the user
+//            requestPermissions(
+//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                    REQUEST_WRITE_EXTERNAL_STORAGE
+//            );
+//        }
+//    }
 
 //    private static void requestPermission(final Context context){
 //        if(ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
