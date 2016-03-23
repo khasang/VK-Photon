@@ -46,7 +46,12 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
 
     public void syncAlbums(MultiSelector multiSelector) {
         vkAlbumsInteractor.syncAlbums(multiSelector, vkAlbumsView.getAdapterCursor());
-        actionMode.finish();
+        if (actionMode != null) {
+            actionMode.finish();
+        }
+        else {
+            Logger.d("AlbumsPresenterImpl. actionMode == null. avoiding instruction actionMode.finish()");
+        }
     }
 
     @Override

@@ -60,7 +60,7 @@ public class LocalAlbumSource {
         if (oldAlbum == null) {
             saveAlbum(photoAlbum, false);
         } else {
-            Logger.d("update " + photoAlbum.id + " photoAlbum");
+            Logger.d("LocalAlbumSource. updateAlbum " + photoAlbum.id);
             ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum, isLocal);
             if (contentValues.size() > 0) {
                 db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
@@ -92,7 +92,7 @@ public class LocalAlbumSource {
     //после его использования необходимо заново выполнить поиск всего, что программа считает альбомом
     public void deleteLocalAlbums(List<PhotoAlbum> photoAlbumList, LocalPhotoSource localPhotoSource) {
         for (PhotoAlbum photoAlbum : photoAlbumList) {
-            Logger.d("now deleting photoAlbum: " + photoAlbum.filePath);
+            Logger.d("LocalAlbumSource. now deleting photoAlbum: " + photoAlbum.filePath);
             List<Photo> deleteList = localPhotoSource.getLocalPhotosByAlbumId(photoAlbum.id);
             localPhotoSource.deleteLocalPhotos(deleteList);
         }
@@ -111,7 +111,7 @@ public class LocalAlbumSource {
     }
 
     public List<PhotoAlbum> getAllSynchronizedAlbums() {
-        Logger.d("LocalAlbumSource getAllSynchronizedAlbums");
+        Logger.d("LocalAlbumSource. getAllSynchronizedAlbums");
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
         Cursor cursor = getAllSynchronizedAlbumsCursor();
         cursor.moveToFirst();
@@ -172,13 +172,16 @@ public class LocalAlbumSource {
                 title = cursor.getString(titleColumn);
                 thumbPath = cursor.getString(thumbPathColumn);
                 String filePath = thumbPath.substring(0, thumbPath.lastIndexOf("/"));
-                int photosCount = new File(filePath).listFiles(new ImageFileFilter()).length;
-                builder = matrixCursor.newRow();
-                builder.add(id)
-                        .add(title)
-                        .add(filePath)
-                        .add(thumbPath)
-                        .add(photosCount);
+                File[] array = new File(filePath).listFiles(new ImageFileFilter());
+                if (array != null) {
+                    int photosCount = array.length;
+                    builder = matrixCursor.newRow();
+                    builder.add(id)
+                            .add(title)
+                            .add(filePath)
+                            .add(thumbPath)
+                            .add(photosCount);
+                }
             } while (cursor.moveToNext());
             cursor.close();
         }

@@ -13,9 +13,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileManager {
     public static final String BASE_DIR_NAME = "VK Photo";
+    private static String BASE_DIR_PATH = "";
     public static final String BASE_DIRECTORY = "base_directory";
     public static final String JPEG_FORMAT = "/%d.jpg";
 
@@ -61,7 +64,8 @@ public class FileManager {
             Logger.d("storageDirectory = null");
             return false;
         }
-        File baseDirectory = new File(storageDirectory.getAbsolutePath() + "/" + BASE_DIR_NAME);
+        BASE_DIR_PATH = storageDirectory.getAbsolutePath() + "/" + BASE_DIR_NAME;
+        File baseDirectory = new File(BASE_DIR_PATH);
         if (checkDirectoryExists(baseDirectory) || baseDirectory.mkdirs()) {
             if (!defaultSharedPreferences.getString(BASE_DIRECTORY, "").equals(baseDirectory.getAbsolutePath())) {
                 SharedPreferences.Editor editor = defaultSharedPreferences.edit();
@@ -82,8 +86,8 @@ public class FileManager {
         return checkDirectoryExists(baseDirectory) ? baseDirectory : null;
     }
 
-    private static boolean checkDirectoryExists(File file) {
-        return file.exists() && file.isDirectory();
+    private static boolean checkDirectoryExists(File folder) {
+        return folder.exists() && folder.isDirectory();
     }
 
     public static File saveImage(String urlPath, PhotoAlbum photoAlbum, int photoId) {
@@ -92,22 +96,19 @@ public class FileManager {
         try {
             URL url = new URL(urlPath);
             URLConnection urlConnection = url.openConnection();
-            //  long total = 0;
             urlConnection.connect();
             String targetFileName = String.format(JPEG_FORMAT, photoId);
-            //  int lenghtOfFile = urlConnection.getContentLength();
-            String folderPath = photoAlbum.filePath + "/";
+//            String folderPath = photoAlbum.filePath + "/";
+            String folderPath = replaceIdWithNameInAlbumPath(photoAlbum);
             String filePath = folderPath + targetFileName;
             File folder = new File(folderPath);
-            if (!folder.exists()) {
+            if (!checkDirectoryExists(folder)) {
                 folder.mkdirs();//If there is no folder it will be created.
             }
             InputStream input = new BufferedInputStream(url.openStream());
             OutputStream output = new FileOutputStream(filePath, false);
             byte data[] = new byte[1024];
             while ((count = input.read(data)) != -1 && !Thread.currentThread().isInterrupted()) {
-                //      total += count;
-//                publishProgress((int) (total * 100 / lenghtOfFile));
                 output.write(data, 0, count);
             }
             output.flush();
@@ -118,5 +119,55 @@ public class FileManager {
             Logger.d(e.toString());
         }
         return file;
+    }
+
+    private static String replaceIdWithNameInAlbumPath(PhotoAlbum photoAlbum){
+        String albumPathFixed = photoAlbum.filePath;
+        if (!"".equals(photoAlbum.title)){
+            String albumID = String.valueOf(photoAlbum.id);
+            String albumName = photoAlbum.title;
+            albumPathFixed = albumPathFixed.replace(albumID, albumName);
+//            checkIfDirNameExist(albumPathFixed, photoAlbum);
+        }
+        return albumPathFixed;
+    }
+
+    //проверить имя альбома на уникальность
+    //код не завершен. необходимо дописывать метод перед его подключением
+    private static String checkIfDirNameExist(String albumPathToBeFixed, PhotoAlbum photoAlbum) {
+        File folder = new File(BASE_DIR_PATH);
+        File[] allFilesInBaseDir = folder.listFiles();
+        List<String> foldersPathsInBaseDir = new ArrayList<>();
+        for (File fileInBaseDir : allFilesInBaseDir) {
+            if (fileInBaseDir.isDirectory()) {
+                foldersPathsInBaseDir.add(fileInBaseDir.getAbsolutePath());
+            }
+        }
+        if (foldersPathsInBaseDir.contains(albumPathToBeFixed)) {//тут точно мистейк
+            Logger.d("oh shit!");
+            String foundPhotoAlbumPath = foldersPathsInBaseDir.get(foldersPathsInBaseDir.indexOf(albumPathToBeFixed));
+            String foundPhotoAlbumName = foundPhotoAlbumPath.substring(foundPhotoAlbumPath.lastIndexOf('/') + 1);
+            //проверить, не фиксили ли мы это имя альбома раньше
+            //потом кто-нибудь заменит это на регекс
+            if (foundPhotoAlbumName.endsWith(" (2)") || foundPhotoAlbumName.endsWith(" (3)") ||
+                    foundPhotoAlbumName.endsWith(" (4)") || foundPhotoAlbumName.endsWith(" (5)") ||
+                    foundPhotoAlbumName.endsWith(" (6)") || foundPhotoAlbumName.endsWith(" (7)") ||
+                    foundPhotoAlbumName.endsWith(" (8)") || foundPhotoAlbumName.endsWith(" (9)") ||
+                    foundPhotoAlbumName.endsWith(" (10)") || foundPhotoAlbumName.endsWith(" (11)") ||
+                    foundPhotoAlbumName.endsWith(" (12)") || foundPhotoAlbumName.endsWith(" (13)") ||
+                    foundPhotoAlbumName.endsWith(" (14)") || foundPhotoAlbumName.endsWith(" (15)") ||
+                    foundPhotoAlbumName.endsWith(" (16)") || foundPhotoAlbumName.endsWith(" (17)") ||
+                    foundPhotoAlbumName.endsWith(" (18)") || foundPhotoAlbumName.endsWith(" (19)")) {
+                int timesCopied = Integer.valueOf(foundPhotoAlbumName.substring(
+                        foundPhotoAlbumName.lastIndexOf("(") + 1, foundPhotoAlbumName.lastIndexOf(")")));
+                foundPhotoAlbumName = foundPhotoAlbumName.replace(String.valueOf(timesCopied), String.valueOf(++timesCopied));
+            } else {
+                foundPhotoAlbumName += " (2)";
+            }
+            Logger.d("FileManager. new PhotoAlbumName" + foundPhotoAlbumName);
+            albumPathToBeFixed = albumPathToBeFixed.substring(foundPhotoAlbumPath.lastIndexOf('/') + 1) + foundPhotoAlbumName;
+            photoAlbum.title = foundPhotoAlbumName;
+        }
+        return albumPathToBeFixed;
     }
 }

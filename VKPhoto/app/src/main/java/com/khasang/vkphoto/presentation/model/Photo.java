@@ -34,14 +34,13 @@ public class Photo extends VKApiPhoto {
     }
 
     public Photo(Cursor cursor, Boolean isAlbumLocal) {
+        this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
         if (isAlbumLocal){
-            this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
             this.album_id = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID));
             this.date = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATE_TAKEN));
             this.filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
         }
         else {
-            this.id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
             this.album_id = cursor.getInt(cursor.getColumnIndex(ALBUM_ID));
             this.owner_id = cursor.getInt(cursor.getColumnIndex(OWNER_ID));
             this.width = cursor.getInt(cursor.getColumnIndex(WIDTH));
@@ -129,6 +128,16 @@ public class Photo extends VKApiPhoto {
     public String getName() {
         char separatorChar = System.getProperty("file.separator", "/").charAt(0);
         String separator = String.valueOf(separatorChar);
+        int separatorIndex = filePath.lastIndexOf(separator);
+        return (separatorIndex < 0) ? filePath : filePath.substring(separatorIndex + 1, filePath.length());
+    }
+
+    public String getNameInDB() {
+        char separatorChar = System.getProperty("file.separator", "/").charAt(0);
+        String separator = String.valueOf(separatorChar);
+//        /storage/emulated/0/Pictures/1458592023063.jpg
+//        /storage/emulated/0/DCIM/VK Photo/143561723/268051143.jpg
+//        /data/data/com.khasang.vkphoto/
         int separatorIndex = filePath.lastIndexOf(separator);
         return (separatorIndex < 0) ? filePath : filePath.substring(separatorIndex + 1, filePath.length());
     }

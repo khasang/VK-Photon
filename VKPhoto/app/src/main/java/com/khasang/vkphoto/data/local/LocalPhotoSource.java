@@ -3,6 +3,7 @@ package com.khasang.vkphoto.data.local;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -20,11 +21,8 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,21 +36,27 @@ public class LocalPhotoSource {
     }
 
     public File savePhotoToAlbum(Photo photo, PhotoAlbum photoAlbum) {
+        Logger.d("savePhotoToAlbum start");
+        //скопируем фото из ВК в локальный альбом, создав альбом при необходимости
+        //filePath=/storage/emulated/0/DCIM/VK Photo/папка/фото
         File imageFile = FileManager.saveImage(photo.getUrlToMaxPhoto(), photoAlbum, photo.id);
         if (imageFile == null) {
             EventBus.getDefault().postSticky(new ErrorEvent(ErrorUtils.PHOTO_NOT_SAVED_ERROR));
         } else {
             photo.filePath = imageFile.getAbsolutePath();
             if (getPhotoById(photo.id) == null) {
+                //добавим запись о новом фото в бд фотографий устройства
+//                    MediaStore.Images.Media.insertImage(context.getContentResolver(), photo.filePath, photo.getName(), photo.text);
+                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri contentUri = Uri.fromFile(imageFile);
+                mediaScanIntent.setData(contentUri);
+                context.sendBroadcast(mediaScanIntent);
+                //добавим запись о новом фото в локальную БД нашего приложения
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
-                try {
-                    MediaStore.Images.Media.insertImage(context.getContentResolver(), photo.filePath, photo.getName(), photo.text);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                db.insert(PhotosTable.TABLE_NAME, null, PhotosTable.getContentValues(photo));
+                Logger.d("savePhotoToAlbum. inserted to DB=" +
+                        db.insert(PhotosTable.TABLE_NAME, null, PhotosTable.getContentValues(photo)));
             } else {
-                Logger.d("Photo " + photo.id + " exists");
+                Logger.d("savePhotoToAlbum. Photo exists " + photo.id);
                 updatePhoto(photo);
             }
         }
