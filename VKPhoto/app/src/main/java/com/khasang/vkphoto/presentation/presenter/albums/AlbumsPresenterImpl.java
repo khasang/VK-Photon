@@ -221,7 +221,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     }
 
     public File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
-        return photoAlbum.thumb_id > 0 ? vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor) : null;
+         return photoAlbum.thumb_id > 0 ? vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor) : null;
     }
 
     @Override

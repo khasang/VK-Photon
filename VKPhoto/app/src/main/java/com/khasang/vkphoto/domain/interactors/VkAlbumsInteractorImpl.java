@@ -144,19 +144,19 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     @Override
     public File downloadAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
         final File[] files = new File[1];
-        RequestMaker.getPhotoAlbumThumb(new MyVkRequestListener() {
+        RequestMaker.getPhotoById(new MyVkRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 try {
-                    final Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
+                    final Photo photo = JsonUtils.getPhotos(response.json, Photo.class).get(0);
                     Future<File> fileFuture = executor.submit(new DownloadPhotoCallable(localPhotoSource, photo, photoAlbum));
                     files[0] = fileFuture.get();
                 } catch (Exception e) {
                     sendError(ErrorUtils.JSON_PARSE_FAILED);
                 }
             }
-        }, photoAlbum);
+        }, photoAlbum.thumb_id);
         return files[0];
     }
 }

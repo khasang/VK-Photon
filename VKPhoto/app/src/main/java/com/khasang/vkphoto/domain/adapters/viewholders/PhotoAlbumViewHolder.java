@@ -120,7 +120,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
             if (file.exists()) {
                 loadPhoto(file);
             }
-        } else {
+        } else if (photoAlbum.thumb_id > 0) {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -131,12 +131,12 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
 
                 private File getAlbumThumb() {
                     final File[] files = new File[1];
-                    RequestMaker.getPhotoAlbumThumb(new MyVkRequestListener() {
+                    RequestMaker.getPhotoById(new MyVkRequestListener() {
                         @Override
                         public void onComplete(VKResponse response) {
                             super.onComplete(response);
                             try {
-                                final Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
+                                final Photo photo = JsonUtils.getPhotos(response.json, Photo.class).get(0);
                                 Future<File> fileFuture = executor.submit(new DownloadPhotoCallable(new LocalPhotoSource(albumThumbImageView.getContext()),
                                         photo, photoAlbum));
                                 addFuture(photo.id, fileFuture);
@@ -146,11 +146,13 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
                                 sendError(ErrorUtils.JSON_PARSE_FAILED);
                             }
                         }
-                    }, photoAlbum);
+                    }, photoAlbum.thumb_id);
                     return files[0];
 //                    return albumsPresenter.getAlbumThumb(localDataSource.getPhotoSource(), photoAlbum, executor);
                 }
             });
+        } else if (photoAlbum.size == 0) {
+            loadPhoto(photoAlbum.owner_id == 0 ? R.mipmap.no_thumb_local : R.mipmap.no_thumb_vk);
         }
     }
 
