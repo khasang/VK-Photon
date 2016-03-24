@@ -11,7 +11,7 @@ import java.util.List;
 public interface LocalAlbumsInteractor {
     void syncLocalAlbums(MultiSelector multiSelector, Cursor cursor);
     List<PhotoAlbum> getAllLocalAlbums();
-    void addAlbum(final String title, final String description, final int privacy, final int commentPrivacy);
+    void addAlbum(String title);
     void deleteLocalAlbums(MultiSelector multiSelector, Cursor cursor);
     void editAlbum(int albumId, String title);
 }

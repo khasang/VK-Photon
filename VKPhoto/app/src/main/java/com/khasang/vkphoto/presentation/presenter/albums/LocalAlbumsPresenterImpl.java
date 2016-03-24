@@ -37,10 +37,8 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     }
 
     @Override
-    public void addAlbum(String title, String thumbPath) {
-        //TODO: implement metod
-        Logger.d("user wants to add new local album");
-//        albumsInteractor.addAlbum(title, description, privacy, commentPrivacy);
+    public void addAlbum(String title) {
+        albumsInteractor.addAlbum(title);
     }
 
     public void syncAlbums(MultiSelector multiSelector) {

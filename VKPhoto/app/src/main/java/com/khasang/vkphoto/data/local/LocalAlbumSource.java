@@ -270,6 +270,16 @@ public class LocalAlbumSource {
         PhotoAlbum album = getAlbumById(albumId);
         album.title = title;
         album.description = description;
+
         updateAlbum(album, true);
+    }
+
+    public void editLocalAlbumById(int albumId, String title) {
+        PhotoAlbum album = getAlbumById(albumId);
+        album.title = title;
+    }
+
+    public void createLocalAlbum(String title) {
+        FileManager.createAlbumDirectory(title, context);
     }
 }

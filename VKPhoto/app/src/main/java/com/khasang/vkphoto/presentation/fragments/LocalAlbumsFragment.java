@@ -97,16 +97,14 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
                 Logger.d("localAlbumsFragment add album");
                 new MaterialDialog.Builder(getContext())
                         .title(R.string.create_album)
-                        .customView(R.layout.fragment_vk_add_album, true)
+                        .customView(R.layout.fragment_local_create_edit_album, true)
                         .positiveText(R.string.create)
                         .negativeText(R.string.cancel)
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 View dialogView = dialog.getView();
-//                                localAlbumsPresenter.addAlbum(
-//                                        ((EditText) dialogView.findViewById(R.id.et_album_title)).getText().toString(),
-//                                        ((EditText) dialogView.findViewById(R.id.et_album_description)).getText().toString());
+                                localAlbumsPresenter.addAlbum(((EditText) dialogView.findViewById(R.id.et_local_album_title)).getText().toString());
                             }
                         })
                         .show();
@@ -273,7 +271,7 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
 
     @Override
     public void editAlbum(final int albumId, String title, String description) {
-        View view = View.inflate(getContext(), R.layout.fragment_local_edit_album, null);
+        View view = View.inflate(getContext(), R.layout.fragment_local_create_edit_album, null);
         ((EditText) view.findViewById(R.id.et_local_album_title)).setText(title);
         new MaterialDialog.Builder(getContext())
                 .title(R.string.edit_album)

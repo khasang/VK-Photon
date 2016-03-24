@@ -137,11 +137,21 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
+    public void createLocalAlbum(final String title) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                localDataSource.getAlbumSource().createLocalAlbum(title);
+            }
+        });
+    }
+
+    @Override
     public void editLocalAlbum(final int albumId, final String title) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-//                localDataSource.getAlbumSource().editAlbumById(albumId, title);
+                localDataSource.getAlbumSource().editLocalAlbumById(albumId, title);
             }
         });
     }
