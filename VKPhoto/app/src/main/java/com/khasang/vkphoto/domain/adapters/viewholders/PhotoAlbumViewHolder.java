@@ -151,6 +151,8 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
 //                    return albumsPresenter.getAlbumThumb(localDataSource.getPhotoSource(), photoAlbum, executor);
                 }
             });
+        } else if (photoAlbum.size == 0) {
+            loadPhoto(photoAlbum.owner_id == 0 ? R.mipmap.no_thumb_local : R.mipmap.no_thumb_vk);
         }
     }
 
