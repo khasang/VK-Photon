@@ -14,6 +14,7 @@ import com.khasang.vkphoto.data.database.MySQliteHelper;
 import com.khasang.vkphoto.data.database.tables.PhotoAlbumsTable;
 import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.LocalALbumEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -270,16 +271,35 @@ public class LocalAlbumSource {
         PhotoAlbum album = getAlbumById(albumId);
         album.title = title;
         album.description = description;
-
         updateAlbum(album, true);
     }
 
     public void editLocalAlbumById(int albumId, String title) {
-        PhotoAlbum album = getAlbumById(albumId);
-        album.title = title;
+        PhotoAlbum album;
+        if (getAlbumById(albumId) != null) {
+            album = getAlbumById(albumId);
+        } else {
+            album = getLocalPhotoAlbumById(albumId);
+        }
+        String newPath = (new File(album.filePath).getParent()) + "/" + title;
+        if (FileManager.renameDir(album.filePath,  newPath)) {
+            album.title = title;
+            album.filePath = newPath;
+            EventBus.getDefault().postSticky(new LocalALbumEvent());
+        }
+        Logger.d("wwwwwwww  "+album.filePath);
     }
 
     public void createLocalAlbum(String title) {
         FileManager.createAlbumDirectory(title, context);
+    }
+
+    private PhotoAlbum getLocalPhotoAlbumById(int albumId) {
+        for (PhotoAlbum album : getAllLocalAlbumsList()) {
+            if (album.getId() == albumId) {
+                return album;
+            }
+        }
+        return null;
     }
 }
