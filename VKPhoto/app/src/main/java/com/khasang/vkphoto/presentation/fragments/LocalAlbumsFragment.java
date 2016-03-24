@@ -45,6 +45,7 @@ import com.khasang.vkphoto.presentation.view.AlbumsView;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -304,9 +305,18 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
 
     @Override
     public void confirmDelete(final MultiSelector multiSelector) {
+        List<String> names = getNamesSelectedAlbums(multiSelector);
         StringBuilder content = new StringBuilder();
-        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_1, multiSelector.getSelectedPositions().size()));
-        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_2, multiSelector.getSelectedPositions().size()));
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_1, names.size()));
+        content.append(" ");
+        for (int i = 0; i < names.size(); i++) {
+            content.append(names.get(i));
+            if (i != names.size() - 1) {
+                content.append(", ");
+            }
+        }
+        content.append(" ");
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_2, names.size()));
         new MaterialDialog.Builder(getContext())
                 .content(content)
                 .positiveText(R.string.delete)
@@ -318,6 +328,20 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
                     }
                 })
                 .show();
+    }
+
+    private List<String> getNamesSelectedAlbums(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        List<String> names = new ArrayList<>();
+        Cursor cursor = getAdapterCursor();
+        if (cursor != null) {
+            for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
+                Integer position = selectedPositions.get(i);
+                cursor.moveToPosition(position);
+                names.add(new PhotoAlbum(cursor).toString());
+            }
+        }
+        return names;
     }
 
     @Override
