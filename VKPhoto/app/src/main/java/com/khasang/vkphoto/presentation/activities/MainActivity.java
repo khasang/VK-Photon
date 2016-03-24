@@ -21,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -42,6 +43,7 @@ import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.AlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.util.Constants;
+import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.PermissionUtils;
 import com.vk.sdk.VKAccessToken;
@@ -74,123 +76,66 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private ViewPager viewPager;
     private FloatingActionButton fab;
     private ViewPagerAdapter adapter;
-    private View mLayout;
 
+    private boolean isExternalStoragePermissionGranted = false;
+    private boolean isGetPermissionsResult = false;
 
-    public void showContacts(View v) {
-        Log.i(TAG, "Show contacts button pressed. Checking permissions.");
-
-        // Verify that all required contact permissions have been granted.
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Contacts permissions have not been granted.
-            Log.i(TAG, "Contact permissions has NOT been granted. Requesting permissions.");
-            requestContactsPermissions();
-
-        } else {
-
-            // Contact permissions have been granted. Show the contacts fragment.
-            Log.i(TAG,
-                    "Contact permissions have already been granted. Displaying contact details.");
-//            showContactDetails();
+    public boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG, "Permission is granted");
+                return true;
+            } else {
+                requestWriteExternalStoragePermission();
+                Log.v(TAG, "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG, "Permission is granted");
+            return true;
         }
     }
 
-    private void requestContactsPermissions() {
-        // BEGIN_INCLUDE(contacts_permission_request)
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                || ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-            // Provide an additional rationale to the user if the permission was not granted
-            // and the user would benefit from additional context for the use of the permission.
-            // For example, if the request has been denied previously.
-            Log.i(TAG,
-                    "Displaying contacts permission rationale to provide additional context.");
-
-            // Display a SnackBar with an explanation and a button to trigger the request.
-            Snackbar.make(mLayout, R.string.permission_contacts_rationale,
-                    Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.st_btn_ok, new View.OnClickListener() {
+    private void requestWriteExternalStoragePermission() {
+//        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            new AlertDialog.Builder(this)
+                    .setTitle("Inform and request")
+                    .setMessage("You need to enable permissions, bla bla bla")
+                    .setPositiveButton(R.string.st_btn_ok, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(View view) {
-                            ActivityCompat
-                                    .requestPermissions(MainActivity.this, PERMISSIONS_EXTERNAL_STORAGE,
-                                            REQUEST_EXTERNAL_STORAGE);
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
                         }
                     })
                     .show();
-        } else {
-            // Contact permissions have not been granted yet. Request them directly.
-            ActivityCompat.requestPermissions(this, PERMISSIONS_EXTERNAL_STORAGE, REQUEST_EXTERNAL_STORAGE);
-        }
-        // END_INCLUDE(contacts_permission_request)
+//        } else {
+//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
+//        }
     }
 
-//    private void showContactDetails() {
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.sample_content_fragment, ContactsFragment.newInstance())
-//                .addToBackStack("contacts")
-//                .commit();
-//    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-
-//        if (requestCode == REQUEST_CAMERA) {
-//            // BEGIN_INCLUDE(permission_result)
-//            // Received permission result for camera permission.
-//            Log.i(TAG, "Received response for Camera permission request.");
-//
-//            // Check if the only required permission has been granted
-//            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                // Camera permission has been granted, preview can be displayed
-//                Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
-//                Snackbar.make(mLayout, R.string.permision_available_camera,
-//                        Snackbar.LENGTH_SHORT).show();
-//            } else {
-//                Log.i(TAG, "CAMERA permission was NOT granted.");
-//                Snackbar.make(mLayout, R.string.permissions_not_granted,
-//                        Snackbar.LENGTH_SHORT).show();
-//
-//            }
-//            // END_INCLUDE(permission_result)
-//
-//        } else
-        if (requestCode == REQUEST_EXTERNAL_STORAGE) {
-            Log.i(TAG, "Received response for contact permissions request.");
-
-            // We have requested multiple permissions for contacts, so all of them need to be
-            // checked.
-            if (PermissionUtils.verifyPermissions(grantResults)) {
-                // All required permissions have been granted, display contacts fragment.
-                Snackbar.make(mLayout, R.string.permision_available_contacts,
-                        Snackbar.LENGTH_SHORT)
-                        .show();
-            } else {
-                Log.i(TAG, "Contacts permissions were NOT granted.");
-                Snackbar.make(mLayout, R.string.permissions_not_granted,
-                        Snackbar.LENGTH_SHORT)
-                        .show();
-            }
-
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
+            isGetPermissionsResult = true;
+            //resume tasks needing this permission
         } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            requestWriteExternalStoragePermission();
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (checkPermission())
-//        verifyStoragePermissions();
+//        do {
+//            requestWriteExternalStoragePermission();
+//        } while (!isGetPermissionsResult);
+//        if (isGetPermissionsResult)
         {
             setContentView(R.layout.activity_main);
-            mLayout = findViewById(R.id.sample_main_layout);
             initServiceConnection(savedInstanceState);
             loginVk();
             initViews();
@@ -201,74 +146,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             measureScreen();
         }
     }
-
-//    private boolean checkPermission() {
-//        boolean isPermissionApply = true;
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-//                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-////            // Should we show an explanation?
-//            if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-////                // Explain to the user why we need to read the contacts
-////                new AlertDialogWrapper.Builder(getApplicationContext())
-////                        .setTitle(R.string.title)
-////                        .setMessage(R.string.request_write_permission)
-////                        .setNegativeButton(R.string.st_btn_ok, new DialogInterface.OnClickListener() {
-////                            @Override
-////                            public void onClick(DialogInterface dialog, int which) {
-////                                dialog.dismiss();
-////
-//////                            ActivityCompat.requestPermissions( ((Activity) context,
-//////                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//////                                    Constants.REQUEST_WRITE_EXTERNAL_STORAGE);
-////                            }
-////                        }).show();
-//                isPermissionApply = true;
-//            } else {
-////                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-////                    Constants.REQUEST_WRITE_EXTERNAL_STORAGE);
-////                isPermissionApply = false;
-//            }
-////            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 29025);
-//            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE (29025) is an app-defined int constant
-//        }
-//        return isPermissionApply;
-//    }
-
-//    public void verifyStoragePermissions() {
-//        // Check if we have write permission
-//        int permission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-//
-//        if (permission != PackageManager.PERMISSION_GRANTED) {
-//            // We don't have permission so prompt the user
-//            requestPermissions(
-//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                    REQUEST_WRITE_EXTERNAL_STORAGE
-//            );
-//        }
-//    }
-
-//    private static void requestPermission(final Context context){
-//        if(ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-//            new AlertDialogWrapper.Builder(context)
-//                    .setTitle(R.string.title)
-//                    .setMessage(R.string.request_write_permission)
-//                    .setNegativeButton(R.string.st_btn_ok, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.dismiss();
-////                            ActivityCompat.requestPermissions( ((Activity) context,
-////                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-////                                    Constants.REQUEST_WRITE_EXTERNAL_STORAGE);
-//                        }
-//                    }).show();
-//
-//        }else {
-//            // permission has not been granted yet. Request it directly.
-//            ActivityCompat.requestPermissions((Activity)context,
-//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                    Constants.REQUEST_WRITE_EXTERNAL_STORAGE);
-//        }
-//    }
 
     private void measureScreen() {
         DisplayMetrics metrics = new DisplayMetrics();
@@ -321,12 +198,16 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private void setupViewPager(ViewPager viewPager) {
         FragmentManager supportFragmentManager = getSupportFragmentManager();
         adapter = new ViewPagerAdapter(supportFragmentManager);
-        if (localAlbumsFragment == null) {
+        if (albumsFragment == null) {
             albumsFragment = new AlbumsFragment();
-            localAlbumsFragment = new LocalAlbumsFragment();
         }
         adapter.addFragment(albumsFragment, "VK Albums");
-        adapter.addFragment(localAlbumsFragment, "Gallery Albums");
+        if (isExternalStoragePermissionGranted) {
+            if (localAlbumsFragment == null) {
+                localAlbumsFragment = new LocalAlbumsFragment();
+            }
+            adapter.addFragment(localAlbumsFragment, "Gallery Albums");
+        }
         viewPager.setAdapter(adapter);
     }
 
@@ -363,6 +244,13 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     protected void onStart() {
         super.onStart();
         bindService(intent, sConn, BIND_AUTO_CREATE);
+        if (isStoragePermissionGranted()) {
+            if (!FileManager.initBaseDirectory(getApplicationContext())) {
+                throw new RuntimeException("Base directory was not created");
+            } else {
+                isExternalStoragePermissionGranted = true;
+            }
+        }
     }
 
     @Override
