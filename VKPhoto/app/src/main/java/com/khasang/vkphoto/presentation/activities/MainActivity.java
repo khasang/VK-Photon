@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             @Override
             public void onPageSelected(int position) {
                 Fragment item = adapter.getItem(position);
+                item.onResume();
                 String tag = item.getTag();
                 Navigator.setTabTag(tag);
                 EventBus.getDefault().post(new CloseActionModeEvent());
