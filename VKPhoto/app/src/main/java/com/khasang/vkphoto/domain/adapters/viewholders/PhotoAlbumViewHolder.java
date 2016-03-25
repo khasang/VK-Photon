@@ -4,10 +4,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
@@ -42,7 +44,10 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     final private ExecutorService executor;
     final private MultiSelector multiSelector;
     final private Map<Integer, Future<File>> downloadFutures;
+    final private ProgressBar progressBar;
+    final private ImageView ivSyncStatus;
     PhotoAlbum photoAlbum;
+    MenuItem menuItem;
     private AlbumsPresenter albumsPresenter;
     private boolean selectable;
     private Handler handler;
@@ -51,13 +56,15 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     public PhotoAlbumViewHolder(View itemView, ExecutorService executor, MultiSelector multiSelector, AlbumsPresenter albumsPresenter, Map<Integer, Future<File>> downloadFutures) {
         super(itemView, multiSelector);
         albumThumbImageView = (ImageView) itemView.findViewById(R.id.album_thumb);
-        albumThumbImageView.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
+        albumThumbImageView.setLayoutParams(new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
                 MainActivity.ALBUM_THUMB_HEIGHT
         ));
         albumTitleTextView = (TextView) itemView.findViewById(R.id.album_title);
-        albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_albums);
+        albumPhotoCountTextView = (TextView) itemView.findViewById(R.id.tv_count_of_photos);
         albumSelectedCheckBox = (CheckBox) itemView.findViewById(R.id.cb_selected);
+        ivSyncStatus = (ImageView) itemView.findViewById(R.id.iv_sync_status);
+        progressBar = (ProgressBar) itemView.findViewById(R.id.progress_bar);
         this.downloadFutures = downloadFutures;
         this.executor = executor;
         this.multiSelector = multiSelector;
@@ -75,8 +82,36 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         this.photoAlbum = photoAlbum;
         albumTitleTextView.setText(photoAlbum.title);
         albumPhotoCountTextView.setText(albumPhotoCountTextView.getContext().getString(R.string.count_of_photos_in_album, photoAlbum.size));
-        Logger.d("bind photoAlbum" + photoAlbum.id);
+        Logger.d("bindPhotoAlbum. ID=" + photoAlbum.id + ", name=" + photoAlbum.title + ", size=" + photoAlbum.size);
+        changeSyncVisibility(photoAlbum);
         loadThumb();
+    }
+
+    private void changeSyncVisibility(PhotoAlbum photoAlbum) {
+        switch (photoAlbum.syncStatus) {
+            case Constants.SYNC_NOT_STARTED:
+                progressBar.setVisibility(View.INVISIBLE);
+                ivSyncStatus.setVisibility(View.INVISIBLE);
+                break;
+            case Constants.SYNC_STARTED:
+                progressBar.setVisibility(View.VISIBLE);
+                ivSyncStatus.setVisibility(View.INVISIBLE);
+                break;
+            case Constants.SYNC_SUCCESS:
+                progressBar.setVisibility(View.INVISIBLE);
+                ivSyncStatus.setVisibility(View.VISIBLE);
+                ivSyncStatus.setImageResource(R.drawable.ic_action_tick);
+                break;
+            case Constants.SYNC_FAILED:
+                progressBar.setVisibility(View.INVISIBLE);
+                ivSyncStatus.setVisibility(View.VISIBLE);
+                ivSyncStatus.setImageResource(R.drawable.ic_sync_problem);
+                break;
+        }
+        if (photoAlbum.syncStatus == Constants.SYNC_NOT_STARTED) {
+            ivSyncStatus.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void loadThumb() {
@@ -85,7 +120,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
             if (file.exists()) {
                 loadPhoto(file);
             }
-        } else {
+        } else if (photoAlbum.thumb_id > 0) {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -96,12 +131,12 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
 
                 private File getAlbumThumb() {
                     final File[] files = new File[1];
-                    RequestMaker.getPhotoAlbumThumb(new MyVkRequestListener() {
+                    RequestMaker.getPhotoById(new MyVkRequestListener() {
                         @Override
                         public void onComplete(VKResponse response) {
                             super.onComplete(response);
                             try {
-                                final Photo photo = JsonUtils.getItems(response.json, Photo.class).get(0);
+                                final Photo photo = JsonUtils.getPhotos(response.json, Photo.class).get(0);
                                 Future<File> fileFuture = executor.submit(new DownloadPhotoCallable(new LocalPhotoSource(albumThumbImageView.getContext()),
                                         photo, photoAlbum));
                                 addFuture(photo.id, fileFuture);
@@ -111,11 +146,13 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
                                 sendError(ErrorUtils.JSON_PARSE_FAILED);
                             }
                         }
-                    }, photoAlbum);
+                    }, photoAlbum.thumb_id);
                     return files[0];
 //                    return albumsPresenter.getAlbumThumb(localDataSource.getPhotoSource(), photoAlbum, executor);
                 }
             });
+        } else if (photoAlbum.size == 0) {
+            loadPhoto(photoAlbum.owner_id == 0 ? R.mipmap.no_thumb_local : R.mipmap.no_thumb_vk);
         }
     }
 
@@ -203,6 +240,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         if (multiSelector.isSelectable()) {
             multiSelector.tapSelection(this);
             albumsPresenter.checkActionModeFinish(multiSelector);
+            albumsPresenter.hideActionModeItem(multiSelector, menuItem);
         } else {
             albumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }

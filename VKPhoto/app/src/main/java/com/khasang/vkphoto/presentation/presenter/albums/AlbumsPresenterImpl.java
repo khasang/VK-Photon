@@ -46,13 +46,18 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
 
     public void syncAlbums(MultiSelector multiSelector) {
         vkAlbumsInteractor.syncAlbums(multiSelector, vkAlbumsView.getAdapterCursor());
-        actionMode.finish();
+        if (actionMode != null) {
+            actionMode.finish();
+        }
+        else {
+            Logger.d("AlbumsPresenterImpl. actionMode == null. avoiding instruction actionMode.finish()");
+        }
     }
 
     @Override
     public void getAllVKAlbums() {
         if (NetWorkUtils.isNetworkOnline(vkAlbumsView.getContext())) {
-            vkAlbumsInteractor.getAllAlbums();
+            vkAlbumsInteractor.getAllVKAlbums();
         } else {
             EventBus.getDefault().postSticky(new ErrorEvent(ErrorUtils.NO_INTERNET_CONNECTION_ERROR));
         }
@@ -71,6 +76,18 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     @Override
     public void addAlbum(String title, String description, int privacy, int commentPrivacy) {
         vkAlbumsInteractor.addAlbum(title, description, privacy, commentPrivacy);
+    }
+
+    @Override
+    public void editAlbumById(int albumId, String title, String description) {
+        vkAlbumsInteractor.editAlbum(albumId, title, description);
+        actionMode.finish();
+    }
+
+    @Override
+    public void editPrivacyAlbumById(int albumId, int privacy) {
+        vkAlbumsInteractor.editPrivacyAlbum(albumId, privacy);
+        actionMode.finish();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -101,6 +118,12 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     }
 
     @Override
+    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
+        MenuItem itemActionEditAlbum = actionMode.getMenu().findItem(R.id.action_edit_album);
+        super.hideActionModeItem(multiSelector, itemActionEditAlbum);
+    }
+
+    @Override
     public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
                 R.menu.menu_action_mode_vk_albums, ((FabProvider) activity).getFloatingActionButton()) {
@@ -116,7 +139,16 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
                     case R.id.action_sync_album:
                         vkAlbumsView.confirmSync(multiSelector);
                         return true;
+//                    case R.id.action_download_album:
+//                        return true;
                     case R.id.action_edit_album:
+                        editSelectedAlbum(multiSelector);
+                        return true;
+                    case R.id.action_select_all:
+                        for (int i = 0; i < vkAlbumsView.getAdapterCursor().getCount(); i++) {
+                            multiSelector.setSelected(i, 0, true);
+                            actionMode.getMenu().findItem(R.id.action_edit_album).setVisible(false);
+                        }
                         return true;
                     case R.id.action_delete_album:
                         vkAlbumsView.confirmDelete(multiSelector);
@@ -124,12 +156,40 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
                     case R.id.action_cancel_sync_album:
                         vkAlbumsInteractor.cancelAlbumsSync(getSelectedAlbums(multiSelector.getSelectedPositions(), vkAlbumsView.getAdapterCursor()));
                         return true;
+                    case R.id.action_privacy:
+                        editPrivacySelectedAlbum(multiSelector);
+                        return true;
                     default:
                         break;
                 }
                 return false;
             }
         });
+    }
+
+    private void editPrivacySelectedAlbum(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Cursor cursor = vkAlbumsView.getAdapterCursor();
+        PhotoAlbum album;
+        if (cursor != null) {
+            Integer position = selectedPositions.get(0);
+            cursor.moveToPosition(position);
+            album = new PhotoAlbum(cursor);
+
+            vkAlbumsView.editPrivacy(album.getId(), album.privacy);
+        }
+    }
+
+    private void editSelectedAlbum(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Cursor cursor = vkAlbumsView.getAdapterCursor();
+        PhotoAlbum album;
+        if (cursor != null) {
+            Integer position = selectedPositions.get(0);
+            cursor.moveToPosition(position);
+            album = new PhotoAlbum(cursor);
+            vkAlbumsView.editAlbum(album.getId(), album.title, album.description);
+        }
     }
 
     @Override
@@ -161,7 +221,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     }
 
     public File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
-        return photoAlbum.thumb_id > 0 ? vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor) : null;
+         return photoAlbum.thumb_id > 0 ? vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor) : null;
     }
 
     @Override

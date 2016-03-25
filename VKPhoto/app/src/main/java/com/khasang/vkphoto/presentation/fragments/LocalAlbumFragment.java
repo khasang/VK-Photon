@@ -1,5 +1,9 @@
 package com.khasang.vkphoto.presentation.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,15 +38,23 @@ import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.ToastUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class LocalAlbumFragment extends Fragment implements AlbumView {
     public static final String TAG = LocalAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
     public static final String IDVKPHOTOALBUM = "idVKPhotoAlbum";
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
+    private static final int CAMERA_REQUEST = 1888;
     private PhotoAlbum photoAlbum;
     private TextView tvCountOfPhotos;
     private LocalAlbumPresenter localAlbumPresenter;
@@ -98,6 +110,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
         restoreState(savedInstanceState);
         initFab();
+        fab.setImageResource(R.drawable.ic_photo_camera_white_24dp);
         initRecyclerView(view);
         initActionBarHome();
         return view;
@@ -147,16 +160,53 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         }
     }
 
+    //нажатие кнопки "добавить" в режиме просмотра альбома открывает камеру
     private void setOnClickListenerFab(View view) {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 //                vKAlbumPresenter.addPhotos();
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            storeImage(photo);
+            try { TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            localAlbumPresenter.getPhotosByAlbumId(albumId);
+        }
+    }
+
+    private void storeImage(Bitmap image) {
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
+        File mediaFile;
+        String mImageName="MI_"+ timeStamp +".jpg";
+        mediaFile = new File(photoAlbum.filePath + File.separator + mImageName);
+        File pictureFile = mediaFile;
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+            fos.flush();
+            fos.close();
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(pictureFile);
+            mediaScanIntent.setData(contentUri);
+            getContext().sendBroadcast(mediaScanIntent);
+        } catch (FileNotFoundException e) {
+            Logger.d( "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Logger.d("Error accessing file: " + e.getMessage());
+        }
+    }
     //lifecycle methods
     @Override
     public void onStart() {
@@ -178,6 +228,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     @Override
     public void onStop() {
         super.onStop();
+        fab.setImageResource(R.drawable.ic_add_white_24dp);
         Logger.d("LocalAlbumFragment onStop");
         localAlbumPresenter.onStop();
     }

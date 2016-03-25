@@ -1,20 +1,17 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
     <header
         android:fragment="com.khasang.vkphoto.presentation.activities.SettingsActivity$GeneralPreferenceFragment"
-        android:icon="@drawable/ic_general_color_26dp"
         android:key="@+id/general_settings"
         android:text="@string/icon_heart"
         android:title="@string/pref_header_general" />
 
     <header
         android:fragment="com.khasang.vkphoto.presentation.activities.SettingsActivity$NotificationPreferenceFragment"
-        android:icon="@drawable/ic_notific_color_26dp"
         android:key="@+id/notification_settings"
         android:title="@string/pref_header_notifications" />
 
     <header
-        android:fragment="com.khasang.vkphoto.presentation.activities.SettingsActivity$DataSyncPreferenceFragment"
-        android:icon="@drawable/ic_sync_color_26dp"
+        android:fragment="com.khasang.vkphoto.presentation.activities.SettingsActivity$SyncPreferenceFragment"
         android:key="@+id/sync_settings"
         android:title="@string/pref_header_data_sync" />
 </preference-headers>

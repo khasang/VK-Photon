@@ -7,4 +7,8 @@ public interface VkCommentsPresenter extends Presenter {
     public void getCommentsByPhotoId(int photoId);
 
     void getPhotoById(int photoId);
+
+    void registerEventBus();
+
+    void unregisterEventBus();
 }

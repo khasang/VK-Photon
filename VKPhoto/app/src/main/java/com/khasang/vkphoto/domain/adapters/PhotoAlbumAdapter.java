@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -25,6 +26,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
     private List<Photo> photoList;
     private AlbumPresenter albumPresenter;
     private long idVKPhotoAlbum;
+    static MenuItem menuItem;
 
     public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter) {
         this.multiSelector = multiSelector;
@@ -47,7 +49,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bindPhotoAlbum(photoList.get(position));
+        holder.bindPhotoAlbum(photoList.get(position), position);
     }
 
     @Override
@@ -61,7 +63,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         notifyDataSetChanged();
     }
 
-    public static class ViewHolder extends MultiSelectorBindingHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class ViewHolder extends MultiSelectorBindingHolder implements View.OnClickListener, View.OnLongClickListener {
         final private ImageView imageView;
         final private CheckBox checkBox;
         private MultiSelector multiSelector;
@@ -69,6 +71,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         private AlbumPresenter localAlbumPresenter;
         private long idVKPhotoAlbum;
         private Photo photo;
+        private int position;
 
         public ViewHolder(View itemView, MultiSelector multiSelector, AlbumPresenter localAlbumPresenter, long idVKPhotoAlbum) {
             super(itemView, multiSelector);
@@ -107,8 +110,9 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
             checkBox.setChecked(b);
         }
 
-        public void bindPhotoAlbum(Photo photo) {
+        public void bindPhotoAlbum(Photo photo, int position) {
             this.photo = photo;
+            this.position = position;
             if (!TextUtils.isEmpty(photo.filePath)) {
                 Glide.with(imageView.getContext())
                         .load("file://" + photo.filePath)
@@ -131,9 +135,11 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
             if (multiSelector.isSelectable()) {
                 multiSelector.tapSelection(this);
                 localAlbumPresenter.checkActionModeFinish(multiSelector);
+                localAlbumPresenter.hideActionModeItem(multiSelector, menuItem);
             } else {
 //                        albumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
-                    Navigator.navigateToVKCommentsFragment(v.getContext(), photo);
+                    //Navigator.navigateToVKCommentsFragment(v.getContext(), photo);
+                Navigator.navigateToPhotoViewPagerFragment(v.getContext(),photoList, this.position);
             }
             if (photo.filePath != null) {
                 Logger.d(photo.filePath);

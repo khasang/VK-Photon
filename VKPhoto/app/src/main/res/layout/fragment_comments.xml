@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:id="@+id/scrollView">
 
     <RelativeLayout
         android:id="@+id/vLinearLayout"
@@ -52,12 +53,13 @@
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_marginTop="@dimen/margin10"
             android:animateLayoutChanges="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/recyclerView"
+            android:layout_height="match_parent"
             android:visibility="gone"
-            android:layout_below="@+id/hLayout"/>
+            android:layout_below="@+id/hLayout" />
     </RelativeLayout>
 
 </ScrollView>

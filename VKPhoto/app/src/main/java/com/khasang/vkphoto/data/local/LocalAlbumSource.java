@@ -47,7 +47,8 @@ public class LocalAlbumSource {
         } else {
             PhotoAlbum photoAlbum = new PhotoAlbum(apiPhotoAlbum);
             photoAlbum.filePath = path;
-            db.insert(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.getContentValues(photoAlbum));
+            Logger.d("saveAlbum. inserted to DB=" +
+                    db.insert(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.getContentValues(photoAlbum)));
             if (sendEvent) {
                 EventBus.getDefault().postSticky(new VKAlbumEvent());
             }
@@ -60,7 +61,7 @@ public class LocalAlbumSource {
         if (oldAlbum == null) {
             saveAlbum(photoAlbum, false);
         } else {
-            Logger.d("update " + photoAlbum.id + " photoAlbum");
+            Logger.d("LocalAlbumSource. updateAlbum " + photoAlbum.id);
             ContentValues contentValues = PhotoAlbumsTable.getContentValuesUpdated(photoAlbum, oldAlbum, isLocal);
             if (contentValues.size() > 0) {
                 db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
@@ -92,7 +93,7 @@ public class LocalAlbumSource {
     //после его использования необходимо заново выполнить поиск всего, что программа считает альбомом
     public void deleteLocalAlbums(List<PhotoAlbum> photoAlbumList, LocalPhotoSource localPhotoSource) {
         for (PhotoAlbum photoAlbum : photoAlbumList) {
-            Logger.d("now deleting photoAlbum: " + photoAlbum.filePath);
+            Logger.d("LocalAlbumSource. now deleting photoAlbum: " + photoAlbum.filePath);
             List<Photo> deleteList = localPhotoSource.getLocalPhotosByAlbumId(photoAlbum.id);
             localPhotoSource.deleteLocalPhotos(deleteList);
         }
@@ -110,22 +111,28 @@ public class LocalAlbumSource {
         return photoAlbum;
     }
 
-    public List<PhotoAlbum> getAllAlbums() {
+    public List<PhotoAlbum> getAllSynchronizedAlbums() {
+        Logger.d("LocalAlbumSource. getAllSynchronizedAlbums");
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            photoAlbumList.add(new PhotoAlbum(cursor));
-            cursor.moveToNext();
+        Cursor cursor = getAllSynchronizedAlbumsCursor();
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                PhotoAlbum photoAlbum = new PhotoAlbum(cursor);
+                Logger.d("LocalAlbumSource. getAllSynchronizedAlbums. ID=" + photoAlbum.id + ", name=" +
+                        photoAlbum.title + ", size=" + photoAlbum.size + ", filepath=" + photoAlbum.filePath);
+                photoAlbumList.add(photoAlbum);
+                cursor.moveToNext();
+            }
+            cursor.close();
         }
-        cursor.close();
         return photoAlbumList;
     }
 
-    public Cursor getAllAlbumsCursor() {
+    public Cursor getAllSynchronizedAlbumsCursor() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         return db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
+//        String[] selectionArgs = new String[]{Constants.SYNC_STARTED + ", " + Constants.SYNC_SUCCESS + ", " + Constants.SYNC_FAILED};
+//        return db.query(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.SYNC_STATUS + " IN (?)", selectionArgs, null, null, null);
     }
 
     public Cursor getAllLocalAlbums() {
@@ -172,13 +179,16 @@ public class LocalAlbumSource {
                 title = cursor.getString(titleColumn);
                 thumbPath = cursor.getString(thumbPathColumn);
                 String filePath = thumbPath.substring(0, thumbPath.lastIndexOf("/"));
-                int photosCount = new File(filePath).listFiles(new ImageFileFilter()).length;
-                builder = matrixCursor.newRow();
-                builder.add(id)
-                        .add(title)
-                        .add(filePath)
-                        .add(thumbPath)
-                        .add(photosCount);
+                File[] array = new File(filePath).listFiles(new ImageFileFilter());
+                if (array != null) {
+                    int photosCount = array.length;
+                    builder = matrixCursor.newRow();
+                    builder.add(id)
+                            .add(title)
+                            .add(filePath)
+                            .add(thumbPath)
+                            .add(photosCount);
+                }
             } while (cursor.moveToNext());
             cursor.close();
         }
@@ -247,5 +257,19 @@ public class LocalAlbumSource {
         }
         cursor.close();
         return photoAlbumList;
+    }
+
+
+    public void editPrivacyAlbumById(int albumId, int privacy) {
+        PhotoAlbum album = getAlbumById(albumId);
+        album.privacy = privacy;
+        updateAlbum(album, true);
+    }
+
+    public void editAlbumById(int albumId, String title, String description) {
+        PhotoAlbum album = getAlbumById(albumId);
+        album.title = title;
+        album.description = description;
+        updateAlbum(album, true);
     }
 }

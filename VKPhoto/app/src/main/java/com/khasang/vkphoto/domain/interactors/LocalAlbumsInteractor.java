@@ -13,4 +13,5 @@ public interface LocalAlbumsInteractor {
     List<PhotoAlbum> getAllLocalAlbums();
     void addAlbum(final String title, final String description, final int privacy, final int commentPrivacy);
     void deleteLocalAlbums(MultiSelector multiSelector, Cursor cursor);
+    void editAlbum(int albumId, String title);
 }

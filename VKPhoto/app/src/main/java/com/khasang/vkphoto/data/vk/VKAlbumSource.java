@@ -2,6 +2,7 @@ package com.khasang.vkphoto.data.vk;
 
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
+import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
@@ -67,7 +68,7 @@ public class VKAlbumSource {
 
     }
 
-    public void getAllAlbums() {
+    public void getAllVKAlbums() {
         RequestMaker.getAllVkAlbums(new MyVkRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -85,5 +86,23 @@ public class VKAlbumSource {
         });
     }
 
+    public void editAlbumById(final int albumId, String title, String description) {
+        RequestMaker.editAlbumById(new MyVkRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Logger.d("Edit VKPhotoAlbum successfully");
+            }
+        }, albumId, title, description);
+    }
 
+    public void editPrivacyAlbumById(final int albumId, int privacy) {
+        RequestMaker.editPrivacyAlbumById(new MyVkRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Logger.d("Edit Privacy VKPhotoAlbum successfully");
+            }
+        }, albumId, privacy);
+    }
 }

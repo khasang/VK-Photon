@@ -43,7 +43,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
         localPhotosInteractor = new LocalPhotosInteractorImpl(syncServiceProvider);
     }
 
-    @Override
+  @Override
     public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
@@ -54,7 +54,16 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
                     case R.id.action_sync_photo:
                         Logger.d("user wants to sync local photos");
                         return true;
+                    case R.id.action_upload_photo:
+                        return true;
                     case R.id.action_edit_photo:
+                        return true;
+                    case R.id.action_select_all:
+                        for (int i = 0; i < albumView.getPhotoList().size(); i++) {
+                            multiSelector.setSelected(i, 0, true);
+                            actionMode.getMenu().findItem(R.id.action_upload_photo).setVisible(false);
+                            actionMode.getMenu().findItem(R.id.action_edit_photo).setVisible(false);
+                        }
                         return true;
                     case R.id.action_delete_photo:
                         albumView.confirmDelete(multiSelector);
@@ -109,6 +118,14 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
         if (multiSelector.getSelectedPositions().size() == 0) {
             if (actionMode != null) actionMode.finish();
         }
+    }
+
+    @Override
+    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
+        MenuItem itemActionEditPhoto = actionMode.getMenu().findItem(R.id.action_edit_photo);
+        MenuItem itemUpLoadPhoto = actionMode.getMenu().findItem(R.id.action_upload_photo);
+        super.hideActionModeItem(multiSelector, itemActionEditPhoto);
+        super.hideActionModeItem(multiSelector, itemUpLoadPhoto);
     }
 
     @Override

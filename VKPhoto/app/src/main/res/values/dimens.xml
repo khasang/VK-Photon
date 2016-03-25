@@ -8,5 +8,8 @@
     <dimen name="tab_label">14sp</dimen>
     <dimen name="custom_tab_layout_height">72dp</dimen>
     <dimen name="margin5">5dp</dimen>
+    <dimen name="padding5">5dp</dimen>
+    <dimen name="padding10">10dp</dimen>
     <dimen name="margin10">10dp</dimen>
+    <dimen name="pref_text_size">16sp</dimen>
 </resources>

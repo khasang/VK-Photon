@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.presentation.presenter.albums;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.view.MenuItem;
@@ -70,6 +71,12 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     }
 
     @Override
+    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
+        MenuItem itemActionEditAlbum = actionMode.getMenu().findItem(R.id.action_edit_album);
+        super.hideActionModeItem(multiSelector, itemActionEditAlbum);
+    }
+
+    @Override
     public void selectAlbum(final MultiSelector multiSelector, final AppCompatActivity activity) {
         this.actionMode = activity.startSupportActionMode(
                 new MyActionModeCallback(multiSelector, activity, R.menu.menu_action_mode_local_albums,
@@ -80,7 +87,16 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
                             case R.id.action_sync_album:
                                 syncAlbums(multiSelector);
                                 return true;
+//                            case R.id.action_upload_album:
+//                                return true;
                             case R.id.action_edit_album:
+                                editSelectedAlbum(multiSelector);
+                                return true;
+                            case R.id.action_select_all:
+                                for (int i = 0; i < albumsView.getAdapterCursor().getCount(); i++) {
+                                    multiSelector.setSelected(i, 0, true);
+                                    actionMode.getMenu().findItem(R.id.action_edit_album).setVisible(false);
+                                }
                                 return true;
                             case R.id.action_delete_album:
                                 albumsView.confirmDelete(multiSelector);
@@ -91,6 +107,24 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
                         return false;
                     }
                 });
+    }
+
+    private void editSelectedAlbum(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Cursor cursor = albumsView.getAdapterCursor();
+        PhotoAlbum album;
+        if (cursor != null) {
+            Integer position = selectedPositions.get(0);
+            cursor.moveToPosition(position);
+            album = new PhotoAlbum(cursor);
+            albumsView.editAlbum(album.getId(), album.title, null);
+        }
+    }
+
+    @Override
+    public void editAlbumById(int albumId, String title) {
+        albumsInteractor.editAlbum(albumId, title);
+        actionMode.finish();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

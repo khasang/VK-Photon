@@ -11,11 +11,13 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -33,6 +35,7 @@ import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.AlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
+import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -45,7 +48,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider {
+public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider, SearchView.OnQueryTextListener,
+        ActivityCompat.OnRequestPermissionsResultCallback {
     public static final String TAG = MainActivity.class.getSimpleName();
     public static int ALBUM_THUMB_HEIGHT = 0;
     public static int PHOTOS_COLUMNS = 0;
@@ -61,30 +65,42 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private FloatingActionButton fab;
     private ViewPagerAdapter adapter;
 
+    public boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG, "Permission is granted");
+                return true;
+            } else {
+                Log.v(TAG, "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                finish();
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG, "Permission is granted");
+            return true;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkPermission();
-        setContentView(R.layout.activity_main);
-        initServiceConnection(savedInstanceState);
-        loginVk();
-        initViews();
-        initViewPager();
-        if (savedInstanceState != null) {
-            Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
-        }
-        measureScreen();
-    }
-
-    private void checkPermission(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Explain to the user why we need to read the contacts
+        {
+            if (isStoragePermissionGranted()) {
+                if (!FileManager.initBaseDirectory(getApplicationContext())) {
+                    throw new RuntimeException("Base directory was not created");
+                }
             }
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 29025);
-            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE (29025) is an app-defined int constant
+            setContentView(R.layout.activity_main);
+            initServiceConnection(savedInstanceState);
+            loginVk();
+            initViews();
+            initViewPager();
+            if (savedInstanceState != null) {
+                Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
+            }
+            measureScreen();
         }
     }
 
@@ -93,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int screenWidth = metrics.widthPixels;
         float density = metrics.density;
-        Logger.d("measureScreen. density=" + density);
         int thumbWidth;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
             thumbWidth = (int) (screenWidth - 50 * density) / 2;
@@ -101,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             thumbWidth = screenWidth;
         ALBUM_THUMB_HEIGHT = Math.round(thumbWidth / 16 * 9);
         PHOTOS_COLUMNS = (int) (screenWidth / (90 * density));
-        Logger.d("measureScreen. PHOTOS_COLUMNS=" + PHOTOS_COLUMNS);
     }
 
     private void initViewPager() {
@@ -153,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Navigator.initToolbar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
     }
 
@@ -198,6 +213,16 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
+//    private void startMode(Mode mode) {
+//        if(mode == Mode.START){
+//            searchMenuItem.setVisible(true);
+//            microMenuItem.setVisible(false);
+//            toolbar.setTitle(getString(R.string.app_name));
+//        }else if(mode == Mode.ALBUM){
+////            toolbar.setTitle(getString());
+//        }
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -257,6 +282,17 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
         super.onSaveInstanceState(outState);
+    }
+
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
