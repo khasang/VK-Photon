@@ -124,7 +124,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
             public void onClick(View view) {
                 vkAlbumPresenter.getAllLocalAlbums();
                 progressDialog = new MaterialDialog.Builder(getContext())
-                        .title(R.string.progress_dialog)
+                        .title(R.string.load_list_local_albums)
                         .content(R.string.please_wait)
                         .progress(true, 0)
                         .show();
