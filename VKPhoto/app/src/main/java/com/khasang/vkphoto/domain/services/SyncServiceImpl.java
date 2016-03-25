@@ -18,7 +18,7 @@ import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
-import com.khasang.vkphoto.domain.tasks.SavePhotoCallable;
+import com.khasang.vkphoto.domain.tasks.UploadPhotoCallable;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -54,6 +54,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     private List<Future<Boolean>> futureList = new ArrayList<>();
     private Context context;
     private Map<Integer, Future<Boolean>> futureMap = new HashMap<>();
+    private Map<Long, Future<Boolean>> futureMapUploadPhotos = new HashMap<>();
 
     @Override
     public void onCreate() {
@@ -135,7 +136,8 @@ public class SyncServiceImpl extends Service implements SyncService {
                     for (Photo photo : localPhotoList) {
                         File file = new File(photo.filePath);
                         if (file.exists()) {
-                            Callable booleanCallable = new SavePhotoCallable(file, idPhotoAlbum, vKDataSource);
+                            Callable booleanCallable = new UploadPhotoCallable(file, idPhotoAlbum, vKDataSource);
+                            futureMapUploadPhotos.put(idPhotoAlbum, executor.submit(booleanCallable));
                         }
                     }
                     execute();
@@ -144,10 +146,10 @@ public class SyncServiceImpl extends Service implements SyncService {
             }
             private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
                 try {
-                    Iterator<Map.Entry<Integer, Future<Boolean>>> iterator = futureMap.entrySet().iterator();
+                    Iterator<Map.Entry<Long, Future<Boolean>>> iterator = futureMapUploadPhotos.entrySet().iterator();
                     while (iterator.hasNext()) {
                         Future<Boolean> booleanFutureTask = iterator.next().getValue();
-                        Logger.d(booleanFutureTask.toString() + "startSync");
+                        Logger.d(booleanFutureTask.toString() + "startUpload");
                         if (booleanFutureTask.get()) {
                             iterator.remove();
                         }

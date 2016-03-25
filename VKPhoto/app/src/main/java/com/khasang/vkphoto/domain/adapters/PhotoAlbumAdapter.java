@@ -134,8 +134,10 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         public void onClick(View v) {
             if (multiSelector.isSelectable()) {
                 multiSelector.tapSelection(this);
-                localAlbumPresenter.checkActionModeFinish(multiSelector);
-                localAlbumPresenter.hideActionModeItem(multiSelector, menuItem);
+                if (idVKPhotoAlbum == 0) {
+                    localAlbumPresenter.checkActionModeFinish(multiSelector);
+                    localAlbumPresenter.hideActionModeItem(multiSelector, menuItem);
+                }
             } else {
 //                        albumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
                     //Navigator.navigateToVKCommentsFragment(v.getContext(), photo);

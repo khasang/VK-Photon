@@ -53,7 +53,6 @@ public class JsonUtils {
         return photoAlbum;
     }
 
-
     public static <T> List<T> getItems(JSONObject jsonObject, Class<T> tClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, JSONException {
         JSONArray jsonArray = getJsonArray(jsonObject);
         int length = jsonArray.length();
@@ -80,6 +79,17 @@ public class JsonUtils {
             }
         }
         return items;
+    }
+
+    public static <T> Photo getPhoto(JSONObject jsonObject, Class<T> tClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, JSONException {
+        Photo photo = null;
+        try {
+            JSONArray jsonArray = jsonObject.getJSONArray("response");
+            photo = new Photo(jsonArray.getJSONObject(0));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return photo;
     }
 }
       
