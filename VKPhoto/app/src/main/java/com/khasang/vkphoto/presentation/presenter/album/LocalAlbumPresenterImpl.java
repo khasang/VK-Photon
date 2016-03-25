@@ -37,7 +37,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
         localPhotosInteractor = new LocalPhotosInteractorImpl(syncServiceProvider);
     }
 
-    @Override
+  @Override
     public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
