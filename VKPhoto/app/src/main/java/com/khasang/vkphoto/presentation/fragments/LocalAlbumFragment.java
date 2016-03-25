@@ -92,7 +92,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
         restoreState(savedInstanceState);
         initFab();
-        fab.setImageResource(R.drawable.ic_photo_camera_white_24dp);
+
         initRecyclerView(view);
         initActionBarHome();
         return view;
@@ -189,6 +189,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         super.onStart();
         Logger.d("LocalAlbumFragment onStart");
         localAlbumPresenter.onStart();
+        fab.setImageResource(R.drawable.ic_photo_camera_white_24dp);
         if (photoList.isEmpty()) {
             localAlbumPresenter.getPhotosByAlbumId(albumId);
         }
