@@ -63,9 +63,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     public static int ALBUM_THUMB_HEIGHT = 0;
     public static int PHOTOS_COLUMNS = 0;
     private static String VIEWPAGER_VISIBLE = "viewpager_visible";
-    public static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_EXTERNAL_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private static Fragment localAlbumsFragment, albumsFragment;
     private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
     private ServiceConnection sConn;
@@ -77,9 +74,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private FloatingActionButton fab;
     private ViewPagerAdapter adapter;
 
-    private boolean isExternalStoragePermissionGranted = false;
-    private boolean isGetPermissionsResult = false;
-
     public boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -87,9 +81,10 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 Log.v(TAG, "Permission is granted");
                 return true;
             } else {
-                requestWriteExternalStoragePermission();
+//                requestWriteExternalStoragePermission();
                 Log.v(TAG, "Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                finish();
                 return false;
             }
         } else { //permission is automatically granted on sdk<23 upon installation
@@ -98,43 +93,29 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         }
     }
 
-    private void requestWriteExternalStoragePermission() {
-//        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-            new AlertDialog.Builder(this)
-                    .setTitle("Inform and request")
-                    .setMessage("You need to enable permissions, bla bla bla")
-                    .setPositiveButton(R.string.st_btn_ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
-                        }
-                    })
-                    .show();
-//        } else {
-//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
-//        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
-            isGetPermissionsResult = true;
-            //resume tasks needing this permission
-        } else {
-            requestWriteExternalStoragePermission();
-        }
-    }
+//    private void requestWriteExternalStoragePermission() {
+////        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+//            new AlertDialog.Builder(this)
+//                    .setTitle("Inform and request")
+//                    .setMessage("You need to enable permissions, bla bla bla")
+//                    .setPositiveButton(R.string.st_btn_ok, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
+//                        }
+//                    })
+//                    .show();
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        do {
-//            requestWriteExternalStoragePermission();
-//        } while (!isGetPermissionsResult);
-//        if (isGetPermissionsResult)
         {
+            if (isStoragePermissionGranted()) {
+                if (!FileManager.initBaseDirectory(getApplicationContext())) {
+                    throw new RuntimeException("Base directory was not created");
+                }
+            }
             setContentView(R.layout.activity_main);
             initServiceConnection(savedInstanceState);
             loginVk();
@@ -198,16 +179,12 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private void setupViewPager(ViewPager viewPager) {
         FragmentManager supportFragmentManager = getSupportFragmentManager();
         adapter = new ViewPagerAdapter(supportFragmentManager);
-        if (albumsFragment == null) {
+        if (localAlbumsFragment == null) {
             albumsFragment = new AlbumsFragment();
+            localAlbumsFragment = new LocalAlbumsFragment();
         }
         adapter.addFragment(albumsFragment, "VK Albums");
-        if (isExternalStoragePermissionGranted) {
-            if (localAlbumsFragment == null) {
-                localAlbumsFragment = new LocalAlbumsFragment();
-            }
-            adapter.addFragment(localAlbumsFragment, "Gallery Albums");
-        }
+        adapter.addFragment(localAlbumsFragment, "Gallery Albums");
         viewPager.setAdapter(adapter);
     }
 
@@ -244,13 +221,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     protected void onStart() {
         super.onStart();
         bindService(intent, sConn, BIND_AUTO_CREATE);
-        if (isStoragePermissionGranted()) {
-            if (!FileManager.initBaseDirectory(getApplicationContext())) {
-                throw new RuntimeException("Base directory was not created");
-            } else {
-                isExternalStoragePermissionGranted = true;
-            }
-        }
     }
 
     @Override
