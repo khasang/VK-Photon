@@ -89,16 +89,6 @@ public class LocalAlbumSource {
         }
     }
 
-    //метод не уничтожает папку. только все ФОТО в ней
-    //после его использования необходимо заново выполнить поиск всего, что программа считает альбомом
-    public void deleteLocalAlbums(List<PhotoAlbum> photoAlbumList, LocalPhotoSource localPhotoSource) {
-        for (PhotoAlbum photoAlbum : photoAlbumList) {
-            Logger.d("LocalAlbumSource. now deleting photoAlbum: " + photoAlbum.filePath);
-            List<Photo> deleteList = localPhotoSource.getLocalPhotosByAlbumId(photoAlbum.id);
-            localPhotoSource.deleteLocalPhotos(deleteList);
-        }
-    }
-
     public PhotoAlbum getAlbumById(int id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         PhotoAlbum photoAlbum = null;
@@ -195,37 +185,6 @@ public class LocalAlbumSource {
         return matrixCursor;
     }
 
-    public List<PhotoAlbum> getAllLocalAlbumsList() {
-        List<PhotoAlbum> albumsList = new ArrayList<>();
-        Cursor cursor = getAllLocalAlbums();
-        if (cursor.moveToFirst()) {
-            do {
-                albumsList.add(new PhotoAlbum(cursor));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-        return albumsList;
-    }
-
-    public List<String> getAllImagesPathes() {//находит и возвращает все фотографии на девайсе
-        List<String> listOfAllImages = new ArrayList<>();
-        String absolutePathOfImage;
-        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-
-        String[] projection = {MediaStore.MediaColumns.DATA,
-                MediaStore.MediaColumns.DISPLAY_NAME};
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            int dataIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-            while (cursor.moveToNext()) {
-                absolutePathOfImage = cursor.getString(dataIndex);
-                listOfAllImages.add(absolutePathOfImage);
-            }
-            cursor.close();
-        }
-        return listOfAllImages;
-    }
-
     public void setSyncStatus(List<PhotoAlbum> photoAlbumList, int status) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
@@ -236,8 +195,7 @@ public class LocalAlbumSource {
             for (int i = 0; i < photoAlbumList.size(); i++) {
                 whereArgs[i] = String.valueOf(photoAlbumList.get(i).id);
             }
-            db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
-                    whereArgs);
+            db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?", whereArgs);
             db.setTransactionSuccessful();
             EventBus.getDefault().postSticky(new VKAlbumEvent());
         } finally {
@@ -248,7 +206,7 @@ public class LocalAlbumSource {
     public List<PhotoAlbum> getAlbumsToSync() {
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String statuses = Constants.SYNC_FAILED + ", " + Constants.SYNC_STARTED + ", " + Constants.SYNC_SUCCESS;
+        String statuses = Constants.SYNC_STARTED + ", " + Constants.SYNC_SUCCESS + ", " + Constants.SYNC_FAILED;
         Cursor cursor = db.query(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.SYNC_STATUS + " in (" + statuses + ")", null, null, null, null);
         if (cursor.moveToFirst()) {
             do {

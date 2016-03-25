@@ -245,14 +245,15 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
-                List<PhotoAlbum> localAlbumsList = localAlbumSource.getAllSynchronizedAlbums();
+                List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllSynchronizedAlbums();
                 for (PhotoAlbum localAlbum : localAlbumsList) {
                     if (localAlbum.getId() == photoAlbumId) {
-                        if (localAlbum.syncStatus == Constants.SYNC_STARTED) {
+                        if (localAlbum.syncStatus == Constants.SYNC_STARTED ||
+                                localAlbum.syncStatus == Constants.SYNC_SUCCESS ||
+                                localAlbum.syncStatus == Constants.SYNC_FAILED) {
                             FileManager.deleteAlbumDirectory(localAlbum.filePath);
                         }
-                        localAlbumSource.deleteAlbum(localAlbum);
+                        localDataSource.getAlbumSource().deleteAlbum(localAlbum);
                     }
                 }
             }
