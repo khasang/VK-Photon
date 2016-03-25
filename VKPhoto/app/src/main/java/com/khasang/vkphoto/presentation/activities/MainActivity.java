@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -24,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.events.CloseActionModeEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
@@ -33,6 +35,7 @@ import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.AlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
+import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -45,7 +48,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider, SearchView.OnQueryTextListener {
+public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider, SearchView.OnQueryTextListener,
+        ActivityCompat.OnRequestPermissionsResultCallback {
     public static final String TAG = MainActivity.class.getSimpleName();
     public static int ALBUM_THUMB_HEIGHT = 0;
     public static int PHOTOS_COLUMNS = 0;
@@ -61,30 +65,42 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private FloatingActionButton fab;
     private ViewPagerAdapter adapter;
 
+    public boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG, "Permission is granted");
+                return true;
+            } else {
+                Log.v(TAG, "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                finish();
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG, "Permission is granted");
+            return true;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkPermission();
-        setContentView(R.layout.activity_main);
-        initServiceConnection(savedInstanceState);
-        loginVk();
-        initViews();
-        initViewPager();
-        if (savedInstanceState != null) {
-            Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
-        }
-        measureScreen();
-    }
-
-    private void checkPermission(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Explain to the user why we need to read the contacts
+        {
+            if (isStoragePermissionGranted()) {
+                if (!FileManager.initBaseDirectory(getApplicationContext())) {
+                    throw new RuntimeException("Base directory was not created");
+                }
             }
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 29025);
-            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE (29025) is an app-defined int constant
+            setContentView(R.layout.activity_main);
+            initServiceConnection(savedInstanceState);
+            loginVk();
+            initViews();
+            initViewPager();
+            if (savedInstanceState != null) {
+                Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
+            }
+            measureScreen();
         }
     }
 
