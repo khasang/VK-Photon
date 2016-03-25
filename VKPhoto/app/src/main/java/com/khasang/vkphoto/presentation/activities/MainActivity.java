@@ -251,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                         }
                     }
                     ).show();
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
