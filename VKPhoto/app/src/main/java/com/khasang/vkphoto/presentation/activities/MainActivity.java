@@ -1,10 +1,7 @@
 package com.khasang.vkphoto.presentation.activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -12,16 +9,13 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -32,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.events.CloseActionModeEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
@@ -42,10 +35,8 @@ import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.AlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
-import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
-import com.khasang.vkphoto.util.PermissionUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -81,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 Log.v(TAG, "Permission is granted");
                 return true;
             } else {
-//                requestWriteExternalStoragePermission();
                 Log.v(TAG, "Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 finish();
@@ -92,20 +82,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             return true;
         }
     }
-
-//    private void requestWriteExternalStoragePermission() {
-////        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-//            new AlertDialog.Builder(this)
-//                    .setTitle("Inform and request")
-//                    .setMessage("You need to enable permissions, bla bla bla")
-//                    .setPositiveButton(R.string.st_btn_ok, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
-//                        }
-//                    })
-//                    .show();
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
