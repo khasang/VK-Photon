@@ -207,6 +207,10 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
             Logger.d("Error accessing file: " + e.getMessage());
         }
     }
+
+    @Override
+    public void displayRefresh(final boolean refreshing) {}
+
     //lifecycle methods
     @Override
     public void onStart() {

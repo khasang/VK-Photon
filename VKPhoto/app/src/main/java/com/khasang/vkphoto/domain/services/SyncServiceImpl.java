@@ -54,7 +54,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     private List<Future<Boolean>> futureList = new ArrayList<>();
     private Context context;
     private Map<Integer, Future<Boolean>> futureMap = new HashMap<>();
-    private Map<Long, Future<Boolean>> futureMapUploadPhotos = new HashMap<>();
+    private Map<Long, Future<Photo>> futureMapUploadPhotos = new HashMap<>();
 
     @Override
     public void onCreate() {
@@ -136,8 +136,8 @@ public class SyncServiceImpl extends Service implements SyncService {
                     for (Photo photo : localPhotoList) {
                         File file = new File(photo.filePath);
                         if (file.exists()) {
-                            Callable booleanCallable = new UploadPhotoCallable(file, idPhotoAlbum, vKDataSource);
-                            futureMapUploadPhotos.put(idPhotoAlbum, executor.submit(booleanCallable));
+                            Callable photoCallable = new UploadPhotoCallable(file, idPhotoAlbum, vKDataSource);
+                            futureMapUploadPhotos.put(idPhotoAlbum, executor.submit(photoCallable));
                         }
                     }
                     execute();
@@ -145,19 +145,14 @@ public class SyncServiceImpl extends Service implements SyncService {
                 }
             }
             private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
-                try {
-                    Iterator<Map.Entry<Long, Future<Boolean>>> iterator = futureMapUploadPhotos.entrySet().iterator();
-                    while (iterator.hasNext()) {
-                        Future<Boolean> booleanFutureTask = iterator.next().getValue();
-                        Logger.d(booleanFutureTask.toString() + "startUpload");
-                        if (booleanFutureTask.get()) {
-                            iterator.remove();
-                        }
-                        Logger.d("exit get");
+                Iterator<Map.Entry<Long, Future<Photo>>> iterator = futureMapUploadPhotos.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Future<Photo> photoFutureTask = iterator.next().getValue();
+                    Logger.d(photoFutureTask.toString() + "startUpload");
+                    if (photoFutureTask.isDone()) {
+                        iterator.remove();
                     }
-                } catch (ExecutionException e) {
-                    Logger.d("canceled execution error");
-                    execute();
+                    Logger.d("exit get");
                 }
             }
         });

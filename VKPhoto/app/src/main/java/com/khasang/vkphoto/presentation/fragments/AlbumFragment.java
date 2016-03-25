@@ -1,10 +1,12 @@
 package com.khasang.vkphoto.presentation.fragments;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -31,7 +33,9 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenter;
 import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenterImpl;
 import com.khasang.vkphoto.presentation.view.AlbumView;
+import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
+import com.khasang.vkphoto.util.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +53,8 @@ public class AlbumFragment extends Fragment implements AlbumView {
     private PhotoAlbumAdapter adapter;
     private FloatingActionButton fab;
     private MaterialDialog progressDialog;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean refreshing;
     private MultiSelector multiSelector;
 
     public static AlbumFragment newInstance(PhotoAlbum photoAlbum) {
@@ -77,8 +83,14 @@ public class AlbumFragment extends Fragment implements AlbumView {
         restoreState(savedInstanceState);
         initFab();
         albumId = photoAlbum.id;
+        initSwipeRefreshLayout(view);
         initReyclerView(view);
         initActionBarHome();
+        if (savedInstanceState != null) {
+            if (refreshing) {
+                displayRefresh(true);
+            }
+        }
         return view;
     }
 
@@ -95,6 +107,21 @@ public class AlbumFragment extends Fragment implements AlbumView {
         recyclerView.setLayoutManager(new GridLayoutManager(
                 getContext(), MainActivity.PHOTOS_COLUMNS, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
+    }
+
+    private void initSwipeRefreshLayout(View view) {
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_album_layout);
+        Resources resources = getResources();
+        swipeRefreshLayout.setColorSchemeColors(resources.getColor(R.color.colorPrimary),
+                resources.getColor(R.color.colorAccentLight),
+                resources.getColor(R.color.colorAccent),
+                resources.getColor(R.color.colorAccentDark));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                vkAlbumPresenter.getPhotosByAlbumId(albumId);
+            }
+        });
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -146,6 +173,18 @@ public class AlbumFragment extends Fragment implements AlbumView {
                             }
                         })
                 .show();
+    }
+
+    @Override
+    public void displayRefresh(final boolean refreshing) {
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                Logger.d("Refreshing " + refreshing);
+                AlbumFragment.this.refreshing = refreshing;
+                swipeRefreshLayout.setRefreshing(refreshing);
+            }
+        });
     }
 
     @Override
@@ -208,6 +247,12 @@ public class AlbumFragment extends Fragment implements AlbumView {
     @Override
     public void showError(int errorCode) {
         Logger.d(TAG + " error " + errorCode);
+        switch (errorCode) {
+            case ErrorUtils.NO_INTERNET_CONNECTION_ERROR:
+                displayRefresh(false);
+                ToastUtils.showError(ErrorUtils.getErrorMessage(errorCode, getContext()), getContext());
+                break;
+        }
     }
 
     @Override

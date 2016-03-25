@@ -11,6 +11,8 @@ public interface AlbumView extends View {
 
     void displayAllLocalAlbums(List<PhotoAlbum> albumsList);
 
+    void displayRefresh(boolean refreshing);
+
     List<Photo> getPhotoList();
 
     void removePhotosFromView();

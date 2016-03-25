@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.vk.VKDataSource;
-import com.khasang.vkphoto.data.vk.VKPhotoSource;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -13,20 +12,15 @@ import com.khasang.vkphoto.util.Logger;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.concurrent.Callable;
 
-/**
- * Created by bugtsa on 19-Mar-16.
- */
-public class UploadPhotoCallable implements Callable<Boolean> {
-    public static final int ATTAMPTS_COUNT = 3;
+public class UploadPhotoCallable implements Callable<Photo> {
     File file;
     long idVKPhotoAlbum;
     private VKDataSource vkDataSource;
-    private boolean success = false;
+//    private boolean success = false;
+    private Photo photo = null;
 
     public UploadPhotoCallable(File file, long idVKPhotoAlbum, VKDataSource vkDataSource) {
         this.vkDataSource = vkDataSource;
@@ -35,25 +29,26 @@ public class UploadPhotoCallable implements Callable<Boolean> {
     }
 
     @Override
-    public Boolean call() throws Exception {
-        final VKPhotoSource vkPhotoSource = vkDataSource.getPhotoSource();
+    public Photo call() throws Exception {
         VKRequest vkRequest = getVKRequest();
         vkRequest.executeSyncWithListener(new MyVkRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 try {
-                    Photo photo  = JsonUtils.getPhoto(response.json, Photo.class);
-                    success = true;
                     Logger.d("savePhotoToAlbum: " + response.responseString);
+                    photo = JsonUtils.getPhoto(response.json, Photo.class);
+//                    success = true;
                 } catch (Exception e) {
-                    success = false;
+                    photo = null;
+//                    success = false;
                     Logger.d(e.toString());
                     sendError(ErrorUtils.JSON_PARSE_FAILED);
                 }
+
             }
         });
-        return success;
+        return photo;
     }
 
     @NonNull
