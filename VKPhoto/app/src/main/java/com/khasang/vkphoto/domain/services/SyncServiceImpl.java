@@ -188,9 +188,13 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                Logger.d("SyncSerice getAllVKAlbums");
-                localDataSource.getAlbumSource().getAllLocalAlbumsList();
-
+                Logger.d("SyncService getAllLocalAlbums");
+                List<PhotoAlbum> albumsList = localDataSource.getAlbumSource().getAllLocalAlbumsList();
+                if (albumsList.isEmpty()) {
+                    EventBus.getDefault().postSticky(new ErrorEvent(77));
+                } else {
+                    EventBus.getDefault().postSticky(new GetLocalAlbumsEvent(albumsList));
+                }
             }
         });
     }
