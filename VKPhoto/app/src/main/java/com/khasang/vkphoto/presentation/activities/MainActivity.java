@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
     public boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                 Log.v(TAG, "Permission is granted");
                 return true;
@@ -235,6 +235,10 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (id == R.id.action_settings) {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
+            return true;
+        }
+        if (id == R.id.log_out) {
+            VKSdk.logout();
             return true;
         }
 
