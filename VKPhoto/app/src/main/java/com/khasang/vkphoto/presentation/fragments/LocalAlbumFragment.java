@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class LocalAlbumFragment extends Fragment implements AlbumView {
     public static final String TAG = LocalAlbumFragment.class.getSimpleName();
@@ -141,6 +142,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         }
     }
 
+    //нажатие кнопки "добавить" в режиме просмотра альбома открывает камеру
     private void setOnClickListenerFab(View view) {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,12 +159,16 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             storeImage(photo);
+            try { TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             localAlbumPresenter.getPhotosByAlbumId(albumId);
         }
     }
 
     private void storeImage(Bitmap image) {
-        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
         File mediaFile;
         String mImageName="MI_"+ timeStamp +".jpg";
         mediaFile = new File(photoAlbum.filePath + File.separator + mImageName);
