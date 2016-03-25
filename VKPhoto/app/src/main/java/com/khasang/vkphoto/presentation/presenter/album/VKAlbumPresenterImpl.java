@@ -148,7 +148,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
         MenuItem itemActionEditPhoto = actionMode.getMenu().findItem(R.id.action_edit_photo);
         MenuItem itemDownLoadPhoto = actionMode.getMenu().findItem(R.id.action_download_photo);
         super.hideActionModeItem(multiSelector, itemActionEditPhoto);
-        super.hideActionModeItem(multiSelector, itemDownLoadPhoto);
+//        super.hideActionModeItem(multiSelector, itemDownLoadPhoto);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

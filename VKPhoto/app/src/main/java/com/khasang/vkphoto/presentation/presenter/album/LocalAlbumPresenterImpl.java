@@ -125,7 +125,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
         MenuItem itemActionEditPhoto = actionMode.getMenu().findItem(R.id.action_edit_photo);
         MenuItem itemUpLoadPhoto = actionMode.getMenu().findItem(R.id.action_upload_photo);
         super.hideActionModeItem(multiSelector, itemActionEditPhoto);
-        super.hideActionModeItem(multiSelector, itemUpLoadPhoto);
+//        super.hideActionModeItem(multiSelector, itemUpLoadPhoto);
     }
 
     @Override
