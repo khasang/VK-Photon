@@ -3,6 +3,7 @@
     <string name="app_name">VKPhoto</string>
     <string name="action_settings">Настройки</string>
     <string name="log_out">Выйти из аккаунта</string>
+    <string name="logout">Вы уверены, что хотите выйти из аккаунта?</string>
     <string name="count_of_albums">%d альбомов </string>
     <string name="count_of_photos_in_album">Количество фотографий в альбоме: %d</string>
     <string name="sync_album">Синхронизировать альбом</string>
