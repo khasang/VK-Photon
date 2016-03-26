@@ -26,6 +26,7 @@ import com.khasang.vkphoto.util.Logger;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,12 +50,14 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Override
-    public void uploadPhotos(MultiSelector multiSelector, final long idPhotoAlbum, final AppCompatActivity activity) {}
+    public void uploadPhotos(MultiSelector multiSelector, final long idPhotoAlbum, final AppCompatActivity activity) {
+    }
 
     @Override
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
-        VKAlbumInteractor.deleteSelectedVkPhotos(multiSelector, vkAlbumView.getPhotoList());
+        List<Photo> photoList = new ArrayList<>(vkAlbumView.getPhotoList());
         vkAlbumView.removePhotosFromView();
+        VKAlbumInteractor.deleteSelectedVkPhotos(multiSelector, photoList);
         actionMode.finish();
     }
 
@@ -97,7 +100,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Subscribe
-    public void onGetVKPhotoEvent(GetVKPhotoEvent event){
+    public void onGetVKPhotoEvent(GetVKPhotoEvent event) {
         vkAlbumView.displayRefresh(true);
         List<Photo> albumPhotoList = vkAlbumView.getPhotoList();
         albumPhotoList.add(event.photo);
@@ -114,10 +117,9 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             EventBus.getDefault().removeStickyEvent(GetVKPhotosEvent.class);
-            List<Photo> synchronizedPhotos = vkAlbumView.getPhotoList();
+            List<Photo> synchronizedPhotos = new ArrayList<>(vkAlbumView.getPhotoList());
             List<Photo> receivedFromVKPhotos = getVKPhotosEvent.photosList;
             List<Photo> deleteListFromLocal = new ArrayList<>();
             int added = 0, removed = 0;
@@ -181,7 +183,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
                         return true;
                     case R.id.action_select_all:
                         for (int i = 0; i < vkAlbumView.getPhotoList().size(); i++) {
-                                multiSelector.setSelected(i, 0, true);
+                            multiSelector.setSelected(i, 0, true);
                             actionMode.getMenu().findItem(R.id.action_download_photo).setVisible(false);
                             actionMode.getMenu().findItem(R.id.action_edit_photo).setVisible(false);
                         }

@@ -160,7 +160,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
     }
 
     @Override
-    public void displayAllLocalAlbums(final List<PhotoAlbum> albumsList){
+    public void displayAllLocalAlbums(final List<PhotoAlbum> albumsList) {
         progressDialog.dismiss();
         new MaterialDialog.Builder(getContext())
                 .title(R.string.select_album)
@@ -225,7 +225,6 @@ public class AlbumFragment extends Fragment implements AlbumView {
     @Override
     public void displayVkPhotos(List<Photo> photos) {
         displayRefresh(false);
-        photoList = photos;
         adapter.setPhotoList(photos);
         tvCountOfPhotos.setText(getResources().getString(R.string.count_of_photos, photos.size()));
     }
@@ -239,9 +238,11 @@ public class AlbumFragment extends Fragment implements AlbumView {
     public void removePhotosFromView() {
         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
         Collections.sort(selectedPositions, Collections.reverseOrder());
-        for (Integer position : selectedPositions)
-            photoList.remove((int) position);
+        for (int position : selectedPositions) {
+            photoList.remove(position);
+        }
         adapter.notifyDataSetChanged();
+        tvCountOfPhotos.setText(getResources().getString(R.string.count_of_photos, photoList.size()));
     }
 
 
