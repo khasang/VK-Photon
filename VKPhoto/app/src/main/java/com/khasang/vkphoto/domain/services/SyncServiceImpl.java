@@ -161,6 +161,7 @@ public class SyncServiceImpl extends Service implements SyncService {
             }
         });
         multiSelector.clearSelections();
+        eventBus.post(new GotoBackFragmentEvent(context));
         eventBus.postSticky(new GetSwipeRefreshEvent(true));
     }
 
