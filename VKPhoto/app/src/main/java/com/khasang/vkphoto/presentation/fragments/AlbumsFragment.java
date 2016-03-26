@@ -3,6 +3,7 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -86,7 +87,9 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
         Logger.d("" + getTag());
         View view = inflater.inflate(R.layout.fragment_albums, container, false);
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
-        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_photos);
+        tvCountOfAlbums = (TextView) view.findViewById(R.id.tv_count_of_albums);
+        tvCountOfAlbums.setTypeface(Typeface.createFromAsset(
+                getActivity().getAssets(), "fonts/plain.ttf"));
         initSwipeRefreshLayout(view);
         initRecyclerView(view);
         if (savedInstanceState != null) {

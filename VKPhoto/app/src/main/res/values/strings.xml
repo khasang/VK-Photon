@@ -5,7 +5,7 @@
     <string name="logout">Are you sure to logout</string>
     <string name="title_of_album">Title</string>
     <string name="request_write_permission">App request wtire external permission</string>
-    <string name="count_of_photos_in_album">Photos in album: %d</string>
+    <string name="count_of_photos_in_album">%d</string>
     <string name="service_connecting_error">Service is connecting</string>
     <string name="sync_album">Synchronize album</string>
     <string name="download_album">Download album</string>
@@ -17,7 +17,7 @@
     <string name="st_btn_cancel">Cancel</string>
     <string name="sync_delete_album">Delete Album</string>
     <string name="privacy">Privacy settings</string>
-    <string name="count_of_photos">Count of photos: %d</string>
+    <string name="count_of_photos">%d photos in album</string>
     <string name="sync_photo">Synchronize photo</string>
     <string name="select_all">Select all</string>
     <string name="sync_delete_photos">Delete photos</string>
@@ -34,8 +34,8 @@
     <string name="please_wait">Please wait…</string>
     <string name="select_album">Select album</string>
     <plurals name="count_of_albums">
-        <item quantity="one">%d albums</item>
-        <item quantity="other">%d albums</item>
+        <item quantity="one">You have %d albums</item>
+        <item quantity="other">You have %d albums</item>
     </plurals>
 
     <plurals name="synchronize_album_question">
