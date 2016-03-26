@@ -248,10 +248,10 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             VKSdk.logout();
+                            finish();
                         }
                     }
                     ).show();
-            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
