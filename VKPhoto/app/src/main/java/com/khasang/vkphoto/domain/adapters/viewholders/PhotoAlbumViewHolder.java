@@ -81,6 +81,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
 
     public void bindPhotoAlbum(final PhotoAlbum photoAlbum) {
         this.photoAlbum = photoAlbum;
+        albumThumbImageView.setImageDrawable(null);
         albumTitleTextView.setText(photoAlbum.title);
         albumTitleTextView.setTypeface(Typeface.createFromAsset(
                 albumTitleTextView.getContext().getAssets(), "fonts/plain.ttf"));
