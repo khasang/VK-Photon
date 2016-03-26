@@ -30,16 +30,13 @@
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="title">Title</string>
+    <string name="load_list_local_albums">Load List Local Albums</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="select_album">Select album</string>
     <plurals name="count_of_albums">
         <item quantity="one">%d albums</item>
         <item quantity="other">%d albums</item>
     </plurals>
-
-    <string name="permision_available_camera">Camera Permission has been granted. Preview can now be opened.</string>
-    <string name="permision_available_contacts">Contacts Permissions have been granted. Contacts screen can now be opened.</string>
-    <string name="permissions_not_granted">Permissions were not granted.</string>
-    <string name="permission_camera_rationale">Camera permission is needed to show the camera preview.</string>
-    <string name="permission_contacts_rationale">Contacts permissions are needed to demonstrate access.</string>
 
     <plurals name="synchronize_album_question">
         <item quantity="one">Synchronize %d album?</item>

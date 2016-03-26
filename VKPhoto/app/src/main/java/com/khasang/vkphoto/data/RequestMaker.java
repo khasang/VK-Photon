@@ -31,9 +31,13 @@ public class RequestMaker {
         request.executeWithListener(vkRequestListener);
     }
 
-    public static void uploadPhoto(File file, PhotoAlbum photoAlbum, VKRequest.VKRequestListener vkRequestListener) {
-        VKRequest vkRequest = VKApi.uploadAlbumPhotoRequest(file, photoAlbum.id, 0);
+    public static void uploadPhoto(VKRequest.VKRequestListener vkRequestListener, File file, long idVKPhotoAlbum) {
+        VKRequest vkRequest = VKApi.uploadAlbumPhotoRequest(file, idVKPhotoAlbum, 0);
         vkRequest.executeWithListener(vkRequestListener);
+    }
+
+    public static VKRequest uploadPhotoRequest(File file, long idVKPhotoAlbum) {
+        return VKApi.uploadAlbumPhotoRequest(file, idVKPhotoAlbum, 0);
     }
 
     public static void getUploadServer(VKRequest.VKRequestListener vkRequestListener, int albumId) {

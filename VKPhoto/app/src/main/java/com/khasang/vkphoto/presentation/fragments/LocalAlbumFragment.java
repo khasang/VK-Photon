@@ -26,9 +26,9 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.MainActivity;
 import com.khasang.vkphoto.presentation.activities.Navigator;
-import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
@@ -52,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 public class LocalAlbumFragment extends Fragment implements AlbumView {
     public static final String TAG = LocalAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
+    public static final String IDVKPHOTOALBUM = "idVKPhotoAlbum";
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
     private static final int CAMERA_REQUEST = 1888;
     private PhotoAlbum photoAlbum;
@@ -62,10 +63,20 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
     private int albumId;
+    private long idVKPhotoAlbum;
 
     public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
         args.putParcelable(PHOTOALBUM, photoAlbum);
+        LocalAlbumFragment fragment = new LocalAlbumFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum, long idVKPhotoAlbum) {
+        Bundle args = new Bundle();
+        args.putParcelable(PHOTOALBUM, photoAlbum);
+        args.putLong(IDVKPHOTOALBUM, idVKPhotoAlbum);
         LocalAlbumFragment fragment = new LocalAlbumFragment();
         fragment.setArguments(args);
         return fragment;
@@ -80,10 +91,16 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         multiSelector = new MultiSelector();
 
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
+        idVKPhotoAlbum = getArguments().getLong(IDVKPHOTOALBUM);
         if (photoAlbum != null) Logger.d("photoalbum " + photoAlbum.title);
         else Logger.d("wtf where is album?");
         albumId = photoAlbum.id;
-        adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
+        if (idVKPhotoAlbum != 0) {
+            adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter, idVKPhotoAlbum);
+            localAlbumPresenter.runSetContextEvent(getContext());
+        } else {
+            adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
+        }
     }
 
     @Nullable
@@ -148,6 +165,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                vKAlbumPresenter.addPhotos();
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
@@ -189,6 +207,10 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
             Logger.d("Error accessing file: " + e.getMessage());
         }
     }
+
+    @Override
+    public void displayRefresh(final boolean refreshing) {}
+
     //lifecycle methods
     @Override
     public void onStart() {
@@ -224,6 +246,9 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         adapter.setPhotoList(photos);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photos.size()));
     }
+
+    @Override
+    public void displayAllLocalAlbums(List<PhotoAlbum> albumsList) {}
 
     @Override
     public List<Photo> getPhotoList() {
