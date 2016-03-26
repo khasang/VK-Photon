@@ -162,5 +162,5 @@
     <string name="rg_privacy_friends_and_friends_of_friends">Друзья и друзья друзей</string>
     <string name="rg_privacy_only_me">Только я</string>
 
-    <string name="read_camera_permission_explanation">Разрешите доступ к камере</string>
+    <string name="camera_permission_explanation">Разрешите доступ к камере</string>
 </resources>

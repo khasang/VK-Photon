@@ -2,7 +2,7 @@
     <string name="app_name">VKPhoto</string>
     <string name="action_settings">Settings</string>
     <string name="log_out">Logout</string>
-    <string name="logout">Are you sure to logout</string>
+    <string name="logout">Are you sure, you want to logout?</string>
     <string name="title_of_album">Title</string>
     <string name="request_write_permission">App request wtire external permission</string>
     <string name="count_of_photos_in_album">%d</string>
@@ -178,5 +178,5 @@
     <string name="rg_privacy_friends_and_friends_of_friends">Friends and friends of friends</string>
     <string name="rg_privacy_only_me">Only me</string>
 
-    <string name="read_camera_permission_explanation">Add camera permission</string>
+    <string name="camera_permission_explanation">Add camera permission</string>
 </resources>

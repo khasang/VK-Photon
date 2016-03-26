@@ -227,15 +227,17 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         }
         if (id == R.id.log_out) {
             new MaterialDialog.Builder(this)
-                    .positiveText(R.string.logout)
-                    .negativeText(R.string.cancel)
+                    .title(R.string.logout)
+                    .positiveText(R.string.st_btn_ok)
+                    .negativeText(R.string.st_btn_cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            VKSdk.logout();
-                            finish();
-                        }
-                    }
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        syncService.deleteAllVkPhotoAlbums();
+                                        VKSdk.logout();
+                                        finish();
+                                    }
+                                }
                     ).show();
             return true;
         }
