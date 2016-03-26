@@ -13,6 +13,8 @@ import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GetSynchronizedPhotosEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
+import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
+import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractor;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
@@ -76,6 +78,10 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     public void onStart() {
         EventBus.getDefault().register(this);
         onGetSynchronizedPhotosEventCaught = false;
+        GetSwipeRefreshEvent getSwipeRefreshEvent = EventBus.getDefault().removeStickyEvent(GetSwipeRefreshEvent.class);
+        if (getSwipeRefreshEvent != null) {
+            onGetSwipeRefreshEvent(getSwipeRefreshEvent);
+        }
     }
 
     @Override
@@ -96,7 +102,12 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
         onGetSynchronizedPhotosEventCaught = true;
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetSwipeRefreshEvent(GetSwipeRefreshEvent getSwipeRefreshEvent) {
+        vkAlbumView.displayRefresh(getSwipeRefreshEvent.refreshing);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGetVKPhotoEvent(GetVKPhotoEvent event){
         vkAlbumView.displayRefresh(true);
         List<Photo> albumPhotoList = vkAlbumView.getPhotoList();
