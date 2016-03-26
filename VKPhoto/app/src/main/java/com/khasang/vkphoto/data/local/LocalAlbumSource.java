@@ -72,7 +72,7 @@ public class LocalAlbumSource {
     }
 
 
-    public void deleteAlbum(PhotoAlbum photoAlbum) {
+    public void deleteAlbumFromDbAndPhys(PhotoAlbum photoAlbum) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         if (getAlbumById(photoAlbum.id) != null && !TextUtils.isEmpty(photoAlbum.filePath)) {
             db.beginTransaction();

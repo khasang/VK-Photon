@@ -232,16 +232,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
-    private void deleteVKAlbumById(final int albumId) {
-        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
-            @Override
-            public void run() throws Exception {
-                vKDataSource.getAlbumSource().deleteAlbumById(albumId);
-            }
-        });
-    }
-
-    private void deleteAlbumFromDbById(final int photoAlbumId) {
+    private void deleteAlbumFromDbAndPhys(final int photoAlbumId) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
@@ -253,7 +244,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                                 localAlbum.syncStatus == Constants.SYNC_FAILED) {
                             FileManager.deleteAlbumDirectory(localAlbum.filePath);
                         }
-                        localDataSource.getAlbumSource().deleteAlbum(localAlbum);
+                        localDataSource.getAlbumSource().deleteAlbumFromDbAndPhys(localAlbum);
                     }
                 }
             }
@@ -266,8 +257,8 @@ public class SyncServiceImpl extends Service implements SyncService {
             @Override
             public void run() throws Exception {
                 for (PhotoAlbum photoAlbum : photoAlbumList) {
-                    deleteAlbumFromDbById(photoAlbum.getId());
-                    deleteVKAlbumById(photoAlbum.getId());
+                    deleteAlbumFromDbAndPhys(photoAlbum.getId());
+                    vKDataSource.getAlbumSource().deleteAlbumFromVkServ(photoAlbum.getId());
                     try {
                         TimeUnit.MILLISECONDS.sleep(340);
                     } catch (InterruptedException e) {
@@ -328,7 +319,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                     //потом удалим записи из бд нашего приложения.
                     //это нужно только для тех альбомов, которые появились на устройстве в результате синхронизации с ВК
                     try {
-                        deleteAlbumFromDbById(photoAlbum.id);
+                        deleteAlbumFromDbAndPhys(photoAlbum.id);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Logger.d("error while deleting photoAlbum: " + photoAlbum.filePath);
