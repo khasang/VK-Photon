@@ -12,7 +12,6 @@ import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.GetFragmentContextEvent;
 import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
@@ -165,9 +164,9 @@ public class SyncServiceImpl extends Service implements SyncService {
         eventBus.postSticky(new GetSwipeRefreshEvent(true));
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onGetFragmentContextEvent(GetFragmentContextEvent getFragmentContextEvent) {
-        this.context = getFragmentContextEvent.context;
+    @Override
+    public void runSetContextEvent(Context context) {
+        this.context = context;
     }
 
     @Override

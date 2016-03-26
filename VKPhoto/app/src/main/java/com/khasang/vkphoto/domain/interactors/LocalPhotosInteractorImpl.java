@@ -1,5 +1,7 @@
 package com.khasang.vkphoto.domain.interactors;
 
+import android.content.Context;
+
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
@@ -36,6 +38,11 @@ public class LocalPhotosInteractorImpl implements LocalPhotosInteractor {
     public void uploadPhotos(final MultiSelector multiSelector, List<Photo> localPhotoList, final long idVKPhotoAlbum) {
         Logger.d("user wants to addLocalPhotos");
         if (checkSyncService()) syncService.uploadPhotos(multiSelector, localPhotoList, idVKPhotoAlbum);
+    }
+
+    @Override
+    public void runSetContextEvent(Context context) {
+        if (checkSyncService()) syncService.runSetContextEvent(context);
     }
 
     @Override
