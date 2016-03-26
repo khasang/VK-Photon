@@ -170,21 +170,6 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void getLocalAlbumsCursor() {
-        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
-            @Override
-            public void run() throws Exception {
-                List<PhotoAlbum> albumsList = localDataSource.getAlbumSource().getAllLocalAlbumsList();
-                if (albumsList.isEmpty()) {
-                    EventBus.getDefault().postSticky(new ErrorEvent(77));
-                } else {
-                    EventBus.getDefault().postSticky(new GetVKAlbumsEvent(albumsList));
-                }
-            }
-        });
-    }
-
-    @Override
     public void getAllLocalAlbumsList() {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
@@ -219,9 +204,9 @@ public class SyncServiceImpl extends Service implements SyncService {
                 Logger.d("SyncService getAllLocalAlbums");
                 List<PhotoAlbum> albumsList = localDataSource.getAlbumSource().getAllLocalAlbumsList();
                 if (albumsList.isEmpty()) {
-                    EventBus.getDefault().postSticky(new ErrorEvent(77));
+                    eventBus.postSticky(new ErrorEvent(77));
                 } else {
-                    EventBus.getDefault().postSticky(new GetLocalAlbumsEvent(albumsList));
+                    eventBus.postSticky(new GetLocalAlbumsEvent(albumsList));
                 }
                 localDataSource.getAlbumSource().editPrivacyAlbumById(albumId, privacy);
                 vKDataSource.getAlbumSource().editPrivacyAlbumById(albumId, privacy);
@@ -254,27 +239,28 @@ public class SyncServiceImpl extends Service implements SyncService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onGetVKAlbumsEvent(GetVKAlbumsEvent getVKAlbumsEvent) {
         Logger.d("SyncSerice onGetVKAlbumsEvent");
-        List<PhotoAlbum> vKphotoAlbumList = getVKAlbumsEvent.albumsList;
+        List<PhotoAlbum> vkAlbumList = getVKAlbumsEvent.albumsList;
         LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
         List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllSynchronizedAlbums();
-        for (int i = 0, vKphotoAlbumListSize = vKphotoAlbumList.size(); i < vKphotoAlbumListSize; i++) {
-            PhotoAlbum photoAlbum = vKphotoAlbumList.get(i);
-            if (localAlbumsList.contains(photoAlbum)) { //update existing albums
+        for (int i = 0, vkAlbumListSize = vkAlbumList.size(); i < vkAlbumListSize; i++) {
+            PhotoAlbum photoAlbum = vkAlbumList.get(i);
+            if (localAlbumsList.contains(photoAlbum)) { //update existing album
                 localAlbumSource.updateAlbum(photoAlbum, false);
-            } else { //сreate new albums
+            } else { //create new album
                 localAlbumSource.saveAlbum(photoAlbum, false);
             }
         }
 
-        //Update deleted from vk albums syncStatus
-        if (localAlbumsList.removeAll(vKphotoAlbumList)) {
+        //Update deleted from vk albums syncStatus and remove it from DB and from device
+        if (localAlbumsList.removeAll(vkAlbumList)) {
             for (int i = 0, localAlbumsListSize = localAlbumsList.size(); i < localAlbumsListSize; i++) {
                 PhotoAlbum photoAlbum = localAlbumsList.get(i);
                 photoAlbum.syncStatus = Constants.SYNC_DELETED;
                 localAlbumSource.updateAlbum(photoAlbum, true);
+                deleteAlbumFromDbAndPhys(photoAlbum.id);
             }
         }
-        EventBus.getDefault().postSticky(new VKAlbumEvent());
+        eventBus.postSticky(new VKAlbumEvent());
     }
 
     @Override
@@ -316,27 +302,19 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
-    private void deleteVKAlbumById(final int albumId) {
+    private void deleteAlbumFromDbAndPhys(final int photoAlbumId) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                vKDataSource.getAlbumSource().deleteAlbumById(albumId);
-            }
-        });
-    }
-
-    private void deleteAlbumFromDbById(final int photoAlbumId) {
-        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
-            @Override
-            public void run() throws Exception {
-                LocalAlbumSource localAlbumSource = localDataSource.getAlbumSource();
-                List<PhotoAlbum> localAlbumsList = localAlbumSource.getAllSynchronizedAlbums();
+                List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllSynchronizedAlbums();
                 for (PhotoAlbum localAlbum : localAlbumsList) {
                     if (localAlbum.getId() == photoAlbumId) {
-                        if (localAlbum.syncStatus == Constants.SYNC_STARTED) {
+                        if (localAlbum.syncStatus == Constants.SYNC_STARTED ||
+                                localAlbum.syncStatus == Constants.SYNC_SUCCESS ||
+                                localAlbum.syncStatus == Constants.SYNC_FAILED) {
                             FileManager.deleteAlbumDirectory(localAlbum.filePath);
                         }
-                        localAlbumSource.deleteAlbum(localAlbum);
+                        localDataSource.getAlbumSource().deleteAlbumFromDbAndPhys(localAlbum);
                     }
                 }
             }
@@ -349,8 +327,8 @@ public class SyncServiceImpl extends Service implements SyncService {
             @Override
             public void run() throws Exception {
                 for (PhotoAlbum photoAlbum : photoAlbumList) {
-                    deleteAlbumFromDbById(photoAlbum.getId());
-                    deleteVKAlbumById(photoAlbum.getId());
+                    deleteAlbumFromDbAndPhys(photoAlbum.getId());
+                    vKDataSource.getAlbumSource().deleteAlbumFromVkServ(photoAlbum.getId());
                     try {
                         TimeUnit.MILLISECONDS.sleep(340);
                     } catch (InterruptedException e) {
@@ -411,7 +389,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                     //потом удалим записи из бд нашего приложения.
                     //это нужно только для тех альбомов, которые появились на устройстве в результате синхронизации с ВК
                     try {
-                        deleteAlbumFromDbById(photoAlbum.id);
+                        deleteAlbumFromDbAndPhys(photoAlbum.id);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Logger.d("error while deleting photoAlbum: " + photoAlbum.filePath);
