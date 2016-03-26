@@ -1,65 +1,71 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
-    android:fillViewport="true"
-    android:id="@+id/scrollView">
+    android:layout_height="match_parent"
+    android:background="@color/vk_white"
+    android:fillViewport="true">
 
     <RelativeLayout
         android:id="@+id/vLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/userImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:src="@drawable/tom"/>
+            tools:src="@drawable/tom" />
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/hLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_alignBottom="@+id/userImage"
+            android:layout_below="@+id/userImage"
             android:visibility="gone">
 
-            <ImageButton
-                android:id="@+id/commetnsButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/bubble" />
-
-            <TextView
-                android:id="@+id/commentsCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:textSize="40sp"
-                android:layout_gravity="center" />
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:src="@drawable/thumb" />
-
-            <TextView
-                android:id="@+id/photoLikes"
+                android:id="@+id/iv_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:textSize="40sp"
-                android:layout_gravity="center" />
-        </LinearLayout>
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:src="@drawable/ic_action_heart" />
+
+            <TextView
+                android:id="@+id/tv_likes"
+                style="@style/text_comments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/iv_like" />
+
+            <ImageView
+                android:id="@+id/iv_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/iv_like"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:src="@drawable/ic_comment_black_18dp" />
+
+            <TextView
+                android:id="@+id/tv_comments_count"
+                style="@style/text_comments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_likes"
+                android:layout_toRightOf="@+id/iv_comment" />
+
+        </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
-            android:layout_marginTop="@dimen/margin10"
-            android:animateLayoutChanges="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            android:layout_below="@+id/hLayout" />
+            android:layout_below="@+id/hLayout"
+            android:layout_marginTop="@dimen/margin10"
+            android:animateLayoutChanges="true"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </ScrollView>
