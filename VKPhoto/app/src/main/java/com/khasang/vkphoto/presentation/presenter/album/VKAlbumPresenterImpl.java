@@ -1,12 +1,14 @@
 package com.khasang.vkphoto.presentation.presenter.album;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.view.MenuItem;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
@@ -14,6 +16,7 @@ import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
 import com.khasang.vkphoto.domain.events.GetSynchronizedPhotosEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
+import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractor;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
@@ -22,6 +25,7 @@ import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.AlbumView;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -35,19 +39,22 @@ import java.util.concurrent.TimeUnit;
 
 public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumPresenter {
     private AlbumView vkAlbumView;
-    private VKAlbumInteractor VKAlbumInteractor;
+    private VKAlbumInteractor vkAlbumInteractor;
     private boolean onGetSynchronizedPhotosEventCaught = false;
-//    private ActionMode actionMode;
+    private PhotoAlbum photoAlbum;
+    private Handler handler;
 
-    public VKAlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
+    public VKAlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider, PhotoAlbum photoAlbum) {
         this.vkAlbumView = vkAlbumView;
-        VKAlbumInteractor = new VKAlbumInteractorImpl(syncServiceProvider);
+        this.photoAlbum = photoAlbum;
+        vkAlbumInteractor = new VKAlbumInteractorImpl(syncServiceProvider);
+        handler = new Handler();
     }
 
 
     @Override
     public void getPhotosByAlbumId(int albumId) {
-        VKAlbumInteractor.getPhotosByAlbumId(albumId);
+        vkAlbumInteractor.getPhotosByAlbumId(albumId);
     }
 
     @Override
@@ -58,13 +65,15 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
         List<Photo> photoList = new ArrayList<>(vkAlbumView.getPhotoList());
         vkAlbumView.removePhotosFromView();
-        VKAlbumInteractor.deleteSelectedVkPhotos(multiSelector, photoList);
-        actionMode.finish();
+        vkAlbumInteractor.deleteSelectedVkPhotos(multiSelector, photoList);
+        if (actionMode != null) {
+            actionMode.finish();
+        }
     }
 
     @Override
     public void getAllLocalAlbums() {
-        VKAlbumInteractor.getAllLocalAlbums();
+        vkAlbumInteractor.getAllLocalAlbums();
     }
 
     @Override
@@ -109,15 +118,18 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
         vkAlbumView.displayRefresh(getSwipeRefreshEvent.refreshing);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onGetVKPhotoEvent(GetVKPhotoEvent event) {
         vkAlbumView.displayRefresh(true);
         List<Photo> albumPhotoList = new ArrayList<>(vkAlbumView.getPhotoList());
-        albumPhotoList.add(event.photo);
-        vkAlbumView.displayVkPhotos(albumPhotoList);
+        albumPhotoList.add(0, event.photo);
+        if (photoAlbum.syncStatus != Constants.SYNC_NOT_STARTED) {
+            new LocalPhotoSource(vkAlbumView.getContext()).savePhotoToAlbum(event.photo, photoAlbum);
+        }
+        updateView(albumPhotoList);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
         Logger.d("VKAlbumPresenterImpl onGetVKPhotosEvent");
         if (!onGetSynchronizedPhotosEventCaught) {
@@ -129,7 +141,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
             }
         } else {
             EventBus.getDefault().removeStickyEvent(GetVKPhotosEvent.class);
-            List<Photo> synchronizedPhotos = new ArrayList<>(vkAlbumView.getPhotoList());
+            final List<Photo> synchronizedPhotos = new ArrayList<>(vkAlbumView.getPhotoList());
             List<Photo> receivedFromVKPhotos = getVKPhotosEvent.photosList;
             List<Photo> deleteListFromLocal = new ArrayList<>();
             int added = 0, removed = 0;
@@ -148,15 +160,26 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
                 if (!receivedFromVKPhotos.contains(addedPhoto)) {
                     deleteListFromLocal.add(addedPhoto);
                     iter.remove();
-//                    synchronizedPhotos.remove(addedPhoto); //ConcurrentModificationException
                     removed++;
                 }
             }
-
+            if (photoAlbum.syncStatus != Constants.SYNC_NOT_STARTED) {
+                new LocalPhotoSource(vkAlbumView.getContext()).deletePhotoListFromDB(deleteListFromLocal);
+            }
             Logger.d("VKAlbumPresenterImpl added=" + added + ", removed=" + removed + " photos");
+            EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
             //выводим на экран результирующий лист
-            vkAlbumView.displayVkPhotos(synchronizedPhotos);
+            updateView(synchronizedPhotos);
         }
+    }
+
+    private void updateView(final List<Photo> synchronizedPhotos) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                vkAlbumView.displayVkPhotos(synchronizedPhotos);
+            }
+        });
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.khasang.vkphoto.domain.adapters.viewholders;
 
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -81,7 +82,11 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     public void bindPhotoAlbum(final PhotoAlbum photoAlbum) {
         this.photoAlbum = photoAlbum;
         albumTitleTextView.setText(photoAlbum.title);
-        albumPhotoCountTextView.setText(albumPhotoCountTextView.getContext().getString(R.string.count_of_photos_in_album, photoAlbum.size));
+        albumTitleTextView.setTypeface(Typeface.createFromAsset(
+                albumTitleTextView.getContext().getAssets(), "fonts/plain.ttf"));
+        albumPhotoCountTextView.setText(String.valueOf(photoAlbum.size));
+        albumPhotoCountTextView.setTypeface(Typeface.createFromAsset(
+                albumPhotoCountTextView.getContext().getAssets(), "fonts/plain.ttf"));
         Logger.d("bindPhotoAlbum. ID=" + photoAlbum.id + ", name=" + photoAlbum.title + ", size=" + photoAlbum.size);
         changeSyncVisibility(photoAlbum);
         loadThumb();
