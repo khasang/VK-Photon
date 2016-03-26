@@ -81,7 +81,10 @@ public class RequestMaker {
         VKRequest request = new VKRequest("photos.getById", VKParameters.from("photos", VKAccessToken.currentToken().userId + "_" + String.valueOf(photoId),"extended",1));
         request.executeWithListener(vkRequestListener);
     }
-
+    public static void getPhotoByIdSync(VKRequest.VKRequestListener vkRequestListener, int photoId) {
+        VKRequest request = new VKRequest("photos.getById", VKParameters.from("photos", VKAccessToken.currentToken().userId + "_" + String.valueOf(photoId),"extended",1));
+        request.executeSyncWithListener(vkRequestListener);
+    }
     public static void getUserInfoById(VKRequest.VKRequestListener vkRequestListener, int userId) {
         VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.USER_ID, userId, VKApiConst.FIELDS, "photo_50,photo_200,city,verified"));
         request.executeWithListener(vkRequestListener);
