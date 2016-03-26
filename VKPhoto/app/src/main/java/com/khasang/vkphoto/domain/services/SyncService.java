@@ -25,8 +25,6 @@ public interface SyncService {
 
     void getVKPhotosByAlbumId(int albumId);
 
-    void getLocalAlbumsCursor();
-
     void getAllLocalAlbumsList();
 
     void uploadPhotos(final MultiSelector multiSelector, final List<Photo> localPhotoList, final long idPhotoAlbum);

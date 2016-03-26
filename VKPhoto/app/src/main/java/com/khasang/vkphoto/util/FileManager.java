@@ -40,7 +40,10 @@ public class FileManager {
 
     public static boolean deleteAlbumDirectory(String path) {
         File albumDirectory = new File(path);
-        return checkDirectoryExists(albumDirectory) && deleteDir(albumDirectory);
+        boolean success = false;
+        success = checkDirectoryExists(albumDirectory) && deleteDir(albumDirectory);
+        Logger.d("FileManager. deleteAlbumDirectory. success?=" + success);
+        return success;
     }
 
     private static boolean deleteDir(File dir) {

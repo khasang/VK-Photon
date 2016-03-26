@@ -78,8 +78,10 @@ public class LocalAlbumSource {
             db.beginTransaction();
             try {
                 String[] whereArgs = {String.valueOf(photoAlbum.id)};
-                db.delete(PhotosTable.TABLE_NAME, PhotosTable.ALBUM_ID + " = ?", whereArgs);
-                db.delete(PhotoAlbumsTable.TABLE_NAME, BaseColumns._ID + " = ?", whereArgs);
+                Logger.d("LocalAlbumSource. deleteAlbumFromDbAndPhys. deleted from DB photos=" +
+                        db.delete(PhotosTable.TABLE_NAME, PhotosTable.ALBUM_ID + " = ?", whereArgs));
+                Logger.d("LocalAlbumSource. deleteAlbumFromDbAndPhys. deleted from DB albums=" +
+                        db.delete(PhotoAlbumsTable.TABLE_NAME, BaseColumns._ID + " = ?", whereArgs));
                 FileManager.deleteAlbumDirectory(photoAlbum.filePath);
                 db.setTransactionSuccessful();
                 EventBus.getDefault().postSticky(new VKAlbumEvent());
@@ -121,8 +123,16 @@ public class LocalAlbumSource {
     public Cursor getAllSynchronizedAlbumsCursor() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         return db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
-//        String[] selectionArgs = new String[]{Constants.SYNC_STARTED + ", " + Constants.SYNC_SUCCESS + ", " + Constants.SYNC_FAILED};
-//        return db.query(PhotoAlbumsTable.TABLE_NAME, null, PhotoAlbumsTable.SYNC_STATUS + " IN (?)", selectionArgs, null, null, null);
+}
+
+    public List<PhotoAlbum> getAllLocalAlbumsList(){
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        Cursor cursor = getAllLocalAlbums();
+        do {
+            photoAlbumList.add(new PhotoAlbum(cursor));
+        } while (cursor.moveToNext());
+        cursor.close();
+        return photoAlbumList;
     }
 
     public Cursor getAllLocalAlbums() {
