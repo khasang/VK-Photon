@@ -44,4 +44,5 @@ dependencies {
     compile 'com.android.support:support-v4:23.2.0'
     compile 'com.jenzz:materialpreference:1.3'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile 'pub.devrel:easypermissions:0.1.5'
 }
