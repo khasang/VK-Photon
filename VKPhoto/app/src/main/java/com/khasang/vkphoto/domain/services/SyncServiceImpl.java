@@ -138,7 +138,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                     for (Photo photo : localPhotoList) {
                         File file = new File(photo.filePath);
                         if (file.exists()) {
-                            Callable photoCallable = new UploadPhotoCallable(file, idPhotoAlbum, vKDataSource);
+                            Callable<Photo> photoCallable = new UploadPhotoCallable(file, idPhotoAlbum, vKDataSource);
                             futureMapUploadPhotos.put(idPhotoAlbum, executor.submit(photoCallable));
                         }
                     }
@@ -152,9 +152,10 @@ public class SyncServiceImpl extends Service implements SyncService {
                 while (iterator.hasNext()) {
                     Future<Photo> photoFutureTask = iterator.next().getValue();
                     Logger.d(photoFutureTask.toString() + "startUpload");
-                    if (photoFutureTask.isDone()) {
+                    if (photoFutureTask.get() != null) {
                         iterator.remove();
                     }
+                    eventBus.postSticky(new SyncAndTokenReadyEvent());
                     Logger.d("exit get");
                 }
             }

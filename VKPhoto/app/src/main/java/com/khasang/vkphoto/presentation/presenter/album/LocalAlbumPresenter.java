@@ -5,5 +5,5 @@ import android.content.Context;
 public interface LocalAlbumPresenter extends AlbumPresenter {
     void gotoBack(Context context);
 
-    void runSetContextEvent(Context context);
+    void runSetContextEvent();
 }

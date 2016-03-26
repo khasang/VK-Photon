@@ -147,8 +147,8 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
     }
 
     @Override
-    public void runSetContextEvent(Context context){
-        EventBus.getDefault().post(new GetFragmentContextEvent(context));
+    public void runSetContextEvent(){
+        EventBus.getDefault().post(new GetFragmentContextEvent(albumView.getContext()));
     }
 
     //Presenter implementations

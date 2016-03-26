@@ -10,11 +10,10 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
+import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
 import com.khasang.vkphoto.domain.events.GetSynchronizedPhotosEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
-import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
-import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractor;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
@@ -111,9 +110,9 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetVKPhotoEvent(GetVKPhotoEvent event){
+    public void onGetVKPhotoEvent(GetVKPhotoEvent event) {
         vkAlbumView.displayRefresh(true);
-        List<Photo> albumPhotoList = vkAlbumView.getPhotoList();
+        List<Photo> albumPhotoList = new ArrayList<>(vkAlbumView.getPhotoList());
         albumPhotoList.add(event.photo);
         vkAlbumView.displayVkPhotos(albumPhotoList);
     }

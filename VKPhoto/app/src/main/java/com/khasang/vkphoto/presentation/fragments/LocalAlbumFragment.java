@@ -97,7 +97,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         albumId = photoAlbum.id;
         if (idVKPhotoAlbum != 0) {
             adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter, idVKPhotoAlbum);
-            localAlbumPresenter.runSetContextEvent(getContext());
+            localAlbumPresenter.runSetContextEvent();
         } else {
             adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
         }
