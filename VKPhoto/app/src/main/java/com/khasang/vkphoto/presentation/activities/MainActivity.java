@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.presentation.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -40,6 +41,7 @@ import com.khasang.vkphoto.presentation.fragments.AlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
+import com.khasang.vkphoto.util.PermissionUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -68,29 +70,12 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private FloatingActionButton fab;
     private ViewPagerAdapter adapter;
 
-    public boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG, "Permission is granted");
-                return true;
-            } else {
-                Log.v(TAG, "Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                finish();
-                return false;
-            }
-        } else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG, "Permission is granted");
-            return true;
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         {
-            if (isStoragePermissionGranted()) {
+            if (PermissionUtils.isStoragePermissionGranted(this)) {
                 if (!FileManager.initBaseDirectory(getApplicationContext())) {
                     throw new RuntimeException("Base directory was not created");
                 }
