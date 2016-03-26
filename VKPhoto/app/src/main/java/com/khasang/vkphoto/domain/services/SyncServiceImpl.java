@@ -17,6 +17,7 @@ import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
+import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.domain.tasks.UploadPhotoCallable;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
@@ -163,7 +164,8 @@ public class SyncServiceImpl extends Service implements SyncService {
             }
         });
         multiSelector.clearSelections();
-        eventBus.getDefault().post(new GotoBackFragmentEvent(context));
+        eventBus.post(new GotoBackFragmentEvent(context));
+        eventBus.postSticky(new GetSwipeRefreshEvent(true));
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
