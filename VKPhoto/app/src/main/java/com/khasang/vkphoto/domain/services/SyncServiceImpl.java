@@ -18,6 +18,7 @@ import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
 import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
+import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.domain.tasks.UploadPhotoCallable;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
@@ -145,6 +146,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                     executor.shutdown();
                 }
             }
+
             private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
                 Iterator<Map.Entry<Long, Future<Photo>>> iterator = futureMapUploadPhotos.entrySet().iterator();
                 while (iterator.hasNext()) {
@@ -309,6 +311,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                         e.printStackTrace();
                     }
                 }
+                eventBus.postSticky(new SyncAndTokenReadyEvent());
             }
         });
     }
