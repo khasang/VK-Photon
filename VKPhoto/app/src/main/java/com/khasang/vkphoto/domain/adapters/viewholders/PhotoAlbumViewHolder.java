@@ -84,7 +84,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         albumTitleTextView.setText(photoAlbum.title);
         albumTitleTextView.setTypeface(Typeface.createFromAsset(
                 albumTitleTextView.getContext().getAssets(), "fonts/plain.ttf"));
-        albumPhotoCountTextView.setText(albumPhotoCountTextView.getContext().getString(R.string.count_of_photos_in_album, photoAlbum.size));
+        albumPhotoCountTextView.setText(String.valueOf(photoAlbum.size));
         albumPhotoCountTextView.setTypeface(Typeface.createFromAsset(
                 albumPhotoCountTextView.getContext().getAssets(), "fonts/plain.ttf"));
         Logger.d("bindPhotoAlbum. ID=" + photoAlbum.id + ", name=" + photoAlbum.title + ", size=" + photoAlbum.size);

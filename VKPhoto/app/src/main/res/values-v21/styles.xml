@@ -43,7 +43,7 @@
     <string name="search_hint">Search</string>
 
     <style name="texts">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/primary_text</item>
         <item name="android:layout_marginLeft">@dimen/margin10</item>
         <item name="android:layout_marginTop">@dimen/margin5</item>
