@@ -128,6 +128,12 @@ public class SyncServiceImpl extends Service implements SyncService {
 
     @Override
     public void uploadPhotos(final MultiSelector multiSelector, final List<Photo> localPhotoList, final long idPhotoAlbum) {
+//        asyncExecutor.execute(new AsyncExecutor.RunnableEx () {
+//            @Override
+//            public void run() throws Exception {
+//                vKDataSource.getPhotoSource().uploadPhotos(multiSelector, localPhotoList, idPhotoAlbum, context);
+//            }
+//        });
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {

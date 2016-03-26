@@ -31,7 +31,7 @@ public class RequestMaker {
         request.executeWithListener(vkRequestListener);
     }
 
-    public static void uploadPhoto(File file, long idVKPhotoAlbum, VKRequest.VKRequestListener vkRequestListener) {
+    public static void uploadPhoto(VKRequest.VKRequestListener vkRequestListener, File file, long idVKPhotoAlbum) {
         VKRequest vkRequest = VKApi.uploadAlbumPhotoRequest(file, idVKPhotoAlbum, 0);
         vkRequest.executeWithListener(vkRequestListener);
     }

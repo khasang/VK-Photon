@@ -224,6 +224,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
 
     @Override
     public void displayVkPhotos(List<Photo> photos) {
+        displayRefresh(false);
         photoList = photos;
         adapter.setPhotoList(photos);
         tvCountOfPhotos.setText(getResources().getString(R.string.count_of_photos, photos.size()));

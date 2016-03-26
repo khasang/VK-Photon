@@ -7,6 +7,7 @@ import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
+import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -30,15 +31,15 @@ public class VKPhotoSource {
      * @param idPhotoAlbum
      * @param localAlbumSource
      */
-    public void savePhotoToAlbum(final File file, final long idPhotoAlbum, final LocalAlbumSource localAlbumSource) {
+    public void uploadPhoto(final File file, final long idPhotoAlbum, final LocalAlbumSource localAlbumSource) {
         if (file.exists()) {
-            RequestMaker.uploadPhoto(file, idPhotoAlbum, new MyVkRequestListener() {
+            RequestMaker.uploadPhoto(new MyVkRequestListener() {
                 @Override
                 public void onComplete(VKResponse response) {
                     super.onComplete(response);
                     Logger.d("savePhotoToAlbum: " + response.responseString);
                 }
-            });
+            }, file, idPhotoAlbum);
         }
     }
 
@@ -46,10 +47,35 @@ public class VKPhotoSource {
      * Добавляет список фотографий на сервер ВК и в альбом на устройсте
 
      */
-    public void savePhotos(final MultiSelector multiSelector, final List<Photo> photoList, final long idPhotoAlbum, final Context context) {
-//        multiSelector.clearSelections();
-//        multiSelector.getSelectedPositions().clear();
-//        getPhotosByAlbumId(idPhotoAlbum);
+    public void uploadPhotos(final MultiSelector multiSelector, final List<Photo> localPhotoList, final long idPhotoAlbum, Context context) {
+        if (localPhotoList.size() > 0) {
+            for (Photo photo : localPhotoList) {
+                File file = new File(photo.filePath);
+                if (file.exists()) {
+                    RequestMaker.uploadPhoto(new VKRequest.VKRequestListener() {
+                        @Override
+                        public void onComplete(VKResponse response) {
+                            super.onComplete(response);
+                            try {
+                                Logger.d("savePhotoToAlbum: " + response.responseString);
+                                Photo photo = JsonUtils.getPhoto(response.json, Photo.class);
+                                EventBus.getDefault().postSticky(new GetVKPhotoEvent(photo));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onError(VKError error) {
+                            super.onError(error);
+                            System.out.println(error.errorMessage);
+                        }
+                    }, file, idPhotoAlbum);
+                }
+            }
+        }
+        multiSelector.clearSelections();
+        EventBus.getDefault().post(new GotoBackFragmentEvent(context));
     }
 
     public void updatePhoto() {
