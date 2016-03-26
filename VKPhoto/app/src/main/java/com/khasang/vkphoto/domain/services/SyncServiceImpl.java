@@ -302,23 +302,12 @@ public class SyncServiceImpl extends Service implements SyncService {
         });
     }
 
-    private void deleteAlbumFromDbAndPhys(final int photoAlbumId) {
-        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
-            @Override
-            public void run() throws Exception {
-                List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllSynchronizedAlbums();
-                for (PhotoAlbum localAlbum : localAlbumsList) {
-                    if (localAlbum.getId() == photoAlbumId) {
-                        if (localAlbum.syncStatus == Constants.SYNC_STARTED ||
-                                localAlbum.syncStatus == Constants.SYNC_SUCCESS ||
-                                localAlbum.syncStatus == Constants.SYNC_FAILED) {
-                            FileManager.deleteAlbumDirectory(localAlbum.filePath);
-                        }
-                        localDataSource.getAlbumSource().deleteAlbumFromDbAndPhys(localAlbum);
-                    }
-                }
-            }
-        });
+    @Override
+    public void deleteAllVkPhotoAlbums() {
+        final List<PhotoAlbum> photoAlbumList = localDataSource.getAlbumSource().getAllSynchronizedAlbums();
+        for (PhotoAlbum photoAlbum : photoAlbumList) {
+            deleteAlbumFromDbAndPhys(photoAlbum.getId());
+        }
     }
 
     @Override
@@ -333,6 +322,25 @@ public class SyncServiceImpl extends Service implements SyncService {
                         TimeUnit.MILLISECONDS.sleep(340);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private void deleteAlbumFromDbAndPhys(final int photoAlbumId) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                List<PhotoAlbum> localAlbumsList = localDataSource.getAlbumSource().getAllSynchronizedAlbums();
+                for (PhotoAlbum localAlbum : localAlbumsList) {
+                    if (localAlbum.getId() == photoAlbumId) {
+                        if (localAlbum.syncStatus == Constants.SYNC_STARTED ||
+                                localAlbum.syncStatus == Constants.SYNC_SUCCESS ||
+                                localAlbum.syncStatus == Constants.SYNC_FAILED) {
+                            FileManager.deleteAlbumDirectory(localAlbum.filePath);
+                        }
+                        localDataSource.getAlbumSource().deleteAlbumFromDbAndPhys(localAlbum);
                     }
                 }
             }
