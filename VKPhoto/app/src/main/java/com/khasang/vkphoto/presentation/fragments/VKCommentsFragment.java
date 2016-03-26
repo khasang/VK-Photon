@@ -165,6 +165,11 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         adapter.setData(comments, profiles);
         userImage.getLayoutParams().height = ActionBar.LayoutParams.WRAP_CONTENT;
         recyclerView.setVisibility(View.VISIBLE);
+        scrollView.post(new Runnable() {
+            public void run() {
+                scrollView.scrollTo(0, scrollView.getBottom());
+            }
+        });
     }
 
     @Override
