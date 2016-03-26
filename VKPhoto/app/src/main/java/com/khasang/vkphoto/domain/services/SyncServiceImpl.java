@@ -1,17 +1,24 @@
 package com.khasang.vkphoto.domain.services;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
+import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetFragmentContextEvent;
+import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
+import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
+import com.khasang.vkphoto.domain.tasks.UploadPhotoCallable;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
@@ -24,6 +31,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.greenrobot.eventbus.util.AsyncExecutor;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +51,10 @@ public class SyncServiceImpl extends Service implements SyncService {
     private AsyncExecutor asyncExecutor;
     private LocalDataSource localDataSource;
     private VKDataSource vKDataSource;
+    private List<Future<Boolean>> futureList = new ArrayList<>();
+    private Context context;
     private Map<Integer, Future<Boolean>> futureMap = new HashMap<>();
+    private Map<Long, Future<Photo>> futureMapUploadPhotos = new HashMap<>();
 
     @Override
     public void onCreate() {
@@ -115,6 +127,82 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
+    public void uploadPhotos(final MultiSelector multiSelector, final List<Photo> localPhotoList, final long idPhotoAlbum) {
+//        asyncExecutor.execute(new AsyncExecutor.RunnableEx () {
+//            @Override
+//            public void run() throws Exception {
+//                vKDataSource.getPhotoSource().uploadPhotos(multiSelector, localPhotoList, idPhotoAlbum, context);
+//            }
+//        });
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                if (localPhotoList.size() > 0) {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    for (Photo photo : localPhotoList) {
+                        File file = new File(photo.filePath);
+                        if (file.exists()) {
+                            Callable photoCallable = new UploadPhotoCallable(file, idPhotoAlbum, vKDataSource);
+                            futureMapUploadPhotos.put(idPhotoAlbum, executor.submit(photoCallable));
+                        }
+                    }
+                    execute();
+                    executor.shutdown();
+                }
+            }
+            private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
+                Iterator<Map.Entry<Long, Future<Photo>>> iterator = futureMapUploadPhotos.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Future<Photo> photoFutureTask = iterator.next().getValue();
+                    Logger.d(photoFutureTask.toString() + "startUpload");
+                    if (photoFutureTask.isDone()) {
+                        iterator.remove();
+                    }
+                    Logger.d("exit get");
+                }
+            }
+        });
+        multiSelector.clearSelections();
+        eventBus.getDefault().post(new GotoBackFragmentEvent(context));
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onGetFragmentContextEvent(GetFragmentContextEvent getFragmentContextEvent) {
+        this.context = getFragmentContextEvent.context;
+    }
+
+    @Override
+    public void getLocalAlbumsCursor() {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                List<PhotoAlbum> albumsList = localDataSource.getAlbumSource().getAllLocalAlbumsList();
+                if (albumsList.isEmpty()) {
+                    EventBus.getDefault().postSticky(new ErrorEvent(77));
+                } else {
+                    EventBus.getDefault().postSticky(new GetVKAlbumsEvent(albumsList));
+                }
+            }
+        });
+    }
+
+    @Override
+    public void getAllLocalAlbumsList() {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                Logger.d("SyncService getAllLocalAlbums");
+                List<PhotoAlbum> albumsList = localDataSource.getAlbumSource().getAllLocalAlbumsList();
+                if (albumsList.isEmpty()) {
+                    EventBus.getDefault().postSticky(new ErrorEvent(77));
+                } else {
+                    EventBus.getDefault().postSticky(new GetLocalAlbumsEvent(albumsList));
+                }
+            }
+        });
+    }
+
+    @Override
     public void editAlbum(final int albumId, final String title, final String description) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
@@ -130,6 +218,13 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
+                Logger.d("SyncService getAllLocalAlbums");
+                List<PhotoAlbum> albumsList = localDataSource.getAlbumSource().getAllLocalAlbumsList();
+                if (albumsList.isEmpty()) {
+                    EventBus.getDefault().postSticky(new ErrorEvent(77));
+                } else {
+                    EventBus.getDefault().postSticky(new GetLocalAlbumsEvent(albumsList));
+                }
                 localDataSource.getAlbumSource().editPrivacyAlbumById(albumId, privacy);
                 vKDataSource.getAlbumSource().editPrivacyAlbumById(albumId, privacy);
             }
@@ -191,16 +286,6 @@ public class SyncServiceImpl extends Service implements SyncService {
             public void run() throws Exception {
                 localDataSource.getPhotoSource().getSynchronizedPhotosByAlbumId(albumId);
                 vKDataSource.getPhotoSource().getPhotosByAlbumId(albumId);
-            }
-        });
-    }
-
-    @Override
-    public void addPhotos(final List<Photo> listUploadedFiles, final PhotoAlbum photoAlbum) {
-        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
-            @Override
-            public void run() throws Exception {
-                vKDataSource.getPhotoSource().savePhotos(listUploadedFiles, photoAlbum, localDataSource.getAlbumSource());
             }
         });
     }

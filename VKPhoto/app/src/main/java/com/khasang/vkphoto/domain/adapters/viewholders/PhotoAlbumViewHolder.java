@@ -118,12 +118,14 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         if (!TextUtils.isEmpty(photoAlbum.thumbFilePath)) {
             File file = new File(photoAlbum.thumbFilePath);
             if (file.exists()) {
+                Logger.d("photoAlbum thumb exists " + photoAlbum.thumbFilePath);
                 loadPhoto(file);
             }
         } else if (photoAlbum.thumb_id > 0) {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
+                    Logger.d("photoAlbum " + photoAlbum.title + " try do download thumb");
                     if (!setThumb(getAlbumThumb())) {
                         setThumb(getAlbumThumb());
                     }
@@ -131,7 +133,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
 
                 private File getAlbumThumb() {
                     final File[] files = new File[1];
-                    RequestMaker.getPhotoById(new MyVkRequestListener() {
+                    RequestMaker.getPhotoByIdSync(new MyVkRequestListener() {
                         @Override
                         public void onComplete(VKResponse response) {
                             super.onComplete(response);
@@ -148,7 +150,6 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
                         }
                     }, photoAlbum.thumb_id);
                     return files[0];
-//                    return albumsPresenter.getAlbumThumb(localDataSource.getPhotoSource(), photoAlbum, executor);
                 }
             });
         } else if (photoAlbum.size == 0) {

@@ -4,11 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
-import com.khasang.vkphoto.presentation.model.Photo;
-import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.Presenter;
-
-import java.util.List;
 
 public interface AlbumPresenter extends Presenter {
     void getPhotosByAlbumId(int albumId);
@@ -19,7 +15,7 @@ public interface AlbumPresenter extends Presenter {
 
     void checkActionModeFinish(MultiSelector multiSelector);
 
-    void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem);
+    void uploadPhotos(MultiSelector multiSelector, final long idPhotoAlbum, final AppCompatActivity activity);
 
-    void addPhotos(List<Photo> photosList, PhotoAlbum photoAlbum);
+    void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem);
 }
