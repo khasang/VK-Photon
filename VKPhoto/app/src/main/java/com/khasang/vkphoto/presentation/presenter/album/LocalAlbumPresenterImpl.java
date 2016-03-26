@@ -9,7 +9,6 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.GetFragmentContextEvent;
 import com.khasang.vkphoto.domain.events.GetLocalPhotosEvent;
 import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
@@ -148,7 +147,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
 
     @Override
     public void runSetContextEvent(){
-        EventBus.getDefault().post(new GetFragmentContextEvent(albumView.getContext()));
+        localPhotosInteractor.runSetContextEvent(albumView.getContext());
     }
 
     //Presenter implementations
