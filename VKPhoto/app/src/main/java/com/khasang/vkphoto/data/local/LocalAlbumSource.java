@@ -123,16 +123,18 @@ public class LocalAlbumSource {
     public Cursor getAllSynchronizedAlbumsCursor() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         return db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
-}
+    }
 
     public List<PhotoAlbum> getAllLocalAlbumsList(){
-        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        List<PhotoAlbum> albumsList = new ArrayList<>();
         Cursor cursor = getAllLocalAlbums();
-        do {
-            photoAlbumList.add(new PhotoAlbum(cursor));
-        } while (cursor.moveToNext());
-        cursor.close();
-        return photoAlbumList;
+        if (cursor.moveToFirst()) {
+            do {
+                albumsList.add(new PhotoAlbum(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return albumsList;
     }
 
     public Cursor getAllLocalAlbums() {
