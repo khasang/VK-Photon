@@ -38,6 +38,9 @@
     <string name="cancel">Отмена</string>
     <string name="create">Создать</string>
     <string name="create_album">Создать альбом</string>
+    <string name="select_album">Выбор альбома</string>
+    <string name="load_list_local_albums">Загрузка списка локальных альбомов</string>
+    <string name="please_wait">Пожалуйста, подождите…</string>
     <string name="edit_album">Редактировать альбом</string>
     <string name="edit_privacy">Изменить настройки приватности</string>
     <string name="privacy">Настройки приватности</string>
