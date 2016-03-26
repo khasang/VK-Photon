@@ -1,6 +1,7 @@
 package com.khasang.vkphoto.domain.services;
 
 
+import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
@@ -24,7 +25,11 @@ public interface SyncService {
 
     void getVKPhotosByAlbumId(int albumId);
 
-    void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum);
+    void getLocalAlbumsCursor();
+
+    void getAllLocalAlbumsList();
+
+    void uploadPhotos(final MultiSelector multiSelector, final List<Photo> localPhotoList, final long idPhotoAlbum);
 
     void deleteVkPhotoById(int photoId);
 

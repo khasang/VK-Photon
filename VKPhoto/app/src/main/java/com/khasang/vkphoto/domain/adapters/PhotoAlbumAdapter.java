@@ -25,6 +25,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
     private MultiSelector multiSelector;
     private List<Photo> photoList;
     private AlbumPresenter albumPresenter;
+    private long idVKPhotoAlbum;
     static MenuItem menuItem;
 
     public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter) {
@@ -33,10 +34,17 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         this.albumPresenter = albumPresenter;
     }
 
+    public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter, long idVKPhotoAlbum) {
+        this.multiSelector = multiSelector;
+        this.photoList = photoList;
+        this.albumPresenter = albumPresenter;
+        this.idVKPhotoAlbum = idVKPhotoAlbum;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_photo, parent, false);
-        return new ViewHolder(view, multiSelector, albumPresenter);
+        return new ViewHolder(view, multiSelector, albumPresenter, idVKPhotoAlbum);
     }
 
     @Override
@@ -61,13 +69,15 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         private MultiSelector multiSelector;
         private boolean selectable;
         private AlbumPresenter localAlbumPresenter;
+        private long idVKPhotoAlbum;
         private Photo photo;
         private int position;
 
-        public ViewHolder(View itemView, MultiSelector multiSelector, AlbumPresenter localAlbumPresenter) {
+        public ViewHolder(View itemView, MultiSelector multiSelector, AlbumPresenter localAlbumPresenter, long idVKPhotoAlbum) {
             super(itemView, multiSelector);
             this.multiSelector = multiSelector;
             this.localAlbumPresenter = localAlbumPresenter;
+            this.idVKPhotoAlbum = idVKPhotoAlbum;
             this.imageView = (ImageView) itemView.findViewById(R.id.iv_photo);
             this.checkBox = (CheckBox) itemView.findViewById(R.id.cb_photo_selected);
             itemView.setOnClickListener(this);
@@ -124,8 +134,10 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
         public void onClick(View v) {
             if (multiSelector.isSelectable()) {
                 multiSelector.tapSelection(this);
-                localAlbumPresenter.checkActionModeFinish(multiSelector);
-                localAlbumPresenter.hideActionModeItem(multiSelector, menuItem);
+                if (idVKPhotoAlbum == 0) {
+                    localAlbumPresenter.checkActionModeFinish(multiSelector);
+                    localAlbumPresenter.hideActionModeItem(multiSelector, menuItem);
+                }
             } else {
 //                        albumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
                     //Navigator.navigateToVKCommentsFragment(v.getContext(), photo);
@@ -141,7 +153,11 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
             if (!multiSelector.isSelectable()) { // (3)
                 multiSelector.setSelectable(true); // (4)
                 multiSelector.setSelected(this, true); // (5)
-                localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) imageView.getContext());
+                if (idVKPhotoAlbum == 0) {
+                    localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) imageView.getContext());
+                } else {
+                    localAlbumPresenter.uploadPhotos(multiSelector, idVKPhotoAlbum, (AppCompatActivity) imageView.getContext());
+                }
                 return true;
             }
             return false;
