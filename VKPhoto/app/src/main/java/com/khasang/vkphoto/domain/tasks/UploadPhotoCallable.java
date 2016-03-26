@@ -40,7 +40,7 @@ public class UploadPhotoCallable implements Callable<Photo> {
                 try {
                     Logger.d("savePhotoToAlbum: " + response.responseString);
                     photo = JsonUtils.getPhoto(response.json, Photo.class);
-                    EventBus.getDefault().postSticky(new GetVKPhotoEvent(photo));
+                    EventBus.getDefault().post(new GetVKPhotoEvent(photo));
                 } catch (Exception e) {
                     photo = null;
                     Logger.d(e.toString());

@@ -17,6 +17,8 @@ import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
+import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
+import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.domain.tasks.UploadPhotoCallable;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
@@ -128,12 +130,6 @@ public class SyncServiceImpl extends Service implements SyncService {
 
     @Override
     public void uploadPhotos(final MultiSelector multiSelector, final List<Photo> localPhotoList, final long idPhotoAlbum) {
-//        asyncExecutor.execute(new AsyncExecutor.RunnableEx () {
-//            @Override
-//            public void run() throws Exception {
-//                vKDataSource.getPhotoSource().uploadPhotos(multiSelector, localPhotoList, idPhotoAlbum, context);
-//            }
-//        });
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
@@ -142,7 +138,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                     for (Photo photo : localPhotoList) {
                         File file = new File(photo.filePath);
                         if (file.exists()) {
-                            Callable photoCallable = new UploadPhotoCallable(file, idPhotoAlbum, vKDataSource);
+                            Callable<Photo> photoCallable = new UploadPhotoCallable(file, idPhotoAlbum, vKDataSource);
                             futureMapUploadPhotos.put(idPhotoAlbum, executor.submit(photoCallable));
                         }
                     }
@@ -150,20 +146,22 @@ public class SyncServiceImpl extends Service implements SyncService {
                     executor.shutdown();
                 }
             }
+
             private void execute() throws InterruptedException, java.util.concurrent.ExecutionException {
                 Iterator<Map.Entry<Long, Future<Photo>>> iterator = futureMapUploadPhotos.entrySet().iterator();
                 while (iterator.hasNext()) {
                     Future<Photo> photoFutureTask = iterator.next().getValue();
                     Logger.d(photoFutureTask.toString() + "startUpload");
-                    if (photoFutureTask.isDone()) {
+                    if (photoFutureTask.get() != null) {
                         iterator.remove();
                     }
+                    eventBus.postSticky(new SyncAndTokenReadyEvent());
                     Logger.d("exit get");
                 }
             }
         });
         multiSelector.clearSelections();
-        eventBus.post(new GotoBackFragmentEvent(context));
+        eventBus.postSticky(new GetSwipeRefreshEvent(true));
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -299,6 +297,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                         e.printStackTrace();
                     }
                 }
+                eventBus.postSticky(new SyncAndTokenReadyEvent());
             }
         });
     }

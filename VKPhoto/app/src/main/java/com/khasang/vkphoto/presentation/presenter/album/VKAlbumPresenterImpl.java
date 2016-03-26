@@ -10,6 +10,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
+import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
 import com.khasang.vkphoto.domain.events.GetSynchronizedPhotosEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
@@ -26,6 +27,7 @@ import com.khasang.vkphoto.util.Logger;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,12 +51,14 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Override
-    public void uploadPhotos(MultiSelector multiSelector, final long idPhotoAlbum, final AppCompatActivity activity) {}
+    public void uploadPhotos(MultiSelector multiSelector, final long idPhotoAlbum, final AppCompatActivity activity) {
+    }
 
     @Override
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
-        VKAlbumInteractor.deleteSelectedVkPhotos(multiSelector, vkAlbumView.getPhotoList());
+        List<Photo> photoList = new ArrayList<>(vkAlbumView.getPhotoList());
         vkAlbumView.removePhotosFromView();
+        VKAlbumInteractor.deleteSelectedVkPhotos(multiSelector, photoList);
         if (actionMode != null) {
             actionMode.finish();
         }
@@ -78,6 +82,10 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     public void onStart() {
         EventBus.getDefault().register(this);
         onGetSynchronizedPhotosEventCaught = false;
+        GetSwipeRefreshEvent getSwipeRefreshEvent = EventBus.getDefault().removeStickyEvent(GetSwipeRefreshEvent.class);
+        if (getSwipeRefreshEvent != null) {
+            onGetSwipeRefreshEvent(getSwipeRefreshEvent);
+        }
     }
 
     @Override
@@ -98,10 +106,15 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
         onGetSynchronizedPhotosEventCaught = true;
     }
 
-    @Subscribe
-    public void onGetVKPhotoEvent(GetVKPhotoEvent event){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetSwipeRefreshEvent(GetSwipeRefreshEvent getSwipeRefreshEvent) {
+        vkAlbumView.displayRefresh(getSwipeRefreshEvent.refreshing);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetVKPhotoEvent(GetVKPhotoEvent event) {
         vkAlbumView.displayRefresh(true);
-        List<Photo> albumPhotoList = vkAlbumView.getPhotoList();
+        List<Photo> albumPhotoList = new ArrayList<>(vkAlbumView.getPhotoList());
         albumPhotoList.add(event.photo);
         vkAlbumView.displayVkPhotos(albumPhotoList);
     }
@@ -116,10 +129,9 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             EventBus.getDefault().removeStickyEvent(GetVKPhotosEvent.class);
-            List<Photo> synchronizedPhotos = vkAlbumView.getPhotoList();
+            List<Photo> synchronizedPhotos = new ArrayList<>(vkAlbumView.getPhotoList());
             List<Photo> receivedFromVKPhotos = getVKPhotosEvent.photosList;
             List<Photo> deleteListFromLocal = new ArrayList<>();
             int added = 0, removed = 0;
@@ -183,7 +195,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
                         return true;
                     case R.id.action_select_all:
                         for (int i = 0; i < vkAlbumView.getPhotoList().size(); i++) {
-                                multiSelector.setSelected(i, 0, true);
+                            multiSelector.setSelected(i, 0, true);
                             actionMode.getMenu().findItem(R.id.action_download_photo).setVisible(false);
                             actionMode.getMenu().findItem(R.id.action_edit_photo).setVisible(false);
                         }
