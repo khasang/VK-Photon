@@ -70,9 +70,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
-        vkAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()));
         multiSelector = new MultiSelector();
-        adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter);
     }
 
     @Nullable
@@ -83,14 +81,9 @@ public class AlbumFragment extends Fragment implements AlbumView {
         restoreState(savedInstanceState);
         initFab();
         albumId = photoAlbum.id;
-        initSwipeRefreshLayout(view);
         initReyclerView(view);
         initActionBarHome();
-        if (savedInstanceState != null) {
-            if (refreshing) {
-                displayRefresh(true);
-            }
-        }
+        initSwipeRefreshLayout(view);
         return view;
     }
 
@@ -125,12 +118,18 @@ public class AlbumFragment extends Fragment implements AlbumView {
     }
 
     private void restoreState(Bundle savedInstanceState) {
+        photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (savedInstanceState != null) {
+            if (refreshing) {
+                displayRefresh(true);
+            }
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
                 vkAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
             }
+        } else {
+            vkAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()), photoAlbum);
+            adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter);
         }
-        photoAlbum = getArguments().getParcelable(PHOTOALBUM);
         if (photoAlbum != null) {
             Logger.d("photoalbum " + photoAlbum.title);
         } else {
