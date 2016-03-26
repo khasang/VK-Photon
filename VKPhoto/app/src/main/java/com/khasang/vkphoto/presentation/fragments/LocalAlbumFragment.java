@@ -198,6 +198,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView, EasyPermi
     private void createPhotoToCameraWithPermissionsCheck() {
         if (EasyPermissions.hasPermissions(getContext(), Manifest.permission.CAMERA)) {
             Logger.d("Camera permission has been granted.");
+            startCamera();
         } else {
             Logger.d("Request one permission.");
             EasyPermissions.requestPermissions(this, getString(R.string.camera_permission_explanation),
