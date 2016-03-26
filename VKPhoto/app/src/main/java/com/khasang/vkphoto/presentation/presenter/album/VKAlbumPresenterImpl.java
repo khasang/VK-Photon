@@ -109,7 +109,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGetVKPhotoEvent(GetVKPhotoEvent event){
-//        vkAlbumView.displayRefresh(true);
+        vkAlbumView.displayRefresh(true);
         List<Photo> albumPhotoList = vkAlbumView.getPhotoList();
         albumPhotoList.add(event.photo);
         vkAlbumView.displayVkPhotos(albumPhotoList);
