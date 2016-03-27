@@ -177,4 +177,5 @@
     <string name="rg_privacy_friends_only">Friends only</string>
     <string name="rg_privacy_friends_and_friends_of_friends">Friends and friends of friends</string>
     <string name="rg_privacy_only_me">Only me</string>
+
 </resources>

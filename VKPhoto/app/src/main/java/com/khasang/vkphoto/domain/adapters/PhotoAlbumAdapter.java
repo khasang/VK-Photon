@@ -140,8 +140,9 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
                 }
             } else {
 //                        albumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
-                    //Navigator.navigateToVKCommentsFragment(v.getContext(), photo);
-                Navigator.navigateToPhotoViewPagerFragment(v.getContext(),photoList, this.position);
+                //Navigator.navigateToVKCommentsFragment(v.getContext(), photo);
+                if (idVKPhotoAlbum != 0) return;
+                Navigator.navigateToPhotoViewPagerFragment(v.getContext(), photoList, this.position);
             }
             if (photo.filePath != null) {
                 Logger.d(photo.filePath);

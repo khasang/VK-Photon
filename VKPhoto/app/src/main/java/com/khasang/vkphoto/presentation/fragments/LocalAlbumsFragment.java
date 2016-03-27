@@ -10,17 +10,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -37,7 +34,6 @@ import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
 import com.khasang.vkphoto.presentation.custom_classes.GridSpacingItemDecoration;
-import com.khasang.vkphoto.presentation.model.MyActionExpandListener;
 import com.khasang.vkphoto.presentation.model.MyOnQuerrySearchListener;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.albums.LocalAlbumsPresenter;
@@ -190,56 +186,6 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         Logger.d("displayVkSaveAlbum");
     }
 
-
-    /*
-        public void removeAlbumsFromView() {
-            Logger.d("user wants to removeAlbumsFromView");
-            List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-            Collections.sort(selectedPositions, Collections.reverseOrder());
-            Cursor oldCursor = adapter.getCursor();
-
-            MatrixCursor modifiedCursor = new MatrixCursor(new String[]{
-                    BaseColumns._ID,
-                    PhotoAlbumsTable.TITLE,
-                    PhotoAlbumsTable.FILE_PATH,
-                    PhotoAlbumsTable.THUMB_FILE_PATH,
-                    PhotoAlbumsTable.SIZE});
-            MatrixCursor.RowBuilder builder;
-
-            if (oldCursor.moveToFirst()) {
-                int i = 0;
-                String id, title, filePath, thumbPath, photosCount;
-                int idColumn = oldCursor.getColumnIndex(BaseColumns._ID);
-                int titleColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.TITLE);
-                int filePathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.FILE_PATH);
-                int thumbPathColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.THUMB_FILE_PATH);
-                int photosCountColumn = oldCursor.getColumnIndex(PhotoAlbumsTable.SIZE);
-
-                do {
-                    id = oldCursor.getString(idColumn);
-                    title = oldCursor.getString(titleColumn);
-                    filePath = oldCursor.getString(filePathColumn);
-                    thumbPath = oldCursor.getString(thumbPathColumn);
-                    photosCount = oldCursor.getString(photosCountColumn);
-                    if (!selectedPositions.contains(i)) {
-                        builder = modifiedCursor.newRow();
-                        builder.add(id)
-                                .add(title)
-                                .add(filePath)
-                                .add(thumbPath)
-                                .add(photosCount);
-                    }
-                    i++;
-                } while (oldCursor.moveToNext());
-                oldCursor.close();
-            }
-
-            adapter.changeCursor(modifiedCursor);
-            for (Integer position : selectedPositions) {
-                adapter.notifyItemRemoved(position);
-            }
-        }
-    */
     @Override
     public void displayAlbums() {
         getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
@@ -375,21 +321,6 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         outState.putBoolean(ACTION_MODE_ACTIVE, multiSelector.isSelectable());
     }
 
-    /*
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        private ImageView mAlbumThumb;
-        private TextView mAlbumTitle;
-        private TextView mPhotosCount;
-
-        public MyViewHolder(View itemView) {
-            super(itemView);
-            mAlbumThumb = (ImageView) itemView.findViewById(R.id.album_thumb);
-            mAlbumTitle = (TextView) itemView.findViewById(R.id.album_title);
-            mPhotosCount = (TextView) itemView.findViewById(R.id.tv_count_of_photos);
-        }
-    }
-    */
-
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.changeCursor(null);
@@ -397,16 +328,16 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_albums, menu);
-        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        MenuItem microMenuItem = menu.findItem(R.id.action_micro);
-        SearchView mSearchView = (SearchView) searchMenuItem.getActionView();
-        mSearchView.setOnQueryTextListener(myOnQuerrySearchListener);
-        searchMenuItem
-                .setShowAsAction(MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW
-                        | MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
-        MyActionExpandListener myActionExpandListener = new MyActionExpandListener(microMenuItem);
-        MenuItemCompat.setOnActionExpandListener(searchMenuItem, myActionExpandListener);
+//        inflater.inflate(R.menu.menu_albums, menu);
+//        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+//        MenuItem microMenuItem = menu.findItem(R.id.action_micro);
+//        SearchView mSearchView = (SearchView) searchMenuItem.getActionView();
+//        mSearchView.setOnQueryTextListener(myOnQuerrySearchListener);
+//        searchMenuItem
+//                .setShowAsAction(MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW
+//                        | MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+//        MyActionExpandListener myActionExpandListener = new MyActionExpandListener(microMenuItem);
+//        MenuItemCompat.setOnActionExpandListener(searchMenuItem, myActionExpandListener);
         super.onCreateOptionsMenu(menu, inflater);
     }
 }

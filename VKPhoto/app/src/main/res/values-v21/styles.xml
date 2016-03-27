@@ -68,4 +68,9 @@
     <style name="texts_count" parent="texts_titles">
         <item name="android:layout_marginBottom">0dp</item>
     </style>
+
+    <style name="text_comments" parent="texts">
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_alignParentRight">false</item>
+    </style>
 </resources>

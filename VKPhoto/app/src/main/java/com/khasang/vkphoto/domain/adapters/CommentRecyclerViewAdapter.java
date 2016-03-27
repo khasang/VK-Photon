@@ -1,16 +1,21 @@
 package com.khasang.vkphoto.domain.adapters;
 
+import android.graphics.Bitmap;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.viewholders.VkCommentsViewHolder;
 import com.khasang.vkphoto.presentation.model.Comment;
 import com.khasang.vkphoto.presentation.model.VkProfile;
 import com.squareup.picasso.Picasso;
-import com.vk.sdk.api.model.VKApiUser;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -51,7 +56,17 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<VkCommentsV
         }
         if (profile != null) {
             holder.name.setText(profile.first_name + " " + profile.last_name);
-            Picasso.with(holder.itemView.getContext()).load(profile.photo_100).into(holder.userImage);
+            final ImageView imageView = holder.userImage;
+            Glide.with(imageView.getContext()).load(profile.photo_100).asBitmap().fitCenter().into(
+                    new BitmapImageViewTarget(imageView) {
+                @Override
+                protected void setResource(Bitmap resource) {
+                    RoundedBitmapDrawable circularBitmapDrawable =
+                            RoundedBitmapDrawableFactory.create(imageView.getContext().getResources(), resource);
+                    circularBitmapDrawable.setCircular(true);
+                    imageView.setImageDrawable(circularBitmapDrawable);
+                }
+            });
         }
         holder.text.setText(userReplayed(comment.text));
 
@@ -59,7 +74,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<VkCommentsV
         String dateString = formatter.format(new Date(comment.date * 1000L));
         holder.date.setText(dateString);
 
-        if (comment.likes>0){
+        if (comment.likes > 0) {
             holder.commentsLikes.setText(String.valueOf(comment.likes));
             holder.isCommentLikes.setVisibility(View.VISIBLE);
         }
@@ -68,15 +83,15 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<VkCommentsV
     private String userReplayed(String text) {
         Pattern p = Pattern.compile("\\[id(.+)\\|.+\\].+");
         Matcher matcher = p.matcher(text);
-        if(matcher.matches()){
+        if (matcher.matches()) {
             Matcher m = p.matcher(text);
             int userId = 0;
-            if (m.find()){
+            if (m.find()) {
                 userId = Integer.valueOf(m.group(1));
             }
             for (VkProfile temp : profiles) {
                 if (temp.id == userId) {
-                    return text.replaceAll("\\[id(.+)\\|.+\\]","replied to "+ temp.first_name);
+                    return text.replaceAll("\\[id(.+)\\|.+\\]", "replied to " + temp.first_name);
                 }
             }
         }
@@ -88,7 +103,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<VkCommentsV
         return comments.size();
     }
 
-    public void setData(List<Comment> commentsList,List<VkProfile> profiles) {
+    public void setData(List<Comment> commentsList, List<VkProfile> profiles) {
         this.comments = commentsList;
         this.profiles = profiles;
         notifyDataSetChanged();
