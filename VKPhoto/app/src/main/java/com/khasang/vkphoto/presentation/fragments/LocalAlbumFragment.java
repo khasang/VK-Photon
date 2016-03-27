@@ -3,8 +3,10 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -31,6 +34,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
 import com.khasang.vkphoto.presentation.activities.MainActivity;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
@@ -68,6 +72,8 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     private MultiSelector multiSelector;
     private int albumId;
     private long idVKPhotoAlbum;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean refreshing;
 
     public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -100,10 +106,10 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         else Logger.d("wtf where is album?");
         albumId = photoAlbum.id;
         if (idVKPhotoAlbum != 0) {
-            adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter,photoAlbum, idVKPhotoAlbum);
+            adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter, photoAlbum, idVKPhotoAlbum);
             localAlbumPresenter.runSetContextEvent();
         } else {
-            adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter,photoAlbum);
+            adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter, photoAlbum);
         }
     }
 
@@ -112,9 +118,11 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album, container, false);
         tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
+        tvCountOfPhotos.setTypeface(Typeface.createFromAsset(
+                getActivity().getAssets(), "fonts/plain.ttf"));
         restoreState(savedInstanceState);
         initFab();
-
+        initSwipeRefreshLayout(view);
         initRecyclerView(view);
         initActionBarHome();
         return view;
@@ -142,6 +150,8 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
                 getContext(), MainActivity.PHOTOS_COLUMNS, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photoList.size()));
+        recyclerView.addOnScrollListener(new RecyclerViewOnScrollListener(fab));
+
     }
 
     private void initFab() {
@@ -183,7 +193,8 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             storeImage(photo);
             deleteLastImageIfDuplicate();
-            try { TimeUnit.MILLISECONDS.sleep(300);
+            try {
+                TimeUnit.MILLISECONDS.sleep(300);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -191,10 +202,25 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         }
     }
 
+    private void initSwipeRefreshLayout(View view) {
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_album_layout);
+        Resources resources = getResources();
+        swipeRefreshLayout.setColorSchemeColors(resources.getColor(R.color.colorPrimary),
+                resources.getColor(R.color.colorAccentLight),
+                resources.getColor(R.color.colorAccent),
+                resources.getColor(R.color.colorAccentDark));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                localAlbumPresenter.getPhotosByAlbumId(albumId);
+            }
+        });
+    }
+
     private void storeImage(Bitmap image) {
         String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
         File mediaFile;
-        String mImageName="MI_"+ timeStamp +".jpg";
+        String mImageName = "MI_" + timeStamp + ".jpg";
         mediaFile = new File(photoAlbum.filePath + File.separator + mImageName);
         File pictureFile = mediaFile;
         try {
@@ -207,17 +233,17 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
             mediaScanIntent.setData(contentUri);
             getContext().sendBroadcast(mediaScanIntent);
         } catch (FileNotFoundException e) {
-            Logger.d( "File not found: " + e.getMessage());
+            Logger.d("File not found: " + e.getMessage());
         } catch (IOException e) {
             Logger.d("Error accessing file: " + e.getMessage());
         }
     }
 
-    private void deleteLastImageIfDuplicate(){
-        String[] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA, MediaStore.Images.Media.DATE_TAKEN };
+    private void deleteLastImageIfDuplicate() {
+        String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA, MediaStore.Images.Media.DATE_TAKEN};
         final String imageOrderBy = MediaStore.Images.Media.DATE_TAKEN + " DESC";
         Cursor imageCursor = new CursorLoader(getContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, imageOrderBy).loadInBackground();
-        if (imageCursor.moveToFirst()){
+        if (imageCursor.moveToFirst()) {
             int lastImageId = imageCursor.getInt(imageCursor.getColumnIndex(MediaStore.Images.Media._ID));
             String fullPath = imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.Media.DATA));
             long dateTaken = Long.parseLong(imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN)));
@@ -227,9 +253,9 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
             imageCursor.close();
             //TODO: если за 10 секунд успеть сделать 2 фотографии, то первая будет удалена
             //копия фотографии в папке Камера создается не на всех устройствах
-            if (now - dateTaken < 10000){
+            if (now - dateTaken < 10000) {
                 ContentResolver cr = getContext().getContentResolver();
-                Logger.d( "LocalAlbumFragment. deleted duplicate photo=" +
+                Logger.d("LocalAlbumFragment. deleted duplicate photo=" +
                         cr.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                                 MediaStore.Images.Media._ID + "=?",
                                 new String[]{Integer.toString(lastImageId)}));
@@ -238,7 +264,16 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     }
 
     @Override
-    public void displayRefresh(final boolean refreshing) {}
+    public void displayRefresh(final boolean refreshing) {
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                Logger.d("Refreshing " + refreshing);
+                LocalAlbumFragment.this.refreshing = refreshing;
+                swipeRefreshLayout.setRefreshing(refreshing);
+            }
+        });
+    }
 
     //lifecycle methods
     @Override
@@ -271,19 +306,19 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     //AlbumView implementations
     @Override
     public void displayVkPhotos(List<Photo> photos) {
+        displayRefresh(false);
         adapter.setPhotoList(photos);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photos.size()));
     }
 
     @Override
-    public void displayAllLocalAlbums(List<PhotoAlbum> albumsList) {}
+    public void displayAllLocalAlbums(List<PhotoAlbum> albumsList) {
+    }
 
     @Override
     public List<Photo> getPhotoList() {
         return photoList;
     }
-
-
 
 
     public void showError(int errorCode) {
@@ -292,8 +327,9 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
             ToastUtils.showError(error, getContext());
         }
     }
+
     @Override
-    public boolean onOptionsItemSelected (MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
@@ -304,7 +340,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     }
 
     @Override
-    public void confirmDelete ( final MultiSelector multiSelector){
+    public void confirmDelete(final MultiSelector multiSelector) {
         new MaterialDialog.Builder(getContext())
                 .content(multiSelector.getSelectedPositions().size() > 1 ?
                         R.string.sync_delete_photos_question : R.string.sync_delete_photo_question)
@@ -320,7 +356,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     }
 
     @Override
-    public void onSaveInstanceState (Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE, multiSelector.isSelectable());
     }

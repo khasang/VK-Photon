@@ -82,7 +82,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         likes = (TextView) view.findViewById(R.id.tv_likes);
         likes.setTypeface(Typeface.createFromAsset(
                 getActivity().getAssets(), "fonts/plain.ttf"));
-        hlayout = ((RelativeLayout) view.findViewById(R.id.hLayout));
+        hlayout = ((RelativeLayout) view.findViewById(R.id.rl_comments));
         scrollView = (ScrollView) view.findViewById(R.id.scrollView);
 
         adapter = new CommentRecyclerViewAdapter();

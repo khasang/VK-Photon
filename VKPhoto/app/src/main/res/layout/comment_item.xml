@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/vk_white"
     android:orientation="horizontal">
 
     <ImageView
@@ -11,15 +12,16 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="4dp"
-        android:layout_marginLeft="4dp"
+        android:layout_margin="@dimen/margin5"
         android:src="@drawable/test" />
+
     <LinearLayout
         android:id="@+id/mainLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/recyclerViewUserImage"
         android:layout_toEndOf="@+id/recyclerViewUserImage"
+        android:layout_marginLeft="@dimen/margin5"
         android:layout_centerVertical="true"
         android:orientation="vertical">
 
@@ -28,23 +30,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="name"
-            android:textSize="22sp"
-            android:textColor="@color/colorAccentLight" />
+            android:textSize="16sp"
+            android:textColor="@color/primary_text" />
 
         <TextView
             android:id="@+id/recyclerViewUserText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="comment"
-            android:textColor="@color/vk_white"
-            android:textSize="19sp" />
+            android:textColor="@color/primary_text"
+            android:textSize="14sp" />
         <TextView
             android:id="@+id/recyclerViewDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Date"
-            android:textSize="15sp"
-            android:textColor="@color/vk_grey_color" />
+            android:textSize="12sp"
+            android:textColor="@color/secondary_text" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/isCommentLikes"
