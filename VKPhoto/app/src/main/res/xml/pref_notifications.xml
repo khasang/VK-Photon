@@ -20,12 +20,12 @@
             android:defaultValue="true"
             android:key="cb_sync_success_ntf"
             android:title="@string/sync_success_ntf" />
-
+<!--
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="cb_vibration"
             android:title="@string/vibro_with_ntf" />
-
+-->
     </PreferenceCategory>
 
     <!--<SwitchPreference-->
