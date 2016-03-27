@@ -131,7 +131,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
             }
         } else {
             vkAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()), photoAlbum);
-            adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter);
+            adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter,photoAlbum);
         }
         if (photoAlbum != null) {
             Logger.d("photoalbum " + photoAlbum.title);
@@ -171,7 +171,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
                             @Override
                             public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
                                 dialog.dismiss();
-                                vkAlbumPresenter.goToPhotoAlbum(getContext(), albumsList.get(which), photoAlbum.id);
+                                vkAlbumPresenter.goToPhotoAlbum(getContext(), albumsList.get(which), photoAlbum);
                             }
                         })
                 .show();

@@ -77,8 +77,8 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Override
-    public void goToPhotoAlbum(Context context, PhotoAlbum selectedLocalPhotoAlbum, long idVKPhotoAlbum) {
-        Navigator.navigateToLocalAlbumFragmentWithReplace(context, selectedLocalPhotoAlbum, idVKPhotoAlbum);
+    public void goToPhotoAlbum(Context context, PhotoAlbum selectedLocalPhotoAlbum, PhotoAlbum vkAlbum) {
+        Navigator.navigateToLocalAlbumFragmentWithReplace(context, selectedLocalPhotoAlbum, vkAlbum);
     }
 
     @Override
