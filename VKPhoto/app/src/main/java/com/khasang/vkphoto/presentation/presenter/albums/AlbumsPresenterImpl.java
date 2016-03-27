@@ -49,8 +49,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
         vkAlbumsInteractor.syncAlbums(multiSelector, vkAlbumsView.getAdapterCursor());
         if (actionMode != null) {
             actionMode.finish();
-        }
-        else {
+        } else {
             Logger.d("AlbumsPresenterImpl. actionMode == null. avoiding instruction actionMode.finish()");
         }
     }
@@ -120,9 +119,20 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     }
 
     @Override
-    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
-        MenuItem itemActionEditAlbum = actionMode.getMenu().findItem(R.id.action_edit_album);
-        super.hideActionModeItem(multiSelector, itemActionEditAlbum);
+    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem, PhotoAlbum photoAlbum) {
+        if (photoAlbum.id >= 0) {
+            MenuItem itemActionEditAlbum = actionMode.getMenu().findItem(R.id.action_edit_album);
+            super.hideActionModeItem(multiSelector, itemActionEditAlbum, photoAlbum);
+        }else {
+            MenuItem itemActionSyncAlbum = actionMode.getMenu().findItem(R.id.action_sync_album);
+            MenuItem itemActionEditAlbum = actionMode.getMenu().findItem(R.id.action_edit_album);
+            MenuItem itemActionSelectAll = actionMode.getMenu().findItem(R.id.action_select_all);
+            MenuItem itemActionDeleteAlbum = actionMode.getMenu().findItem(R.id.action_delete_album);
+            super.hideActionModeItem(multiSelector, itemActionSyncAlbum, photoAlbum);
+            super.hideActionModeItem(multiSelector, itemActionEditAlbum, photoAlbum);
+            super.hideActionModeItem(multiSelector, itemActionSelectAll, photoAlbum);
+            super.hideActionModeItem(multiSelector, itemActionDeleteAlbum, photoAlbum);
+        }
     }
 
     @Override
@@ -223,7 +233,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     }
 
     public File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
-         return photoAlbum.thumb_id > 0 ? vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor) : null;
+        return photoAlbum.thumb_id > 0 ? vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor) : null;
     }
 
     @Override

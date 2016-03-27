@@ -71,9 +71,9 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     }
 
     @Override
-    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
+    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem, PhotoAlbum photoAlbum) {
         MenuItem itemActionEditAlbum = actionMode.getMenu().findItem(R.id.action_edit_album);
-        super.hideActionModeItem(multiSelector, itemActionEditAlbum);
+        super.hideActionModeItem(multiSelector, itemActionEditAlbum, photoAlbum);
     }
 
     @Override

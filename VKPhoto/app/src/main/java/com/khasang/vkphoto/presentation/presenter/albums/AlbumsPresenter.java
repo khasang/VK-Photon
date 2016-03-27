@@ -16,7 +16,7 @@ public interface AlbumsPresenter extends Presenter {
 
     void checkActionModeFinish(MultiSelector multiSelector);
 
-    void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem);
+    void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem, PhotoAlbum photoAlbum);
 
     void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum);
 
