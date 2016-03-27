@@ -165,4 +165,5 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
             return false;
         }
     }
+
 }
