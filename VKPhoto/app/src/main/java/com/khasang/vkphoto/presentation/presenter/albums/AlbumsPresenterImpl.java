@@ -12,6 +12,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.domain.interactors.VkAlbumsInteractor;
@@ -71,6 +72,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     @Override
     public void goToPhotoAlbum(Context context, PhotoAlbum photoAlbum) {
         Navigator.navigateToVKAlbumFragment(vkAlbumsView.getContext(), photoAlbum);
+        EventBus.getDefault().postSticky(new GetSwipeRefreshEvent(true));
     }
 
     @Override

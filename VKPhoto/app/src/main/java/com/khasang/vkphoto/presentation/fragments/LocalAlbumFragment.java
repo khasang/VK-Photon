@@ -1,14 +1,18 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.CursorLoader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -26,9 +30,9 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
+import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.MainActivity;
 import com.khasang.vkphoto.presentation.activities.Navigator;
-import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
@@ -52,6 +56,7 @@ import java.util.concurrent.TimeUnit;
 public class LocalAlbumFragment extends Fragment implements AlbumView {
     public static final String TAG = LocalAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
+    public static final String IDVKPHOTOALBUM = "idVKPhotoAlbum";
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
     private static final int CAMERA_REQUEST = 1888;
     private PhotoAlbum photoAlbum;
@@ -62,10 +67,20 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     private FloatingActionButton fab;
     private MultiSelector multiSelector;
     private int albumId;
+    private long idVKPhotoAlbum;
 
     public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
         args.putParcelable(PHOTOALBUM, photoAlbum);
+        LocalAlbumFragment fragment = new LocalAlbumFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum, long idVKPhotoAlbum) {
+        Bundle args = new Bundle();
+        args.putParcelable(PHOTOALBUM, photoAlbum);
+        args.putLong(IDVKPHOTOALBUM, idVKPhotoAlbum);
         LocalAlbumFragment fragment = new LocalAlbumFragment();
         fragment.setArguments(args);
         return fragment;
@@ -80,10 +95,16 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         multiSelector = new MultiSelector();
 
         photoAlbum = getArguments().getParcelable(PHOTOALBUM);
+        idVKPhotoAlbum = getArguments().getLong(IDVKPHOTOALBUM);
         if (photoAlbum != null) Logger.d("photoalbum " + photoAlbum.title);
         else Logger.d("wtf where is album?");
         albumId = photoAlbum.id;
-        adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
+        if (idVKPhotoAlbum != 0) {
+            adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter, idVKPhotoAlbum);
+            localAlbumPresenter.runSetContextEvent();
+        } else {
+            adapter = new PhotoAlbumAdapter(multiSelector, photoList, localAlbumPresenter);
+        }
     }
 
     @Nullable
@@ -148,6 +169,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                vKAlbumPresenter.addPhotos();
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
@@ -160,7 +182,8 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             storeImage(photo);
-            try { TimeUnit.MILLISECONDS.sleep(100);
+            deleteLastImageIfDuplicate();
+            try { TimeUnit.MILLISECONDS.sleep(300);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -189,6 +212,34 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
             Logger.d("Error accessing file: " + e.getMessage());
         }
     }
+
+    private void deleteLastImageIfDuplicate(){
+        String[] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA, MediaStore.Images.Media.DATE_TAKEN };
+        final String imageOrderBy = MediaStore.Images.Media.DATE_TAKEN + " DESC";
+        Cursor imageCursor = new CursorLoader(getContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, imageOrderBy).loadInBackground();
+        if (imageCursor.moveToFirst()){
+            int lastImageId = imageCursor.getInt(imageCursor.getColumnIndex(MediaStore.Images.Media._ID));
+            String fullPath = imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            long dateTaken = Long.parseLong(imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN)));
+            long now = new Date().getTime();
+            Logger.d("LocalAlbumFragment. getLastImageId. id=" + lastImageId + ", path=" + fullPath +
+                    ", dateTaken=" + dateTaken + ", now=" + now + ", delta=" + (now - dateTaken));
+            imageCursor.close();
+            //TODO: если за 10 секунд успеть сделать 2 фотографии, то первая будет удалена
+            //копия фотографии в папке Камера создается не на всех устройствах
+            if (now - dateTaken < 10000){
+                ContentResolver cr = getContext().getContentResolver();
+                Logger.d( "LocalAlbumFragment. deleted duplicate photo=" +
+                        cr.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                MediaStore.Images.Media._ID + "=?",
+                                new String[]{Integer.toString(lastImageId)}));
+            }
+        }
+    }
+
+    @Override
+    public void displayRefresh(final boolean refreshing) {}
+
     //lifecycle methods
     @Override
     public void onStart() {
@@ -220,10 +271,12 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     //AlbumView implementations
     @Override
     public void displayVkPhotos(List<Photo> photos) {
-//        photoList = photos;
         adapter.setPhotoList(photos);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photos.size()));
     }
+
+    @Override
+    public void displayAllLocalAlbums(List<PhotoAlbum> albumsList) {}
 
     @Override
     public List<Photo> getPhotoList() {
@@ -239,36 +292,36 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
             ToastUtils.showError(error, getContext());
         }
     }
-        @Override
-        public boolean onOptionsItemSelected (MenuItem item){
-            switch (item.getItemId()) {
-                // Respond to the action bar's Up/Home button
-                case android.R.id.home:
-                    Navigator.navigateBack(getActivity());
-                    return true;
-            }
-            return super.onOptionsItemSelected(item);
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item){
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                Navigator.navigateBack(getActivity());
+                return true;
         }
-
-        @Override
-        public void confirmDelete ( final MultiSelector multiSelector){
-            new MaterialDialog.Builder(getContext())
-                    .content(multiSelector.getSelectedPositions().size() > 1 ?
-                            R.string.sync_delete_photos_question : R.string.sync_delete_photo_question)
-                    .positiveText(R.string.delete)
-                    .negativeText(R.string.cancel)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            localAlbumPresenter.deleteSelectedPhotos(multiSelector);
-                        }
-                    })
-                    .show();
-        }
-
-        @Override
-        public void onSaveInstanceState (Bundle outState){
-            super.onSaveInstanceState(outState);
-            outState.putBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE, multiSelector.isSelectable());
-        }
+        return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void confirmDelete ( final MultiSelector multiSelector){
+        new MaterialDialog.Builder(getContext())
+                .content(multiSelector.getSelectedPositions().size() > 1 ?
+                        R.string.sync_delete_photos_question : R.string.sync_delete_photo_question)
+                .positiveText(R.string.delete)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        localAlbumPresenter.deleteSelectedPhotos(multiSelector);
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public void onSaveInstanceState (Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE, multiSelector.isSelectable());
+    }
+}

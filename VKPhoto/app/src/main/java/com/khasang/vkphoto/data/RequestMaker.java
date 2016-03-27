@@ -31,9 +31,13 @@ public class RequestMaker {
         request.executeWithListener(vkRequestListener);
     }
 
-    public static void uploadPhoto(File file, PhotoAlbum photoAlbum, VKRequest.VKRequestListener vkRequestListener) {
-        VKRequest vkRequest = VKApi.uploadAlbumPhotoRequest(file, photoAlbum.id, 0);
+    public static void uploadPhoto(VKRequest.VKRequestListener vkRequestListener, File file, long idVKPhotoAlbum) {
+        VKRequest vkRequest = VKApi.uploadAlbumPhotoRequest(file, idVKPhotoAlbum, 0);
         vkRequest.executeWithListener(vkRequestListener);
+    }
+
+    public static VKRequest uploadPhotoRequest(File file, long idVKPhotoAlbum) {
+        return VKApi.uploadAlbumPhotoRequest(file, idVKPhotoAlbum, 0);
     }
 
     public static void getUploadServer(VKRequest.VKRequestListener vkRequestListener, int albumId) {
@@ -81,7 +85,10 @@ public class RequestMaker {
         VKRequest request = new VKRequest("photos.getById", VKParameters.from("photos", VKAccessToken.currentToken().userId + "_" + String.valueOf(photoId),"extended",1));
         request.executeWithListener(vkRequestListener);
     }
-
+    public static void getPhotoByIdSync(VKRequest.VKRequestListener vkRequestListener, int photoId) {
+        VKRequest request = new VKRequest("photos.getById", VKParameters.from("photos", VKAccessToken.currentToken().userId + "_" + String.valueOf(photoId),"extended",1));
+        request.executeSyncWithListener(vkRequestListener);
+    }
     public static void getUserInfoById(VKRequest.VKRequestListener vkRequestListener, int userId) {
         VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.USER_ID, userId, VKApiConst.FIELDS, "photo_50,photo_200,city,verified"));
         request.executeWithListener(vkRequestListener);

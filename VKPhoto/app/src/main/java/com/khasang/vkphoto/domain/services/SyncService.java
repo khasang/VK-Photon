@@ -1,6 +1,9 @@
 package com.khasang.vkphoto.domain.services;
 
 
+import android.content.Context;
+
+import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
@@ -24,11 +27,15 @@ public interface SyncService {
 
     void getVKPhotosByAlbumId(int albumId);
 
-    void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum);
+    void getAllLocalAlbumsList();
+
+    void uploadPhotos(final MultiSelector multiSelector, final List<Photo> localPhotoList, final long idPhotoAlbum);
 
     void deleteVkPhotoById(int photoId);
 
     void deleteSelectedVkPhotos(List<Photo> photoList);
+
+    void deleteAllVkPhotoAlbums();
 
     void deleteSelectedVkPhotoAlbums(List<PhotoAlbum> photoAlbumList);
 
@@ -69,5 +76,7 @@ public interface SyncService {
     void editLocalAlbum(int albumId, String title);
 
     void createLocalAlbum(String title);
+
+    void runSetContextEvent(Context context);
 }
       

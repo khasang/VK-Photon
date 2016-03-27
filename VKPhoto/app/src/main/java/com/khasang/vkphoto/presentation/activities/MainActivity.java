@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -26,6 +27,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.events.CloseActionModeEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
     public boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                 Log.v(TAG, "Permission is granted");
                 return true;
@@ -238,7 +241,22 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             startActivity(intent);
             return true;
         }
-
+        if (id == R.id.log_out) {
+            new MaterialDialog.Builder(this)
+                    .title(R.string.logout)
+                    .positiveText(R.string.st_btn_ok)
+                    .negativeText(R.string.st_btn_cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        syncService.deleteAllVkPhotoAlbums();
+                                        VKSdk.logout();
+                                        finish();
+                                    }
+                                }
+                    ).show();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

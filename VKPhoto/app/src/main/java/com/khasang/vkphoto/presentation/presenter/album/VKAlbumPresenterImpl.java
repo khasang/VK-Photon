@@ -1,22 +1,31 @@
 package com.khasang.vkphoto.presentation.presenter.album;
 
+import android.content.Context;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.view.MenuItem;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
+import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
+import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
+import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
 import com.khasang.vkphoto.domain.events.GetSynchronizedPhotosEvent;
+import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
+import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractor;
 import com.khasang.vkphoto.domain.interactors.VKAlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.view.AlbumView;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -28,34 +37,48 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-
 public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumPresenter {
     private AlbumView vkAlbumView;
-    private VKAlbumInteractor VKAlbumInteractor;
+    private VKAlbumInteractor vkAlbumInteractor;
     private boolean onGetSynchronizedPhotosEventCaught = false;
-//    private ActionMode actionMode;
+    private PhotoAlbum photoAlbum;
+    private Handler handler;
 
-    public VKAlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider) {
+    public VKAlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider, PhotoAlbum photoAlbum) {
         this.vkAlbumView = vkAlbumView;
-        VKAlbumInteractor = new VKAlbumInteractorImpl(syncServiceProvider);
+        this.photoAlbum = photoAlbum;
+        vkAlbumInteractor = new VKAlbumInteractorImpl(syncServiceProvider);
+        handler = new Handler();
     }
 
 
     @Override
     public void getPhotosByAlbumId(int albumId) {
-        VKAlbumInteractor.getPhotosByAlbumId(albumId);
+        vkAlbumInteractor.getPhotosByAlbumId(albumId);
+    }
+
+    @Override
+    public void uploadPhotos(MultiSelector multiSelector, final long idPhotoAlbum, final AppCompatActivity activity) {
     }
 
     @Override
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
-        VKAlbumInteractor.deleteSelectedVkPhotos(multiSelector, vkAlbumView.getPhotoList());
+        List<Photo> photoList = new ArrayList<>(vkAlbumView.getPhotoList());
         vkAlbumView.removePhotosFromView();
-        actionMode.finish();
+        vkAlbumInteractor.deleteSelectedVkPhotos(multiSelector, photoList);
+        if (actionMode != null) {
+            actionMode.finish();
+        }
     }
 
     @Override
-    public void addPhotos(List<Photo> listUploadedFiles, PhotoAlbum photoAlbum) {
-        VKAlbumInteractor.addPhotos(listUploadedFiles, photoAlbum);
+    public void getAllLocalAlbums() {
+        vkAlbumInteractor.getAllLocalAlbums();
+    }
+
+    @Override
+    public void goToPhotoAlbum(Context context, PhotoAlbum selectedLocalPhotoAlbum, long idVKPhotoAlbum) {
+        Navigator.navigateToLocalAlbumFragmentWithReplace(context, selectedLocalPhotoAlbum, idVKPhotoAlbum);
     }
 
     @Override
@@ -66,6 +89,10 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     public void onStart() {
         EventBus.getDefault().register(this);
         onGetSynchronizedPhotosEventCaught = false;
+        GetSwipeRefreshEvent getSwipeRefreshEvent = EventBus.getDefault().removeStickyEvent(GetSwipeRefreshEvent.class);
+        if (getSwipeRefreshEvent != null) {
+            onGetSwipeRefreshEvent(getSwipeRefreshEvent);
+        }
     }
 
     @Override
@@ -87,6 +114,22 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetSwipeRefreshEvent(GetSwipeRefreshEvent getSwipeRefreshEvent) {
+        vkAlbumView.displayRefresh(getSwipeRefreshEvent.refreshing);
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onGetVKPhotoEvent(GetVKPhotoEvent event) {
+        vkAlbumView.displayRefresh(true);
+        List<Photo> albumPhotoList = new ArrayList<>(vkAlbumView.getPhotoList());
+        albumPhotoList.add(0, event.photo);
+        if (photoAlbum.syncStatus != Constants.SYNC_NOT_STARTED) {
+            new LocalPhotoSource(vkAlbumView.getContext()).savePhotoToAlbum(event.photo, photoAlbum);
+        }
+        updateView(albumPhotoList);
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
         Logger.d("VKAlbumPresenterImpl onGetVKPhotosEvent");
         if (!onGetSynchronizedPhotosEventCaught) {
@@ -96,10 +139,9 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             EventBus.getDefault().removeStickyEvent(GetVKPhotosEvent.class);
-            List<Photo> synchronizedPhotos = vkAlbumView.getPhotoList();
+            final List<Photo> synchronizedPhotos = new ArrayList<>(vkAlbumView.getPhotoList());
             List<Photo> receivedFromVKPhotos = getVKPhotosEvent.photosList;
             List<Photo> deleteListFromLocal = new ArrayList<>();
             int added = 0, removed = 0;
@@ -118,15 +160,26 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
                 if (!receivedFromVKPhotos.contains(addedPhoto)) {
                     deleteListFromLocal.add(addedPhoto);
                     iter.remove();
-//                    synchronizedPhotos.remove(addedPhoto); //ConcurrentModificationException
                     removed++;
                 }
             }
-
+            if (photoAlbum.syncStatus != Constants.SYNC_NOT_STARTED) {
+                new LocalPhotoSource(vkAlbumView.getContext()).deletePhotoListFromDB(deleteListFromLocal);
+            }
             Logger.d("VKAlbumPresenterImpl added=" + added + ", removed=" + removed + " photos");
+            EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
             //выводим на экран результирующий лист
-            vkAlbumView.displayVkPhotos(synchronizedPhotos);
+            updateView(synchronizedPhotos);
         }
+    }
+
+    private void updateView(final List<Photo> synchronizedPhotos) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                vkAlbumView.displayVkPhotos(synchronizedPhotos);
+            }
+        });
     }
 
     @Override
@@ -139,7 +192,12 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
         MenuItem itemActionEditPhoto = actionMode.getMenu().findItem(R.id.action_edit_photo);
         MenuItem itemDownLoadPhoto = actionMode.getMenu().findItem(R.id.action_download_photo);
         super.hideActionModeItem(multiSelector, itemActionEditPhoto);
-        super.hideActionModeItem(multiSelector, itemDownLoadPhoto);
+//        super.hideActionModeItem(multiSelector, itemDownLoadPhoto);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetVKAlbumsEvent(GetLocalAlbumsEvent getLocalAlbumsEvent) {
+        vkAlbumView.displayAllLocalAlbums(getLocalAlbumsEvent.albumsList);
     }
 
     @Override
@@ -158,7 +216,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
                         return true;
                     case R.id.action_select_all:
                         for (int i = 0; i < vkAlbumView.getPhotoList().size(); i++) {
-                                multiSelector.setSelected(i, 0, true);
+                            multiSelector.setSelected(i, 0, true);
                             actionMode.getMenu().findItem(R.id.action_download_photo).setVisible(false);
                             actionMode.getMenu().findItem(R.id.action_edit_photo).setVisible(false);
                         }
