@@ -252,11 +252,11 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+//            startActivity(intent);
+//            return true;
+//        }
         if (id == R.id.log_out) {
             new MaterialDialog.Builder(this)
                     .title(R.string.logout)
