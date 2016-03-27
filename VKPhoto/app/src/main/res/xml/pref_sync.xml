@@ -7,7 +7,7 @@
 
         <CheckBoxPreference
             android:key="sync_on_opening"
-            android:title="Sync on opening app"
+            android:title="@string/sync_on_opening"
             android:defaultValue="true"/>
 
         <SwitchPreference
