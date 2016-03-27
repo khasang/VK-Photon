@@ -249,7 +249,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     @Override
     public boolean onLongClick(View v) {
         if (!multiSelector.isSelectable()) { // (3)
-            if (photoAlbum.id > 0) {
+            if (PhotoAlbum.checkSelectable(photoAlbum.id)) {
                 multiSelector.setSelectable(true); // (4)
                 multiSelector.setSelected(this, true); // (5)
                 albumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) albumThumbImageView.getContext());
