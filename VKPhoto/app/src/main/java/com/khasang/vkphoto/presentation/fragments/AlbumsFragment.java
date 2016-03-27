@@ -198,10 +198,10 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     }
 
     @Override
-    public void editPrivacy(final int albumId, int privacy) {
+    public void editPrivacyOfAlbums(final List<PhotoAlbum> albumsList, int oldPrivacy) {
         View view = View.inflate(getContext(), R.layout.fragment_vk_edit_privacy, null);
         final RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.rg_privacy);
-        switch (privacy) {
+        switch (oldPrivacy) {
             case VKPrivacy.PRIVACY_ALL:
                 radioGroup.check(R.id.rb_album_privacy_everybody);
                 break;
@@ -219,7 +219,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
                 .title(R.string.edit_privacy)
                 .customView(view, true)
                 .positiveText(R.string.st_btn_ok)
-                .negativeText(R.string.cancel)
+                .negativeText(R.string.st_btn_cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -238,8 +238,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
                                 newPrivacy = VKPrivacy.PRIVACY_NOBODY;
                                 break;
                         }
-                        Logger.d(String.valueOf(newPrivacy));
-                        vKAlbumsPresenter.editPrivacyAlbumById(albumId, newPrivacy);
+                        vKAlbumsPresenter.editPrivacyOfAlbums(albumsList, newPrivacy);
                     }
                 })
                 .show();

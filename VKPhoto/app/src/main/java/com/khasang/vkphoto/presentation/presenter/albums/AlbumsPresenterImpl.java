@@ -87,9 +87,17 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     }
 
     @Override
-    public void editPrivacyAlbumById(int albumId, int privacy) {
-        vkAlbumsInteractor.editPrivacyAlbum(albumId, privacy);
+    public void editPrivacyOfAlbums(List<PhotoAlbum> albumsList, int newPrivacy) {
+        vkAlbumsInteractor.editPrivacyOfAlbums(albumsList, newPrivacy);
         actionMode.finish();
+    }
+
+    //очень плохо давать интерфейсному и приватному методам одинаковое имя
+    private void editPrivacyOfAlbums(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        Cursor cursor = vkAlbumsView.getAdapterCursor();
+        List<PhotoAlbum> albumsList = getSelectedAlbums(selectedPositions, cursor);
+        vkAlbumsView.editPrivacyOfAlbums(albumsList, albumsList.get(0).privacy);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -159,7 +167,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
                         vkAlbumsInteractor.cancelAlbumsSync(getSelectedAlbums(multiSelector.getSelectedPositions(), vkAlbumsView.getAdapterCursor()));
                         return true;
                     case R.id.action_privacy:
-                        editPrivacySelectedAlbum(multiSelector);
+                        editPrivacyOfAlbums(multiSelector);
                         return true;
                     default:
                         break;
@@ -167,19 +175,6 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
                 return false;
             }
         });
-    }
-
-    private void editPrivacySelectedAlbum(MultiSelector multiSelector) {
-        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
-        Cursor cursor = vkAlbumsView.getAdapterCursor();
-        PhotoAlbum album;
-        if (cursor != null) {
-            Integer position = selectedPositions.get(0);
-            cursor.moveToPosition(position);
-            album = new PhotoAlbum(cursor);
-
-            vkAlbumsView.editPrivacy(album.getId(), album.privacy);
-        }
     }
 
     private void editSelectedAlbum(MultiSelector multiSelector) {

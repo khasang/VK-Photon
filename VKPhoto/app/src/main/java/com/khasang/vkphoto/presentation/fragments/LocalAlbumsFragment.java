@@ -240,7 +240,7 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     }
 
     @Override
-    public void editPrivacy(int albumId, int privacy) {
+    public void editPrivacyOfAlbums(List<PhotoAlbum> albumsList, int oldPrivacy) {
 
     }
 

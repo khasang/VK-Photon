@@ -88,13 +88,13 @@ public class VKAlbumSource {
         }, albumId, title, description);
     }
 
-    public void editPrivacyAlbumById(final int albumId, int privacy) {
+    public void editPrivacyOfAlbum(final PhotoAlbum PhotoAlbum, int newPrivacy) {
         RequestMaker.editPrivacyAlbumById(new MyVkRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 Logger.d("Edit Privacy VKPhotoAlbum successfully");
             }
-        }, albumId, privacy);
+        }, PhotoAlbum.id, newPrivacy);
     }
 }

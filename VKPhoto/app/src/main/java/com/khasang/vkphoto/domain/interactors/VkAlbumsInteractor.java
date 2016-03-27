@@ -35,5 +35,5 @@ public interface VkAlbumsInteractor {
 
     void editAlbum(int albumId, String title, String description);
 
-    void editPrivacyAlbum(int albumId, int privacy);
+    void editPrivacyOfAlbums(List<PhotoAlbum> albumsList, int newPrivacy);
 }

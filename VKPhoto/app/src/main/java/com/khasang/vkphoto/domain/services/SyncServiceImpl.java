@@ -197,19 +197,14 @@ public class SyncServiceImpl extends Service implements SyncService {
     }
 
     @Override
-    public void editPrivacyAlbum(final int albumId, final int privacy) {
+    public void editPrivacyOfAlbums(final List<PhotoAlbum> albumsList, final int newPrivacy) {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                Logger.d("SyncService getAllLocalAlbums");
-                List<PhotoAlbum> albumsList = localDataSource.getAlbumSource().getAllLocalAlbumsList();
-                if (albumsList.isEmpty()) {
-                    eventBus.postSticky(new ErrorEvent(77));
-                } else {
-                    eventBus.postSticky(new GetLocalAlbumsEvent(albumsList));
+                for (PhotoAlbum photoAlbum : albumsList) {
+                    localDataSource.getAlbumSource().editPrivacyOfAlbum(photoAlbum, newPrivacy);
+                    vKDataSource.getAlbumSource().editPrivacyOfAlbum(photoAlbum, newPrivacy);
                 }
-                localDataSource.getAlbumSource().editPrivacyAlbumById(albumId, privacy);
-                vKDataSource.getAlbumSource().editPrivacyAlbumById(albumId, privacy);
             }
         });
     }

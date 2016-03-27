@@ -98,9 +98,9 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     }
 
     @Override
-    public void editPrivacyAlbum(int albumId, int privacy) {
+    public void editPrivacyOfAlbums(List<PhotoAlbum> albumsList, int newPrivacy) {
         if (checkSyncService()) {
-            syncService.editPrivacyAlbum(albumId, privacy);
+            syncService.editPrivacyOfAlbums(albumsList, newPrivacy);
         }
     }
 

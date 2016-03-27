@@ -16,7 +16,6 @@ import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
-import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -231,9 +230,9 @@ public class LocalAlbumSource {
     }
 
 
-    public void editPrivacyAlbumById(int albumId, int privacy) {
-        PhotoAlbum album = getAlbumById(albumId);
-        album.privacy = privacy;
+    public void editPrivacyOfAlbum(PhotoAlbum PhotoAlbum, int newPrivacy) {
+        PhotoAlbum album = getAlbumById(PhotoAlbum.id);
+        album.privacy = newPrivacy;
         updateAlbum(album, true);
     }
 
