@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -26,7 +27,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
@@ -42,10 +42,11 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenterImpl;
 import com.khasang.vkphoto.presentation.view.AlbumView;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
+import com.khasang.vkphoto.util.PermissionUtils;
 import com.khasang.vkphoto.util.ToastUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -57,12 +58,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class LocalAlbumFragment extends Fragment implements AlbumView {
+public class LocalAlbumFragment extends Fragment implements AlbumView{
     public static final String TAG = LocalAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
     public static final String IDVKPHOTOALBUM = "idVKPhotoAlbum";
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
-    private static final int CAMERA_REQUEST = 1888;
     private PhotoAlbum photoAlbum;
     private TextView tvCountOfPhotos;
     private LocalAlbumPresenter localAlbumPresenter;
@@ -188,16 +188,26 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
             @Override
             public void onClick(View view) {
 //                vKAlbumPresenter.addPhotos();
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (PermissionUtils.isPermissionsGranted(getActivity())) {
+                        intentToStartCamera();
+                    }
+                } else {
+                    intentToStartCamera();
+                }
             }
         });
+    }
+
+    private void intentToStartCamera() {
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, Constants.REQUEST_PERMISSIONS);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Constants.REQUEST_PERMISSIONS && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             storeImage(photo);
             deleteLastImageIfDuplicate();
@@ -310,7 +320,6 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         localAlbumPresenter.onStop();
     }
 
-
     //AlbumView implementations
     @Override
     public void displayPhotos(List<Photo> photos) {
@@ -335,7 +344,6 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     public List<Photo> getPhotoList() {
         return photoList;
     }
-
 
     public void showError(int errorCode) {
         String error = ErrorUtils.getErrorMessage(errorCode, getContext());

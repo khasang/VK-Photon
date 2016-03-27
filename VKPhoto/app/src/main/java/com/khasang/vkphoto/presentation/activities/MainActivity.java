@@ -26,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.khasang.vkphoto.R;
@@ -38,16 +37,16 @@ import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.AlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
+import com.khasang.vkphoto.util.PermissionUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,43 +68,54 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private FloatingActionButton fab;
     private ViewPagerAdapter adapter;
 
-    public boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG, "Permission is granted");
-                return true;
-            } else {
-                Log.v(TAG, "Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                finish();
-                return false;
-            }
-        } else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG, "Permission is granted");
-            return true;
-        }
-    }
+    private static String[] PERMISSIONS_EXTERNAL = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         {
-            if (isStoragePermissionGranted()) {
-                if (!FileManager.initBaseDirectory(getApplicationContext())) {
-                    throw new RuntimeException("Base directory was not created");
-                }
-            }
             setContentView(R.layout.activity_main);
             initServiceConnection(savedInstanceState);
             loginVk();
             initViews();
-            initViewPager();
+            if (Build.VERSION.SDK_INT < 23) {
+                codeForRequestPermission();
+            } else if (Build.VERSION.SDK_INT >= 23) {
+                if (PermissionUtils.isPermissionsGranted(this)) {
+                    codeForRequestPermission();
+                }
+            }
             if (savedInstanceState != null) {
                 Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
                 getSupportActionBar().setTitle(savedInstanceState.getString(ACTION_BAR_TITLE));
             }
             measureScreen();
+        }
+    }
+
+    private void codeForRequestPermission() {
+        initViewPager();
+        if (!FileManager.initBaseDirectory(getApplicationContext())) {
+            throw new RuntimeException("Base directory was not created");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == Constants.REQUEST_PERMISSIONS) {
+            Logger.d("Received response for permissions request.");
+            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Logger.d("Permissions has now been granted.");
+                codeForRequestPermission();
+            } else if (grantResults.length != 2 && grantResults[0] != PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                Logger.d("Permissions was NOT granted.");
+            }
+        } else if (requestCode != Constants.REQUEST_PERMISSIONS) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            finish();
         }
     }
 
@@ -129,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -183,10 +192,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 Logger.d("MainActivity onServiceConnected");
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
-                if (VKAccessToken.currentToken() != null && viewPager.getVisibility() == View.VISIBLE && savedInstanceState == null) {
+                if (VKAccessToken.currentToken() != null && savedInstanceState == null) {
                     EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
                     syncService.startSync();
-                    Logger.d("ViewPagerVisibile" + viewPager.getVisibility());
                 }
             }
 
@@ -300,7 +308,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
+        if (viewPager != null) {
+            outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
+        }
         outState.putString(ACTION_BAR_TITLE, getSupportActionBar().getTitle().toString());
         super.onSaveInstanceState(outState);
     }

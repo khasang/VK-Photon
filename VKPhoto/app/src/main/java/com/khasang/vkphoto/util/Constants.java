@@ -1,5 +1,7 @@
 package com.khasang.vkphoto.util;
 
+import android.Manifest;
+
 public class Constants {
     public static final int MAX_WIDTH = 1024;
     public static final int MAX_HEIGHT = 768;
@@ -19,6 +21,11 @@ public class Constants {
     public static final int SEARCH = 2;
     public static final int ALBUM = 3;
     public static final int PHOTO = 4;
+
+    public static final int REQUEST_PERMISSIONS = 0;
+
+    public static String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA};
 }
 
 
