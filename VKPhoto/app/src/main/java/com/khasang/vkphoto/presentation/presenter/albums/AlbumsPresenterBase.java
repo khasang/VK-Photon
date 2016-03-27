@@ -4,6 +4,7 @@ import android.support.v7.view.ActionMode;
 import android.view.MenuItem;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,9 +30,9 @@ public abstract class AlbumsPresenterBase implements AlbumsPresenter {
         }
     }
 
-    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
+    public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem, PhotoAlbum photoAlbum) {
         int size = multiSelector.getSelectedPositions().size();
-        if (size == 1) {
+        if (photoAlbum.id >=0 && size == 1) {
             menuItem.setVisible(true);
         } else {
             menuItem.setVisible(false);

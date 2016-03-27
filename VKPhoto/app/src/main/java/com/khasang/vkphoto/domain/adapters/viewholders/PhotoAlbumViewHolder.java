@@ -250,6 +250,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
             multiSelector.setSelectable(true); // (4)
             multiSelector.setSelected(this, true); // (5)
             albumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) albumThumbImageView.getContext());
+            albumsPresenter.hideActionModeItem(multiSelector, menuItem, photoAlbum);
             return true;
         }
         return false;
@@ -260,7 +261,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         if (multiSelector.isSelectable()) {
             multiSelector.tapSelection(this);
             albumsPresenter.checkActionModeFinish(multiSelector);
-            albumsPresenter.hideActionModeItem(multiSelector, menuItem);
+            albumsPresenter.hideActionModeItem(multiSelector, menuItem, photoAlbum);
         } else {
             albumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }
