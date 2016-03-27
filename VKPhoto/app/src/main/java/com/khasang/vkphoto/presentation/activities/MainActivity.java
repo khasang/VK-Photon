@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             if (Build.VERSION.SDK_INT < 23) {
                 codeForRequestPermission();
             } else if (Build.VERSION.SDK_INT >= 23) {
-                if (PermissionUtils.isStoragePermissionGranted(this)) {
+                if (PermissionUtils.isPermissionsGranted(this)) {
                     codeForRequestPermission();
                 }
             }
@@ -103,16 +103,17 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == Constants.REQUEST_EXTERNAL_STORAGE) {
-            Logger.d("Received response for External Storage permission request.");
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Logger.d("External Storage permission has now been granted. Showing preview.");
+        if (requestCode == Constants.REQUEST_PERMISSIONS) {
+            Logger.d("Received response for permissions request.");
+            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Logger.d("Permissions has now been granted.");
                 codeForRequestPermission();
-            } else {
-                Logger.d("External Storage permission was NOT granted.");
-
+            } else if (grantResults.length != 2 && grantResults[0] != PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                Logger.d("Permissions was NOT granted.");
             }
-        } else {
+        } else if (requestCode != Constants.REQUEST_PERMISSIONS) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             finish();
         }
@@ -138,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 Logger.d("MainActivity onServiceConnected");
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
-                if (VKAccessToken.currentToken() != null  && savedInstanceState == null) {
+                if (VKAccessToken.currentToken() != null && savedInstanceState == null) {
                     EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
                     syncService.startSync();
                 }

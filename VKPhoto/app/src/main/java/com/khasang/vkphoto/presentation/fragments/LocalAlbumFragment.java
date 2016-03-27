@@ -1,6 +1,5 @@
 package com.khasang.vkphoto.presentation.fragments;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -46,6 +45,7 @@ import com.khasang.vkphoto.presentation.view.AlbumView;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
+import com.khasang.vkphoto.util.PermissionUtils;
 import com.khasang.vkphoto.util.ToastUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,20 +53,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
 
-public class LocalAlbumFragment extends Fragment implements AlbumView, EasyPermissions.PermissionCallbacks {
+public class LocalAlbumFragment extends Fragment implements AlbumView{
     public static final String TAG = LocalAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
     public static final String IDVKPHOTOALBUM = "idVKPhotoAlbum";
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
-//    private static final int CAMERA_REQUEST = 1888;
     private PhotoAlbum photoAlbum;
     private TextView tvCountOfPhotos;
     private LocalAlbumPresenter localAlbumPresenter;
@@ -185,55 +181,25 @@ public class LocalAlbumFragment extends Fragment implements AlbumView, EasyPermi
             public void onClick(View view) {
 //                vKAlbumPresenter.addPhotos();
                 if (Build.VERSION.SDK_INT >= 23) {
-                    createPhotoToCameraWithPermissionsCheck();
+                    if (PermissionUtils.isPermissionsGranted(getActivity())) {
+                        intentToStartCamera();
+                    }
                 } else {
-                    startCamera();
+                    intentToStartCamera();
                 }
             }
         });
     }
 
-    private void startCamera() {
+    private void intentToStartCamera() {
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, Constants.REQUEST_CAMERA);
-    }
-
-    @AfterPermissionGranted(Constants.REQUEST_CAMERA)
-    private void createPhotoToCameraWithPermissionsCheck() {
-        if (EasyPermissions.hasPermissions(getContext(), Manifest.permission.CAMERA)) {
-            Logger.d("Camera permission has been granted.");
-            startCamera();
-        } else {
-            Logger.d("Request one permission.");
-            EasyPermissions.requestPermissions(this, getString(R.string.camera_permission_explanation),
-                    Constants.REQUEST_CAMERA, Manifest.permission.CAMERA);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (isVisible() && Arrays.asList(permissions).contains(Manifest.permission.CAMERA)) {
-            requestCode = Constants.REQUEST_CAMERA;
-        }
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> list) {
-        Logger.d("Some permissions have been granted");
-        startCamera();
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> list) {
-        Logger.d("Some permissions have been denied");
+        startActivityForResult(cameraIntent, Constants.REQUEST_PERMISSIONS);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constants.REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Constants.REQUEST_PERMISSIONS && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             storeImage(photo);
             deleteLastImageIfDuplicate();
