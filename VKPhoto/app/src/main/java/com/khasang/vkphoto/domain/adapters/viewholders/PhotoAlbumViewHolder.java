@@ -123,7 +123,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
 
     private void loadThumb() {
         if (photoAlbum.size == 0) { //Пустой альбом
-            loadPhoto(photoAlbum.owner_id == 0 ? R.mipmap.no_thumb_local : R.mipmap.no_thumb_vk);
+            loadPhoto(photoAlbum.owner_id == 0 ? R.drawable.black_no_foto : R.drawable.blue_no_foto);
         } else if (photoAlbum.owner_id == 0) { //локальный альбом
             File file = new File(photoAlbum.thumbFilePath);
             loadPhoto(file);
