@@ -98,8 +98,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     }
 
     private void loadPhoto() {
-        if (TextUtils.isEmpty(photo.photo_130)) {
-            Logger.d(VKCommentsFragment.class.getSimpleName() + ": image load form local album");
+        if (!TextUtils.isEmpty(photo.filePath)) {
             Glide.with(userImage.getContext())
                     .load("file://" + photo.filePath)
                     .error(R.drawable.vk_share_send_button_background)
@@ -110,6 +109,8 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
                     .load(photo.getUrlToMaxPhoto())
                     .error(R.drawable.vk_share_send_button_background)
                     .into(userImage);
+        }
+        if (photo.owner_id != 0) {
             hlayout.setVisibility(View.VISIBLE);
             photolikes.setText(String.valueOf(photo.likes));
             commentCount.setText(String.valueOf(photo.comments));
