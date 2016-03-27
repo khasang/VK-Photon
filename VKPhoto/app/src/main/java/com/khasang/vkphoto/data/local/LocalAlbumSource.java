@@ -2,6 +2,7 @@ package com.khasang.vkphoto.data.local;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,6 +17,7 @@ import com.khasang.vkphoto.data.database.tables.PhotosTable;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
+import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.ErrorUtils;
@@ -243,13 +245,26 @@ public class LocalAlbumSource {
         updateAlbum(album, true);
     }
 
-    public void editLocalOrSyncAlbum(PhotoAlbum albumToEdit, String newTitle) {
+    public void editLocalOrSyncAlbum(PhotoAlbum albumToEdit, String newTitle, LocalPhotoSource localPhotoSource, List<Photo> photosInAlbum) {
         PhotoAlbum album = albumIsLocal(albumToEdit) ?
                 getLocalAlbumById(albumToEdit.id) : getAlbumFromDb(albumToEdit.id);
-        String newPath = (new File(album.filePath).getParent()) + "/" + newTitle;
-        if (FileManager.renameDir(album.filePath, newPath)) {
+        String newAlbumPath = (new File(album.filePath).getParent()) + File.separator + newTitle;
+        if (FileManager.renameDir(album.filePath, newAlbumPath)) {
             album.title = newTitle;
-            album.filePath = newPath;
+            album.filePath = newAlbumPath;
+//            updateAlbum(album, albumIsLocal(albumToEdit));//refresh DB
+
+            for (Photo photo : photosInAlbum) {
+                String photoFileName = photo.filePath.substring(photo.filePath.lastIndexOf(File.separator) + 1);
+                photo.filePath = newAlbumPath + File.separator + photoFileName;
+//                localPhotoSource.updatePhoto(photo);//refresh DB
+
+                File imageFile = new File(photo.filePath);
+                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri contentUri = Uri.fromFile(imageFile);
+                mediaScanIntent.setData(contentUri);
+                context.sendBroadcast(mediaScanIntent);
+            }
             EventBus.getDefault().postSticky(new LocalALbumEvent());
         }
         Logger.d("LocalAlbumSource. editLocalOrSyncAlbum " + album.filePath);

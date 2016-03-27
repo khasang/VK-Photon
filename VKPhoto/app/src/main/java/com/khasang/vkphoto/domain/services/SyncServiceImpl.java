@@ -201,7 +201,8 @@ public class SyncServiceImpl extends Service implements SyncService {
         asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
             @Override
             public void run() throws Exception {
-                localDataSource.getAlbumSource().editLocalOrSyncAlbum(photoAlbum, newTitle);
+                localDataSource.getAlbumSource().editLocalOrSyncAlbum(photoAlbum, newTitle, localDataSource.getPhotoSource(),
+                        localDataSource.getPhotoSource().getLocalPhotosByAlbumId(photoAlbum.id));
             }
         });
     }
