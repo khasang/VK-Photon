@@ -63,10 +63,6 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         if (getArguments() != null) {
             photo = getArguments().getParcelable(PHOTO_ID);
         }
-        FloatingActionButton floatingActionButton = ((FabProvider) getContext()).getFloatingActionButton();
-        if (floatingActionButton != null) {
-            floatingActionButton.hide();
-        }
         Logger.d(TAG + " onCreate");
     }
 
@@ -102,7 +98,10 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
             }
         });
         loadPhoto();
-        ((FabProvider) getContext()).getFloatingActionButton().hide();
+        if ("alive".equals(PhotoViewPagerFragment.CRUTCH)) {
+            Logger.d("VKCommentsFragment. hiding fab");
+            ((FabProvider) getContext()).getFloatingActionButton().hide();
+        }
         return view;
     }
 
@@ -127,30 +126,11 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         Logger.d(TAG + " onStop");
         presenter.onStop();
         hlayout.setVisibility(View.GONE);
-
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Logger.d(TAG + " onResume");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Logger.d(TAG + " onPause");
     }
 
     @Override
@@ -160,13 +140,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         Logger.d(TAG + " onStart");
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Logger.d(TAG + " onDestroy");
-    }
-
-    @Override
+   @Override
     public void displayVkComments(List<Comment> comments, List<VkProfile> profiles) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();

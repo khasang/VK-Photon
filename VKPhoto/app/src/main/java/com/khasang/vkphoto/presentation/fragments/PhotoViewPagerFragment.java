@@ -26,7 +26,7 @@ public class PhotoViewPagerFragment extends Fragment {
 
     private static final String PHOTO_LIST = "photoList";
     private static final String POSITION = "position";
-
+    public static String CRUTCH = "";
     public static final String TAG = PhotoViewPagerFragment.class.getSimpleName();
 
     private List<Photo> photoList;
@@ -88,6 +88,7 @@ public class PhotoViewPagerFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         fragmentActivity = (FragmentActivity) context;
+        CRUTCH = "alive";
     }
 
     @Override
@@ -95,7 +96,7 @@ public class PhotoViewPagerFragment extends Fragment {
         super.onStop();
         Logger.d(TAG + " onStop");
         adapter = null;
-
+        CRUTCH = "dead";
     }
 
     @Override
