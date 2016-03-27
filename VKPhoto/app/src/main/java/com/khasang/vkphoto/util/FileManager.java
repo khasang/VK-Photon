@@ -173,4 +173,14 @@ public class FileManager {
         }
         return albumPathToBeFixed;
     }
+
+    public static boolean renameDir(String oldPath, String newPath) {
+        File folder = new File(oldPath);
+        if (folder.exists()) {
+            if (folder.renameTo(new File(newPath))) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

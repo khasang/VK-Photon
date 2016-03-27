@@ -132,7 +132,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
                 @Override
                 public void run() {
                     if (!TextUtils.isEmpty(photoAlbum.thumbFilePath)) { //вк альбом со скачанной обложкой
-                        Photo photo = localDataSource.getPhotoSource().getPhotoById(photoAlbum.thumb_id);
+                        Photo photo = localDataSource.getPhotoSource().getPhotoFromDb(photoAlbum.thumb_id);
                         if (photo != null && photo.filePath.equals(photoAlbum.thumbFilePath)) {
                             File file = new File(photoAlbum.thumbFilePath);
                             if (file.exists()) {

@@ -37,10 +37,8 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
     }
 
     @Override
-    public void addAlbum(String title, String thumbPath) {
-        //TODO: implement metod
-        Logger.d("user wants to add new local album");
-//        albumsInteractor.addAlbum(title, description, privacy, commentPrivacy);
+    public void addAlbum(String title) {
+        albumsInteractor.addAlbum(title);
     }
 
     public void syncAlbums(MultiSelector multiSelector) {
@@ -117,13 +115,13 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
             Integer position = selectedPositions.get(0);
             cursor.moveToPosition(position);
             album = new PhotoAlbum(cursor);
-            albumsView.editAlbum(album.getId(), album.title, null);
+            albumsView.editAlbum(album);
         }
     }
 
     @Override
-    public void editAlbumById(int albumId, String title) {
-        albumsInteractor.editAlbum(albumId, title);
+    public void editLocalOrSyncAlbum(PhotoAlbum photoAlbum, String newTitle) {
+        albumsInteractor.editLocalOrSyncAlbum(photoAlbum, newTitle);
         actionMode.finish();
     }
 

@@ -63,8 +63,7 @@ public class PhotoAlbum extends VKApiPhotoAlbum {
             this.thumb_src = cursor.getString(cursor.getColumnIndex(THUMB_SRC));
             this.syncStatus = cursor.getInt(cursor.getColumnIndex(SYNC_STATUS));
         } catch (Exception e) {
-            Logger.d("check");
-            printPhotoAlbum();
+//            printPhotoAlbum();
         }
     }
 

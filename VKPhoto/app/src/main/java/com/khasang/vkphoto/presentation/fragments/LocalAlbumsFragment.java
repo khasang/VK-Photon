@@ -42,6 +42,7 @@ import com.khasang.vkphoto.presentation.view.AlbumsView;
 import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.Logger;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -96,16 +97,14 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
                 Logger.d("localAlbumsFragment add album");
                 new MaterialDialog.Builder(getContext())
                         .title(R.string.create_album)
-                        .customView(R.layout.fragment_vk_add_album, true)
+                        .customView(R.layout.fragment_local_create_edit_album, true)
                         .positiveText(R.string.create)
                         .negativeText(R.string.cancel)
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 View dialogView = dialog.getView();
-//                                localAlbumsPresenter.addAlbum(
-//                                        ((EditText) dialogView.findViewById(R.id.et_album_title)).getText().toString(),
-//                                        ((EditText) dialogView.findViewById(R.id.et_album_description)).getText().toString());
+                                localAlbumsPresenter.addAlbum(((EditText) dialogView.findViewById(R.id.et_local_album_title)).getText().toString());
                             }
                         })
                         .show();
@@ -221,27 +220,28 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     }
 
     @Override
-    public void editAlbum(final int albumId, String title, String description) {
-        View view = View.inflate(getContext(), R.layout.fragment_local_edit_album, null);
-        ((EditText) view.findViewById(R.id.et_local_album_title)).setText(title);
+    public void editAlbum(final PhotoAlbum photoAlbum) {
+        View view = View.inflate(getContext(), R.layout.fragment_local_create_edit_album, null);
+        ((EditText) view.findViewById(R.id.et_local_album_title)).setText(photoAlbum.title);
         new MaterialDialog.Builder(getContext())
                 .title(R.string.edit_album)
                 .customView(view, true)
                 .positiveText(R.string.st_btn_ok)
-                .negativeText(R.string.cancel)
+                .negativeText(R.string.st_btn_cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         View dialogView = dialog.getView();
-                        localAlbumsPresenter.editAlbumById(albumId,
-                                ((EditText) dialogView.findViewById(R.id.et_local_album_title)).getText().toString());
+                        String newTitle = ((EditText) dialogView.findViewById(R.id.et_local_album_title)).getText().toString();
+                        photoAlbum.title = newTitle;
+                        localAlbumsPresenter.editLocalOrSyncAlbum(photoAlbum, newTitle);
                     }
                 })
                 .show();
     }
 
     @Override
-    public void editPrivacy(int albumId, int privacy) {
+    public void editPrivacyOfAlbums(List<PhotoAlbum> albumsList, int oldPrivacy) {
 
     }
 
@@ -255,9 +255,18 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
 
     @Override
     public void confirmDelete(final MultiSelector multiSelector) {
+        List<String> names = getNamesSelectedAlbums(multiSelector);
         StringBuilder content = new StringBuilder();
-        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_1, multiSelector.getSelectedPositions().size()));
-        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_2, multiSelector.getSelectedPositions().size()));
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_1, names.size()));
+        content.append(" ");
+        for (int i = 0; i < names.size(); i++) {
+            content.append(names.get(i));
+            if (i != names.size() - 1) {
+                content.append(", ");
+            }
+        }
+        content.append(" ");
+        content.append(getResources().getQuantityString(R.plurals.sync_delete_album_question_content_2, names.size()));
         new MaterialDialog.Builder(getContext())
                 .content(content)
                 .positiveText(R.string.delete)
@@ -269,6 +278,20 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
                     }
                 })
                 .show();
+    }
+
+    private List<String> getNamesSelectedAlbums(MultiSelector multiSelector) {
+        List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+        List<String> names = new ArrayList<>();
+        Cursor cursor = getAdapterCursor();
+        if (cursor != null) {
+            for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
+                Integer position = selectedPositions.get(i);
+                cursor.moveToPosition(position);
+                names.add(new PhotoAlbum(cursor).toString());
+            }
+        }
+        return names;
     }
 
     @Override

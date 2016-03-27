@@ -33,7 +33,7 @@ public interface VkAlbumsInteractor {
 
     void cancelAlbumsSync(List<PhotoAlbum> selectedAlbums);
 
-    void editAlbum(int albumId, String title, String description);
+    void editVkAlbum(PhotoAlbum photoAlbum);
 
-    void editPrivacyAlbum(int albumId, int privacy);
+    void editPrivacyOfAlbums(List<PhotoAlbum> albumsList, int newPrivacy);
 }

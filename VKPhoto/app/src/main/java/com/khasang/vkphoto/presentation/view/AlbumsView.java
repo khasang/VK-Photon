@@ -1,9 +1,9 @@
 package com.khasang.vkphoto.presentation.view;
 
 import android.database.Cursor;
-
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
+import java.util.List;
 
 public interface AlbumsView extends View {
     void confirmSync(final MultiSelector multiSelector);
@@ -16,8 +16,8 @@ public interface AlbumsView extends View {
 
     Cursor getAdapterCursor();
 
-    void editAlbum(int albumId, String title, String description);
+    void editAlbum(PhotoAlbum photoAlbum);
 
-    void editPrivacy(int albumId, int privacy);
+    void editPrivacyOfAlbums(List<PhotoAlbum> albumsList, int oldPrivacy);
 }
       

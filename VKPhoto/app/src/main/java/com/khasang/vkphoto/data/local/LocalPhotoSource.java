@@ -44,7 +44,7 @@ public class LocalPhotoSource {
             EventBus.getDefault().postSticky(new ErrorEvent(ErrorUtils.PHOTO_NOT_SAVED_ERROR));
         } else {
             photo.filePath = imageFile.getAbsolutePath();
-            if (getPhotoById(photo.id) == null) {
+            if (getPhotoFromDb(photo.id) == null) {
                 //добавим запись о новом фото в бд фотографий устройства
 //                    MediaStore.Images.Media.insertImage(context.getContentResolver(), photo.filePath, photo.getName(), photo.text);
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -71,7 +71,7 @@ public class LocalPhotoSource {
 
     public File getLocalPhotoFile(int photoId) {
         File file;
-        Photo localPhoto = getPhotoById(photoId);
+        Photo localPhoto = getPhotoFromDb(photoId);
         if (localPhoto == null) return null;
         file = new File(localPhoto.filePath);
         return file.exists() ? file : null;
@@ -83,7 +83,7 @@ public class LocalPhotoSource {
 
     public void updatePhoto(Photo photo) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues contentValues = PhotosTable.getContentValuesUpdated(photo, getPhotoById(photo.id));
+        ContentValues contentValues = PhotosTable.getContentValuesUpdated(photo, getPhotoFromDb(photo.id));
         if (contentValues.size() > 0) {
             db.update(PhotosTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?",
                     new String[]{String.valueOf(photo.id)});
@@ -135,10 +135,22 @@ public class LocalPhotoSource {
         }
     }
 
-    public Photo getPhotoById(int id) {
+    public Photo getPhotoFromDb(int id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Photo photo = null;
         Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, BaseColumns._ID + " = ?", new String[]{String.valueOf(id)}, null, null, null);
+        cursor.moveToFirst();
+        if (!cursor.isAfterLast()) {
+            photo = new Photo(cursor, false);
+        }
+        cursor.close();
+        return photo;
+    }
+
+    public Photo getPhotoFromDb(String filePath) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Photo photo = null;
+        Cursor cursor = db.query(PhotosTable.TABLE_NAME, null, PhotosTable.FILE_PATH + " = ?", new String[]{filePath}, null, null, null);
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
             photo = new Photo(cursor, false);

@@ -43,9 +43,10 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
     }
 
     @Override
-    public void addAlbum(String title, String description, int privacy, int commentPrivacy) {
-        Logger.d("user wants to addAlbum");
-        Logger.d("no body");
+    public void addAlbum(String title) {
+        if (checkSyncService()) {
+            syncService.createLocalAlbum(title);
+        }
     }
 
     @Override
@@ -65,9 +66,9 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
     }
 
     @Override
-    public void editAlbum(int albumId, String title) {
+    public void editLocalOrSyncAlbum(PhotoAlbum photoAlbum, String newTitle) {
         if (checkSyncService()) {
-            syncService.editLocalAlbum(albumId, title);
+            syncService.editLocalOrSyncAlbum(photoAlbum, newTitle);
         }
     }
 
