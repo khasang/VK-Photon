@@ -89,6 +89,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                     }
                     execute();
                     if (futureMap.isEmpty()) {
+                        eventBus.postSticky(new SyncAndTokenReadyEvent());
                         Logger.d("full sync success");
                     } else {
                         Logger.d("full sync fail");

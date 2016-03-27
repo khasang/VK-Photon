@@ -2,6 +2,7 @@ package com.khasang.vkphoto.domain.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -16,15 +17,20 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Created by bugtsa on 16-Mar-16. */
+/**
+ * Created by bugtsa on 16-Mar-16.
+ */
 public class SelectAlbumItemAdapter extends BaseAdapter implements View.OnClickListener {
 
     private final Context mContext;
     private List<PhotoAlbum> arrayList = new ArrayList<>();
+    private Typeface typeface;
 
     public SelectAlbumItemAdapter(Context context, List<PhotoAlbum> arrayList) {
         this.mContext = context;
         this.arrayList = arrayList;
+        typeface = Typeface.createFromAsset(
+                context.getAssets(), "fonts/plain.ttf");
     }
 
     @Override
@@ -52,6 +58,7 @@ public class SelectAlbumItemAdapter extends BaseAdapter implements View.OnClickL
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.dialog_customlistitem, null);
+            ((TextView) convertView.findViewById(R.id.title)).setTypeface(typeface);
         }
         ((TextView) convertView.findViewById(R.id.title)).setText(arrayList.get(position).title);
         ImageView myImage = (ImageView) convertView.findViewById(R.id.imageViewDialog);
