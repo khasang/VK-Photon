@@ -119,9 +119,11 @@
 
     <string name="pref_title_system_sync_settings">Системные настройки синхронизации</string>
 
+
+
     <!-- Settings for Notifications -->
     <string name="pref_header_notifications">Уведомления</string>
-
+    <string name="sync_success_ntf">Уведомление об успешной синхронизации</string>
     <string name="pref_new_message_notifications_title">Уведомление о новом сообщении</string>
 
     <string name="pref_ringtone_title">Рингтон</string>
