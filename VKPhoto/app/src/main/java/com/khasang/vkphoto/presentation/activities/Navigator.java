@@ -9,7 +9,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
+
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.fragments.AlbumFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumFragment;
@@ -17,14 +19,10 @@ import com.khasang.vkphoto.presentation.fragments.PhotoViewPagerFragment;
 import com.khasang.vkphoto.presentation.fragments.VKCommentsFragment;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
-import com.khasang.vkphoto.util.Constants;
 
 import java.util.List;
 
 public class Navigator {
-
-    private static int mode = Constants.START;
-    private static int tabPosition = 0;
     private static String tabTag = "";
 
     private static FragmentManager getFragmentManager(Context context) {
@@ -40,11 +38,23 @@ public class Navigator {
     }
 
     public static void navigateToVKAlbumFragment(Context context, PhotoAlbum photoAlbum) {
-        navigateToFragmentWithBackStack(context, AlbumFragment.newInstance(photoAlbum), AlbumFragment.TAG);
+        navigateToFragmentWithBackStack(context, AlbumFragment.newInstance(photoAlbum), photoAlbum.title);
     }
 
-    public static void navigateToPhotoViewPagerFragment(Context context, List<Photo> photoList, int position) {
-        getFragmentManager(context).beginTransaction().replace(R.id.fragment_container, PhotoViewPagerFragment.newInstance(photoList, position), PhotoViewPagerFragment.TAG).addToBackStack(PhotoViewPagerFragment.TAG).commit();
+    public static void navigateToPhotoViewPagerFragment(Context context, PhotoAlbum photoAlbum, List<Photo> photoList, int position) {
+        getFragmentManager(context).beginTransaction().replace(R.id.fragment_container, PhotoViewPagerFragment.newInstance(photoList, position), photoAlbum.title).addToBackStack(photoAlbum.title).commit();
+        changePhotoTitle((AppCompatActivity) context, photoList, position);
+    }
+
+    public static void changePhotoTitle(AppCompatActivity context, List<Photo> photoList, int position) {
+        Photo photo = photoList.get(position);
+        String title;
+        if (!TextUtils.isEmpty(photo.filePath)) {
+            title = photo.getName();
+        } else {
+            title = photo.id + ".jpg";
+        }
+        changeActionBarTitle(context, title);
     }
 
     public static void navigateToVKCommentsFragment(Context context, Photo photo) {
@@ -55,8 +65,9 @@ public class Navigator {
         navigateToFragmentWithBackStack(context, LocalAlbumFragment.newInstance(photoAlbum), photoAlbum.title);
     }
 
-    public static void navigateToLocalAlbumFragmentWithReplace(Context context, PhotoAlbum selectedLocalPhotoAlbum, long idVKPhotoAlbum) {
-        navigateToFragmentWithBackStackWithReplace(context, LocalAlbumFragment.newInstance(selectedLocalPhotoAlbum, idVKPhotoAlbum), LocalAlbumFragment.TAG);
+    public static void navigateToLocalAlbumFragmentWithReplace(Context context, PhotoAlbum selectedLocalPhotoAlbum, PhotoAlbum vkPhotoAlbum) {
+        navigateToFragmentWithBackStackWithReplace(context, LocalAlbumFragment.newInstance(selectedLocalPhotoAlbum, vkPhotoAlbum.id), vkPhotoAlbum.title);
+        changeActionBarTitle((AppCompatActivity) context, selectedLocalPhotoAlbum.title);
     }
 
     private static void navigateToFragment(Context context, Fragment fragment, String tag) {
@@ -84,6 +95,8 @@ public class Navigator {
     }
 
     public static void navigateBack(Context context) {
+        AppCompatActivity appCompatActivity = (AppCompatActivity) context;
+        String title;
         FragmentManager fragmentManager = getFragmentManager(context);
         if (fragmentManager.getBackStackEntryCount() > 0) {
             Fragment fragment;
@@ -91,8 +104,9 @@ public class Navigator {
             fragmentManager.popBackStack();
             if (backStackEntryCount == 1) {
                 changeViewPagerVisibility((Activity) context, true);
+                title = context.getString(R.string.app_name);
                 fragment = fragmentManager.findFragmentByTag(tabTag);
-                ActionBar supportActionBar = ((AppCompatActivity) context).getSupportActionBar();
+                ActionBar supportActionBar = appCompatActivity.getSupportActionBar();
                 if (supportActionBar != null) {
                     supportActionBar.setDisplayHomeAsUpEnabled(false);
                 }
@@ -100,7 +114,10 @@ public class Navigator {
                 FragmentManager.BackStackEntry backEntry = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1);
                 String str = backEntry.getName();
                 fragment = fragmentManager.findFragmentByTag(str);
+                title = str;
             }
+            changeActionBarTitle(appCompatActivity, title);
+
             fragment.onResume();
         } else {
             ((Activity) context).finish();

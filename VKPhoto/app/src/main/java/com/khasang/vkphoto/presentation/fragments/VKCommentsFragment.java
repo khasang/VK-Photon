@@ -2,7 +2,9 @@ package com.khasang.vkphoto.presentation.fragments;
 
 
 import android.app.ActionBar;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -40,8 +42,8 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     private CommentRecyclerViewAdapter adapter;
     private VkCommentsPresenter presenter;
     private ImageView userImage;
-    private TextView photolikes, commentCount;
-    private LinearLayout hlayout;
+    private TextView likes, commentsCount;
+    private RelativeLayout hlayout;
     private ScrollView scrollView;
 
     public static VKCommentsFragment newInstance(Photo photo) {
@@ -61,7 +63,10 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         if (getArguments() != null) {
             photo = getArguments().getParcelable(PHOTO_ID);
         }
-        ((FabProvider) getContext()).getFloatingActionButton().hide();
+        FloatingActionButton floatingActionButton = ((FabProvider) getContext()).getFloatingActionButton();
+        if (floatingActionButton != null) {
+            floatingActionButton.hide();
+        }
         Logger.d(TAG + " onCreate");
     }
 
@@ -71,15 +76,19 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         View view = inflater.inflate(R.layout.fragment_comments, container, false);
         userImage = (ImageView) view.findViewById(R.id.userImage);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        commentCount = (TextView) view.findViewById(R.id.commentsCount);
-        photolikes = (TextView) view.findViewById(R.id.photoLikes);
-        hlayout = ((LinearLayout) view.findViewById(R.id.hLayout));
+        commentsCount = (TextView) view.findViewById(R.id.tv_comments_count);
+        commentsCount.setTypeface(Typeface.createFromAsset(
+                getActivity().getAssets(), "fonts/plain.ttf"));
+        likes = (TextView) view.findViewById(R.id.tv_likes);
+        likes.setTypeface(Typeface.createFromAsset(
+                getActivity().getAssets(), "fonts/plain.ttf"));
+        hlayout = ((RelativeLayout) view.findViewById(R.id.rl_comments));
         scrollView = (ScrollView) view.findViewById(R.id.scrollView);
 
         adapter = new CommentRecyclerViewAdapter();
         recyclerView.setAdapter(adapter);
 
-        view.findViewById(R.id.commetnsButton).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.iv_comment).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (recyclerView.getVisibility() == RecyclerView.GONE) {
@@ -98,8 +107,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     }
 
     private void loadPhoto() {
-        if (TextUtils.isEmpty(photo.photo_130)) {
-            Logger.d(VKCommentsFragment.class.getSimpleName() + ": image load form local album");
+        if (!TextUtils.isEmpty(photo.filePath)) {
             Glide.with(userImage.getContext())
                     .load("file://" + photo.filePath)
                     .error(R.drawable.vk_share_send_button_background)
@@ -110,9 +118,11 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
                     .load(photo.getUrlToMaxPhoto())
                     .error(R.drawable.vk_share_send_button_background)
                     .into(userImage);
+        }
+        if (photo.owner_id != 0) {
             hlayout.setVisibility(View.VISIBLE);
-            photolikes.setText(String.valueOf(photo.likes));
-            commentCount.setText(String.valueOf(photo.comments));
+            commentsCount.setText(String.valueOf(photo.comments));
+            likes.setText(String.valueOf(photo.likes));
         }
     }
 
@@ -176,8 +186,8 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     public void displayVkPhoto(Photo photo) {
         Logger.d("load image " + photo.getUrlToMaxPhoto() + " into imageView");
         Glide.with(getContext()).load(photo.getUrlToMaxPhoto()).into(userImage);
-        photolikes.setText(String.valueOf(photo.likes));
-        commentCount.setText(String.valueOf(photo.comments));
+        likes.setText(String.valueOf(photo.likes));
+        commentsCount.setText(String.valueOf(photo.comments));
     }
 
 

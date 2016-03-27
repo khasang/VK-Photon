@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Created by TAU on 05.03.2016.
  */
-public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements LocalAlbumPresenter {
+public class LocalAlbumPresenterImpl extends AlbumPresenterBase implements LocalAlbumPresenter {
     private AlbumView albumView;
     private LocalPhotosInteractor localPhotosInteractor;
     private boolean isSelectAll = false;
@@ -42,7 +42,7 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
         localPhotosInteractor = new LocalPhotosInteractorImpl(syncServiceProvider);
     }
 
-  @Override
+    @Override
     public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
         ((FabProvider) activity).getFloatingActionButton().hide();
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
@@ -129,12 +129,13 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
 
     @Override
     public void getPhotosByAlbumId(int albumId) {
+        albumView.displayRefresh(true);
         localPhotosInteractor.getPhotosByAlbumId(albumId);
     }
 
     @Override
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
-        localPhotosInteractor.deleteSelectedLocalPhotos(multiSelector, new ArrayList<>(albumView.getPhotoList()) );
+        localPhotosInteractor.deleteSelectedLocalPhotos(multiSelector, new ArrayList<>(albumView.getPhotoList()));
         albumView.removePhotosFromView();
         if (actionMode != null) {
             actionMode.finish();
@@ -143,12 +144,12 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
 
     @Override
     public void gotoBack(Context context) {
-        Navigator.navigateBack(context);
         actionMode.finish();
+        Navigator.navigateBack(context);
     }
 
     @Override
-    public void runSetContextEvent(){
+    public void runSetContextEvent() {
         localPhotosInteractor.runSetContextEvent(albumView.getContext());
     }
 

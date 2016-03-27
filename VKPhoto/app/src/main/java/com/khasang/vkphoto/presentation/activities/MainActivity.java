@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     public static int ALBUM_THUMB_HEIGHT = 0;
     public static int PHOTOS_COLUMNS = 0;
     private static String VIEWPAGER_VISIBLE = "viewpager_visible";
+    public static final String ACTION_BAR_TITLE = "action_bar_title";
     private static Fragment localAlbumsFragment, albumsFragment;
     private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
     private ServiceConnection sConn;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
             }
             if (savedInstanceState != null) {
                 Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
+                getSupportActionBar().setTitle(savedInstanceState.getString(ACTION_BAR_TITLE));
             }
             measureScreen();
         }
@@ -309,6 +311,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (viewPager != null) {
             outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
         }
+        outState.putString(ACTION_BAR_TITLE, getSupportActionBar().getTitle().toString());
         super.onSaveInstanceState(outState);
     }
 

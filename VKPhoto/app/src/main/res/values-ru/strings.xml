@@ -71,7 +71,6 @@
     </plurals>
 
 
->>>>>>> feature/delete-albums
     <!-- Strings related to Settings -->
 
     <!-- General settings -->
@@ -110,27 +109,21 @@
 
     <string name="pref_title_sync_frequency">Частота синхронизации</string>
     <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
+        <item>15 минут</item>
+        <item>30 минут</item>
+        <item>1 час</item>
+        <item>3 часа</item>
+        <item>6 часов</item>
         <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
     </string-array>
 
     <string name="pref_title_system_sync_settings">Системные настройки синхронизации</string>
 
+
+
     <!-- Settings for Notifications -->
     <string name="pref_header_notifications">Уведомления</string>
-
+    <string name="sync_success_ntf">Уведомление об успешной синхронизации</string>
     <string name="pref_new_message_notifications_title">Уведомление о новом сообщении</string>
 
     <string name="pref_ringtone_title">Рингтон</string>
@@ -163,4 +156,10 @@
     <string name="rg_privacy_only_me">Только я</string>
 
     <string name="camera_permission_explanation">Разрешите доступ к камере</string>
+
+    <string name="russian">Русский</string>
+    <string name="search_hint">Поиск</string>
+    <string name="vibro_with_ntf"></string>
+    <string name="auto_sync">Авто синхронизация</string>
+    <string name="sync_on_opening">Синхронизация при открытии</string>
 </resources>
