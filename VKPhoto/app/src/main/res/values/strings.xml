@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VKPhoto</string>
+    <string name="app_name">VK Photon</string>
     <string name="action_settings">Settings</string>
     <string name="log_out">Logout</string>
     <string name="logout">Are you sure, you want to logout?</string>
