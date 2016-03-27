@@ -103,6 +103,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
         recyclerView.setLayoutManager(new GridLayoutManager(
                 getContext(), MainActivity.PHOTOS_COLUMNS, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
+        tvCountOfPhotos.setText(getResources().getString(R.string.count_of_photos, photoList.size()));
     }
 
     private void initSwipeRefreshLayout(View view) {
