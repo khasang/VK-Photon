@@ -5,6 +5,7 @@ import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.presentation.model.Photo;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.ErrorUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -12,11 +13,11 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VKAlbumInteractorImpl implements VKAlbumInteractor {
+public class AlbumInteractorImpl implements AlbumInteractor {
     private SyncServiceProvider syncServiceProvider;
     private SyncService syncService;
 
-    public VKAlbumInteractorImpl(SyncServiceProvider syncServiceProvider) {
+    public AlbumInteractorImpl(SyncServiceProvider syncServiceProvider) {
         this.syncServiceProvider = syncServiceProvider;
         setSyncService();
     }
@@ -45,6 +46,20 @@ public class VKAlbumInteractorImpl implements VKAlbumInteractor {
                 }
                 syncService.deleteSelectedVkPhotos(deletePhotoList);
             }
+        }
+    }
+
+    @Override
+    public void syncPhotos(MultiSelector multiSelector, ArrayList<Photo> photos, PhotoAlbum photoAlbum) {
+        if (checkSyncService() ) {
+            List<Integer> selectedPositions = multiSelector.getSelectedPositions();
+            List<Photo> selectedPhotos = new ArrayList<>();
+            if (photos != null) {
+                for (int i = 0, selectedPositionsSize = selectedPositions.size(); i < selectedPositionsSize; i++) {
+                    selectedPhotos.add(photos.get(selectedPositions.get(i)));
+                }
+            }
+            syncService.syncPhotos(selectedPhotos,photoAlbum);
         }
     }
 

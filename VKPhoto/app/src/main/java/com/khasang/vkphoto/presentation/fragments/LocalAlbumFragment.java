@@ -126,7 +126,6 @@ public class LocalAlbumFragment extends Fragment implements AlbumView{
         initSwipeRefreshLayout(view);
         initRecyclerView(view);
         initActionBarHome();
-
         return view;
     }
 
@@ -164,6 +163,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView{
             }
         } else {
             if (!fabHidden) {
+                Logger.d("Local Album hide fab");
                 fab.hide();
             }
         }
@@ -180,6 +180,11 @@ public class LocalAlbumFragment extends Fragment implements AlbumView{
             photoList.remove((int) position);
             adapter.notifyItemRemoved(position);
         }
+    }
+
+    @Override
+    public void confirmSync() {
+
     }
 
     //нажатие кнопки "добавить" в режиме просмотра альбома открывает камеру

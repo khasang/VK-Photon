@@ -180,4 +180,10 @@
     <string name="camera_permission_explanation">Add camera permission</string>
 
     <string name="sync_on_opening">Sync on opening App</string>
+    <string name="sync_photo_question">Synchronize photo?</string>
+    <string name="sync_photos_question">Synchronize photos?</string>
+    <string name="sync">Synchronize</string>
+    <string name="photos_synched">Photos synchronized!</string>
+    <string name="photos_synched_error">Synchronization error! Try again!</string>
+
 </resources>

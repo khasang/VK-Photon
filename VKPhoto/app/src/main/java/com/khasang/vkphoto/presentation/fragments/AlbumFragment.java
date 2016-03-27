@@ -33,7 +33,7 @@ import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenter;
-import com.khasang.vkphoto.presentation.presenter.album.VKAlbumPresenterImpl;
+import com.khasang.vkphoto.presentation.presenter.album.AlbumPresenterImpl;
 import com.khasang.vkphoto.presentation.view.AlbumView;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
@@ -135,7 +135,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
                 vkAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
             }
         } else {
-            vkAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()), photoAlbum);
+            vkAlbumPresenter = new AlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()), photoAlbum);
             adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter, photoAlbum);
         }
         if (photoAlbum != null) {
@@ -260,6 +260,22 @@ public class AlbumFragment extends Fragment implements AlbumView {
         }
         adapter.notifyDataSetChanged();
         tvCountOfPhotos.setText(getResources().getString(R.string.count_of_photos, photoList.size()));
+    }
+
+    @Override
+    public void confirmSync() {
+        new MaterialDialog.Builder(getContext())
+                .content(multiSelector.getSelectedPositions().size() > 1 ?
+                        R.string.sync_photos_question : R.string.sync_photo_question)
+                .positiveText(R.string.sync)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        vkAlbumPresenter.syncPhotos(multiSelector);
+                    }
+                })
+                .show();
     }
 
 

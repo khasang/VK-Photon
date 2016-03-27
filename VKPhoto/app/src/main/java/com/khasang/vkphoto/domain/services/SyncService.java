@@ -15,6 +15,7 @@ import java.util.List;
 public interface SyncService {
     /**
      * Создаёт пустой альбом в ВК и на устройстве
+     *
      * @param title
      * @param description
      * @param privacy
@@ -78,5 +79,7 @@ public interface SyncService {
     void createLocalAlbum(String title);
 
     void runSetContextEvent(Context context);
+
+    void syncPhotos(List<Photo> selectedPhotos, PhotoAlbum photoAlbum);
 }
       

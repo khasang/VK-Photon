@@ -13,14 +13,16 @@ import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetLocalAlbumsEvent;
+import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
 import com.khasang.vkphoto.domain.events.GetVKAlbumsEvent;
 import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.events.LocalALbumEvent;
-import com.khasang.vkphoto.domain.events.GetSwipeRefreshEvent;
+import com.khasang.vkphoto.domain.events.PhotosSynchedEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.events.VKAlbumEvent;
-import com.khasang.vkphoto.domain.tasks.UploadPhotoCallable;
+import com.khasang.vkphoto.domain.tasks.DownloadPhotoCallable;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
+import com.khasang.vkphoto.domain.tasks.UploadPhotoCallable;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
@@ -65,6 +67,7 @@ public class SyncServiceImpl extends Service implements SyncService {
         vkDataSource = new VKDataSource();
         eventBus = EventBus.getDefault();
         eventBus.register(this);
+        context = getApplicationContext();
     }
 
     @Nullable
@@ -167,6 +170,39 @@ public class SyncServiceImpl extends Service implements SyncService {
     @Override
     public void runSetContextEvent(Context context) {
         this.context = context;
+    }
+
+    @Override
+    public void syncPhotos(final List<Photo> selectedPhotos, final PhotoAlbum photoAlbum) {
+        asyncExecutor.execute(new AsyncExecutor.RunnableEx() {
+            @Override
+            public void run() throws Exception {
+                List<Future<File>> futures = new ArrayList<>();
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                for (int i = 0; i < selectedPhotos.size(); i++) {
+                    futures.add(executor.submit(new DownloadPhotoCallable(localDataSource.getPhotoSource(),
+                            selectedPhotos.get(i), photoAlbum)));
+                }
+                execute(futures);
+                if (futureList.isEmpty()) {
+                    Logger.d("Full sync of photos complete");
+                    eventBus.postSticky(new PhotosSynchedEvent(true));
+                } else {
+                    Logger.d("Not Full sync of photos complete");
+                    eventBus.postSticky(new PhotosSynchedEvent(false));
+                }
+            }
+
+            private void execute(List<Future<File>> futures) throws InterruptedException, ExecutionException {
+                Logger.d("start downloading photos");
+                Iterator<Future<File>> futureIterator = futures.iterator();
+                while (futureIterator.hasNext()) {
+                    if (futureIterator.next().get() != null) {
+                        futureIterator.remove();
+                    }
+                }
+            }
+        });
     }
 
     @Override

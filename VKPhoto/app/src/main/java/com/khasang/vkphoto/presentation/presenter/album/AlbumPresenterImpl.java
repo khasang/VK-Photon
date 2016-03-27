@@ -17,8 +17,8 @@ import com.khasang.vkphoto.domain.events.GetSynchronizedPhotosEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotosEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
-import com.khasang.vkphoto.domain.interactors.VKAlbumInteractor;
-import com.khasang.vkphoto.domain.interactors.VKAlbumInteractorImpl;
+import com.khasang.vkphoto.domain.interactors.AlbumInteractor;
+import com.khasang.vkphoto.domain.interactors.AlbumInteractorImpl;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
 import com.khasang.vkphoto.presentation.activities.Navigator;
@@ -37,24 +37,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumPresenter {
+public class AlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumPresenter {
     private AlbumView vkAlbumView;
-    private VKAlbumInteractor vkAlbumInteractor;
+    private AlbumInteractor albumInteractor;
     private boolean onGetSynchronizedPhotosEventCaught = false;
     private PhotoAlbum photoAlbum;
     private Handler handler;
 
-    public VKAlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider, PhotoAlbum photoAlbum) {
+    public AlbumPresenterImpl(AlbumView vkAlbumView, SyncServiceProvider syncServiceProvider, PhotoAlbum photoAlbum) {
         this.vkAlbumView = vkAlbumView;
         this.photoAlbum = photoAlbum;
-        vkAlbumInteractor = new VKAlbumInteractorImpl(syncServiceProvider);
+        albumInteractor = new AlbumInteractorImpl(syncServiceProvider);
         handler = new Handler();
     }
 
 
     @Override
     public void getPhotosByAlbumId(int albumId) {
-        vkAlbumInteractor.getPhotosByAlbumId(albumId);
+        albumInteractor.getPhotosByAlbumId(albumId);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
         List<Photo> photoList = new ArrayList<>(vkAlbumView.getPhotoList());
         vkAlbumView.removePhotosFromView();
-        vkAlbumInteractor.deleteSelectedVkPhotos(multiSelector, photoList);
+        albumInteractor.deleteSelectedVkPhotos(multiSelector, photoList);
         if (actionMode != null) {
             actionMode.finish();
         }
@@ -73,12 +73,20 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
 
     @Override
     public void getAllLocalAlbums() {
-        vkAlbumInteractor.getAllLocalAlbums();
+        albumInteractor.getAllLocalAlbums();
     }
 
     @Override
     public void goToPhotoAlbum(Context context, PhotoAlbum selectedLocalPhotoAlbum, PhotoAlbum vkAlbum) {
         Navigator.navigateToLocalAlbumFragmentWithReplace(context, selectedLocalPhotoAlbum, vkAlbum);
+    }
+
+    @Override
+    public void syncPhotos(MultiSelector multiSelector) {
+        albumInteractor.syncPhotos(multiSelector, new ArrayList<>(vkAlbumView.getPhotoList()), photoAlbum);
+        if (actionMode != null) {
+            actionMode.finish();
+        }
     }
 
     @Override
@@ -107,7 +115,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGetSynchronizedPhotosEvent(GetSynchronizedPhotosEvent getSynchronizedPhotosEvent) {
-        Logger.d("VKAlbumPresenterImpl onGetSynchronizedPhotosEvent");
+        Logger.d("AlbumPresenterImpl onGetSynchronizedPhotosEvent");
         EventBus.getDefault().removeStickyEvent(GetSynchronizedPhotosEvent.class);
         vkAlbumView.displayPhotos(getSynchronizedPhotosEvent.photosList);
         onGetSynchronizedPhotosEventCaught = true;
@@ -131,9 +139,9 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onGetVKPhotosEvent(GetVKPhotosEvent getVKPhotosEvent) {
-        Logger.d("VKAlbumPresenterImpl onGetVKPhotosEvent");
+        Logger.d("AlbumPresenterImpl onGetVKPhotosEvent");
         if (!onGetSynchronizedPhotosEventCaught) {
-            Logger.d("VKAlbumPresenterImpl SynchronizedPhotos not loaded yet. Will try to sleep for 0.5 sec");
+            Logger.d("AlbumPresenterImpl SynchronizedPhotos not loaded yet. Will try to sleep for 0.5 sec");
             try {
                 TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException e) {
@@ -145,7 +153,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
             List<Photo> receivedFromVKPhotos = getVKPhotosEvent.photosList;
             List<Photo> deleteListFromLocal = new ArrayList<>();
             int added = 0, removed = 0;
-            Logger.d("VKAlbumPresenterImpl synchronizedPhotos.size=" + synchronizedPhotos.size());
+            Logger.d("AlbumPresenterImpl synchronizedPhotos.size=" + synchronizedPhotos.size());
             //сначала добавляем в лист фото, которые еще не синхонизировались
             for (Photo vkPhoto : receivedFromVKPhotos) {
                 if (!synchronizedPhotos.contains(vkPhoto)) {
@@ -166,7 +174,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
             if (photoAlbum.syncStatus != Constants.SYNC_NOT_STARTED) {
                 new LocalPhotoSource(vkAlbumView.getContext()).deletePhotoListFromDB(deleteListFromLocal);
             }
-            Logger.d("VKAlbumPresenterImpl added=" + added + ", removed=" + removed + " photos");
+            Logger.d("AlbumPresenterImpl added=" + added + ", removed=" + removed + " photos");
             EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
             //выводим на экран результирующий лист
             updateView(synchronizedPhotos);
@@ -209,6 +217,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_sync_photo:
+                        vkAlbumView.confirmSync();
                         return true;
                     case R.id.action_download_photo:
                         return true;

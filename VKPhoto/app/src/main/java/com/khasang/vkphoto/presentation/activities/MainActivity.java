@@ -1,6 +1,5 @@
 package com.khasang.vkphoto.presentation.activities;
 
-import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -26,10 +25,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.events.CloseActionModeEvent;
+import com.khasang.vkphoto.domain.events.PhotosSynchedEvent;
 import com.khasang.vkphoto.domain.events.SyncAndTokenReadyEvent;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
@@ -41,12 +42,17 @@ import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.PermissionUtils;
+import com.khasang.vkphoto.util.ToastUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
+
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,8 +73,6 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private ViewPager viewPager;
     private FloatingActionButton fab;
     private ViewPagerAdapter adapter;
-
-    private static String[] PERMISSIONS_EXTERNAL = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     protected void onStart() {
         super.onStart();
         bindService(intent, sConn, BIND_AUTO_CREATE);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -219,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         if (!bound) return;
         unbindService(sConn);
         bound = false;
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -316,6 +322,11 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         super.onSaveInstanceState(outState);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPhotosSynchedEvent(PhotosSynchedEvent photosSynchedEvent) {
+        ToastUtils.showShortMessage(getString(photosSynchedEvent.success ? R.string.photos_synched : R.string.photos_synched_error)
+                , this);
+    }
 
     @Override
     public boolean onQueryTextSubmit(String query) {

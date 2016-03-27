@@ -21,7 +21,9 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
+
 import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,7 @@ public class LocalPhotoSource {
         //filePath=/storage/emulated/0/DCIM/VK Photo/папка/фото
         File imageFile = FileManager.saveImage(photo.getUrlToMaxPhoto(), photoAlbum, photo.id);
         if (imageFile == null) {
+            Logger.d("photo not saved");
             EventBus.getDefault().postSticky(new ErrorEvent(ErrorUtils.PHOTO_NOT_SAVED_ERROR));
         } else {
             photo.filePath = imageFile.getAbsolutePath();
@@ -116,7 +119,7 @@ public class LocalPhotoSource {
             Logger.d("deletePhotoFromDB. photoFilePath=" + photo.filePath);
 
             Cursor cursor = db.query(PhotosTable.TABLE_NAME, new String[]{PhotosTable.FILE_PATH}, null, null, null, null, null);
-            while(cursor.moveToNext()){
+            while (cursor.moveToNext()) {
                 int filePathColumn = cursor.getColumnIndex(PhotosTable.FILE_PATH);
                 Logger.d("deletePhotoFromDB. DBfilePath=" + cursor.getString(filePathColumn));
             }
@@ -125,12 +128,10 @@ public class LocalPhotoSource {
             Logger.d("deletePhotoFromDB. deleted=" +
                     db.delete(PhotosTable.TABLE_NAME, PhotosTable.FILE_PATH + " = ?", new String[]{String.valueOf(photo.filePath)}));
             db.setTransactionSuccessful();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Logger.d("deletePhotoFromDB error: " + photo.getName());
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             db.endTransaction();
         }
     }
@@ -186,15 +187,18 @@ public class LocalPhotoSource {
                 images, PROJECTION_BUCKET,
                 MediaStore.Images.ImageColumns.BUCKET_ID + " = ?",
                 new String[]{String.valueOf(albumId)}, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
-        if (cursor.moveToFirst()) {
-            do {
-                Photo photo = new Photo(cursor, true);
-                photo.printPhoto();
-                result.add(photo);
-            } while (cursor.moveToNext());
-            cursor.close();
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Photo photo = new Photo(cursor, true);
+                    photo.printPhoto();
+                    result.add(photo);
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+            EventBus.getDefault().postSticky(new GetLocalPhotosEvent(result));
         }
-        EventBus.getDefault().postSticky(new GetLocalPhotosEvent(result));
         return result;
     }
 }
