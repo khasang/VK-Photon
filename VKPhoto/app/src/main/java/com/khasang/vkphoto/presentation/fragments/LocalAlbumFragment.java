@@ -13,7 +13,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v7.app.ActionBar;
@@ -26,7 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
@@ -41,11 +39,10 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenter;
 import com.khasang.vkphoto.presentation.presenter.album.LocalAlbumPresenterImpl;
 import com.khasang.vkphoto.presentation.view.AlbumView;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
-import com.khasang.vkphoto.util.PermissionUtils;
 import com.khasang.vkphoto.util.ToastUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -57,7 +54,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -66,7 +62,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView, EasyPermi
     public static final String PHOTOALBUM = "photoalbum";
     public static final String IDVKPHOTOALBUM = "idVKPhotoAlbum";
     public static final String ACTION_MODE_PHOTO_FRAGMENT_ACTIVE = "action_mode_photo_fragment_active";
-    private static final int CAMERA_REQUEST = 1888;
+//    private static final int CAMERA_REQUEST = 1888;
     private PhotoAlbum photoAlbum;
     private TextView tvCountOfPhotos;
     private LocalAlbumPresenter localAlbumPresenter;
@@ -76,8 +72,6 @@ public class LocalAlbumFragment extends Fragment implements AlbumView, EasyPermi
     private MultiSelector multiSelector;
     private int albumId;
     private long idVKPhotoAlbum;
-
-    private static final int REQUEST_CAMERA = 1;
 
     public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -191,10 +185,10 @@ public class LocalAlbumFragment extends Fragment implements AlbumView, EasyPermi
 
     private void startCamera() {
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        startActivityForResult(cameraIntent, Constants.REQUEST_CAMERA);
     }
 
-    @AfterPermissionGranted(REQUEST_CAMERA)
+    @AfterPermissionGranted(Constants.REQUEST_CAMERA)
     private void createPhotoToCameraWithPermissionsCheck() {
         if (EasyPermissions.hasPermissions(getContext(), Manifest.permission.CAMERA)) {
             Logger.d("Camera permission has been granted.");
@@ -202,7 +196,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView, EasyPermi
         } else {
             Logger.d("Request one permission.");
             EasyPermissions.requestPermissions(this, getString(R.string.camera_permission_explanation),
-                    REQUEST_CAMERA, Manifest.permission.CAMERA);
+                    Constants.REQUEST_CAMERA, Manifest.permission.CAMERA);
         }
     }
 
@@ -210,7 +204,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView, EasyPermi
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (isVisible() && Arrays.asList(permissions).contains(Manifest.permission.CAMERA)) {
-            requestCode = REQUEST_CAMERA;
+            requestCode = Constants.REQUEST_CAMERA;
         }
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
@@ -229,7 +223,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView, EasyPermi
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Constants.REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             storeImage(photo);
             deleteLastImageIfDuplicate();

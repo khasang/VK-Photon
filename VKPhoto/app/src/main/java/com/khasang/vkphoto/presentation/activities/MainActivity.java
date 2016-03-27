@@ -1,7 +1,6 @@
 package com.khasang.vkphoto.presentation.activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -27,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.khasang.vkphoto.R;
@@ -39,6 +37,7 @@ import com.khasang.vkphoto.domain.services.SyncService;
 import com.khasang.vkphoto.domain.services.SyncServiceImpl;
 import com.khasang.vkphoto.presentation.fragments.AlbumsFragment;
 import com.khasang.vkphoto.presentation.fragments.LocalAlbumsFragment;
+import com.khasang.vkphoto.util.Constants;
 import com.khasang.vkphoto.util.FileManager;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.PermissionUtils;
@@ -47,9 +46,7 @@ import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,25 +67,52 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
     private FloatingActionButton fab;
     private ViewPagerAdapter adapter;
 
+    private static String[] PERMISSIONS_EXTERNAL = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         {
-            if (PermissionUtils.isStoragePermissionGranted(this)) {
-                if (!FileManager.initBaseDirectory(getApplicationContext())) {
-                    throw new RuntimeException("Base directory was not created");
-                }
-            }
             setContentView(R.layout.activity_main);
             initServiceConnection(savedInstanceState);
             loginVk();
             initViews();
-            initViewPager();
+            if (Build.VERSION.SDK_INT < 23) {
+                codeForRequestPermission();
+            } else if (Build.VERSION.SDK_INT >= 23) {
+                if (PermissionUtils.isStoragePermissionGranted(this)) {
+                    codeForRequestPermission();
+                }
+            }
             if (savedInstanceState != null) {
                 Navigator.changeViewPagerVisibility(this, savedInstanceState.getBoolean(VIEWPAGER_VISIBLE));
             }
             measureScreen();
+        }
+    }
+
+    private void codeForRequestPermission() {
+        initViewPager();
+        if (!FileManager.initBaseDirectory(getApplicationContext())) {
+            throw new RuntimeException("Base directory was not created");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == Constants.REQUEST_EXTERNAL_STORAGE) {
+            Logger.d("Received response for External Storage permission request.");
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Logger.d("External Storage permission has now been granted. Showing preview.");
+                codeForRequestPermission();
+            } else {
+                Logger.d("External Storage permission was NOT granted.");
+
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            finish();
         }
     }
 
@@ -166,10 +190,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
                 Logger.d("MainActivity onServiceConnected");
                 syncService = ((SyncServiceImpl.MyBinder) binder).getService();
                 bound = true;
-                if (VKAccessToken.currentToken() != null && viewPager.getVisibility() == View.VISIBLE && savedInstanceState == null) {
+                if (VKAccessToken.currentToken() != null  && savedInstanceState == null) {
                     EventBus.getDefault().postSticky(new SyncAndTokenReadyEvent());
                     syncService.startSync();
-                    Logger.d("ViewPagerVisibile" + viewPager.getVisibility());
                 }
             }
 
@@ -283,7 +306,9 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
+        if (viewPager != null) {
+            outState.putBoolean(VIEWPAGER_VISIBLE, viewPager.getVisibility() == View.VISIBLE);
+        }
         super.onSaveInstanceState(outState);
     }
 
