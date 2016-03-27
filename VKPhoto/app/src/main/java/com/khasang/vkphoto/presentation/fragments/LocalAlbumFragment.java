@@ -74,6 +74,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     private long idVKPhotoAlbum;
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean refreshing;
+    private RecyclerView recyclerView;
 
     public static LocalAlbumFragment newInstance(PhotoAlbum photoAlbum) {
         Bundle args = new Bundle();
@@ -125,6 +126,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         initSwipeRefreshLayout(view);
         initRecyclerView(view);
         initActionBarHome();
+
         return view;
     }
 
@@ -144,20 +146,26 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     }
 
     private void initRecyclerView(View view) {
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(
                 getContext(), MainActivity.PHOTOS_COLUMNS, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photoList.size()));
         recyclerView.addOnScrollListener(new RecyclerViewOnScrollListener(fab));
-
     }
 
     private void initFab() {
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
-        if (!fab.isShown()) {
-            fab.show();
+        boolean fabHidden = !fab.isShown();
+        if (idVKPhotoAlbum != 0) {
+            if (fabHidden) {
+                fab.show();
+            }
+        } else {
+            if (!fabHidden) {
+                fab.hide();
+            }
         }
     }
 
@@ -305,10 +313,18 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
 
     //AlbumView implementations
     @Override
-    public void displayVkPhotos(List<Photo> photos) {
+    public void displayPhotos(List<Photo> photos) {
         displayRefresh(false);
         adapter.setPhotoList(photos);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photos.size()));
+        if (idVKPhotoAlbum != 0 && photos.size() > 0) {
+            recyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    recyclerView.getLayoutManager().findViewByPosition(0).performLongClick();
+                }
+            });
+        }
     }
 
     @Override

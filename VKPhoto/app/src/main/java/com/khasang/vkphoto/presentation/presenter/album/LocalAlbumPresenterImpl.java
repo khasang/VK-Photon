@@ -175,7 +175,7 @@ public class LocalAlbumPresenterImpl extends AlbumPresenterBase implements Local
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGetLocalPhotosEvent(GetLocalPhotosEvent getLocalPhotosEvent) {
-        albumView.displayVkPhotos(getLocalPhotosEvent.photosList);
+        albumView.displayPhotos(getLocalPhotosEvent.photosList);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
