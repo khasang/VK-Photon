@@ -156,16 +156,12 @@ public class LocalAlbumFragment extends Fragment implements AlbumView{
 
     private void initFab() {
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
-        boolean fabHidden = !fab.isShown();
-        if (idVKPhotoAlbum != 0) {
-            if (fabHidden) {
-                fab.show();
-            }
+        if (PhotoAlbum.checkSelectable(photoAlbum.id)) {
+            Logger.d("LocalAlbumFragment. showing fab");
+            fab.show();
         } else {
-            if (!fabHidden) {
-                Logger.d("Local Album hide fab");
-                fab.hide();
-            }
+            Logger.d("LocalAlbumFragment. hiding fab");
+            fab.hide();
         }
     }
 

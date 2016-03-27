@@ -147,17 +147,13 @@ public class AlbumFragment extends Fragment implements AlbumView {
 
     private void initFab() {
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
-        boolean fabHidden = !fab.isShown();
         if (PhotoAlbum.checkSelectable(photoAlbum.id)) {
-            if (fabHidden) {
-                fab.show();
-            }
+            Logger.d("AlbumFragment. showing fab");
+            fab.show();
         } else {
-            if (!fabHidden) {
-                fab.hide();
-            }
+            Logger.d("AlbumFragment. hiding fab");
+            fab.hide();
         }
-
     }
 
     private void setOnClickListenerFab() {
