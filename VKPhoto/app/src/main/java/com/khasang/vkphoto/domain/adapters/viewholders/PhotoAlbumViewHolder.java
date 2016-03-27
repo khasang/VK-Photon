@@ -71,7 +71,6 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         this.albumsPresenter = albumsPresenter;
         handler = new Handler(Looper.getMainLooper());
         localDataSource = new LocalDataSource(albumThumbImageView.getContext().getApplicationContext());
-
         itemView.setLongClickable(true);
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
@@ -90,6 +89,9 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         Logger.d("bindPhotoAlbum. ID=" + photoAlbum.id + ", name=" + photoAlbum.title + ", size=" + photoAlbum.size);
         changeSyncVisibility(photoAlbum);
         loadThumb();
+        if (photoAlbum.id < 0) {
+            albumSelectedCheckBox.setVisibility(View.GONE);
+        }
     }
 
     private void changeSyncVisibility(PhotoAlbum photoAlbum) {
@@ -247,9 +249,11 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     @Override
     public boolean onLongClick(View v) {
         if (!multiSelector.isSelectable()) { // (3)
-            multiSelector.setSelectable(true); // (4)
-            multiSelector.setSelected(this, true); // (5)
-            albumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) albumThumbImageView.getContext());
+            if (photoAlbum.id > 0) {
+                multiSelector.setSelectable(true); // (4)
+                multiSelector.setSelected(this, true); // (5)
+                albumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) albumThumbImageView.getContext());
+            }
             return true;
         }
         return false;
@@ -258,12 +262,18 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     @Override
     public void onClick(View v) {
         if (multiSelector.isSelectable()) {
-            multiSelector.tapSelection(this);
-            albumsPresenter.checkActionModeFinish(multiSelector);
-            albumsPresenter.hideActionModeItem(multiSelector, menuItem);
+            if (checkSelectable(photoAlbum.id)) {
+                multiSelector.tapSelection(this);
+                albumsPresenter.checkActionModeFinish(multiSelector);
+                albumsPresenter.hideActionModeItem(multiSelector, menuItem);
+            }
         } else {
             albumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }
+    }
+
+    public boolean checkSelectable(int photoAlbumId) {
+        return !(photoAlbumId == -6 || photoAlbumId == -7 || photoAlbumId == -15);
     }
 
     @Override
@@ -274,7 +284,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     @Override
     public void setSelectable(boolean b) {
         selectable = b;
-        if (selectable) {
+        if (selectable && photoAlbum != null && checkSelectable(photoAlbum.id)) {
             albumSelectedCheckBox.setVisibility(View.VISIBLE);
         } else {
             albumSelectedCheckBox.setVisibility(View.GONE);
