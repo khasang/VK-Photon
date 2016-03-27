@@ -50,11 +50,7 @@ public class VKAlbumSource {
         }, title, description, privacy, commentPrivacy);
     }
 
-    public void updateAlbum() {
-
-    }
-
-    public void deleteAlbumById(int albumId) {
+    public void deleteAlbumFromVkServ(int albumId) {
         RequestMaker.deleteVkAlbumById(new MyVkRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -62,10 +58,6 @@ public class VKAlbumSource {
                 Logger.d("Delete VKPhotoAlbum successfully");
             }
         }, albumId);
-    }
-
-    public void deleteAlbums() {
-
     }
 
     public void getAllVKAlbums() {

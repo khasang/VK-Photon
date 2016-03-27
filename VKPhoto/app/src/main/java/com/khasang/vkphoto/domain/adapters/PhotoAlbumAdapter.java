@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
+import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.presentation.presenter.album.AlbumPresenter;
 import com.khasang.vkphoto.util.Logger;
 
@@ -26,18 +27,18 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
     private List<Photo> photoList;
     private AlbumPresenter albumPresenter;
     private long idVKPhotoAlbum;
+    private PhotoAlbum photoAlbum;
     static MenuItem menuItem;
 
-    public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter) {
+    public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter, PhotoAlbum photoAlbum) {
         this.multiSelector = multiSelector;
         this.photoList = photoList;
         this.albumPresenter = albumPresenter;
+        this.photoAlbum = photoAlbum;
     }
 
-    public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter, long idVKPhotoAlbum) {
-        this.multiSelector = multiSelector;
-        this.photoList = photoList;
-        this.albumPresenter = albumPresenter;
+    public PhotoAlbumAdapter(MultiSelector multiSelector, List<Photo> photoList, AlbumPresenter albumPresenter, PhotoAlbum photoAlbum, long idVKPhotoAlbum) {
+        this(multiSelector, photoList, albumPresenter, photoAlbum);
         this.idVKPhotoAlbum = idVKPhotoAlbum;
     }
 
@@ -140,8 +141,9 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
                 }
             } else {
 //                        albumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
-                    //Navigator.navigateToVKCommentsFragment(v.getContext(), photo);
-                Navigator.navigateToPhotoViewPagerFragment(v.getContext(),photoList, this.position);
+                //Navigator.navigateToVKCommentsFragment(v.getContext(), photo);
+                if (idVKPhotoAlbum != 0) return;
+                Navigator.navigateToPhotoViewPagerFragment(v.getContext(),photoAlbum, photoList, this.position);
             }
             if (photo.filePath != null) {
                 Logger.d(photo.filePath);
@@ -163,4 +165,5 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
             return false;
         }
     }
+
 }

@@ -19,7 +19,6 @@ import com.bumptech.glide.Glide;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalDataSource;
-import com.khasang.vkphoto.data.local.LocalPhotoSource;
 import com.khasang.vkphoto.domain.tasks.DownloadPhotoCallable;
 import com.khasang.vkphoto.presentation.activities.MainActivity;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
@@ -72,7 +71,6 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         this.albumsPresenter = albumsPresenter;
         handler = new Handler(Looper.getMainLooper());
         localDataSource = new LocalDataSource(albumThumbImageView.getContext().getApplicationContext());
-
         itemView.setLongClickable(true);
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
@@ -81,15 +79,19 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
 
     public void bindPhotoAlbum(final PhotoAlbum photoAlbum) {
         this.photoAlbum = photoAlbum;
+        albumThumbImageView.setImageDrawable(null);
         albumTitleTextView.setText(photoAlbum.title);
         albumTitleTextView.setTypeface(Typeface.createFromAsset(
                 albumTitleTextView.getContext().getAssets(), "fonts/plain.ttf"));
-        albumPhotoCountTextView.setText(albumPhotoCountTextView.getContext().getString(R.string.count_of_photos_in_album, photoAlbum.size));
+        albumPhotoCountTextView.setText(String.valueOf(photoAlbum.size));
         albumPhotoCountTextView.setTypeface(Typeface.createFromAsset(
                 albumPhotoCountTextView.getContext().getAssets(), "fonts/plain.ttf"));
         Logger.d("bindPhotoAlbum. ID=" + photoAlbum.id + ", name=" + photoAlbum.title + ", size=" + photoAlbum.size);
         changeSyncVisibility(photoAlbum);
         loadThumb();
+        if (photoAlbum.id < 0) {
+            albumSelectedCheckBox.setVisibility(View.GONE);
+        }
     }
 
     private void changeSyncVisibility(PhotoAlbum photoAlbum) {
@@ -120,46 +122,58 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     }
 
     private void loadThumb() {
-        if (!TextUtils.isEmpty(photoAlbum.thumbFilePath)) {
+        if (photoAlbum.size == 0) { //Пустой альбом
+            loadPhoto(photoAlbum.owner_id == 0 ? R.mipmap.no_thumb_local : R.mipmap.no_thumb_vk);
+        } else if (photoAlbum.owner_id == 0) { //локальный альбом
             File file = new File(photoAlbum.thumbFilePath);
-            if (file.exists()) {
-                Logger.d("photoAlbum thumb exists " + photoAlbum.thumbFilePath);
-                loadPhoto(file);
-            }
-        } else if (photoAlbum.thumb_id > 0) {
+            loadPhoto(file);
+        } else {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    Logger.d("photoAlbum " + photoAlbum.title + " try do download thumb");
-                    if (!setThumb(getAlbumThumb())) {
-                        setThumb(getAlbumThumb());
-                    }
-                }
-
-                private File getAlbumThumb() {
-                    final File[] files = new File[1];
-                    RequestMaker.getPhotoByIdSync(new MyVkRequestListener() {
-                        @Override
-                        public void onComplete(VKResponse response) {
-                            super.onComplete(response);
-                            try {
-                                final Photo photo = JsonUtils.getPhotos(response.json, Photo.class).get(0);
-                                Future<File> fileFuture = executor.submit(new DownloadPhotoCallable(new LocalPhotoSource(albumThumbImageView.getContext()),
-                                        photo, photoAlbum));
-                                addFuture(photo.id, fileFuture);
-                                files[0] = fileFuture.get();
-                                removeFuture(photo);
-                            } catch (Exception e) {
-                                sendError(ErrorUtils.JSON_PARSE_FAILED);
+                    if (!TextUtils.isEmpty(photoAlbum.thumbFilePath)) { //вк альбом со скачанной обложкой
+                        Photo photo = localDataSource.getPhotoSource().getPhotoById(photoAlbum.thumb_id);
+                        if (photo != null && photo.filePath.equals(photoAlbum.thumbFilePath)) {
+                            File file = new File(photoAlbum.thumbFilePath);
+                            if (file.exists()) {
+                                Logger.d("photoAlbum thumb exists " + photoAlbum.thumbFilePath);
+                                loadPhoto(file);
+                                return;
                             }
                         }
-                    }, photoAlbum.thumb_id);
-                    return files[0];
+                    }
+                    downloadThumb();
                 }
             });
-        } else if (photoAlbum.size == 0) {
-            loadPhoto(photoAlbum.owner_id == 0 ? R.mipmap.no_thumb_local : R.mipmap.no_thumb_vk);
         }
+    }
+
+    private void downloadThumb() {
+        Logger.d("photoAlbum " + photoAlbum.title + " try do download thumb");
+        if (!setThumb(getAlbumThumb())) {
+            setThumb(getAlbumThumb());
+        }
+    }
+
+    private File getAlbumThumb() {
+        final File[] files = new File[1];
+        RequestMaker.getPhotoByIdSync(new MyVkRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                try {
+                    final Photo photo = JsonUtils.getPhotos(response.json, Photo.class).get(0);
+                    Future<File> fileFuture = executor.submit(new DownloadPhotoCallable(localDataSource.getPhotoSource(),
+                            photo, photoAlbum));
+                    addFuture(photo.id, fileFuture);
+                    files[0] = fileFuture.get();
+                    removeFuture(photo);
+                } catch (Exception e) {
+                    sendError(ErrorUtils.JSON_PARSE_FAILED);
+                }
+            }
+        }, photoAlbum.thumb_id);
+        return files[0];
     }
 
     private void removeFuture(Photo photo) {
@@ -181,12 +195,14 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     private boolean setThumb(File thumb) {
         boolean success = false;
         if (thumb != null && thumb.exists() && thumb.getAbsolutePath().equals(photoAlbum.thumbFilePath)) {
+            Logger.d(photoAlbum.title + " photoAlbumThumb not changed, load" + photoAlbum.thumbFilePath);
             loadPhoto(thumb);
             success = true;
         } else if (photoAlbum.thumb_id != Constants.NULL) {
             thumb = localDataSource.getPhotoSource().getLocalPhotoFile(photoAlbum.thumb_id);
             if (thumb != null) {
                 photoAlbum.thumbFilePath = thumb.getAbsolutePath();
+                Logger.d(photoAlbum.title + " new photoAlbumThumb save it " + photoAlbum.thumbFilePath);
                 localDataSource.getAlbumSource().updateAlbum(photoAlbum, true);
                 loadPhoto(thumb);
                 success = true;
@@ -233,9 +249,11 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     @Override
     public boolean onLongClick(View v) {
         if (!multiSelector.isSelectable()) { // (3)
-            multiSelector.setSelectable(true); // (4)
-            multiSelector.setSelected(this, true); // (5)
-            albumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) albumThumbImageView.getContext());
+            if (PhotoAlbum.checkSelectable(photoAlbum.id)) {
+                multiSelector.setSelectable(true); // (4)
+                multiSelector.setSelected(this, true); // (5)
+                albumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) albumThumbImageView.getContext());
+            }
             return true;
         }
         return false;
@@ -244,9 +262,11 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     @Override
     public void onClick(View v) {
         if (multiSelector.isSelectable()) {
-            multiSelector.tapSelection(this);
-            albumsPresenter.checkActionModeFinish(multiSelector);
-            albumsPresenter.hideActionModeItem(multiSelector, menuItem);
+            if (PhotoAlbum.checkSelectable(photoAlbum.id)) {
+                multiSelector.tapSelection(this);
+                albumsPresenter.checkActionModeFinish(multiSelector);
+                albumsPresenter.hideActionModeItem(multiSelector, menuItem);
+            }
         } else {
             albumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }
@@ -260,7 +280,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     @Override
     public void setSelectable(boolean b) {
         selectable = b;
-        if (selectable) {
+        if (selectable && photoAlbum != null && PhotoAlbum.checkSelectable(photoAlbum.id)) {
             albumSelectedCheckBox.setVisibility(View.VISIBLE);
         } else {
             albumSelectedCheckBox.setVisibility(View.GONE);

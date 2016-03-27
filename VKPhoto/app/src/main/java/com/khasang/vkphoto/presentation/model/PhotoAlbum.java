@@ -119,7 +119,9 @@ public class PhotoAlbum extends VKApiPhotoAlbum {
         dest.writeString(this.thumbFilePath);
         dest.writeInt(this.syncStatus);
     }
-
+    public static boolean checkSelectable(int photoAlbumId) {
+        return !(photoAlbumId == -6 || photoAlbumId == -7 || photoAlbumId == -15);
+    }
     public void printPhotoAlbum(){
         Logger.d("PhotoAlbum: "
                 + "  id="               + String.valueOf(id)

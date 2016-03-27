@@ -1,17 +1,20 @@
 package com.khasang.vkphoto.presentation.fragments;
 
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoViewPagerAdapter;
+import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.util.Logger;
 
@@ -30,20 +33,22 @@ public class PhotoViewPagerFragment extends Fragment {
     private int position;
     private ViewPager viewPager;
     private PhotoViewPagerAdapter adapter;
-    private FragmentActivity myContext;
+    private FragmentActivity fragmentActivity;
 
     public static PhotoViewPagerFragment newInstance(List<Photo> photoList, int position) {
         Logger.d(TAG + " onNewInstance");
         PhotoViewPagerFragment fragment = new PhotoViewPagerFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(PHOTO_LIST, (ArrayList) photoList);
-        args.putInt(POSITION,position);
+        args.putInt(POSITION, position);
         fragment.setArguments(args);
         return fragment;
     }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
         Logger.d(TAG + " onCreate");
         if (getArguments() != null) {
             photoList = getArguments().getParcelableArrayList(PHOTO_LIST);
@@ -57,34 +62,32 @@ public class PhotoViewPagerFragment extends Fragment {
         Logger.d(TAG + " onCreateView");
         View view = inflater.inflate(R.layout.fragment_photo_view_pager, container, false);
         viewPager = (ViewPager) view.findViewById(R.id.photoListPager);
-        adapter = new PhotoViewPagerAdapter(myContext.getSupportFragmentManager(),photoList);
+        adapter = new PhotoViewPagerAdapter(fragmentActivity.getSupportFragmentManager(), photoList);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(position);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-//        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//
-//            }
-//
-//            @Override
-//            public void onPageSelected(int position) {
-//
-//            }
-//
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//
-//            }
-//        });
+            }
 
+            @Override
+            public void onPageSelected(int position) {
+                Navigator.changePhotoTitle((AppCompatActivity) getContext(), photoList, position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         return view;
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        myContext=(FragmentActivity) activity;
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        fragmentActivity = (FragmentActivity) context;
     }
 
     @Override
@@ -113,4 +116,14 @@ public class PhotoViewPagerFragment extends Fragment {
         Logger.d(TAG + " onDestroy");
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                Navigator.navigateBack(getActivity());
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

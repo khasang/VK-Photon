@@ -8,5 +8,5 @@ public interface VKAlbumPresenter extends AlbumPresenter {
 
     void getAllLocalAlbums();
 
-    void goToPhotoAlbum(Context context, PhotoAlbum selectedLocalPhotoAlbum, long idVKPhotoAlbum);
+    void goToPhotoAlbum(Context context, PhotoAlbum selectedLocalPhotoAlbum, PhotoAlbum vkAlbum);
 }

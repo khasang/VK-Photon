@@ -9,7 +9,6 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.callbacks.MyActionModeCallback;
 import com.khasang.vkphoto.domain.events.ErrorEvent;
-import com.khasang.vkphoto.domain.events.GetFragmentContextEvent;
 import com.khasang.vkphoto.domain.events.GetLocalPhotosEvent;
 import com.khasang.vkphoto.domain.events.GotoBackFragmentEvent;
 import com.khasang.vkphoto.domain.interactors.LocalPhotosInteractor;
@@ -135,20 +134,22 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
 
     @Override
     public void deleteSelectedPhotos(MultiSelector multiSelector) {
-        localPhotosInteractor.deleteSelectedLocalPhotos(multiSelector, albumView.getPhotoList());
+        localPhotosInteractor.deleteSelectedLocalPhotos(multiSelector, new ArrayList<>(albumView.getPhotoList()) );
         albumView.removePhotosFromView();
-        actionMode.finish();
+        if (actionMode != null) {
+            actionMode.finish();
+        }
     }
 
     @Override
     public void gotoBack(Context context) {
-        Navigator.navigateBack(context);
         actionMode.finish();
+        Navigator.navigateBack(context);
     }
 
     @Override
-    public void runSetContextEvent(Context context){
-        EventBus.getDefault().post(new GetFragmentContextEvent(context));
+    public void runSetContextEvent(){
+        localPhotosInteractor.runSetContextEvent(albumView.getContext());
     }
 
     //Presenter implementations

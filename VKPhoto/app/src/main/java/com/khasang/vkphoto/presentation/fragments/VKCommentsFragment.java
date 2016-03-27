@@ -4,6 +4,7 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.app.ActionBar;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -62,7 +63,10 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         if (getArguments() != null) {
             photo = getArguments().getParcelable(PHOTO_ID);
         }
-        ((FabProvider) getContext()).getFloatingActionButton().hide();
+        FloatingActionButton floatingActionButton = ((FabProvider) getContext()).getFloatingActionButton();
+        if (floatingActionButton != null) {
+            floatingActionButton.hide();
+        }
         Logger.d(TAG + " onCreate");
     }
 
@@ -103,8 +107,7 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
     }
 
     private void loadPhoto() {
-        if (TextUtils.isEmpty(photo.photo_130)) {
-            Logger.d(VKCommentsFragment.class.getSimpleName() + ": image load form local album");
+        if (!TextUtils.isEmpty(photo.filePath)) {
             Glide.with(userImage.getContext())
                     .load("file://" + photo.filePath)
                     .error(R.drawable.vk_share_send_button_background)
@@ -115,6 +118,8 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
                     .load(photo.getUrlToMaxPhoto())
                     .error(R.drawable.vk_share_send_button_background)
                     .into(userImage);
+        }
+        if (photo.owner_id != 0) {
             hlayout.setVisibility(View.VISIBLE);
             commentsCount.setText(String.valueOf(photo.comments));
             likes.setText(String.valueOf(photo.likes));
@@ -170,6 +175,11 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         adapter.setData(comments, profiles);
         userImage.getLayoutParams().height = ActionBar.LayoutParams.WRAP_CONTENT;
         recyclerView.setVisibility(View.VISIBLE);
+        scrollView.post(new Runnable() {
+            public void run() {
+                scrollView.scrollTo(0, scrollView.getBottom());
+            }
+        });
     }
 
     @Override

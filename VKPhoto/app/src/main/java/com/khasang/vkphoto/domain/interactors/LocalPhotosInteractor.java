@@ -1,5 +1,7 @@
 package com.khasang.vkphoto.domain.interactors;
 
+import android.content.Context;
+
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.khasang.vkphoto.presentation.model.Photo;
 
@@ -12,6 +14,8 @@ public interface LocalPhotosInteractor {
     void getPhotosByAlbumId(int albumId);
 
     void uploadPhotos(final MultiSelector multiSelector, List<Photo> localPhotoList, final long idVKPhotoAlbum);
+
+    void runSetContextEvent(Context context);
 
     void deleteSelectedLocalPhotos(MultiSelector multiSelector, List<Photo> photoList);
 }
