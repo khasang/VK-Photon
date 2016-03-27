@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -80,7 +81,12 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
         initRecyclerView(view);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {
-                localAlbumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) getActivity());
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        localAlbumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) getActivity());
+                    }
+                });
             }
             if (refreshing) {
                 displayRefresh(true);

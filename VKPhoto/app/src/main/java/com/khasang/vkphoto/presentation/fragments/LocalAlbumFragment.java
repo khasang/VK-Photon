@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -142,7 +143,12 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
                 if (idVKPhotoAlbum == 0) {
-                    localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity(),true);
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity(), true);
+                        }
+                    });
                 } else {
                     localAlbumPresenter.uploadPhotos(multiSelector, idVKPhotoAlbum, (AppCompatActivity) getContext());
                 }
