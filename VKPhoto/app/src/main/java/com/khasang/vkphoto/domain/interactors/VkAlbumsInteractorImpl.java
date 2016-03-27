@@ -91,9 +91,9 @@ public class VkAlbumsInteractorImpl implements VkAlbumsInteractor {
     }
 
     @Override
-    public void editAlbum(int albumId, String title, String description) {
+    public void editVkAlbum(PhotoAlbum photoAlbum) {
         if (checkSyncService()) {
-                syncService.editAlbum(albumId, title, description);
+                syncService.editVkAlbum(photoAlbum);
         }
     }
 

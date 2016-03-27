@@ -57,7 +57,7 @@ import static com.khasang.vkphoto.util.Constants.ALBUMS_SPAN_COUNT;
 public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TAG = AlbumsFragment.class.getSimpleName();
     public static final String ACTION_MODE_ACTIVE = "action_mode_active";
-    private VKAlbumsPresenter vKAlbumsPresenter;
+    private VKAlbumsPresenter vkAlbumsPresenter;
     private PhotoAlbumsCursorAdapter adapter;
     private MultiSelector multiSelector;
     private TextView tvCountOfAlbums;
@@ -74,7 +74,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
         setRetainInstance(true);
         setHasOptionsMenu(true);
         multiSelector = new MultiSelector();
-        vKAlbumsPresenter = new AlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
+        vkAlbumsPresenter = new AlbumsPresenterImpl(this, ((SyncServiceProvider) getActivity()));
     }
 
     @Override
@@ -90,7 +90,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
         initRecyclerView(view);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_ACTIVE)) {
-                vKAlbumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) getActivity());
+                vkAlbumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) getActivity());
             }
             if (refreshing) {
                 displayRefresh(true);
@@ -110,7 +110,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                vKAlbumsPresenter.getAllVKAlbums();
+                vkAlbumsPresenter.getAllVKAlbums();
             }
         });
     }
@@ -136,7 +136,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     public void onStart() {
         super.onStart();
         Logger.d("AlbumsFragment onStart()");
-        vKAlbumsPresenter.onStart();
+        vkAlbumsPresenter.onStart();
     }
 
     @Override
@@ -153,7 +153,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     public void onStop() {
         super.onStop();
         Logger.d("AlbumsFragment onStop()");
-        vKAlbumsPresenter.onStop();
+        vkAlbumsPresenter.onStop();
     }
 
     //AlbumsView implementations
@@ -176,10 +176,10 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
     }
 
     @Override
-    public void editAlbum(final int albumId, String title, String description) {
+    public void editAlbum(final PhotoAlbum photoAlbum) {
         View view = View.inflate(getContext(), R.layout.fragment_vk_add_album, null);
-        ((EditText) view.findViewById(R.id.et_album_title)).setText(title);
-        ((EditText) view.findViewById(R.id.et_album_description)).setText(description);
+        ((EditText) view.findViewById(R.id.et_album_title)).setText(photoAlbum.title);
+        ((EditText) view.findViewById(R.id.et_album_description)).setText(photoAlbum.description);
         new MaterialDialog.Builder(getContext())
                 .title(R.string.edit_album)
                 .customView(view, true)
@@ -189,9 +189,11 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         View dialogView = dialog.getView();
-                        vKAlbumsPresenter.editAlbumById(albumId,
-                                ((EditText) dialogView.findViewById(R.id.et_album_title)).getText().toString(),
-                                ((EditText) dialogView.findViewById(R.id.et_album_description)).getText().toString());
+                        String newTitle = ((EditText) dialogView.findViewById(R.id.et_album_title)).getText().toString();
+                        String newDescription = ((EditText) dialogView.findViewById(R.id.et_album_description)).getText().toString();
+                        photoAlbum.title = newTitle;
+                        photoAlbum.description = newDescription;
+                        vkAlbumsPresenter.editVkAlbum(photoAlbum);
                     }
                 })
                 .show();
@@ -238,7 +240,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
                                 newPrivacy = VKPrivacy.PRIVACY_NOBODY;
                                 break;
                         }
-                        vKAlbumsPresenter.editPrivacyOfAlbums(albumsList, newPrivacy);
+                        vkAlbumsPresenter.editPrivacyOfAlbums(albumsList, newPrivacy);
                     }
                 })
                 .show();
@@ -277,7 +279,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        vKAlbumsPresenter.deleteSelectedAlbums(multiSelector);
+                        vkAlbumsPresenter.deleteSelectedAlbums(multiSelector);
                     }
                 })
                 .show();
@@ -307,7 +309,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        vKAlbumsPresenter.syncAlbums(multiSelector);
+                        vkAlbumsPresenter.syncAlbums(multiSelector);
                     }
                 })
                 .show();
@@ -355,7 +357,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
 
     private boolean initAdapter(Cursor cursor) {
         if (adapter == null) {
-            adapter = new PhotoAlbumsCursorAdapter(getContext(), cursor, multiSelector, vKAlbumsPresenter);
+            adapter = new PhotoAlbumsCursorAdapter(getContext(), cursor, multiSelector, vkAlbumsPresenter);
             return true;
         }
         return false;
@@ -366,7 +368,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
             @Override
             public void onClick(View view) {
                 Logger.d("AlbumsFragment add album");
-//                vKAlbumsPresenter.addAlbum();
+//                vkAlbumsPresenter.addAlbum();
                 new MaterialDialog.Builder(getContext())
                         .title(R.string.create_album)
                         .customView(R.layout.fragment_vk_add_album, true)
@@ -376,7 +378,7 @@ public class AlbumsFragment extends Fragment implements AlbumsView, LoaderManage
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 View dialogView = dialog.getView();
-                                vKAlbumsPresenter.addAlbum(((EditText) dialogView.findViewById(R.id.et_album_title)).getText().toString(),
+                                vkAlbumsPresenter.addAlbum(((EditText) dialogView.findViewById(R.id.et_album_title)).getText().toString(),
                                         ((EditText) dialogView.findViewById(R.id.et_album_description)).getText().toString(),
                                         VKPrivacy.PRIVACY_ALL,
                                         VKPrivacy.PRIVACY_ALL);

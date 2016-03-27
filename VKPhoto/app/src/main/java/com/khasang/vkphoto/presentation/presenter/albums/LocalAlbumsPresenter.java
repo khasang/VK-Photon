@@ -5,6 +5,8 @@ import java.util.List;
 
 public interface LocalAlbumsPresenter extends AlbumsPresenter {
     void addAlbum(String title);
+
     List<PhotoAlbum> getAllLocalAlbums();
-    void editAlbumById(int albumId, String title);
+
+    void editLocalOrSyncAlbum(PhotoAlbum photoAlbum, String newTitle);
 }

@@ -78,14 +78,14 @@ public class VKAlbumSource {
         });
     }
 
-    public void editAlbumById(final int albumId, String title, String description) {
+    public void editVkAlbum(final PhotoAlbum photoAlbum) {
         RequestMaker.editAlbumById(new MyVkRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 Logger.d("Edit VKPhotoAlbum successfully");
             }
-        }, albumId, title, description);
+        }, photoAlbum.id, photoAlbum.title, photoAlbum.description);
     }
 
     public void editPrivacyOfAlbum(final PhotoAlbum PhotoAlbum, int newPrivacy) {

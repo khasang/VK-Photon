@@ -115,13 +115,13 @@ public class LocalAlbumsPresenterImpl extends AlbumsPresenterBase implements Loc
             Integer position = selectedPositions.get(0);
             cursor.moveToPosition(position);
             album = new PhotoAlbum(cursor);
-            albumsView.editAlbum(album.getId(), album.title, null);
+            albumsView.editAlbum(album);
         }
     }
 
     @Override
-    public void editAlbumById(int albumId, String title) {
-        albumsInteractor.editAlbum(albumId, title);
+    public void editLocalOrSyncAlbum(PhotoAlbum photoAlbum, String newTitle) {
+        albumsInteractor.editLocalOrSyncAlbum(photoAlbum, newTitle);
         actionMode.finish();
     }
 

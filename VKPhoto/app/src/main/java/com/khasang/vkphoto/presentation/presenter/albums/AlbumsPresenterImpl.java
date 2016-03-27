@@ -81,8 +81,8 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     }
 
     @Override
-    public void editAlbumById(int albumId, String title, String description) {
-        vkAlbumsInteractor.editAlbum(albumId, title, description);
+    public void editVkAlbum(PhotoAlbum photoAlbum) {
+        vkAlbumsInteractor.editVkAlbum(photoAlbum);
         actionMode.finish();
     }
 
@@ -185,7 +185,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
             Integer position = selectedPositions.get(0);
             cursor.moveToPosition(position);
             album = new PhotoAlbum(cursor);
-            vkAlbumsView.editAlbum(album.getId(), album.title, album.description);
+            vkAlbumsView.editAlbum(album);
         }
     }
 

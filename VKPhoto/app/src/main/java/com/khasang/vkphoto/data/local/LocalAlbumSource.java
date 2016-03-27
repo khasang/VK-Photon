@@ -57,7 +57,7 @@ public class LocalAlbumSource {
 
     public void updateAlbum(PhotoAlbum photoAlbum, boolean isLocal) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        PhotoAlbum oldAlbum = getAlbumById(photoAlbum.id);
+        PhotoAlbum oldAlbum = getAlbumFromDb(photoAlbum.id);
         if (oldAlbum == null) {
             saveAlbum(photoAlbum, false);
         } else {
@@ -74,7 +74,7 @@ public class LocalAlbumSource {
 
     public void deleteAlbumFromDbAndPhys(PhotoAlbum photoAlbum) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        if (getAlbumById(photoAlbum.id) != null && !TextUtils.isEmpty(photoAlbum.filePath)) {
+        if (getAlbumFromDb(photoAlbum.id) != null && !TextUtils.isEmpty(photoAlbum.filePath)) {
             db.beginTransaction();
             try {
                 String[] whereArgs = {String.valueOf(photoAlbum.id)};
@@ -91,7 +91,7 @@ public class LocalAlbumSource {
         }
     }
 
-    public PhotoAlbum getAlbumById(int id) {
+    public PhotoAlbum getAlbumFromDb(int id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         PhotoAlbum photoAlbum = null;
         Cursor cursor = db.query(PhotoAlbumsTable.TABLE_NAME, null, BaseColumns._ID + " = ?", new String[]{String.valueOf(id)}, null, null, null);
@@ -230,40 +230,40 @@ public class LocalAlbumSource {
     }
 
 
-    public void editPrivacyOfAlbum(PhotoAlbum PhotoAlbum, int newPrivacy) {
-        PhotoAlbum album = getAlbumById(PhotoAlbum.id);
+    public void editPrivacyOfAlbum(PhotoAlbum photoAlbum, int newPrivacy) {
+        PhotoAlbum album = getAlbumFromDb(photoAlbum.id);
         album.privacy = newPrivacy;
         updateAlbum(album, true);
     }
 
-    public void editAlbumById(int albumId, String title, String description) {
-        PhotoAlbum album = getAlbumById(albumId);
-        album.title = title;
-        album.description = description;
+    public void editVkAlbum(PhotoAlbum photoAlbum) {
+        PhotoAlbum album = getAlbumFromDb(photoAlbum.id);
+        album.title = photoAlbum.title;
+        album.description = photoAlbum.description;
         updateAlbum(album, true);
     }
 
-    public void editLocalAlbumById(int albumId, String title) {
-        PhotoAlbum album;
-        if (getAlbumById(albumId) != null) {
-            album = getAlbumById(albumId);
-        } else {
-            album = getLocalPhotoAlbumById(albumId);
-        }
-        String newPath = (new File(album.filePath).getParent()) + "/" + title;
-        if (FileManager.renameDir(album.filePath,  newPath)) {
-            album.title = title;
+    public void editLocalOrSyncAlbum(PhotoAlbum albumToEdit, String newTitle) {
+        PhotoAlbum album = albumIsLocal(albumToEdit) ?
+                getLocalAlbumById(albumToEdit.id) : getAlbumFromDb(albumToEdit.id);
+        String newPath = (new File(album.filePath).getParent()) + "/" + newTitle;
+        if (FileManager.renameDir(album.filePath, newPath)) {
+            album.title = newTitle;
             album.filePath = newPath;
             EventBus.getDefault().postSticky(new LocalALbumEvent());
         }
-        Logger.d("wwwwwwww  "+album.filePath);
+        Logger.d("LocalAlbumSource. editLocalOrSyncAlbum " + album.filePath);
     }
 
     public void createLocalAlbum(String title) {
         FileManager.createAlbumDirectory(title, context);
     }
 
-    private PhotoAlbum getLocalPhotoAlbumById(int albumId) {
+    private boolean albumIsLocal(PhotoAlbum photoAlbum){
+        return getAlbumFromDb(photoAlbum.id) == null;
+    }
+
+    private PhotoAlbum getLocalAlbumById(int albumId) {
         for (PhotoAlbum album : getAllLocalAlbumsList()) {
             if (album.getId() == albumId) {
                 return album;

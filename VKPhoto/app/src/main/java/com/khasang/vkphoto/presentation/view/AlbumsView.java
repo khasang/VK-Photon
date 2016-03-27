@@ -16,7 +16,7 @@ public interface AlbumsView extends View {
 
     Cursor getAdapterCursor();
 
-    void editAlbum(int albumId, String title, String description);
+    void editAlbum(PhotoAlbum photoAlbum);
 
     void editPrivacyOfAlbums(List<PhotoAlbum> albumsList, int oldPrivacy);
 }

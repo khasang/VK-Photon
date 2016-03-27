@@ -220,20 +220,21 @@ public class LocalAlbumsFragment extends Fragment implements AlbumsView, LoaderM
     }
 
     @Override
-    public void editAlbum(final int albumId, String title, String description) {
+    public void editAlbum(final PhotoAlbum photoAlbum) {
         View view = View.inflate(getContext(), R.layout.fragment_local_create_edit_album, null);
-        ((EditText) view.findViewById(R.id.et_local_album_title)).setText(title);
+        ((EditText) view.findViewById(R.id.et_local_album_title)).setText(photoAlbum.title);
         new MaterialDialog.Builder(getContext())
                 .title(R.string.edit_album)
                 .customView(view, true)
                 .positiveText(R.string.st_btn_ok)
-                .negativeText(R.string.cancel)
+                .negativeText(R.string.st_btn_cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         View dialogView = dialog.getView();
-                        localAlbumsPresenter.editAlbumById(albumId,
-                                ((EditText) dialogView.findViewById(R.id.et_local_album_title)).getText().toString());
+                        String newTitle = ((EditText) dialogView.findViewById(R.id.et_local_album_title)).getText().toString();
+                        photoAlbum.title = newTitle;
+                        localAlbumsPresenter.editLocalOrSyncAlbum(photoAlbum, newTitle);
                     }
                 })
                 .show();

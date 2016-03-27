@@ -66,9 +66,9 @@ public class LocalAlbumsInteractorImpl implements LocalAlbumsInteractor {
     }
 
     @Override
-    public void editAlbum(int albumId, String title) {
+    public void editLocalOrSyncAlbum(PhotoAlbum photoAlbum, String newTitle) {
         if (checkSyncService()) {
-            syncService.editLocalAlbum(albumId, title);
+            syncService.editLocalOrSyncAlbum(photoAlbum, newTitle);
         }
     }
 
