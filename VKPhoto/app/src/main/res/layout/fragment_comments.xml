@@ -3,11 +3,11 @@
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/vk_black"
+    android:background="@color/vk_grey_color"
     android:fillViewport="true">
 
     <RelativeLayout
-        android:id="@+id/vLinearLayout"
+        android:id="@+id/rl_main_comments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -18,7 +18,7 @@
             tools:src="@drawable/tom" />
 
         <RelativeLayout
-            android:id="@+id/hLayout"
+            android:id="@+id/rl_comments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/userImage"
@@ -74,8 +74,7 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/hLayout"
-            android:layout_marginTop="@dimen/margin10"
+            android:layout_below="@+id/rl_comments"
             android:animateLayoutChanges="true"
             android:visibility="gone" />
     </RelativeLayout>
