@@ -12,8 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_margin="@dimen/margin5"
-        android:src="@drawable/test" />
+        android:layout_margin="@dimen/margin5" />
 
     <LinearLayout
         android:id="@+id/mainLinearLayout"

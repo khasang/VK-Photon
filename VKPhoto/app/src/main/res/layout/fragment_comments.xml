@@ -14,8 +14,7 @@
         <ImageView
             android:id="@+id/userImage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:src="@drawable/tom" />
+            android:layout_height="match_parent" />
 
         <RelativeLayout
             android:id="@+id/rl_comments"
