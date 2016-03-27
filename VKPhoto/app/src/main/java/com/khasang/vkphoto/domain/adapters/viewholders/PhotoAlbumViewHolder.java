@@ -139,6 +139,8 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
                                 Logger.d("photoAlbum thumb exists " + photoAlbum.thumbFilePath);
                                 loadPhoto(file);
                                 return;
+                            } else {
+                                downloadThumb();
                             }
                         }
                     }
