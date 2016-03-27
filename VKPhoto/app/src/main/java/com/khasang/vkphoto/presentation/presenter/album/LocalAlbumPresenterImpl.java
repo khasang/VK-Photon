@@ -96,6 +96,7 @@ public class LocalAlbumPresenterImpl extends AlbumPresenterBase implements Local
                         }
                         return true;
                     case R.id.action_upload_photos:
+                        Logger.d("upload photo");
                         List<Integer> selectedPositions = multiSelector.getSelectedPositions();
                         Collections.sort(selectedPositions, Collections.reverseOrder());
                         List<Photo> localPhotoList = new ArrayList<Photo>();
@@ -103,6 +104,7 @@ public class LocalAlbumPresenterImpl extends AlbumPresenterBase implements Local
                             localPhotoList.add(albumView.getPhotoList().get(position));
                         }
                         localPhotosInteractor.uploadPhotos(multiSelector, localPhotoList, idVKPhotoAlbum);
+                        Navigator.navigateBack(albumView.getContext());
                         return true;
                     default:
                         break;

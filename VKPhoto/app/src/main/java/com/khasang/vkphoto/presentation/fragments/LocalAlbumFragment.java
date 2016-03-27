@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bignerdranch.android.multiselector.MultiSelector;
@@ -47,6 +48,7 @@ import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.Logger;
 import com.khasang.vkphoto.util.PermissionUtils;
 import com.khasang.vkphoto.util.ToastUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -58,7 +60,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class LocalAlbumFragment extends Fragment implements AlbumView{
+public class LocalAlbumFragment extends Fragment implements AlbumView {
     public static final String TAG = LocalAlbumFragment.class.getSimpleName();
     public static final String PHOTOALBUM = "photoalbum";
     public static final String IDVKPHOTOALBUM = "idVKPhotoAlbum";
@@ -139,7 +141,11 @@ public class LocalAlbumFragment extends Fragment implements AlbumView{
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
-                localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
+                if (idVKPhotoAlbum == 0) {
+                    localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
+                } else {
+                    localAlbumPresenter.uploadPhotos(multiSelector, idVKPhotoAlbum, (AppCompatActivity) getContext());
+                }
             }
         }
     }
