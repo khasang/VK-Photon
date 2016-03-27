@@ -4,7 +4,6 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.app.ActionBar;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -117,19 +116,9 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
                     .error(R.drawable.vk_share_send_button_background)
                     .into(userImage);
             hlayout.setVisibility(View.VISIBLE);
+            commentsCount.setText(String.valueOf(photo.comments));
             likes.setText(String.valueOf(photo.likes));
-            StringBuilder stringPhrase = createPhraseOfComments();
-            commentsCount.setText(stringPhrase);
         }
-    }
-
-    @NonNull
-    private StringBuilder createPhraseOfComments() {
-        StringBuilder stringPhrase = new StringBuilder();
-        stringPhrase.append(R.string.like_to);
-        stringPhrase.append(String.valueOf(photo.comments));
-        stringPhrase.append(R.string.people);
-        return stringPhrase;
     }
 
     @Override

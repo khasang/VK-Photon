@@ -3,7 +3,7 @@
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/vk_white"
+    android:background="@color/vk_black"
     android:fillViewport="true">
 
     <RelativeLayout
@@ -21,7 +21,9 @@
             android:id="@+id/hLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/userImage"
+            android:layout_alignBottom="@+id/userImage"
+            android:background="@color/vk_black"
+            android:alpha="0.8"
             android:visibility="gone">
 
             <ImageView
@@ -30,31 +32,41 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_action_heart" />
+                android:layout_marginTop="@dimen/margin10"
+                android:layout_marginBottom="@dimen/margin5"
+                android:src="@drawable/ic_favorite_white_24dp" />
 
             <TextView
                 android:id="@+id/tv_likes"
-                style="@style/text_comments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/iv_like" />
+                android:layout_alignBottom="@+id/iv_like"
+                android:layout_marginLeft="@dimen/margin5"
+                android:layout_toRightOf="@+id/iv_like"
+                android:paddingBottom="2dp"
+                android:textColor="@color/vk_white"
+                android:textSize="16sp" />
 
             <ImageView
                 android:id="@+id/iv_comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/iv_like"
+                android:layout_toRightOf="@+id/tv_likes"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_comment_black_18dp" />
+                android:layout_marginTop="@dimen/margin10"
+                android:layout_marginBottom="@dimen/margin5"
+                android:src="@drawable/ic_comment_white_24dp" />
 
             <TextView
                 android:id="@+id/tv_comments_count"
-                style="@style/text_comments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_likes"
-                android:layout_toRightOf="@+id/iv_comment" />
+                android:layout_alignBottom="@+id/iv_comment"
+                android:layout_marginLeft="@dimen/margin5"
+                android:layout_toRightOf="@+id/iv_comment"
+                android:paddingBottom="2dp"
+                android:textColor="@color/vk_white"
+                android:textSize="16sp" />
 
         </RelativeLayout>
 
