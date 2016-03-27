@@ -104,6 +104,9 @@ public class LocalAlbumPresenterImpl extends AlbumPresenterBase implements Local
                             localPhotoList.add(albumView.getPhotoList().get(position));
                         }
                         localPhotosInteractor.uploadPhotos(multiSelector, localPhotoList, idVKPhotoAlbum);
+                        if (actionMode != null) {
+                            actionMode.finish();
+                        }
                         Navigator.navigateBack(albumView.getContext());
                         return true;
                     default:
