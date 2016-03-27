@@ -34,6 +34,7 @@ import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.domain.adapters.PhotoAlbumAdapter;
 import com.khasang.vkphoto.domain.interfaces.FabProvider;
 import com.khasang.vkphoto.domain.interfaces.SyncServiceProvider;
+import com.khasang.vkphoto.domain.listeners.RecyclerViewOnScrollListener;
 import com.khasang.vkphoto.presentation.activities.MainActivity;
 import com.khasang.vkphoto.presentation.activities.Navigator;
 import com.khasang.vkphoto.presentation.model.Photo;
@@ -149,6 +150,8 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
                 getContext(), MainActivity.PHOTOS_COLUMNS, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
         tvCountOfPhotos.setText(getString(R.string.count_of_photos, photoList.size()));
+        recyclerView.addOnScrollListener(new RecyclerViewOnScrollListener(fab));
+
     }
 
     private void initFab() {
