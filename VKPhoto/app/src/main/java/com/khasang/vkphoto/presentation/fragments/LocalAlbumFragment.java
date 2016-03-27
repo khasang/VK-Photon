@@ -3,6 +3,7 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -108,6 +109,8 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album, container, false);
         tvCountOfPhotos = (TextView) view.findViewById(R.id.tv_photos);
+        tvCountOfPhotos.setTypeface(Typeface.createFromAsset(
+                getActivity().getAssets(), "fonts/plain.ttf"));
         restoreState(savedInstanceState);
         initFab();
 
