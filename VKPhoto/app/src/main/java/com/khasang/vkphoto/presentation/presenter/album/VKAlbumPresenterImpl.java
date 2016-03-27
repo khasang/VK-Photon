@@ -109,7 +109,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
     public void onGetSynchronizedPhotosEvent(GetSynchronizedPhotosEvent getSynchronizedPhotosEvent) {
         Logger.d("VKAlbumPresenterImpl onGetSynchronizedPhotosEvent");
         EventBus.getDefault().removeStickyEvent(GetSynchronizedPhotosEvent.class);
-        vkAlbumView.displayVkPhotos(getSynchronizedPhotosEvent.photosList);
+        vkAlbumView.displayPhotos(getSynchronizedPhotosEvent.photosList);
         onGetSynchronizedPhotosEventCaught = true;
     }
 
@@ -177,7 +177,7 @@ public class VKAlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumP
         handler.post(new Runnable() {
             @Override
             public void run() {
-                vkAlbumView.displayVkPhotos(synchronizedPhotos);
+                vkAlbumView.displayPhotos(synchronizedPhotos);
             }
         });
     }

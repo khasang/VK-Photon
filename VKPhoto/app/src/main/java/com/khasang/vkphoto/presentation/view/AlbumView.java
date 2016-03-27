@@ -7,7 +7,7 @@ import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import java.util.List;
 
 public interface AlbumView extends View {
-    void displayVkPhotos(List<Photo> photos);
+    void displayPhotos(List<Photo> photos);
 
     void displayAllLocalAlbums(List<PhotoAlbum> albumsList);
 
