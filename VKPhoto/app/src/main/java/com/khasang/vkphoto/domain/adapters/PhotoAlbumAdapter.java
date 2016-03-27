@@ -143,7 +143,7 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
 //                        albumPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
                 //Navigator.navigateToVKCommentsFragment(v.getContext(), photo);
                 if (idVKPhotoAlbum != 0) return;
-                Navigator.navigateToPhotoViewPagerFragment(v.getContext(),photoAlbum, photoList, this.position);
+                Navigator.navigateToPhotoViewPagerFragment(v.getContext(), photoAlbum, photoList, this.position);
             }
             if (photo.filePath != null) {
                 Logger.d(photo.filePath);
@@ -156,7 +156,14 @@ public class PhotoAlbumAdapter extends RecyclerView.Adapter<PhotoAlbumAdapter.Vi
                 multiSelector.setSelectable(true); // (4)
                 multiSelector.setSelected(this, true); // (5)
                 if (idVKPhotoAlbum == 0) {
-                    localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) imageView.getContext());
+                    boolean showFab;
+                    if (PhotoAlbum.checkSelectable(photoAlbum.id)) {
+                        showFab = true;
+                    } else {
+                        showFab = false;
+                    }
+                    localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) imageView.getContext(), showFab);
+
                 } else {
                     localAlbumPresenter.uploadPhotos(multiSelector, idVKPhotoAlbum, (AppCompatActivity) imageView.getContext());
                 }

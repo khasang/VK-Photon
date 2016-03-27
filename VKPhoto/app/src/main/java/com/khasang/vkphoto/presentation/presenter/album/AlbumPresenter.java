@@ -11,7 +11,7 @@ public interface AlbumPresenter extends Presenter {
 
     void deleteSelectedPhotos(MultiSelector multiSelector);
 
-    void selectPhoto(MultiSelector multiSelector, final AppCompatActivity activity);
+    void selectPhoto(MultiSelector multiSelector, final AppCompatActivity activity, boolean fabInclude);
 
     void checkActionModeFinish(MultiSelector multiSelector);
 

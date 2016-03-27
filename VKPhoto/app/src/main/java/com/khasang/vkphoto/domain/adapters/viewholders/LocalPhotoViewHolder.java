@@ -79,7 +79,7 @@ public class LocalPhotoViewHolder implements SelectableHolder, View.OnLongClickL
 //            multiSelector.bindHolder(this, adapterPosition, -1);
             multiSelector.setSelectable(true);
             multiSelector.setSelected(this, true);
-            localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) v.getContext());
+            localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) v.getContext(),true);
             Logger.d("" + adapterPosition + " " + isSelectable());
             return true;
         }

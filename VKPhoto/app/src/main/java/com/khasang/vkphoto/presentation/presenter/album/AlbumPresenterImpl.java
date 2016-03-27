@@ -209,10 +209,10 @@ public class AlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumPre
     }
 
     @Override
-    public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity) {
+    public void selectPhoto(final MultiSelector multiSelector, final AppCompatActivity activity, boolean showFab) {
         ((FabProvider) activity).getFloatingActionButton().hide();
         this.actionMode = activity.startSupportActionMode(new MyActionModeCallback(multiSelector, activity,
-                R.menu.menu_action_mode_vk_album, ((FabProvider) activity).getFloatingActionButton()) {
+                R.menu.menu_action_mode_vk_album, showFab ? ((FabProvider) activity).getFloatingActionButton() : null) {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {

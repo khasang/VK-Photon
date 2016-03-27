@@ -142,7 +142,7 @@ public class LocalAlbumFragment extends Fragment implements AlbumView {
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
                 if (idVKPhotoAlbum == 0) {
-                    localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
+                    localAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity(),true);
                 } else {
                     localAlbumPresenter.uploadPhotos(multiSelector, idVKPhotoAlbum, (AppCompatActivity) getContext());
                 }

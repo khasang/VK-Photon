@@ -98,7 +98,7 @@ public class VKPhotoViewHolder implements SelectableHolder, View.OnLongClickList
 //            multiSelector.bindHolder(this, adapterPosition, -1);
             multiSelector.setSelectable(true);
             multiSelector.setSelected(this, true);
-            vkAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) v.getContext());
+            vkAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) v.getContext(), true);
             Logger.d("" + adapterPosition + " " + isSelectable());
             return true;
         }

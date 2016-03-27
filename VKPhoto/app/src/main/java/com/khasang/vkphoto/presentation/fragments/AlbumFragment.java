@@ -132,7 +132,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
                 displayRefresh(true);
             }
             if (savedInstanceState.getBoolean(ACTION_MODE_PHOTO_FRAGMENT_ACTIVE)) {
-                vkAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity());
+                vkAlbumPresenter.selectPhoto(multiSelector, (AppCompatActivity) getActivity(),true);
             }
         } else {
             vkAlbumPresenter = new AlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()), photoAlbum);
