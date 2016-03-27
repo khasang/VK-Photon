@@ -53,15 +53,15 @@ public class LocalAlbumPresenterImpl extends AlbumPresenterBase implements Local
                     case R.id.action_sync_photo:
                         Logger.d("user wants to sync local photos");
                         return true;
-                    case R.id.action_upload_photo:
-                        return true;
-                    case R.id.action_edit_photo:
-                        return true;
+//                    case R.id.action_upload_photo:
+//                        return true;
+//                    case R.id.action_edit_photo:
+//                        return true;
                     case R.id.action_select_all:
                         for (int i = 0; i < albumView.getPhotoList().size(); i++) {
                             multiSelector.setSelected(i, 0, true);
-                            actionMode.getMenu().findItem(R.id.action_upload_photo).setVisible(false);
-                            actionMode.getMenu().findItem(R.id.action_edit_photo).setVisible(false);
+//                            actionMode.getMenu().findItem(R.id.action_upload_photo).setVisible(false);
+//                            actionMode.getMenu().findItem(R.id.action_edit_photo).setVisible(false);
                         }
                         return true;
                     case R.id.action_delete_photo:
@@ -121,9 +121,9 @@ public class LocalAlbumPresenterImpl extends AlbumPresenterBase implements Local
 
     @Override
     public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
-        MenuItem itemActionEditPhoto = actionMode.getMenu().findItem(R.id.action_edit_photo);
-        MenuItem itemUpLoadPhoto = actionMode.getMenu().findItem(R.id.action_upload_photo);
-        super.hideActionModeItem(multiSelector, itemActionEditPhoto);
+//        MenuItem itemActionEditPhoto = actionMode.getMenu().findItem(R.id.action_edit_photo);
+//        MenuItem itemUpLoadPhoto = actionMode.getMenu().findItem(R.id.action_upload_photo);
+//        super.hideActionModeItem(multiSelector, itemActionEditPhoto);
 //        super.hideActionModeItem(multiSelector, itemUpLoadPhoto);
     }
 

@@ -197,9 +197,9 @@ public class AlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumPre
 
     @Override
     public void hideActionModeItem(MultiSelector multiSelector, MenuItem menuItem) {
-        MenuItem itemActionEditPhoto = actionMode.getMenu().findItem(R.id.action_edit_photo);
-        MenuItem itemDownLoadPhoto = actionMode.getMenu().findItem(R.id.action_download_photo);
-        super.hideActionModeItem(multiSelector, itemActionEditPhoto);
+//        MenuItem itemActionEditPhoto = actionMode.getMenu().findItem(R.id.action_edit_photo);
+//        MenuItem itemDownLoadPhoto = actionMode.getMenu().findItem(R.id.action_download_photo);
+//        super.hideActionModeItem(multiSelector, itemActionEditPhoto);
 //        super.hideActionModeItem(multiSelector, itemDownLoadPhoto);
     }
 
@@ -219,15 +219,15 @@ public class AlbumPresenterImpl extends AlbumPresenterBase implements VKAlbumPre
                     case R.id.action_sync_photo:
                         vkAlbumView.confirmSync();
                         return true;
-                    case R.id.action_download_photo:
-                        return true;
-                    case R.id.action_edit_photo:
-                        return true;
+//                    case R.id.action_download_photo:
+//                        return true;
+//                    case R.id.action_edit_photo:
+//                        return true;
                     case R.id.action_select_all:
                         for (int i = 0; i < vkAlbumView.getPhotoList().size(); i++) {
                             multiSelector.setSelected(i, 0, true);
-                            actionMode.getMenu().findItem(R.id.action_download_photo).setVisible(false);
-                            actionMode.getMenu().findItem(R.id.action_edit_photo).setVisible(false);
+//                            actionMode.getMenu().findItem(R.id.action_download_photo).setVisible(false);
+//                            actionMode.getMenu().findItem(R.id.action_edit_photo).setVisible(false);
                         }
                         return true;
                     case R.id.action_delete_photo:

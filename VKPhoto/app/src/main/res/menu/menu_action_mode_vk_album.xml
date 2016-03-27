@@ -8,18 +8,18 @@
         android:orderInCategory="100"
         android:title="@string/sync_photo"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/action_download_photo"
-        android:icon="@drawable/ic_file_download_white_24dp"
-        android:orderInCategory="100"
-        android:title="@string/download_photo"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_edit_photo"
-        android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:orderInCategory="100"
-        android:title="@string/edit_photo_title"
-        app:showAsAction="always" />
+    <!--<item-->
+        <!--android:id="@+id/action_download_photo"-->
+        <!--android:icon="@drawable/ic_file_download_white_24dp"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:title="@string/download_photo"-->
+        <!--app:showAsAction="always" />-->
+    <!--<item-->
+        <!--android:id="@+id/action_edit_photo"-->
+        <!--android:icon="@drawable/ic_mode_edit_white_24dp"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:title="@string/edit_photo_title"-->
+        <!--app:showAsAction="always" />-->
     <item
         android:id="@+id/action_delete_photo"
         android:icon="@drawable/ic_delete_white_24dp"
