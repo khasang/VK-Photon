@@ -249,7 +249,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     @Override
     public boolean onLongClick(View v) {
         if (!multiSelector.isSelectable()) { // (3)
-            if (photoAlbum.id > 0) {
+            if (PhotoAlbum.checkSelectable(photoAlbum.id)) {
                 multiSelector.setSelectable(true); // (4)
                 multiSelector.setSelected(this, true); // (5)
                 albumsPresenter.selectAlbum(multiSelector, (AppCompatActivity) albumThumbImageView.getContext());
@@ -262,7 +262,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     @Override
     public void onClick(View v) {
         if (multiSelector.isSelectable()) {
-            if (checkSelectable(photoAlbum.id)) {
+            if (PhotoAlbum.checkSelectable(photoAlbum.id)) {
                 multiSelector.tapSelection(this);
                 albumsPresenter.checkActionModeFinish(multiSelector);
                 albumsPresenter.hideActionModeItem(multiSelector, menuItem);
@@ -270,10 +270,6 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
         } else {
             albumsPresenter.goToPhotoAlbum(v.getContext(), photoAlbum);
         }
-    }
-
-    public boolean checkSelectable(int photoAlbumId) {
-        return !(photoAlbumId == -6 || photoAlbumId == -7 || photoAlbumId == -15);
     }
 
     @Override
@@ -284,7 +280,7 @@ public class PhotoAlbumViewHolder extends MultiSelectorBindingHolder implements 
     @Override
     public void setSelectable(boolean b) {
         selectable = b;
-        if (selectable && photoAlbum != null && checkSelectable(photoAlbum.id)) {
+        if (selectable && photoAlbum != null && PhotoAlbum.checkSelectable(photoAlbum.id)) {
             albumSelectedCheckBox.setVisibility(View.VISIBLE);
         } else {
             albumSelectedCheckBox.setVisibility(View.GONE);

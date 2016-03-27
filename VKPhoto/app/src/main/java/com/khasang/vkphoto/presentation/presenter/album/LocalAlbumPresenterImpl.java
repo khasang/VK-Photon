@@ -143,8 +143,8 @@ public class LocalAlbumPresenterImpl  extends AlbumPresenterBase implements Loca
 
     @Override
     public void gotoBack(Context context) {
-        Navigator.navigateBack(context);
         actionMode.finish();
+        Navigator.navigateBack(context);
     }
 
     @Override

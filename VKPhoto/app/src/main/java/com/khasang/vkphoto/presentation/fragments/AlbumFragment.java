@@ -103,6 +103,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
         recyclerView.setLayoutManager(new GridLayoutManager(
                 getContext(), MainActivity.PHOTOS_COLUMNS, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
+        tvCountOfPhotos.setText(getResources().getString(R.string.count_of_photos, photoList.size()));
     }
 
     private void initSwipeRefreshLayout(View view) {
@@ -131,7 +132,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
             }
         } else {
             vkAlbumPresenter = new VKAlbumPresenterImpl(this, ((SyncServiceProvider) getActivity()), photoAlbum);
-            adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter);
+            adapter = new PhotoAlbumAdapter(multiSelector, photoList, vkAlbumPresenter, photoAlbum);
         }
         if (photoAlbum != null) {
             Logger.d("photoalbum " + photoAlbum.title);
@@ -142,23 +143,33 @@ public class AlbumFragment extends Fragment implements AlbumView {
 
     private void initFab() {
         fab = ((FabProvider) getActivity()).getFloatingActionButton();
-        if (!fab.isShown()) {
-            fab.show();
+        boolean fabHidden = !fab.isShown();
+        if (PhotoAlbum.checkSelectable(photoAlbum.id)) {
+            if (fabHidden) {
+                fab.show();
+            }
+        } else {
+            if (!fabHidden) {
+                fab.hide();
+            }
         }
+
     }
 
-    private void setOnClickListenerFab(View view) {
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vkAlbumPresenter.getAllLocalAlbums();
-                progressDialog = new MaterialDialog.Builder(getContext())
-                        .title(R.string.load_list_local_albums)
-                        .content(R.string.please_wait)
-                        .progress(true, 0)
-                        .show();
-            }
-        });
+    private void setOnClickListenerFab() {
+        if (PhotoAlbum.checkSelectable(photoAlbum.id)) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    vkAlbumPresenter.getAllLocalAlbums();
+                    progressDialog = new MaterialDialog.Builder(getContext())
+                            .title(R.string.load_list_local_albums)
+                            .content(R.string.please_wait)
+                            .progress(true, 0)
+                            .show();
+                }
+            });
+        }
     }
 
     @Override
@@ -171,7 +182,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
                             @Override
                             public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
                                 dialog.dismiss();
-                                vkAlbumPresenter.goToPhotoAlbum(getContext(), albumsList.get(which), photoAlbum.id);
+                                vkAlbumPresenter.goToPhotoAlbum(getContext(), albumsList.get(which), photoAlbum);
                             }
                         })
                 .show();
@@ -214,7 +225,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
     public void onResume() {
         super.onResume();
         Logger.d("AlbumFragment onResume()");
-        setOnClickListenerFab(getView());
+        setOnClickListenerFab();
     }
 
     @Override

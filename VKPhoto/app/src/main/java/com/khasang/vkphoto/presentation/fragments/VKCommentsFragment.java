@@ -4,6 +4,7 @@ package com.khasang.vkphoto.presentation.fragments;
 import android.app.ActionBar;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -62,7 +63,10 @@ public class VKCommentsFragment extends Fragment implements VkCommentsView {
         if (getArguments() != null) {
             photo = getArguments().getParcelable(PHOTO_ID);
         }
-        ((FabProvider) getContext()).getFloatingActionButton().hide();
+        FloatingActionButton floatingActionButton = ((FabProvider) getContext()).getFloatingActionButton();
+        if (floatingActionButton != null) {
+            floatingActionButton.hide();
+        }
         Logger.d(TAG + " onCreate");
     }
 
