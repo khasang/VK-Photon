@@ -1,11 +1,12 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/pref_header_general">
 
     <PreferenceCategory
         android:defaultValue="true"
         android:key="display_settings"
         android:title="@string/pref_title_display_settings">
 
-        <com.khasang.vkphoto.presentation.model.MaterialLanguageListPreference
+        <ListPreference
             android:dialogTitle="@string/pref_dialog_title_language"
             android:entries="@array/pref_list_languages"
             android:entryValues="@array/pref_list_languages"

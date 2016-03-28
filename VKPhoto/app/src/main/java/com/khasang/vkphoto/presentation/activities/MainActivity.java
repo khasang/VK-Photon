@@ -61,10 +61,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements SyncServiceProvider, FabProvider, SearchView.OnQueryTextListener,
         ActivityCompat.OnRequestPermissionsResultCallback {
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String ACTION_BAR_TITLE = "action_bar_title";
     public static int ALBUM_THUMB_HEIGHT = 0;
     public static int PHOTOS_COLUMNS = 0;
     private static String VIEWPAGER_VISIBLE = "viewpager_visible";
-    public static final String ACTION_BAR_TITLE = "action_bar_title";
     private static Fragment localAlbumsFragment, albumsFragment;
     private final String[] scopes = {VKScope.WALL, VKScope.PHOTOS};
     private ServiceConnection sConn;
@@ -267,11 +267,11 @@ public class MainActivity extends AppCompatActivity implements SyncServiceProvid
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-//            startActivity(intent);
-//            return true;
-//        }
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(MainActivity.this, UpdatedSettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
         if (id == R.id.log_out) {
             new MaterialDialog.Builder(this)
                     .title(R.string.logout)

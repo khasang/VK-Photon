@@ -30,10 +30,16 @@
             android:label="ServiceActivity"
             android:parentActivityName=".presentation.activities.MainActivity"
             android:theme="@style/VK.Transparent" />
+
         <service android:name=".domain.services.SyncServiceImpl" />
+
         <activity
             android:name=".presentation.activities.SettingsActivity"
-            android:theme="@style/MySettingsTheme"/>
+            android:theme="@style/MySettingsTheme" />
+        <activity
+            android:name=".presentation.activities.UpdatedSettingsActivity"
+            android:label="@string/action_settings"
+            android:theme="@style/MySettingsTheme" />
     </application>
 
 </manifest>
