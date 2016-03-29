@@ -11,13 +11,15 @@ import android.view.ViewGroup;
 
 import com.khasang.vkphoto.R;
 import com.khasang.vkphoto.presentation.activities.AppCompatPreferenceActivity;
+import com.khasang.vkphoto.util.Logger;
 
 public class SettingsFragment extends PreferenceFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTheme(R.style.MyMaterialTheme);
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
 
         if (getArguments() != null) {
             String page = getArguments().getString("page");
@@ -36,7 +38,9 @@ public class SettingsFragment extends PreferenceFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.settings_page, container, false);
-        if (layout != null) {
+        getActivity().setTheme(R.style.MyMaterialTheme);
+        AppCompatPreferenceActivity appCompatPreferenceActivity = (AppCompatPreferenceActivity) getActivity();
+        if (layout != null && !appCompatPreferenceActivity.onIsMultiPane()) {
             AppCompatPreferenceActivity activity = (AppCompatPreferenceActivity) getActivity();
             Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbar);
             activity.setSupportActionBar(toolbar);

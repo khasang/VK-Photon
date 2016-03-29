@@ -13,5 +13,4 @@
             android:name="page"
             android:value="page2" />
     </header>
-    ...
 </preference-headers>
