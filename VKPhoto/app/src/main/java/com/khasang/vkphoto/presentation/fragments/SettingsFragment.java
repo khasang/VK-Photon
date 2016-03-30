@@ -1,6 +1,9 @@
 package com.khasang.vkphoto.presentation.fragments;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -8,16 +11,27 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.support.annotation.Nullable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 
 import com.khasang.vkphoto.R;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+    private int summaryColor;
 
+    @SuppressLint("NewApi")
+    @TargetApi(23)
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         addPreferencesFromResource(R.xml.preferences);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            summaryColor = getResources().getColor(R.color.colorPrimary, getActivity().getTheme());
+        } else {
+            summaryColor = getResources().getColor(R.color.colorPrimary);
+        }
         initSummary(getPreferenceScreen());
     }
 
@@ -35,16 +49,22 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private void updatePrefSummary(Preference p) {
         if (p instanceof ListPreference) {
             ListPreference listPref = (ListPreference) p;
-            p.setSummary(listPref.getEntry());
-        }
-        if (p instanceof EditTextPreference) {
+            p.setSummary(getColoredString(listPref.getEntry()));
+        } else if (p instanceof EditTextPreference) {
             EditTextPreference editTextPref = (EditTextPreference) p;
             if (p.getTitle().toString().toLowerCase().contains("password")) {
-                p.setSummary("******");
+                p.setSummary(getColoredString("*****"));
             } else {
-                p.setSummary(editTextPref.getText());
+                p.setSummary(getColoredString(editTextPref.getText()));
             }
         }
+    }
+
+    private CharSequence getColoredString(CharSequence sequence) {
+        Spannable summary = new SpannableString(sequence);
+        summary.setSpan(new ForegroundColorSpan(summaryColor), 0, summary.length(), 0);
+        return summary;
+//        return Html.fromHtml("<font color=\"" + summaryColor + "\">" + sequence + "</font>");
     }
 
     @Override

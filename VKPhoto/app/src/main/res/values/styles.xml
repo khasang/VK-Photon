@@ -15,11 +15,11 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="colorControlNormal">@color/vk_white</item>
         <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="android:textColor">@color/primary_text</item>
         <item name="android:textColorSecondary">@color/vk_share_gray_line</item>
     </style>
 
     <style name="MySettingsTheme" parent="MyMaterialTheme.Base">
-        <item name="android:textColorPrimary">@color/primary_text</item>
         <item name="android:textColorSecondary">@color/colorPrimary</item>
     </style>
 
