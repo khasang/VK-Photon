@@ -1,8 +1,8 @@
 package com.khasang.vkphoto;
 
 import android.app.Application;
+import android.preference.PreferenceManager;
 
-import com.khasang.vkphoto.util.FileManager;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
@@ -27,5 +27,6 @@ public class MyApplication extends Application {
                 .sendNoSubscriberEvent(false).installDefaultEventBus();
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(getApplicationContext());
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
 }

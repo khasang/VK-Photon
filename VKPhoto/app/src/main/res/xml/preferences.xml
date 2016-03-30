@@ -1,27 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
     <PreferenceCategory
-        android:defaultValue="true"
-        android:key="sync_settings"
-        android:title="@string/pref_title_sync_settings">
+        android:key="@string/pref_sync_category_key"
+        android:title="@string/pref_sync_category_name">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_sync_enabled_key"
+            android:title="@string/auto_sync" />
 
         <CheckBoxPreference
             android:defaultValue="true"
+            android:dependency="@string/pref_sync_enabled_key"
             android:key="sync_on_opening"
             android:title="@string/sync_on_opening" />
 
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="sync_enabled"
-            android:title="@string/auto_sync" />
 
         <ListPreference
+            android:defaultValue="@string/pref_sync_frequency_default_value"
+            android:dependency="@string/pref_sync_enabled_key"
             android:dialogTitle="@string/pref_title_sync_frequency"
             android:entries="@array/pref_sync_frequency_titles"
             android:entryValues="@array/pref_sync_frequency_values"
             android:key="sync_frequency"
             android:title="@string/pref_title_sync_frequency" />
-
     </PreferenceCategory>
-
 </PreferenceScreen>

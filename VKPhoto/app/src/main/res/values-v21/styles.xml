@@ -30,14 +30,8 @@
         <item name="android:imeActionId">6</item>
     </style>
 
-    <style name="MySettingsTheme" parent="Base.Theme.AppCompat.Light">
-        <item name="android:textColor">@color/primary_text</item>
-        <item name="android:textSize">@dimen/pref_text_size</item>
-        <item name="android:colorAccent">@color/colorAccent</item>
-        <item name="android:colorPrimary">@color/colorPrimary</item>
-        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorControlNormal">@color/vk_white</item>
-        <item name="colorControlActivated">@color/colorAccent</item>
+    <style name="MySettingsTheme" parent="MyMaterialTheme.Base">
+        <item name="android:textColorSecondary">@color/primary_text</item>
     </style>
 
     <string name="search_hint">Search</string>

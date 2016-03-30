@@ -105,7 +105,7 @@
     </string-array>
 
     <!-- Settings for Data & Sync -->
-    <string name="pref_header_data_sync">Настройки синхронизации</string>
+    <string name="pref_sync_category_name">Настройки синхронизации</string>
 
     <string name="pref_title_sync_frequency">Частота синхронизации</string>
     <string-array name="pref_sync_frequency_titles">
@@ -114,11 +114,11 @@
         <item>1 час</item>
         <item>3 часа</item>
         <item>6 часов</item>
+        <item>1 день</item>
         <item>Never</item>
     </string-array>
 
     <string name="pref_title_system_sync_settings">Системные настройки синхронизации</string>
-
 
 
     <!-- Settings for Notifications -->

@@ -25,6 +25,7 @@ import com.khasang.vkphoto.util.Logger;
 
 import java.util.List;
 
+@Deprecated
 public class SettingsActivity extends PreferenceActivity {
 
 
@@ -153,10 +154,10 @@ public class SettingsActivity extends PreferenceActivity {
         // Apply for ListPreference with key="cb_language"
         private void updatePrefListLanguages() {
             MaterialLanguageListPreference preference = (MaterialLanguageListPreference) findPreference("cb_language");
-            if (preference.getValue() == null){
+            if (preference.getValue() == null) {
                 preference.setValueIndex(0);
                 Logger.d("Language is null");
-            } else{
+            } else {
                 preference.setValue(preference.getValue());
             }
             preference.setSummary(preference.getValue());
@@ -189,10 +190,10 @@ public class SettingsActivity extends PreferenceActivity {
         // Apply for ListPreference Summary with key="sync_frequency"
         private void updatePrefListSyncFrequency() {
             MaterialSyncListPreference preference = (MaterialSyncListPreference) findPreference("sync_frequency");
-            if (preference.getValue() == null){
+            if (preference.getValue() == null) {
                 preference.setValueIndex(0);
                 Logger.d("Sync frequency is null");
-            } else{
+            } else {
                 preference.setValue(preference.getValue());
             }
             preference.setSummary(preference.getValue());

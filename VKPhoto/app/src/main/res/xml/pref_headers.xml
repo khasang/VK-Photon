@@ -13,5 +13,5 @@
     <header
         android:fragment="com.khasang.vkphoto.presentation.activities.SettingsActivity$SyncPreferenceFragment"
         android:key="@+id/sync_settings"
-        android:title="@string/pref_header_data_sync" />
+        android:title="@string/pref_sync_category_name" />
 </preference-headers>
