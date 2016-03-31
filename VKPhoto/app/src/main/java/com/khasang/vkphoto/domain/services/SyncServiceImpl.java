@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.bignerdranch.android.multiselector.MultiSelector;
+import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalAlbumSource;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.vk.VKDataSource;
@@ -22,11 +23,16 @@ import com.khasang.vkphoto.domain.events.VKAlbumEvent;
 import com.khasang.vkphoto.domain.tasks.DownloadPhotoCallable;
 import com.khasang.vkphoto.domain.tasks.SyncAlbumCallable;
 import com.khasang.vkphoto.domain.tasks.UploadPhotoCallable;
+import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
+import com.khasang.vkphoto.util.ErrorUtils;
 import com.khasang.vkphoto.util.FileManager;
+import com.khasang.vkphoto.util.JsonUtils;
 import com.khasang.vkphoto.util.Logger;
+import com.khasang.vkphoto.util.NetWorkUtils;
+import com.vk.sdk.api.VKResponse;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -55,7 +61,7 @@ public class SyncServiceImpl extends Service implements SyncService {
     private VKDataSource vkDataSource;
     private List<Future<Boolean>> futureList = new ArrayList<>();
     private Context context;
-    private Map<Integer, Future<Boolean>> futureMap = new HashMap<>();
+    private volatile Map<Integer, Future<Boolean>> futureMap = new HashMap<>();
     private Map<Long, Future<Photo>> futureMapUploadPhotos = new HashMap<>();
 
     @Override
@@ -82,10 +88,25 @@ public class SyncServiceImpl extends Service implements SyncService {
             public void run() throws Exception {
                 if (photoAlbumList.size() > 0) {
                     localDataSource.getAlbumSource().setSyncStatus(photoAlbumList, Constants.SYNC_STARTED);
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
-                    for (PhotoAlbum photoAlbum : photoAlbumList) {
-                        Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource);
-                        futureMap.put(photoAlbum.id, executor.submit(booleanCallable));
+                    final ExecutorService executor = Executors.newSingleThreadExecutor();
+                    for (final PhotoAlbum photoAlbum : photoAlbumList) {
+                        if (!futureMap.containsKey(photoAlbum.id)) {
+                            RequestMaker.getVkPhotosByAlbumIdRequest(photoAlbum.id).executeSyncWithListener(new MyVkRequestListener() {
+                                @Override
+                                public void onComplete(VKResponse response) {
+                                    super.onComplete(response);
+                                    try {
+                                        Callable<Boolean> booleanCallable = new SyncAlbumCallable(photoAlbum, localDataSource,
+                                                JsonUtils.getItems(response.json, Photo.class));
+                                        futureMap.put(photoAlbum.id, executor.submit(booleanCallable));
+                                        Logger.d("Got VKPhoto for photoAlbum " + photoAlbum.title);
+                                    } catch (Exception e) {
+                                        Logger.d(e.toString());
+                                        sendError(ErrorUtils.JSON_PARSE_FAILED);
+                                    }
+                                }
+                            });
+                        }
                     }
                     execute();
                     if (futureMap.isEmpty()) {
@@ -104,14 +125,13 @@ public class SyncServiceImpl extends Service implements SyncService {
                     while (iterator.hasNext()) {
                         Future<Boolean> booleanFutureTask = iterator.next().getValue();
                         Logger.d(booleanFutureTask.toString() + "startSync");
-                        if (booleanFutureTask.get()) {
+                        if (booleanFutureTask.get() && NetWorkUtils.isNetworkOnline(context)) {
                             iterator.remove();
                         }
                         Logger.d("exit get");
                     }
                 } catch (ExecutionException e) {
                     Logger.d("canceled execution error");
-                    execute();
                 }
             }
 
@@ -478,6 +498,7 @@ public class SyncServiceImpl extends Service implements SyncService {
                         photoAlbum.syncStatus = Constants.SYNC_NOT_STARTED;
                         localDataSource.getAlbumSource().updateAlbum(photoAlbum, true);
                     }
+                    eventBus.postSticky(new SyncAndTokenReadyEvent());
                 } catch (Exception e) {
                     Logger.d(e.toString());
                 }

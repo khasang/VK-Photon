@@ -49,8 +49,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
         vkAlbumsInteractor.syncAlbums(multiSelector, vkAlbumsView.getAdapterCursor());
         if (actionMode != null) {
             actionMode.finish();
-        }
-        else {
+        } else {
             Logger.d("AlbumsPresenterImpl. actionMode == null. avoiding instruction actionMode.finish()");
         }
     }
@@ -196,6 +195,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     }
 
     private void checkShowCancelSync(MultiSelector multiSelector, Menu menu) {
+        Logger.d("check show download albums");
         List<Integer> indexes = multiSelector.getSelectedPositions();
         Cursor cursor = vkAlbumsView.getAdapterCursor();
         List<PhotoAlbum> photoAlbumList = getSelectedAlbums(indexes, cursor);
@@ -218,7 +218,7 @@ public class AlbumsPresenterImpl extends AlbumsPresenterBase implements VKAlbums
     }
 
     public File getAlbumThumb(final LocalPhotoSource localPhotoSource, final PhotoAlbum photoAlbum, final ExecutorService executor) {
-         return photoAlbum.thumb_id > 0 ? vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor) : null;
+        return photoAlbum.thumb_id > 0 ? vkAlbumsInteractor.downloadAlbumThumb(localPhotoSource, photoAlbum, executor) : null;
     }
 
     @Override

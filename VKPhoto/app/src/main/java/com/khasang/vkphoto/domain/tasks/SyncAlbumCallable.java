@@ -1,19 +1,11 @@
 package com.khasang.vkphoto.domain.tasks;
 
-import android.support.annotation.NonNull;
-
-import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.local.LocalDataSource;
 import com.khasang.vkphoto.data.local.LocalPhotoSource;
-import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
 import com.khasang.vkphoto.presentation.model.PhotoAlbum;
 import com.khasang.vkphoto.util.Constants;
-import com.khasang.vkphoto.util.ErrorUtils;
-import com.khasang.vkphoto.util.JsonUtils;
 import com.khasang.vkphoto.util.Logger;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,9 +23,10 @@ public class SyncAlbumCallable implements Callable<Boolean> {
     private PhotoAlbum photoAlbum;
     private boolean success = false;
 
-    public SyncAlbumCallable(PhotoAlbum photoAlbum, LocalDataSource localDataSource) {
+    public SyncAlbumCallable(PhotoAlbum photoAlbum, LocalDataSource localDataSource, List<Photo> vkPhotoList) {
         this.localDataSource = localDataSource;
         this.photoAlbum = photoAlbum;
+        this.vkPhotoList = vkPhotoList;
     }
 
     @Override
@@ -41,20 +34,6 @@ public class SyncAlbumCallable implements Callable<Boolean> {
         Logger.d("Entered SyncAlbumCallable " + photoAlbum.title + " call");
         final LocalPhotoSource localPhotoSource = localDataSource.getPhotoSource();
         photoAlbum.syncStatus = Constants.SYNC_FAILED;
-        VKRequest vkRequest = getVkRequest();
-        vkRequest.executeSyncWithListener(new MyVkRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-                try {
-                    vkPhotoList = JsonUtils.getItems(response.json, Photo.class);
-                    Logger.d("Got VKPhoto for photoAlbum " + photoAlbum.title);
-                } catch (Exception e) {
-                    Logger.d(e.toString());
-                    sendError(ErrorUtils.JSON_PARSE_FAILED);
-                }
-            }
-        });
         ExecutorService executor = Executors.newFixedThreadPool(3);
         removeDownloadedPhotos(vkPhotoList, localPhotoSource);
         List<Future<File>> futureList = new ArrayList<>();
@@ -91,6 +70,7 @@ public class SyncAlbumCallable implements Callable<Boolean> {
         return futureList.isEmpty();
     }
 
+
     private void fillFutureList(List<Photo> vkPhotoList, ExecutorService executor, List<Future<File>> futureList, LocalPhotoSource localPhotoSource) {
         for (int i = 0; i < vkPhotoList.size(); i++) {
             Photo photo = vkPhotoList.get(i);
@@ -107,13 +87,6 @@ public class SyncAlbumCallable implements Callable<Boolean> {
                 vkPhotoList.remove(photo);
             }
         }
-    }
-
-    @NonNull
-    private VKRequest getVkRequest() {
-        VKRequest vkRequest = RequestMaker.getVkPhotosByAlbumIdRequest(photoAlbum.id);
-        vkRequest.attempts = 5;
-        return vkRequest;
     }
 
 

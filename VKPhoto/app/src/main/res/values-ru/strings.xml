@@ -167,4 +167,5 @@
     <string name="sync">Синхронизировать</string>
     <string name="photos_synched">Фотографии синхронизированы</string>
     <string name="photos_synched_error">Ошибка при синхронизации фотографий!</string>
+    <string name="cancel_album_sync">Отменить синхронизацию</string>
 </resources>

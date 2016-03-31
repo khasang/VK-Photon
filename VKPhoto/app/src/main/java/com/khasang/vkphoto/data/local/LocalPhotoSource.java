@@ -50,10 +50,7 @@ public class LocalPhotoSource {
             if (getPhotoFromDb(photo.id) == null) {
                 //добавим запись о новом фото в бд фотографий устройства
 //                    MediaStore.Images.Media.insertImage(context.getContentResolver(), photo.filePath, photo.getName(), photo.text);
-                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                Uri contentUri = Uri.fromFile(imageFile);
-                mediaScanIntent.setData(contentUri);
-                context.sendBroadcast(mediaScanIntent);
+
                 //добавим запись о новом фото в локальную БД нашего приложения
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 Logger.d("savePhotoToAlbum. inserted to DB=" +
@@ -62,6 +59,10 @@ public class LocalPhotoSource {
                 Logger.d("savePhotoToAlbum. Photo exists " + photo.id);
                 updatePhoto(photo);
             }
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(imageFile);
+            mediaScanIntent.setData(contentUri);
+            context.sendBroadcast(mediaScanIntent);
         }
         return imageFile;
     }

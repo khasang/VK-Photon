@@ -5,44 +5,40 @@
     <item
         android:id="@+id/action_sync_album"
         android:icon="@android:drawable/stat_notify_sync"
-        android:orderInCategory="100"
         android:title="@string/sync_album"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_cancel_sync_album"
         android:icon="@drawable/ic_sync_disabled_white_24dp"
-        android:orderInCategory="100"
-        android:title="@string/sync_album"
-        android:visible="false" />
-<!--    <item
-        android:id="@+id/action_download_album"
-        android:icon="@drawable/ic_file_download_white_24dp"
-        android:orderInCategory="100"
-        android:title="@string/download_album"
-        app:showAsAction="always" />-->
+        android:title="@string/cancel_album_sync"
+        android:visible="false"
+        app:showAsAction="always" />
+    <!--    <item
+            android:id="@+id/action_download_album"
+            android:icon="@drawable/ic_file_download_white_24dp"
+            android:orderInCategory="100"
+            android:title="@string/download_album"
+            app:showAsAction="always" />-->
     <item
         android:id="@+id/action_privacy"
         android:icon="@drawable/ic_lock_outline_white_24dp"
-        android:orderInCategory="100"
         android:title="@string/privacy"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_edit_album"
         android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:orderInCategory="100"
         android:title="@string/edit_album_title"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_delete_album"
         android:icon="@drawable/ic_delete_white_24dp"
-        android:orderInCategory="100"
         android:title="@string/sync_delete_album"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_select_all"
         android:icon="@drawable/ic_select_all_white_24dp"
-        android:orderInCategory="100"
         android:title="@string/select_all"
         app:showAsAction="always" />
+
 
 </menu>

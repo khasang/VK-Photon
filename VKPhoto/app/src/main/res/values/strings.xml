@@ -189,5 +189,6 @@
     <string name="photos_synched">Photos synchronized!</string>
     <string name="photos_synched_error">Synchronization error! Try again!</string>
     <string name="pref_sync_enabled_key">sync_enabled</string>
+    <string name="cancel_album_sync">Cancel sync</string>
 
 </resources>

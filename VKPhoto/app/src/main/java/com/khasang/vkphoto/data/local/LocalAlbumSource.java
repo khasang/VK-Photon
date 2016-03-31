@@ -140,7 +140,7 @@ public class LocalAlbumSource {
         return db.query(PhotoAlbumsTable.TABLE_NAME, null, null, null, null, null, null);
     }
 
-    public List<PhotoAlbum> getAllLocalAlbumsList(){
+    public List<PhotoAlbum> getAllLocalAlbumsList() {
         List<PhotoAlbum> albumsList = new ArrayList<>();
         Cursor cursor = getAllLocalAlbums();
         if (cursor.moveToFirst()) {
@@ -215,14 +215,16 @@ public class LocalAlbumSource {
     public void setSyncStatus(List<PhotoAlbum> photoAlbumList, int status) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
+        Logger.d("setSyncStatus to albums StartSync");
         try {
+            String[] ids = new String[photoAlbumList.size()];
+            for (int i = 0; i < ids.length; i++) {
+                ids[i] = String.valueOf(photoAlbumList.get(i).id);
+            }
+            String joinedIds = TextUtils.join(", ", ids);
             ContentValues contentValues = new ContentValues();
             contentValues.put(PhotoAlbumsTable.SYNC_STATUS, status);
-            String[] whereArgs = new String[photoAlbumList.size()];
-            for (int i = 0; i < photoAlbumList.size(); i++) {
-                whereArgs[i] = String.valueOf(photoAlbumList.get(i).id);
-            }
-            db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " = ?", whereArgs);
+            db.update(PhotoAlbumsTable.TABLE_NAME, contentValues, BaseColumns._ID + " in (" + joinedIds + ")", null);
             db.setTransactionSuccessful();
             EventBus.getDefault().postSticky(new VKAlbumEvent());
         } finally {
