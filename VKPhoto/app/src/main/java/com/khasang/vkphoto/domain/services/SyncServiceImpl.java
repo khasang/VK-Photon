@@ -158,10 +158,15 @@ public class SyncServiceImpl extends Service implements SyncService {
                 if (localPhotoList.size() > 0) {
                     ExecutorService executor = Executors.newSingleThreadExecutor();
                     for (Photo photo : localPhotoList) {
-                        File file = new File(photo.filePath);
-                        if (file.exists()) {
-                            Callable<Photo> photoCallable = new UploadPhotoCallable(file, idPhotoAlbum, vkDataSource);
-                            futureMapUploadPhotos.put(idPhotoAlbum, executor.submit(photoCallable));
+                        try {
+                            File file = new File(photo.filePath);
+                            if (file.exists()) {
+                                Callable<Photo> photoCallable = new UploadPhotoCallable(file, idPhotoAlbum, vkDataSource);
+                                futureMapUploadPhotos.put(idPhotoAlbum, executor.submit(photoCallable));
+                                Logger.d("Upload photo " + photoCallable.toString());
+                            }
+                        } catch (Exception e) {
+                            Logger.d(e.toString());
                         }
                     }
                     execute();

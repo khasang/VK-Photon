@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.khasang.vkphoto.data.RequestMaker;
 import com.khasang.vkphoto.data.vk.VKDataSource;
+import com.khasang.vkphoto.domain.events.ErrorEvent;
 import com.khasang.vkphoto.domain.events.GetVKPhotoEvent;
 import com.khasang.vkphoto.presentation.model.MyVkRequestListener;
 import com.khasang.vkphoto.presentation.model.Photo;
@@ -45,8 +46,8 @@ public class UploadPhotoCallable implements Callable<Photo> {
                     photo = null;
                     Logger.d(e.toString());
                     sendError(ErrorUtils.JSON_PARSE_FAILED);
+                    EventBus.getDefault().postSticky(new ErrorEvent(ErrorUtils.PHOTO_NOT_UPLOADED_ERROR));
                 }
-
             }
         });
         return photo;

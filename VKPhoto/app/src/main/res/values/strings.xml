@@ -159,6 +159,7 @@
     <string name="no_internet_connection_error">No internet connection</string>
     <string name="album_not_created_error">Create of album failed</string>
     <string name="photo_not_saved_error">Error downloading photo</string>
+    <string name="photo_not_uploaded_error">Error uploading photo</string>
     <string name="userReply">replied to</string>
     <string name="synchronize">Synchronize</string>
     <string name="comments_ntf">Comments notifications</string>
