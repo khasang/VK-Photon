@@ -283,6 +283,10 @@ public class AlbumFragment extends Fragment implements AlbumView {
                 displayRefresh(false);
                 ToastUtils.showError(ErrorUtils.getErrorMessage(errorCode, getContext()), getContext());
                 break;
+            case ErrorUtils.PHOTO_NOT_UPLOADED_ERROR:
+                displayRefresh(false);
+                ToastUtils.showError(ErrorUtils.getErrorMessage(errorCode, getContext()), getContext());
+                break;
         }
     }
 
