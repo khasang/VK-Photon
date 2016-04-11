@@ -50,7 +50,7 @@
     <string name="sync_delete_album_question">Удалить альбом?</string>
     <string name="sync_delete_albums_question">Удалить альбомы?</string>
     <string name="userReply">ответил</string>
-    <string name="hello_blank_fragment"></string>
+    <string name="hello_blank_fragment">Привет чистый фрагмент</string>
     <plurals name="sync_delete_albums_question_title">
         <item quantity="one" tools:ignore="ImpliedQuantity">Удалить альбом?</item>
         <item quantity="few">Удалить альбомы?</item>
@@ -104,6 +104,11 @@
         <item>-1</item>
     </string-array>
 
+    <string-array name="pref_list_languages">
+        <item>Русский</item>
+        <item>Английский</item>
+    </string-array>
+
     <!-- Settings for Data & Sync -->
     <string name="pref_sync_category_name">Настройки синхронизации</string>
 
@@ -117,7 +122,15 @@
         <item>1 день</item>
         <item>Never</item>
     </string-array>
-
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>1440</item>
+        <item>-1</item>
+    </string-array>
     <string name="pref_title_system_sync_settings">Системные настройки синхронизации</string>
 
 
@@ -136,14 +149,14 @@
     <string name="photo_not_saved_error">Ошибка при скачивании фотографии</string>
     <string name="synchronize">Синхронизировать</string>
 
-    <string name="icon_heart" translatable="false">&#xf004;</string>
+    <string name="icon_heart">&#xf004;</string>
     <string name="pref_title_display_settings">Настройки отображения</string>
     <string name="pref_title_notification_settings">Настройки уведомлений</string>
     <string name="microphone">Микрофон</string>
     <string name="remove">Удалить</string>
     <string name="pref_title_sync_settings">Настройки синхронизации</string>
     <string name="comments_ntf">Уведомления о комментариях</string>
-    <string name="enable_fab"></string>
+    <string name="enable_fab">Активировать плавающую кнопку действия</string>
     <string name="english">Английский</string>
     <string name="language">Язык</string>
     <string name="likes_ntf">Уведомления о лайках</string>
@@ -159,7 +172,7 @@
 
     <string name="russian">Русский</string>
     <string name="search_hint">Поиск</string>
-    <string name="vibro_with_ntf"></string>
+    <string name="vibro_with_ntf">Вибрация с уведомлением</string>
     <string name="auto_sync">Авто синхронизация</string>
     <string name="sync_on_opening">Синхронизация при открытии</string>
     <string name="sync_photo_question">Синхронизировать фотографию?</string>
@@ -168,4 +181,16 @@
     <string name="photos_synched">Фотографии синхронизированы</string>
     <string name="photos_synched_error">Ошибка при синхронизации фотографий!</string>
     <string name="cancel_album_sync">Отменить синхронизацию</string>
+    <string name="hour">1 час</string>
+    <string name="hours_3">3 часа</string>
+    <string name="hours_6">6 часов</string>
+    <string name="day">1 день</string>
+    <string name="min_15">15 минут</string>
+    <string name="min_30">30 минут</string>
+    <string name="never">Никогда</string>
+    <string name="pref_sync_category_key">Настройки синхронизации</string>
+    <string name="pref_sync_frequency_default_value">15</string>
+    <string name="pref_sync_enabled_key">Синхронизация включена</string>
+    <string name="request_write_permission">Приложению нужно разрешение на запись</string>
+    <string name="sync_frequency">Частота синхронизации</string>
 </resources>

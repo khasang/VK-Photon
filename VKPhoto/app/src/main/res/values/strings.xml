@@ -4,7 +4,7 @@
     <string name="log_out">Logout</string>
     <string name="logout">Are you sure, you want to logout?</string>
     <string name="title_of_album">Title</string>
-    <string name="request_write_permission">App request wtire external permission</string>
+    <string name="request_write_permission">App request write external permission</string>
     <string name="count_of_photos_in_album">%d</string>
     <string name="service_connecting_error">Service is connecting</string>
     <string name="sync_album">Synchronize album</string>
@@ -140,7 +140,7 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
 
-    <string name="icon_heart" translatable="false">&#xf004;</string>
+    <string name="icon_heart">&#xf004;</string>
     <string name="microphone">Microphone</string>
     <string name="remove">Remove</string>
 
