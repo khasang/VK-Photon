@@ -10,4 +10,4 @@
 * Приложение разработано в среде Android Studio 1.5.1, версия SDK 23, на основе языка Java 1.7 и с использованием API ВКонтакте и VK SDK. Минимальная версия SDK устройства пользователя: 15.
 
 ### User guide
-* User gurde is available [here](https://github.com/khasang-incubator/Android-20160131/tree/develop/Auxiliary_files/Docx/UserGuide.docx)
+* User gurde is available [here](https://github.com/khasang/VK-Photon/blob/develop/Auxiliary_files/Docs/UserGuide.docx)
